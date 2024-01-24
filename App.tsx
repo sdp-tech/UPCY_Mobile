@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, TouchableOpacity, Text } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { BottomTabBarProps, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
@@ -12,9 +12,17 @@ import MyPageIcon from './src/assets/navbar/MyPage.svg';
 
 const Stack = createNativeStackNavigator();
 
+const GlobalTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: 'white'
+  }
+}
+
 function App(): React.JSX.Element {
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={GlobalTheme}>
       <Stack.Navigator
         screenOptions={() => ({
           headerShown: false,
@@ -65,10 +73,10 @@ const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
             key={index}
             onPress={onPress}
             style={{
-              width: "20%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
+              width: '20%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
           >
             {
