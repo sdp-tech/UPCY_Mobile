@@ -5,6 +5,11 @@ import { BLACK, GREEN, PURPLE } from '../../styles/GlobalColor';
 
 import RightArrow from '../../assets/common/RightArrow.svg';
 
+interface SignupProps {
+  navigation: any;
+  route: any;
+}
+
 interface StartBtnProps {
   containerStyle?: ViewStyle;
   onPress: () => void;
@@ -49,7 +54,7 @@ function StartBtn({
   );
 }
 
-export default function Signup() {
+export default function Signup({ navigation, route }: SignupProps) {
   const { width, height } = Dimensions.get('window');
   return (
     <SafeAreaView>
@@ -84,7 +89,9 @@ export default function Signup() {
             color={BLACK}
           />
           <StartBtn
-            onPress={() => {}}
+            onPress={() => {
+              navigation.navigate('Reformer');
+            }}
             subtext="전문성으로 수익을 창출하고 싶다면"
             text="리폼러로 가입"
             colorBack={PURPLE}
