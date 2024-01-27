@@ -7,12 +7,13 @@ import { PURPLE } from '../styles/GlobalColor';
 interface HashtagParams {
   value: string;
   pressable?: boolean;
+  pressed?: boolean;
+  onPress?: () => void;
 }
 
-const Hashtag = ({value, pressable} : HashtagParams) => {
-  const [pressed, setPressed] = useState<boolean>(false);
+const Hashtag = ({value, pressable, pressed, onPress} : HashtagParams) => {
   return (
-    <HashtagContainer pressed={pressed} onPress={() => setPressed(!pressed)} disabled={!pressable}>
+    <HashtagContainer pressed={pressed} onPress={onPress} disabled={!pressable}>
       <Filter14M style={{color: pressed ? PURPLE : 'white'}}>{value}</Filter14M>
     </HashtagContainer>
   )
