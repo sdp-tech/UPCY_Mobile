@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { SafeAreaView, ScrollView, View, Text, TouchableOpacity, useWindowDimensions } from 'react-native';
+import { SafeAreaView, ScrollView, View, FlatList, Text, TouchableOpacity, useWindowDimensions } from 'react-native';
 import styled from 'styled-components/native';
 import { TabView, TabBar, SceneMap } from "react-native-tab-view";
 import { Title20B, Body14R, Caption11M } from '../../../styles/GlobalText.tsx';
@@ -7,8 +7,9 @@ import { Title20B, Body14R, Caption11M } from '../../../styles/GlobalText.tsx';
 import { StackScreenProps } from '@react-navigation/stack';
 import { HomeStackParams } from '../../../pages/Home';
 
+import Footer from '../../../common/Footer.tsx';
+
 import LeftArrow from '../../../assets/common/LeftArrow.svg';
-import { FlatList } from 'react-native-gesture-handler';
 import Hashtag from '../../../common/Hashtag.tsx';
 
 const ProfileSection = () => {
@@ -113,6 +114,7 @@ const MarketTabView = ({ navigation, route } : StackScreenProps<HomeStackParams,
           />
         )}
       />
+      <Footer />
     </SafeAreaView>
   )
 }
