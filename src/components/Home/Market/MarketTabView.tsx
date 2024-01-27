@@ -7,6 +7,7 @@ import { Title20B, Body14R, Caption11M } from '../../../styles/GlobalText.tsx';
 import { StackScreenProps } from '@react-navigation/stack';
 import { HomeStackParams } from '../../../pages/Home';
 
+import InfoPage from './InfoPage.tsx';
 import Footer from '../../../common/Footer.tsx';
 
 import LeftArrow from '../../../assets/common/LeftArrow.svg';
@@ -34,14 +35,6 @@ const ProfileSection = () => {
             )
           }}
         />
-    </View>
-  )
-}
-
-const InfoPage = () => {
-  return (
-    <View>
-      <Text>정보</Text>
     </View>
   )
 }
