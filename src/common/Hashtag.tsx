@@ -4,14 +4,14 @@ import styled from 'styled-components/native';
 import { Filter14M } from '../styles/GlobalText';
 import { PURPLE } from '../styles/GlobalColor';
 
-interface HashtagParams {
+interface HashtagProps {
   value: string;
   pressable?: boolean;
   pressed?: boolean;
   onPress?: () => void;
 }
 
-const Hashtag = ({value, pressable, pressed, onPress} : HashtagParams) => {
+const Hashtag = ({value, pressable, pressed, onPress} : HashtagProps) => {
   return (
     <HashtagContainer pressed={pressed} onPress={onPress} disabled={!pressable}>
       <Filter14M style={{color: pressed ? PURPLE : 'white'}}>{value}</Filter14M>

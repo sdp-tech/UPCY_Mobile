@@ -8,9 +8,10 @@ import { StackScreenProps } from '@react-navigation/stack';
 import { HomeStackParams } from '../../../pages/Home';
 
 import InfoPage from './InfoPage.tsx';
+import ProductPage from './ProductPage.tsx';
 import Footer from '../../../common/Footer.tsx';
 
-import LeftArrow from '../../../assets/common/LeftArrow.svg';
+import Arrow from '../../../assets/common/Arrow.svg';
 import Hashtag from '../../../common/Hashtag.tsx';
 
 const ProfileSection = () => {
@@ -35,14 +36,6 @@ const ProfileSection = () => {
             )
           }}
         />
-    </View>
-  )
-}
-
-const ProductPage = () => {
-  return (
-    <View>
-      <Text>상품</Text>
     </View>
   )
 }
@@ -78,7 +71,7 @@ const MarketTabView = ({ navigation, route } : StackScreenProps<HomeStackParams,
   return (
     <SafeAreaView style={{flex: 1}}>
       <BackButton onPress={() => navigation.goBack()}>
-        <LeftArrow />
+        <Arrow />
       </BackButton>
       <ProfileSection />
       <TabView

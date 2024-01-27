@@ -4,13 +4,13 @@ import styled from 'styled-components/native';
 import { Body16M } from '../styles/GlobalText';
 import { PURPLE, GREEN } from '../styles/GlobalColor';
 
-interface BottomButtonParams {
+interface BottomButtonProps {
   value: string;
   pressed: boolean;
   onPress: () => void;
 }
 
-const BottomButton = ({ value, pressed, onPress }: BottomButtonParams) => {
+const BottomButton = ({ value, pressed, onPress }: BottomButtonProps) => {
   return (
     <ButtonContainer pressed={pressed} onPress={onPress}>
       <Body16M style={{color: pressed ? PURPLE : 'white'}}>{value}</Body16M>
