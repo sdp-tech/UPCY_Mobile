@@ -84,7 +84,7 @@ const MarketTabView = ({ navigation, route } : StackScreenProps<HomeStackParams,
             {...props}
             indicatorContainerStyle={{
               borderBottomColor: '#DFDFDF',
-              borderBottomWidth: 2
+              borderBottomWidth: 1
             }}
             indicatorStyle={{
               backgroundColor: '#BDBDBD',
