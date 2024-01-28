@@ -1,7 +1,7 @@
 import { Dimensions, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View, StyleSheet } from 'react-native';
 import { StackScreenProps, createStackNavigator } from '@react-navigation/stack';
 import { HomeStackParams } from '../../../pages/Home';
-import LeftArrow from '../../../assets/common/LeftArrow.svg';
+import Arrow from '../../../assets/common/Arrow.svg';
 import UnFilledLike from '../../../assets/common/UnFilledLike.svg';
 import Search from '../../../assets/common/Search.svg';
 import styled from "styled-components/native";
@@ -73,7 +73,7 @@ const DetailPageMainScreen = ({ navigation }: StackScreenProps<DetailPageStackPa
         <TouchableOpacity onPress={() => {
           navigation.goBack();
         }}>
-          <LeftArrow/>
+          <Arrow/>
         </TouchableOpacity>
       </View>
       <ScrollView>
