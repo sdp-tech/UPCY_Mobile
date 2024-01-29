@@ -57,7 +57,7 @@ const DetailPageMainScreen = ({ navigation }: StackScreenProps<DetailPageStackPa
         <TouchableOpacity onPress={() => {
           navigation.goBack();
         }}>
-          <Arrow/>
+          <Arrow color='black' />
         </TouchableOpacity>
       </View>
       <CardView // 데이터 들어오면 렌더링
