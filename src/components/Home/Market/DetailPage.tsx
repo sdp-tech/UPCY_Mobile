@@ -1,4 +1,4 @@
-import { Dimensions, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View, StyleSheet } from 'react-native';
+import { Dimensions, SafeAreaView, ScrollView, Text, TouchableOpacity, View, StyleSheet, useWindowDimensions } from 'react-native';
 import { StackScreenProps, createStackNavigator } from '@react-navigation/stack';
 import { HomeStackParams } from '../../../pages/Home';
 import Arrow from '../../../assets/common/Arrow.svg';
@@ -7,33 +7,13 @@ import Search from '../../../assets/common/Search.svg';
 import styled from "styled-components/native";
 import { useRef, useState } from 'react';
 import CustomHeader from '../../../common/CustomHeader';
+import DetailBox from './DetailBox';
+import OptionBox from './OptionBox';
 import CardView from '../../../common/CardView';
+import Footer from '../../../common/Footer';
+import { TabBar, TabView } from 'react-native-tab-view';
 
 const { width, height } = Dimensions.get("window");
-
-const SearchWrapper = styled.View`
-  display: flex;
-  width: 80%;
-  margin: 0 auto;
-  height: 36px;
-  flex-direction: row;
-  border-radius: 12px;
-`;
-const StyledInput = styled.TextInput`
-  width: 100%;
-  padding: 0 5%;
-  font-family: Pretendard Variable;
-`;
-const ResetButton = styled.TouchableOpacity`
-  position: absolute;
-  height: 100%;
-  right: 0px;
-  top: 0px;
-  width: 15%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
 
 export type DetailPageStackParams = {
   DetailPage: undefined;
@@ -53,22 +33,25 @@ const DetailPageScreen = ({ navigation, route }: StackScreenProps<HomeStackParam
 };
 
 const DetailPageMainScreen = ({ navigation }: StackScreenProps<DetailPageStackParams, 'DetailPage'>) => {
-  const [search, setSearch] = useState<string>("");
-  const [isInfo, setIsInfo] = useState<boolean>(true);
-  const inputRef = useRef<TextInput>(null);
+  const layout = useWindowDimensions();
+  const [index, setIndex] = useState<number>(0);
   const [data, setData] = useState([]);
+  const [routes] = useState([
+    { key: 'detail', title: '상세설명'},
+    { key: 'option', title: '옵션 및 유의사항' }
+  ]);
 
-  const isDetail = () => setIsInfo(true);
-  const isOption = () => setIsInfo(false);
+  const renderScene = ({ route }: any) => {
+    switch (route.key) {
+      case 'detail':
+        return <DetailBox/>;
+      case 'option':
+        return <OptionBox />;
+    }
+  }
 
   return (
-    <SafeAreaView>
-      <CustomHeader
-            onSearch={() => {
-              // navigation.navigate("Search");
-            }}
-            onAlarm={() => {}}
-          />
+    <SafeAreaView style={{flex:1}}>
       <View style={{flexDirection: "row", height: 50, alignItems: 'center'}}>
         <TouchableOpacity onPress={() => {
           navigation.goBack();
@@ -76,22 +59,21 @@ const DetailPageMainScreen = ({ navigation }: StackScreenProps<DetailPageStackPa
           <Arrow/>
         </TouchableOpacity>
       </View>
-      <ScrollView>
-        <CardView // 데이터 들어오면 렌더링
-          gap={0}
-          offset={0}
-          data={data}
-          pageWidth={width}
-          dot={true}
-          renderItem={({ item }: any) => (
-            <View style={{width: width, height: height * 0.4}}><UnFilledLike color={'black'}/></View>
-            // <CurationItemCard
-            //   rep={true}
-            //   data={item}
-            //   style={{ width: width, height: height * 0.4 }}
-            // />
-          )}
-        />
+      <CardView // 데이터 들어오면 렌더링
+        gap={0}
+        offset={0}
+        data={data}
+        pageWidth={width}
+        dot={true}
+        renderItem={({ item }: any) => (
+          <View style={{width: width, height: height * 0.4}}><UnFilledLike color={'black'}/></View>
+          // <CurationItemCard
+          //   rep={true}
+          //   data={item}
+          //   style={{ width: width, height: height * 0.4 }}
+          // />
+        )}
+      />
         <View style={TextStyles.borderBottom}>
           <Text style={TextStyles.Title}>서비스 이름</Text>
           <Text style={TextStyles.Sub}>#키워드 #키워드 # 키워드</Text>
@@ -107,30 +89,36 @@ const DetailPageMainScreen = ({ navigation }: StackScreenProps<DetailPageStackPa
             </View>
           </View>
         </View>
-        <View style={{flexDirection:'row', justifyContent:"space-around", borderBottomWidth:1, borderBottomColor:"black"}}>
-          <TouchableOpacity onPress={isDetail}><Text style={{...TextStyles.Price, color: isInfo ? "black":"#dcdcdc", borderBottomWidth: isInfo ? 3:0}}>상세설명</Text></TouchableOpacity>
-          <TouchableOpacity onPress={isOption}><Text style={{...TextStyles.Price, color: isInfo ? "#dcdcdc" : "black", borderBottomWidth: isInfo ? 0:3}}>옵션 및 유의사항</Text></TouchableOpacity>
-        </View>
-        <View style={TextStyles.borderBottom}>
-            <View style={{flexDirection:'row'}}>
-              <Text style={TextStyles.Price}>제작 기간</Text>
-              <Text style={TextStyles.PriceInfo}>3주</Text>
-            </View>
-            <Text style={TextStyles.Price}>서비스 상세</Text>
-            <View style={{backgroundColor:"gray", height:150, width:150}}></View>
-        </View>
+        <TabView
+        navigationState={{ index, routes }}
+        renderScene={renderScene}
+        onIndexChange={setIndex}
+        initialLayout={{ width: layout.width, height: layout.height}}
+        renderTabBar={props => (
+          <TabBar
+            {...props}
+            indicatorContainerStyle={{
+              borderBottomColor: '#DFDFDF',
+              borderBottomWidth: 1
+            }}
+            indicatorStyle={{
+              backgroundColor: '#BDBDBD',
+              height: 2
+            }}
+            style={{
+              backgroundColor: 'white',
+            }}
+            labelStyle={{
+              color: 'black'
+            }}
+            pressColor='black'
+          />
+        )}
+      />
         <View style={{...TextStyles.borderBottom,borderBottomWidth:1, alignItems: 'center'}}>
           <Text style={{...TextStyles.Price}}>후기(3)</Text>
         </View>
-        <View style={{ height:50, display: 'flex', flexDirection:"row", justifyContent:"space-around", alignItems:'center'}}>
-        <UnFilledLike color={'black'}/>
-        <TouchableOpacity style={{backgroundColor:"#000", flex:0.5, height:30, justifyContent:"center"}}>
-          <Text style={{color: '#FFF', fontWeight:"bold", textAlign:'center' }}>
-            견적서 보내기
-          </Text>
-        </TouchableOpacity>
-      </View>
-      </ScrollView>
+      <Footer/>
     </SafeAreaView>
   )
 }
