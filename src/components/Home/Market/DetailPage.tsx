@@ -12,6 +12,7 @@ import OptionBox from './OptionBox';
 import CardView from '../../../common/CardView';
 import Footer from '../../../common/Footer';
 import { TabBar, TabView } from 'react-native-tab-view';
+import DetailComment from './DetailComment';
 
 const { width, height } = Dimensions.get("window");
 
@@ -74,12 +75,14 @@ const DetailPageMainScreen = ({ navigation }: StackScreenProps<DetailPageStackPa
           // />
         )}
       />
+        {/* 컴포넌트로 변경 예정 */}
         <View style={TextStyles.borderBottom}>
           <Text style={TextStyles.Title}>서비스 이름</Text>
           <Text style={TextStyles.Sub}>#키워드 #키워드 # 키워드</Text>
           <Text style={TextStyles.PriceInfo}>기본: <Text style={TextStyles.Price}>가격</Text></Text>
           <Text style={TextStyles.PriceInfo}>최대: <Text style={TextStyles.Price}>가격</Text></Text>
         </View>
+        {/* 컴포넌트로 변경 예정 */}
         <View style={{...TextStyles.borderBottom, justifyContent: 'space-between'}}>
           <View style={{ padding:15, flexDirection:'row'}}>
             <View style={{backgroundColor:"gray", width:50, height:50, borderRadius:25}}></View>
@@ -115,9 +118,7 @@ const DetailPageMainScreen = ({ navigation }: StackScreenProps<DetailPageStackPa
           />
         )}
       />
-        <View style={{...TextStyles.borderBottom,borderBottomWidth:1, alignItems: 'center'}}>
-          <Text style={{...TextStyles.Price}}>후기(3)</Text>
-        </View>
+      <DetailComment/>
       <Footer/>
     </SafeAreaView>
   )
