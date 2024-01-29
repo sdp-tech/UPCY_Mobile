@@ -21,7 +21,7 @@ const DetailBoxPage = () => {
         return (
           <InfoSection>
             <Body16B>{item.label}</Body16B>
-            <Body14R style={{marginLeft:10}}>{item.data}</Body14R>
+            <Body14R>{item.data}</Body14R>
           </InfoSection>
         )
       } }
