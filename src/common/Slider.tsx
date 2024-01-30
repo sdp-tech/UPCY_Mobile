@@ -1,14 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
 import { View, Animated } from 'react-native';
 import styled from 'styled-components/native';
-import { BLACK, BLACK2 } from '../styles/GlobalColor';
+import { BLACK, BLACK2, LIGHTGRAY, PURPLE } from '../styles/GlobalColor';
 
 interface SliderProps {
   total: number;
   page: number;
+  rating?: boolean;
 }
 
-const Slider = ({ total, page }: SliderProps) => {
+const Slider = ({ total, page, rating }: SliderProps) => {
   const loaderValue = useRef(new Animated.Value(0)).current;
 
   const load = (count: number) => {
@@ -31,12 +32,13 @@ const Slider = ({ total, page }: SliderProps) => {
 
   return (
     <>
-      <SliderBar>
+      <SliderBar style={{borderRadius: rating ? 2 : 0, backgroundColor: rating ? LIGHTGRAY : BLACK2}}>
         <Animated.View
           style={{
-            backgroundColor: BLACK,
+            backgroundColor: rating ? PURPLE : BLACK,
             width,
-            height: 3
+            height: 3,
+            borderRadius: rating ? 2 : 0
           }}
         />
       </SliderBar>

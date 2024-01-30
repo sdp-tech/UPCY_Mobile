@@ -12,8 +12,9 @@ interface CarouselProps {
   slider?: boolean;
 }
 
+const { width } = Dimensions.get('window');
+
 const Carousel = ({ data, renderItem, dot, slider }: CarouselProps) => {
-  const { width } = Dimensions.get('window');
   const [page, setPage] = useState<number>(0);
   return (
     <>
@@ -59,7 +60,7 @@ const DotContainer = styled.View`
 
 const SliderContainer = styled.View`
   display: flex;
-  padding: 5px 20px;
+  padding: 0px 20px;
 `
 
 export default Carousel;
