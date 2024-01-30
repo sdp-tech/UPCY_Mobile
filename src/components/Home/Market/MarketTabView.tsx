@@ -4,16 +4,19 @@ import styled from 'styled-components/native';
 import { Tabs, MaterialTabBar } from 'react-native-collapsible-tab-view';
 import { getStatusBarHeight } from 'react-native-safearea-height';
 import { Title20B, Body14R, Caption11M } from '../../../styles/GlobalText.tsx';
+import { BLACK, BLACK2 } from '../../../styles/GlobalColor.tsx';
 
 import { StackScreenProps } from '@react-navigation/stack';
 import { HomeStackParams } from '../../../pages/Home';
 
 import InfoPage from './InfoPage.tsx';
 import ProductPage from './ProductPage.tsx';
+import ReviewPage from './ReviewPage.tsx';
+
+import Hashtag from '../../../common/Hashtag.tsx';
 import Footer from '../../../common/Footer.tsx';
 
 import Arrow from '../../../assets/common/Arrow.svg';
-import Hashtag from '../../../common/Hashtag.tsx';
 
 const ProfileSection = ({ navigation }: {navigation: any}) => {
   const filter = ['스포티', '영캐주얼', '깔끔']
@@ -36,7 +39,7 @@ const ProfileSection = ({ navigation }: {navigation: any}) => {
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <Body14R>안녕하세요 리폼러 이하늘입니다!</Body14R>
           <TouchableOpacity>
-            <Caption11M style={{opacity: 0.5, marginLeft: 5}}>...더보기</Caption11M>
+            <Caption11M style={{color: BLACK2, marginLeft: 5}}>...더보기</Caption11M>
           </TouchableOpacity>
         </View>
         <FlatList
@@ -49,14 +52,6 @@ const ProfileSection = ({ navigation }: {navigation: any}) => {
             )
           }}
         />
-    </View>
-  )
-}
-
-const ReviewPage = () => {
-  return (
-    <View>
-      <Text>리뷰</Text>
     </View>
   )
 }
@@ -90,7 +85,9 @@ const MarketTabView = ({ navigation, route } : StackScreenProps<HomeStackParams,
               backgroundColor: 'white',
             }}
             labelStyle={{
-              color: 'black'
+              color: BLACK,
+              fontWeight: '700',
+              fontSize: 16
             }}
           />
         )}
