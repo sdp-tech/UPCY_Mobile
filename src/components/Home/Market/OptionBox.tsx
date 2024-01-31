@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { View, SafeAreaView, FlatList, Text } from 'react-native';
+import { View, SafeAreaView, Text, FlatList } from 'react-native';
 import styled from 'styled-components/native';
 import { Body14R, Body16B } from '../../../styles/GlobalText';
+import { Tabs } from 'react-native-collapsible-tab-view';
 
 
 const OptionPage = () => {
@@ -13,7 +14,7 @@ const OptionPage = () => {
   return (
     <View>
       <Text style={{padding:16, fontWeight:'700', color: 'black'}}>옵션별 추가 금액</Text>
-      <FlatList
+      <Tabs.FlatList
         data={data}
         renderItem={({item}:any) => {
           return (
@@ -24,6 +25,7 @@ const OptionPage = () => {
             </InfoSection>
           )
         } }
+        keyExtractor={(item, index) => index.toString()}
       />
       <Text>주문 시 유의사항</Text>
     </View>

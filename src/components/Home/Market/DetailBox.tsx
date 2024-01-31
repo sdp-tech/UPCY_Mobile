@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { View, SafeAreaView, FlatList, Text } from 'react-native';
 import styled from 'styled-components/native';
 import { Body14R, Body16B } from '../../../styles/GlobalText';
+import { Tabs } from 'react-native-collapsible-tab-view';
 
 
 const DetailBoxPage = () => {
@@ -15,7 +16,7 @@ const DetailBoxPage = () => {
   ]
 
   return (
-    <FlatList
+    <Tabs.FlatList
       data={data}
       renderItem={({item}:any) => {
         return (

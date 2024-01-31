@@ -3,16 +3,14 @@ import { StackScreenProps, createStackNavigator } from '@react-navigation/stack'
 import { HomeStackParams } from '../../../pages/Home';
 import Arrow from '../../../assets/common/Arrow.svg';
 import UnFilledLike from '../../../assets/common/UnFilledLike.svg';
-import Search from '../../../assets/common/Search.svg';
-import styled from "styled-components/native";
 import { useRef, useState } from 'react';
-import CustomHeader from '../../../common/CustomHeader';
 import DetailBox from './DetailBox';
 import OptionBox from './OptionBox';
 import CardView from '../../../common/CardView';
 import Footer from '../../../common/Footer';
-import { TabBar, TabView } from 'react-native-tab-view';
-import DetailComment from './DetailComment';
+import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
+import { BLACK } from '../../../styles/GlobalColor';
+import ReviewPage from './ReviewPage';
 
 const { width, height } = Dimensions.get("window");
 
@@ -33,27 +31,11 @@ const DetailPageScreen = ({ navigation, route }: StackScreenProps<HomeStackParam
   );
 };
 
-const DetailPageMainScreen = ({ navigation }: StackScreenProps<DetailPageStackParams, 'DetailPage'>) => {
-  const layout = useWindowDimensions();
-  const [index, setIndex] = useState<number>(0);
+const ProfileSection = ({ navigation }: {navigation:any}) => {
   const [data, setData] = useState([]);
-  const [routes] = useState([
-    { key: 'detail', title: '상세설명'},
-    { key: 'option', title: '옵션 및 유의사항' }
-  ]);
-
-  const renderScene = ({ route }: any) => {
-    switch (route.key) {
-      case 'detail':
-        return <DetailBox/>;
-      case 'option':
-        return <OptionBox />;
-    }
-  }
-
   return (
-    <SafeAreaView style={{flex:1}}>
-      <View style={{flexDirection: "row", height: 50, alignItems: 'center'}}>
+    <View>
+    <View style={{flexDirection: "row", height: 50, alignItems: 'center'}}>
         <TouchableOpacity onPress={() => {
           navigation.goBack();
         }}>
@@ -92,18 +74,31 @@ const DetailPageMainScreen = ({ navigation }: StackScreenProps<DetailPageStackPa
             </View>
           </View>
         </View>
-        <TabView
-        navigationState={{ index, routes }}
-        renderScene={renderScene}
-        onIndexChange={setIndex}
-        initialLayout={{ width: layout.width, height: layout.height}}
+        </View>
+  )
+}
+
+const DetailPageMainScreen = ({ navigation }: StackScreenProps<DetailPageStackParams, 'DetailPage'>) => {
+  const layout = useWindowDimensions();
+  const [index, setIndex] = useState<number>(0);
+  const [routes] = useState([
+    { key: 'detail', title: '상세설명'},
+    { key: 'option', title: '옵션 및 유의사항' },
+    { key: 'review', title: '리뷰'}
+  ]);
+  
+  return (
+    <View style={{flex:1}}>
+        <Tabs.Container
+        renderHeader={props => <ProfileSection navigation={navigation} />}
+        headerContainerStyle={{
+          shadowOpacity: 0,
+          borderBottomWidth: 1,
+          borderColor: '#D9D9D9'
+        }}
         renderTabBar={props => (
-          <TabBar
+          <MaterialTabBar
             {...props}
-            indicatorContainerStyle={{
-              borderBottomColor: '#DFDFDF',
-              borderBottomWidth: 1
-            }}
             indicatorStyle={{
               backgroundColor: '#BDBDBD',
               height: 2
@@ -112,15 +107,23 @@ const DetailPageMainScreen = ({ navigation }: StackScreenProps<DetailPageStackPa
               backgroundColor: 'white',
             }}
             labelStyle={{
-              color: 'black'
+              color: BLACK,
+              fontWeight: '700',
+              fontSize: 16
             }}
-            pressColor='black'
           />
         )}
-      />
-      <DetailComment/>
+      >
+        {routes.map(route =>
+          (<Tabs.Tab key={route.key} name={route.title}>
+            {route.key === 'detail' && <DetailBox />}
+            {route.key === 'option' && <OptionBox />}
+            {route.key === 'review' && <ReviewPage />}
+          </Tabs.Tab>)
+        )}
+      </Tabs.Container>
       <Footer/>
-    </SafeAreaView>
+    </View>
   )
 }
 
