@@ -13,7 +13,7 @@ interface ServiceItemProps {
 const ServiceItem = ({ onPress }: ServiceItemProps) => {
   const [like, setLike] = useState<boolean>(false);
   return (
-    <TouchableOpacity style={{paddingHorizontal: 20, paddingVertical: 10}} onPress={onPress}>
+    <TouchableOpacity style={{paddingHorizontal: 20, paddingBottom: 10}} onPress={onPress}>
       <ImageBackground
         style={{width: '100%', height: 180, justifyContent: 'flex-end', alignItems: 'flex-end'}}
         source={{uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp'}}
