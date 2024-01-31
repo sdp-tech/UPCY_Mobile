@@ -9,8 +9,8 @@ const Footer = () => {
   const [pressed, setPressed] = useState<boolean>(false);
   return (
     <FooterContainer>
-      <HeartButton like={like} onPress={() => setLike(!like)} blank />
-      <BottomButton value={'견적서 보내기'} pressed={pressed} onPress={() => setPressed(!pressed)} />
+      <HeartButton like={like} onPress={() => {setLike(!like)}} blank />
+      <BottomButton value={'견적서 보내기'} pressed={pressed} onPress={() => {}} />
     </FooterContainer>
   )
 }

@@ -17,6 +17,7 @@ import Hashtag from '../../../common/Hashtag.tsx';
 import Footer from '../../../common/Footer.tsx';
 
 import Arrow from '../../../assets/common/Arrow.svg';
+import Pencil from '../../../assets/common/Pencil.svg';
 
 const ProfileSection = ({ navigation }: {navigation: any}) => {
   const filter = ['스포티', '영캐주얼', '깔끔']
@@ -25,6 +26,9 @@ const ProfileSection = ({ navigation }: {navigation: any}) => {
       <BackButton onPress={() => navigation.goBack()}>
         <Arrow color={'white'} />
       </BackButton>
+      <EditButton>
+        <Pencil />
+      </EditButton>
       <ImageBackground
         style={{width: '100%', height: 200}}
         imageStyle={{height: 160}}
@@ -109,6 +113,14 @@ const BackButton = styled.TouchableOpacity`
   padding: 10px;
   position: absolute;
   left: 0px;
+  top: ${statusBarHeight-10}px;
+  z-index: 1;
+`
+
+const EditButton = styled.TouchableOpacity`
+  padding: 10px;
+  position: absolute;
+  right: 7px;
   top: ${statusBarHeight-10}px;
   z-index: 1;
 `

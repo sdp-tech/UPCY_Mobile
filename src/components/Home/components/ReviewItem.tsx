@@ -12,7 +12,7 @@ interface ReviewItemProps {
 
 const ReviewItem = ({ onPress }: ReviewItemProps) => {
   // 한 줄에 2개씩 아이템 배치
-  const product = [...new Array(6).keys()]
+  const items = [...new Array(6).keys()]
   const splitArrayIntoPairs = (arr: any[], pairSize: number) => {
     return arr.reduce((result, item, index) => {
       if (index % pairSize === 0) {
@@ -22,7 +22,7 @@ const ReviewItem = ({ onPress }: ReviewItemProps) => {
       return result;
     }, []);
   };
-  const splitProduct = splitArrayIntoPairs(product, 2);
+  const splitItems = splitArrayIntoPairs(items, 2);
   return (
     <View style={{ borderBottomWidth: 1, borderBottomColor: LIGHTGRAY }}>
       <ItemContainer style={{marginVertical: 10}}>
@@ -36,7 +36,7 @@ const ReviewItem = ({ onPress }: ReviewItemProps) => {
         </View>
       </ItemContainer>
       <Carousel
-        data={splitProduct}
+        data={splitItems}
         renderItem={({item}: any) => {
           return (
             <View style={{ flexDirection: 'row' }}>
