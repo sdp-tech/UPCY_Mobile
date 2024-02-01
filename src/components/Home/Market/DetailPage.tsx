@@ -83,7 +83,7 @@ const DetailPageMainScreen = ({ navigation }: StackScreenProps<DetailPageStackPa
   const [index, setIndex] = useState<number>(0);
   const [routes] = useState([
     { key: 'detail', title: '상세설명'},
-    { key: 'option', title: '옵션 및 유의사항' },
+    { key: 'option', title: '필독사항' },
     { key: 'review', title: '리뷰'}
   ]);
   
