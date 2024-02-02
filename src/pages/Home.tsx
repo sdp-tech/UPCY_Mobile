@@ -14,6 +14,7 @@ import CustomHeader from '../common/CustomHeader';
 import MarketTabView from '../components/Home/Market/MarketTabView';
 import DetailPageScreen from '../components/Home/Market/DetailPage';
 import QuotationForm from '../components/Home/Quotation/QuotationForm';
+import RegistrationPage from '../components/Home/Market/ServiceRegistration';
 
 export type HomeStackParams = {
   Home: undefined;
@@ -22,6 +23,7 @@ export type HomeStackParams = {
     id?: number;
   };
   Quotation: undefined;
+  RegistrationPage: undefined;
 };
 
 const HomeStack = createStackNavigator<HomeStackParams>();
@@ -39,6 +41,7 @@ const HomeScreen = ({
       <HomeStack.Screen name='Market' component={MarketTabView} />
       <HomeStack.Screen name='DetailPage' component={DetailPageScreen} />
       <HomeStack.Screen name='Quotation' component={QuotationForm} />
+      <HomeStack.Screen name='RegistrationPage' component={RegistrationPage} />
     </HomeStack.Navigator>
   );
 };
@@ -58,6 +61,9 @@ const HomeMainScreen = ({
       </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate('Quotation')}>
         <Text>견적서</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('RegistrationPage')}>
+        <Text>상품등록</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
