@@ -5,7 +5,7 @@ import Arrow from '../../../assets/common/Arrow.svg';
 import styled from "styled-components/native";
 import { getStatusBarHeight } from "react-native-safearea-height";
 import { Body14B, Body14M, Body16B, Subtitle16B, Subtitle16M, Subtitle18M } from "../../../styles/GlobalText";
-import { LIGHTGRAY } from "../../../styles/GlobalColor";
+import { BLACK2, LIGHTGRAY } from "../../../styles/GlobalColor";
 import InputBox from "../../../common/InputBox";
 import { useState } from "react";
 import Filter from "../../../common/Filter";
@@ -112,17 +112,18 @@ const FilterSection = ({ items }: HashtagSectionProps) => {
 
 
 const RegistrationPage = ({ navigation, route }: StackScreenProps<HomeStackParams, 'RegistrationPage'>) => {
-  const [text, setText] = useState<string>('');
+  const [makingTime, setMakingTime] = useState<string>("")
   const [name, setName] = useState<string>('');
   const [hashTag, setHashTag] = useState<string>('');
   const [price, setPrice] = useState<string>('');
   const [detail, setDetail] = useState<string>('');
-  const [addPrice, setAddprice] = useState<number>(0);
+  const [addPrice, setAddprice] = useState<string>("");
+  const [optionExplain, setOptionExplain] = useState<string>("");
   const [notice, setNotice] = useState<string>('');
   const tag = ["#가방", "#어쩌구저쩌구", "#가방", "#가방", "#가방"]
   const registList = [{
     option: "디테일 어쩌구",
-    price: `${price}`+`${addPrice}`,
+    price: `${parseInt(price)}`+`${parseInt(addPrice)}`,
     detail: "상세설명"
   }, {
     option: "디테일 어쩌구",
@@ -152,36 +153,55 @@ const RegistrationPage = ({ navigation, route }: StackScreenProps<HomeStackParam
         </UploadButton>
       </UploadSection>
       <View style={{padding:10,borderBottomWidth:3, borderBottomColor: "#dcdcdc"}}>
-        <Body16B style={{margin: 10}}>상품 이름</Body16B>
+        <Body16B style={{margin: 10}}>⚫ 상품 이름</Body16B>
         <View style={{margin: 10}}>
-          <InputBox value={name} setValue={setName} placeholder='상품 이름을 입력해주세요' long/>
+          <InputBox style={{height:50}} value={name} setValue={setName} placeholder='상품 이름을 입력해주세요' long/>
         </View>
       </View>
       <View style={{padding:10,borderBottomWidth:3, borderBottomColor: "#dcdcdc"}}>
-        <Body16B style={{margin: 10}}>해시태그 입력</Body16B>
+        <Body16B style={{margin: 10}}>⚫ 해시태그 입력</Body16B>
+        {/* usestate 변경해야함 */}
         <View style={{margin: 10}}>
-          <InputBox value={hashTag} setValue={setHashTag} placeholder='상품 이름을 입력해주세요' long/>
+          <InputBox style={{height:50}} value={hashTag} setValue={setHashTag} placeholder='상품 이름을 입력해주세요' long/>
         </View>
         <FilterSection items={tag} />
       </View>
       <View style={{padding:10,borderBottomWidth:3, borderBottomColor: "#dcdcdc"}}>
-        <Body16B style={{margin: 10}}>가격</Body16B>
-        <View style={{margin: 10}}>
-          <InputBox value={price} setValue={setPrice} placeholder='가격을 입력해주세요' long/>
+        <Body16B style={{margin: 10}}>⚫ 가격</Body16B>
+        <View style={{ margin: 10}}>
+          <TextInput
+           style={{
+            width: '100%',
+            borderWidth: 1,
+            borderColor: BLACK2,
+            borderRadius: 5,
+            paddingHorizontal: 16,
+            paddingTop: 10
+          }}
+           value={price} onChangeText={setPrice} placeholder='가격을 입력해주세요' />
         </View>
       </View>
       <View style={{padding:10,borderBottomWidth:3, borderBottomColor: "#dcdcdc"}}>
-        <Body16B style={{margin: 10}}>상세 설명</Body16B>
+        <Body16B style={{margin: 10}}>⚫ 상세 설명</Body16B>
         <Body16B style={{margin: 10}}>필터 설정</Body16B>
         <FillerSection style={{backgroundColor:"#f5f4f0"}}>
           <UploadButton style={{backgroundColor:"#dcdcdc"}}>
             <Subtitle16B>설정하기</Subtitle16B>
           </UploadButton>
         </FillerSection>
-        <View style={{flexDirection:"row"}}>
+        <View style={{flexDirection:"row", alignItems:"center"}}>
           <Body16B style={{margin: 10}}>제작기간</Body16B>
           <View style={{margin: 10, flex:1}}>
-            <InputBox value={text} setValue={setText} placeholder='제작 기간을 선택하세요' long/>
+            <TextInput
+            style={{
+              flex:1,
+              borderWidth: 1,
+              borderColor: BLACK2,
+              borderRadius: 5,
+              paddingHorizontal: 16,
+              paddingTop: 10
+            }}
+            value={makingTime} onChangeText={setMakingTime} placeholder='제작 기간을 선택하세요'/>
           </View>
         </View>
         <Body16B style={{margin: 10}}>상품 상세</Body16B>
@@ -192,24 +212,30 @@ const RegistrationPage = ({ navigation, route }: StackScreenProps<HomeStackParam
         </FillerSection>
       </View>
       <View style={{padding:10,borderBottomWidth:3, borderBottomColor: "#dcdcdc"}}>
-        <Body16B style={{margin: 10}}>가격 책정 기준</Body16B>
+        <Body16B style={{margin: 10}}>⚫ 가격 책정 기준</Body16B>
         <Body14M style={{margin: 10}}>설명글 (특별한 기술이나 소재가 사용된 부분을 설명해주세요</Body14M>
         <View style={{margin: 10}}>
           <FillerSection style={{flexDirection:"column", height:350}}>
             <View style={{flexDirection:"row", justifyContent: "space-between", alignItems:"center", width:"90%", marginBottom:10}}>
               <Body16B>디테일</Body16B>
-              <TextInput style={{borderWidth:2, borderColor:"#828282", borderRadius:20, flex:.84}} placeholder="옵션 명을 입력해주세요"/>
+              <TextInput 
+              value={detail}
+              onChangeText={setDetail}
+              style={{borderWidth:2, borderColor:"#828282", borderRadius:20, flex:.84}} placeholder="옵션 명을 입력해주세요"/>
             </View>
             <View style={{flexDirection:"row", justifyContent: "space-between", alignItems:"center", width:"90%", marginBottom:10}}>
               <Body16B>금액</Body16B>
-              <TextInput style={{borderWidth:2, borderColor:"#828282", borderRadius:20, flex:.8}} placeholder="옵션 명을 입력해주세요"/>
+              <TextInput 
+              value = {addPrice}
+              onChangeText={setAddprice}
+              style={{borderWidth:2, borderColor:"#828282", borderRadius:20, flex:.8}} placeholder="추가 금액을 입력해주세요"/>
             </View>
             <View style={{  width:"90%", marginBottom:10}}>
               <View style={{flexDirection: 'row'}}>
                 <Body16B>상세 설명</Body16B>
                 <Body14M>    이미지 1장 첨부 가능합니다.</Body14M>
               </View>
-              <InputBox value={text} setValue={setText} placeholder="옵션 명을 입력해주세요"/>
+              <InputBox value={optionExplain} setValue={setOptionExplain} placeholder="옵션 명을 입력해주세요"/>
             </View>
             <ButtonSection style={{width:"90%", justifyContent: "space-between"}}>
               <UploadButton style={{backgroundColor: "#bebebe"}}><Subtitle16B>📷</Subtitle16B></UploadButton>
@@ -219,10 +245,10 @@ const RegistrationPage = ({ navigation, route }: StackScreenProps<HomeStackParam
         </View>
       </View>
       <View style={{padding:10,borderBottomWidth:3, borderBottomColor: "#dcdcdc"}}>
-        <Body16B style={{margin: 10}}>등록된 목록</Body16B>
+        <Body16B style={{margin: 10}}>⚫ 등록된 목록</Body16B>
         <View>
           {registList.map((item, idx) => (
-            <FillerSection style={{flexDirection:"column"}}>
+            <FillerSection key = {idx} style={{flexDirection:"column"}}>
               <View style={{flexDirection:"row", justifyContent:"space-between", width:"90%", marginBottom:5}}>
                 <Body16B>{idx+1}. {item.option}</Body16B>
                 <Body16B>{item.price}원</Body16B>
@@ -239,9 +265,9 @@ const RegistrationPage = ({ navigation, route }: StackScreenProps<HomeStackParam
         </View>
       </View>
       <View style={{padding:10,borderBottomWidth:3, borderBottomColor: "#dcdcdc"}}>
-        <Body16B style={{margin: 10}}>주문 시 유의사항</Body16B>
+        <Body16B style={{margin: 10}}>⚫ 주문 시 유의사항</Body16B>
         <View style={{margin: 10}}>
-          <InputBox value={text} setValue={setText} placeholder='입력해주세요' long/>
+          <InputBox value={notice} setValue={setNotice} placeholder='입력해주세요' long/>
         </View>
       </View>
       <ButtonSection style={{flex:1}}>
