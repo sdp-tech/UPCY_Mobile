@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { View, SafeAreaView, FlatList, Text } from 'react-native';
+import { Tabs } from 'react-native-collapsible-tab-view';
 import styled from 'styled-components/native';
 import { Body14R, Body16B } from '../../../styles/GlobalText';
 
@@ -14,7 +15,7 @@ const InfoPage = () => {
   ]
 
   return (
-    <FlatList
+    <Tabs.FlatList
       data={data}
       renderItem={({item}:any) => {
         return (
@@ -23,7 +24,8 @@ const InfoPage = () => {
             <Body14R style={{textAlign: 'right'}}>{item.data}</Body14R>
           </InfoSection>
         )
-      } }
+      }}
+      keyExtractor={(item, index) => index.toString()}
     />
   )
 }

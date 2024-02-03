@@ -1,20 +1,20 @@
 import { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
-import { Filter14M } from '../styles/GlobalText';
-import { PURPLE } from '../styles/GlobalColor';
+import { Filter14M, Subtitle16B } from '../styles/GlobalText';
+import { BLACK, BLACK2, GRAY, PURPLE } from '../styles/GlobalColor';
 
-interface HashtagParams {
+interface HashtagProps {
   value: string;
   pressable?: boolean;
   pressed?: boolean;
   onPress?: () => void;
 }
 
-const Hashtag = ({value, pressable, pressed, onPress} : HashtagParams) => {
+const Hashtag = ({value, pressable, pressed, onPress} : HashtagProps) => {
   return (
     <HashtagContainer pressed={pressed} onPress={onPress} disabled={!pressable}>
-      <Filter14M style={{color: pressed ? PURPLE : 'white'}}>{value}</Filter14M>
+      <Subtitle16B style={{color: pressed ? 'white' : BLACK}}>{value}</Subtitle16B>
     </HashtagContainer>
   )
 }
@@ -26,9 +26,7 @@ const HashtagContainer = styled.TouchableOpacity<{ pressed: boolean }>`
   align-items: center;
   padding: 4px 16px;
   margin: 5px;
-  background: ${(props: { pressed: boolean }) => props.pressed ? 'white' : PURPLE};
-  border-color: ${PURPLE};
-  border-width: 1px;
+  background: ${(props: { pressed: boolean }) => props.pressed ? 'white' : "#dcdcdc"};
 `
 
 export default Hashtag;
