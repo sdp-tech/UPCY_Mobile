@@ -115,19 +115,19 @@ const RegistrationPage = ({ navigation, route }: StackScreenProps<HomeStackParam
   const [makingTime, setMakingTime] = useState<string>("")
   const [name, setName] = useState<string>('');
   const [hashTag, setHashTag] = useState<string>('');
-  const [price, setPrice] = useState<string>('');
+  const [price, setPrice] = useState<string>('1000');
   const [detail, setDetail] = useState<string>('');
-  const [addPrice, setAddprice] = useState<string>("");
+  const [addPrice, setAddprice] = useState<string>("1000");
   const [optionExplain, setOptionExplain] = useState<string>("");
   const [notice, setNotice] = useState<string>('');
   const tag = ["#가방", "#어쩌구저쩌구", "#가방", "#가방", "#가방"]
   const registList = [{
     option: "디테일 어쩌구",
-    price: `${parseInt(price)}`+`${parseInt(addPrice)}`,
+    price: parseInt(price)+parseInt(addPrice),
     detail: "상세설명"
   }, {
     option: "디테일 어쩌구",
-    price: `${price}`+`${addPrice}`,
+    price: parseInt(price)+parseInt(addPrice),
     detail: "상세설명"
   } ]
   return (
