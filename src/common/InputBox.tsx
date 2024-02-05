@@ -7,9 +7,10 @@ interface InputBoxProps {
   setValue: Dispatch<SetStateAction<string>>;
   placeholder: string;
   long?: boolean;
+  style?:any;
 }
 
-const InputBox = ({ value, setValue, placeholder, long }: InputBoxProps) => {
+const InputBox = ({ value, setValue, placeholder, long, style }: InputBoxProps) => {
   return (
     <TextInput
       value={value}
@@ -24,7 +25,8 @@ const InputBox = ({ value, setValue, placeholder, long }: InputBoxProps) => {
         borderColor: BLACK2,
         borderRadius: 5,
         paddingHorizontal: 16,
-        paddingTop: 10
+        paddingTop: 10,
+        ...style
       }}
     />
   )
