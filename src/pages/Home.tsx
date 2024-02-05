@@ -108,7 +108,6 @@ const HomeMainScreen = ({
   return (
     <SafeAreaView>
       <CustomHeader onSearch={() => {}} />
-      <Text>홈</Text>
       <TouchableOpacity>
         <FrameBox>
           <Logo />
