@@ -4,8 +4,8 @@ import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 
 import Arrow from '../../../assets/common/Arrow.svg';
 import styled from "styled-components/native";
 import { getStatusBarHeight } from "react-native-safearea-height";
-import { Body14B, Body14M, Body16B, Subtitle16B, Subtitle16M, Subtitle18M } from "../../../styles/GlobalText";
-import { BLACK2, LIGHTGRAY } from "../../../styles/GlobalColor";
+import { Body14B, Body14M, Body16B, Caption11M, Subtitle16B, Subtitle16M, Subtitle18M } from "../../../styles/GlobalText";
+import { BLACK2, LIGHTGRAY, PURPLE } from "../../../styles/GlobalColor";
 import InputBox from "../../../common/InputBox";
 import { useState } from "react";
 import Filter from "../../../common/Filter";
@@ -96,26 +96,58 @@ const TagBox = styled.View`
   align-items: center;
 `
 
-interface HashtagSectionProps {
+const FilterContainer = styled.View`
+  padding: 20px 15px;
+  border-bottom-width: 1px;
+  border-color: #D9D9D9;
+`
+
+const FilterBox = styled.View`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+`
+
+interface FilterSectionProps {
+  label?: string;
   items: any[];
+  style?: any;
 }
 
-const FilterSection = ({ items }: HashtagSectionProps) => {
+const FilterSection = ({ label, items }: FilterSectionProps) => {
   return (
+    <>
+    {label ?
+     <FilterContainer>
+      <FilterBox style={{marginBottom: 5, justifyContent: 'space-between'}}>
+        <Subtitle18M>{label}</Subtitle18M>
+      </FilterBox>
+      <FilterBox>
+        {items.map((item, index) => (
+        <Filter key={index} value={item} pressed={false} onPress={() => {}} /> 
+        ))}
+      </FilterBox>
+    </FilterContainer>
+    : 
     <TagContainer>
-      <TagBox style={{marginBottom: 5, justifyContent: 'space-between'}}>
-      </TagBox>
       <TagBox>
         {items.map((item, index) => (
-          <Hashtag key={index} value={item} pressed={false} onPress={() => {}} />
+        <Hashtag key={index} value={item} pressed={false} onPress={() => {}} /> 
         ))}
       </TagBox>
-    </TagContainer>
+    </TagContainer> }
+  </>
   )
 }
 
 
 const RegistrationPage = ({ navigation, route }: StackScreenProps<HomeStackParams, 'RegistrationPage'>) => {
+  const materials = ['폴리에스테르', '면', '스웨이드', '울', '캐시미어', '가죽', '데님', '추가 요청사항에 기재']
+  const styles = ["빈티지", "미니멀", "캐주얼", "페미닌", "글램", "스트릿", "키치", "스포티", "홈웨어", "걸리시"]
+  const category = ["아우터", "상의", "하의", "가방", "모자", "잡화"]
+  const fit = ["노멀", "타이트", "오버사이즈", "와이드"]
+  const detailStyle = ["지퍼", "단추", "셔링", "포켓", "워싱", "집업", "프릴","보(리본)", "크롭","칼라", "금속", "비즈"]
   const [makingTime, setMakingTime] = useState<string>("")
   const [name, setName] = useState<string>('');
   const [hashTag, setHashTag] = useState<string>('');
@@ -129,11 +161,11 @@ const RegistrationPage = ({ navigation, route }: StackScreenProps<HomeStackParam
   const registList = [{
     option: "디테일 어쩌구",
     price: parseInt(price)+parseInt(addPrice),
-    detail: "상세설명"
+    detail: "가방 입구에 똑딱이 단추를 추가할 수 있어요."
   }, {
     option: "디테일 어쩌구",
     price: parseInt(price)+parseInt(addPrice),
-    detail: "상세설명"
+    detail: "주머니에 귀여운 지퍼를 달아보세요."
   } ]
   return (
     <ScrollView>
@@ -167,11 +199,11 @@ const RegistrationPage = ({ navigation, route }: StackScreenProps<HomeStackParam
       <View style={{padding:10,borderBottomWidth:3, borderBottomColor: "#dcdcdc"}}>
         <Body16B style={{margin: 10}}>⚫ 상세 설명</Body16B>
         <Body16B style={{margin: 10}}>필터 설정</Body16B>
-        <FillerSection style={{backgroundColor:"#f5f4f0"}}>
-          <UploadButton style={{backgroundColor:"#dcdcdc"}}>
-            <Subtitle16B>설정하기</Subtitle16B>
-          </UploadButton>
-        </FillerSection>
+        <FilterSection label='스타일' items={styles} />
+        <FilterSection label='카테고리' items={category} />
+        <FilterSection label='재질' items={materials} />
+        <FilterSection label='핏' items={fit} />
+        <FilterSection label='디테일' items={detailStyle} />
         <View style={{flexDirection:"row", alignItems:"center"}}>
           <Body16B style={{margin: 10}}>제작기간</Body16B>
           <View style={{margin: 10, flex:1}}>
@@ -221,8 +253,8 @@ const RegistrationPage = ({ navigation, route }: StackScreenProps<HomeStackParam
               <InputBox value={optionExplain} setValue={setOptionExplain} placeholder="옵션 명을 입력해주세요"/>
             </View>
             <ButtonSection style={{width:"90%", justifyContent: "space-between"}}>
-              <UploadButton style={{backgroundColor: "#612FEF"}}><Subtitle16B>📷</Subtitle16B></UploadButton>
-              <UploadButton style={{backgroundColor: "#612FEF"}}><Subtitle16M style={{color:"white"}}>등록하기</Subtitle16M></UploadButton>
+              <UploadButton style={{backgroundColor: "#612FEF", height: "100%"}}><Subtitle16B>📷</Subtitle16B></UploadButton>
+              <UploadButton style={{backgroundColor: "#612FEF", height: "100%"}}><Subtitle16M style={{color:"white"}}>등록하기</Subtitle16M></UploadButton>
             </ButtonSection>
           </FillerSection>
         </View>
@@ -241,8 +273,8 @@ const RegistrationPage = ({ navigation, route }: StackScreenProps<HomeStackParam
                 <Body14M>{item.detail}</Body14M>
               </View>
               <ButtonSection style={{width:"90%", justifyContent: "space-between"}}>
-                <UploadButton style={{backgroundColor: "#612FEF"}}><Subtitle16B style={{color:"white"}}>🗑️</Subtitle16B></UploadButton>
-                <UploadButton style={{backgroundColor: "#612FEF"}}><Subtitle16M style={{color:"white"}}>수정하기</Subtitle16M></UploadButton>
+                <UploadButton style={{backgroundColor: "#612FEF", height: "100%"}}><Subtitle16B style={{color:"white"}}>🗑️</Subtitle16B></UploadButton>
+                <UploadButton style={{backgroundColor: "#612FEF", height: "100%"}}><Subtitle16M style={{color:"white"}}>수정하기</Subtitle16M></UploadButton>
               </ButtonSection>
             </FillerSection>
           ))}
