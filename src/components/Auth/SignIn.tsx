@@ -2,7 +2,12 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import Login from './Login';
 import Signup from './Signup';
-import ReformForm from './Reformer/ReformForm';
+import ReformForm from './Reformer/Reformer';
+
+export interface FormProps {
+  route: any;
+  navigation: any;
+}
 
 export type SignInParams = {
   Login: undefined;

@@ -4,6 +4,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { BLACK, GREEN, PURPLE } from '../../styles/GlobalColor';
 
 import RightArrow from '../../assets/common/RightArrow.svg';
+import LeftArrow from '../../assets/common/LeftArrow.svg';
 
 interface SignupProps {
   navigation: any;
@@ -65,7 +66,12 @@ export default function Signup({ navigation, route }: SignupProps) {
           flexDirection: 'column',
           marginHorizontal: width * 0.03,
         }}>
-        <View style={{ marginTop: height * 0.1, marginLeft: width * 0.02 }}>
+        <TouchableOpacity
+          onPress={() => navigation.pop()}
+          style={{ marginVertical: height * 0.02 }}>
+          <LeftArrow />
+        </TouchableOpacity>
+        <View style={{ marginTop: height * 0.06, marginLeft: width * 0.02 }}>
           <View>
             <Title20B>업시에서 어떤 서비스를</Title20B>
             <Title20B>이용하고 싶으세요?</Title20B>

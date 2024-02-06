@@ -8,6 +8,7 @@ import {
 import { GREEN, PURPLE } from '../../styles/GlobalColor';
 import { useState } from 'react';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import Request from '../../common/requests';
 import { Body16B, Caption11M } from '../../styles/GlobalText';
 
 interface LoginProps {
@@ -44,6 +45,11 @@ function LoginInput({ placeholder, onChangeText }: LoginInputProps) {
 export default function Login({ navigation, route }: LoginProps) {
   const { width, height } = Dimensions.get('window');
   const [form, setForm] = useState({ id: '', pw: '' });
+  const request = Request();
+  const handleLogin = async () => {
+    const response = await request.get(`login`, form);
+  };
+
   return (
     <View
       style={{
@@ -57,7 +63,7 @@ export default function Login({ navigation, route }: LoginProps) {
           marginTop: Platform.OS === 'ios' ? height * 0.09 : 0,
           alignItems: 'center',
         }}>
-        <View>
+        <View style={{ marginTop: height * 0.2 }}>
           <LoginInput
             placeholder="아이디"
             onChangeText={value => {
@@ -81,7 +87,8 @@ export default function Login({ navigation, route }: LoginProps) {
               marginVertical: 6,
               justifyContent: 'center',
               alignItems: 'center',
-            }}>
+            }}
+            onPress={handleLogin}>
             <Body16B>로그인</Body16B>
           </TouchableOpacity>
           <View
