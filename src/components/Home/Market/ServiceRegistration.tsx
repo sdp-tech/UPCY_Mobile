@@ -11,13 +11,12 @@ import { useState } from "react";
 import Filter from "../../../common/Filter";
 import Hashtag from "../../../common/Hashtag";
 import Photo from "../../../assets/common/Photo.svg"
+import TempStorage from "./TempStorage";
 
 const statusBarHeight = getStatusBarHeight(true);
 
 const BackButton = styled.TouchableOpacity`
   padding: 10px;
-  position: absolute;
-  left: 0px;
   top: ${statusBarHeight-10}px;
   z-index: 1;
 `
@@ -169,11 +168,16 @@ const RegistrationPage = ({ navigation, route }: StackScreenProps<HomeStackParam
   } ]
   return (
     <ScrollView>
-      <View style={{marginTop:30, borderBottomWidth:1, borderBlockColor:"#000", padding:5}}>
+      <View style={{flexDirection:"row", marginTop:20, borderBottomWidth:1, borderBlockColor:"#000", padding:5, justifyContent:"space-between"}}>
         <BackButton onPress={() => navigation.goBack()}>
           <Arrow color='black' />
         </BackButton>
-        <Body16B style={{fontSize:18,textAlign:"center"}}>서비스 등록</Body16B>
+        <View>
+          <Body16B style={{fontSize:18,textAlign:"center"}}>서비스 등록</Body16B>
+        </View>
+        <TouchableOpacity onPress={() => {navigation.navigate("TempStorage")}}>
+          <Body14M style={{color:"#929292"}}>임시저장 | 5</Body14M>
+        </TouchableOpacity>
       </View>
       {/* 사진 업로드하는 컴포넌트 만들 것 */}
       <UploadSection style={{borderBottomWidth:5, borderBottomColor: "#dcdcdc"}}>

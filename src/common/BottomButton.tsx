@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
-import { Body16M } from '../styles/GlobalText';
+import { Body16B, Body16M } from '../styles/GlobalText';
 import { PURPLE, GREEN, PURPLE2 } from '../styles/GlobalColor';
 
 interface BottomButtonProps {
@@ -13,7 +13,7 @@ interface BottomButtonProps {
 const BottomButton = ({ value, pressed, onPress }: BottomButtonProps) => {
   return (
     <ButtonContainer pressed={pressed} onPress={onPress}>
-      <Body16M style={{color: pressed ? PURPLE2 : PURPLE }}>{value}</Body16M>
+      <Body16B style={{color: pressed ? PURPLE2 : PURPLE }}>{value}</Body16B>
     </ButtonContainer>
   )
 }
