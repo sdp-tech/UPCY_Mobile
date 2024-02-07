@@ -141,7 +141,7 @@ const FilterSection = ({ label, items }: FilterSectionProps) => {
 }
 
 
-const RegistrationPage = ({ navigation, route }: StackScreenProps<HomeStackParams, 'RegistrationPage'>) => {
+const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeStackParams, 'ServiceRegistrationPage'>) => {
   const materials = ['폴리에스테르', '면', '스웨이드', '울', '캐시미어', '가죽', '데님', '추가 요청사항에 기재']
   const styles = ["빈티지", "미니멀", "캐주얼", "페미닌", "글램", "스트릿", "키치", "스포티", "홈웨어", "걸리시"]
   const category = ["아우터", "상의", "하의", "가방", "모자", "잡화"]
@@ -334,4 +334,4 @@ const RegistrationPage = ({ navigation, route }: StackScreenProps<HomeStackParam
   )
 }
 
-export default RegistrationPage
+export default ServiceRegistrationPage
