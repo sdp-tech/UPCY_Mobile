@@ -4,13 +4,17 @@ import ReformFormHeader from './ReformFormHeader';
 import BasicForm from '../BasicForm';
 import ReformFormProfile from './ReformFormProfile';
 
-export type ReformProps = {
+export interface ReformProps {
   navigation: any;
   route: any;
-};
+}
 
 export type ReformStackParams = {
-  Basic: undefined;
+  Basic: {
+    form: BasicFormProp;
+    setForm: React.Dispatch<React.SetStateAction<BasicFormProp>>;
+    handleSubmit: () => void;
+  };
   Profile: {
     goBack: () => void;
     goNext: () => void;
@@ -18,15 +22,34 @@ export type ReformStackParams = {
   };
 };
 
+interface BasicFormProp {
+  email: string;
+  mailDomain: string;
+  password: string;
+  region: string;
+  marketing: boolean;
+}
+
 export default function Reformer() {
   const [steps, setSteps] = useState(1);
+  const [basicform, setBasicform] = useState({
+    email: '',
+    mailDomain: '',
+    password: '',
+    region: '',
+    marketing: false,
+  });
   const Stack = createNativeStackNavigator<ReformStackParams>();
+
+  const handleSubmit = () => {
+    console.log(basicform);
+  };
 
   return (
     <Stack.Navigator
       initialRouteName="Basic"
       screenOptions={{
-        header: ({ navigation }) => (
+        header: ({ navigation, route }) => (
           <ReformFormHeader step={steps} navigation={navigation} />
         ),
       }}>
@@ -34,6 +57,11 @@ export default function Reformer() {
         name="Basic"
         component={BasicForm}
         options={{ headerShown: false }}
+        initialParams={{
+          form: basicform,
+          setForm: setBasicform,
+          handleSubmit: handleSubmit,
+        }}
       />
       <Stack.Screen
         name="Profile"
