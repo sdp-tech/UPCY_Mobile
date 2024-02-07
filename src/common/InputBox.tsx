@@ -1,47 +1,36 @@
-import { View, Text, TouchableOpacity, TextInput } from 'react-native';
-import styled from 'styled-components/native';
-import { Subtitle16B, Title20B } from '../styles/GlobalText';
+
+import { Dispatch, SetStateAction } from 'react';
+import { TextInput } from 'react-native';
+import { BLACK2 } from '../styles/GlobalColor';
 
 interface InputBoxProps {
-  title?: string;
-  large?: boolean;
-  secure?: boolean;
+  value: string;
+  setValue: Dispatch<SetStateAction<string>>;
   placeholder: string;
-  text: string;
-  onChangeText: (text: string) => void;
+  long?: boolean;
+  style?:any;
 }
 
-export default function InputBox({
-  title,
-  placeholder,
-  secure,
-  text,
-  large,
-  onChangeText,
-}: InputBoxProps) {
+const InputBox = ({ value, setValue, placeholder, long, style }: InputBoxProps) => {
   return (
-    <View style={{ width: '100%' }}>
-      {title !== '' && (
-        <Subtitle16B style={{ marginBottom: 8 }}>{title}</Subtitle16B>
-      )}
-      <TextInput
-        style={{
-          height: large ? 63 : 43,
-          marginBottom: 8,
-          borderWidth: 1,
-          borderColor: '#929292',
-          borderRadius: 8,
-          paddingHorizontal: 13,
-          paddingTop: large ? 12 : 0,
-        }}
-        value={text}
-        onChangeText={onChangeText}
-        placeholder={placeholder}
-        placeholderTextColor="#BDBDBD"
-        secureTextEntry={secure}
-        multiline={large ? true : false}
-        textAlignVertical="top"
-      />
-    </View>
-  );
+    <TextInput
+      value={value}
+      onChangeText={setValue}
+      placeholder={placeholder}
+      placeholderTextColor={BLACK2}
+      multiline={long}
+      style={{
+        width: '100%',
+        height: 100,
+        borderWidth: 1,
+        borderColor: BLACK2,
+        borderRadius: 5,
+        paddingHorizontal: 16,
+        paddingTop: 10,
+        ...style
+      }}
+    />
+  )
 }
+
+export default InputBox;

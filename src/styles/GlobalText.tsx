@@ -1,8 +1,10 @@
 import { Text } from 'react-native';
+import { BLACK } from './GlobalColor';
 
 export const Title20B = ({ children, style }: any) => {
   return (
     <Text style={{
+      color: BLACK,
       fontSize: 20,
       fontWeight: '700',
       lineHeight: 24,
@@ -16,6 +18,7 @@ export const Title20B = ({ children, style }: any) => {
 export const Subtitle18B = ({ children, style }: any) => {
   return (
     <Text style={{
+      color: BLACK,
       fontSize: 18,
       fontWeight: '700',
       lineHeight: 24,
@@ -29,6 +32,7 @@ export const Subtitle18B = ({ children, style }: any) => {
 export const Subtitle18M = ({ children, style }: any) => {
   return (
     <Text style={{
+      color: BLACK,
       fontSize: 18,
       fontWeight: '500',
       lineHeight: 24,
@@ -42,6 +46,7 @@ export const Subtitle18M = ({ children, style }: any) => {
 export const Subtitle16B = ({ children, style }: any) => {
   return (
     <Text style={{
+      color: BLACK,
       fontSize: 16,
       fontWeight: '700',
       lineHeight: 24,
@@ -55,6 +60,7 @@ export const Subtitle16B = ({ children, style }: any) => {
 export const Subtitle16M = ({ children, style }: any) => {
   return (
     <Text style={{
+      color: BLACK,
       fontSize: 16,
       fontWeight: '500',
       lineHeight: 24,
@@ -68,6 +74,7 @@ export const Subtitle16M = ({ children, style }: any) => {
 export const Body16B = ({ children, style }: any) => {
   return (
     <Text style={{
+      color: BLACK,
       fontSize: 16,
       fontWeight: '700',
       lineHeight: 24,
@@ -81,6 +88,7 @@ export const Body16B = ({ children, style }: any) => {
 export const Body16M = ({ children, style }: any) => {
   return (
     <Text style={{
+      color: BLACK,
       fontSize: 16,
       fontWeight: '500',
       lineHeight: 24,
@@ -94,6 +102,7 @@ export const Body16M = ({ children, style }: any) => {
 export const Body16R = ({ children, style }: any) => {
   return (
     <Text style={{
+      color: BLACK,
       fontSize: 16,
       fontWeight: '400',
       lineHeight: 24,
@@ -107,6 +116,7 @@ export const Body16R = ({ children, style }: any) => {
 export const Body14B = ({ children, style }: any) => {
   return (
     <Text style={{
+      color: BLACK,
       fontSize: 14,
       fontWeight: '700',
       lineHeight: 24,
@@ -120,6 +130,7 @@ export const Body14B = ({ children, style }: any) => {
 export const Body14M = ({ children, style }: any) => {
   return (
     <Text style={{
+      color: BLACK,
       fontSize: 14,
       fontWeight: '500',
       lineHeight: 24,
@@ -132,6 +143,7 @@ export const Body14M = ({ children, style }: any) => {
 export const Body14R = ({ children, style }: any) => {
   return (
     <Text style={{
+      color: BLACK,
       fontSize: 14,
       fontWeight: '400',
       lineHeight: 24,
@@ -145,6 +157,7 @@ export const Body14R = ({ children, style }: any) => {
 export const Caption12M = ({ children, style }: any) => {
   return (
     <Text style={{
+      color: BLACK,
       fontSize: 12,
       fontWeight: '500',
       ...style
@@ -157,6 +170,7 @@ export const Caption12M = ({ children, style }: any) => {
 export const Caption11M = ({ children, style }: any) => {
   return (
     <Text style={{
+      color: BLACK,
       fontSize: 11,
       fontWeight: '500',
       ...style
