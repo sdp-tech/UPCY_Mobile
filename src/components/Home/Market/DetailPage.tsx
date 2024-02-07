@@ -59,10 +59,10 @@ const ProfileSection = ({ navigation }: {navigation:any}) => {
       />
         {/* 컴포넌트로 변경 예정 */}
         <View style={TextStyles.borderBottom}>
+          <Text style={TextStyles.Sub}>#키워드 #키워드 #키워드 #키워드 #키워드</Text>
           <Text style={TextStyles.Title}>서비스 이름</Text>
-          <Text style={TextStyles.Sub}>#키워드 #키워드 # 키워드</Text>
-          <Text style={TextStyles.PriceInfo}>기본: <Text style={TextStyles.Price}>가격</Text></Text>
-          <Text style={TextStyles.PriceInfo}>최대: <Text style={TextStyles.Price}>가격</Text></Text>
+          <Text style={TextStyles.PriceInfo}>기본: <Text style={TextStyles.Price}>20000원</Text></Text>
+          <Text style={TextStyles.PriceInfo}>최대: <Text style={TextStyles.Price}>20000원</Text></Text>
         </View>
         {/* 컴포넌트로 변경 예정 */}
         <View style={{...TextStyles.borderBottom, justifyContent: 'space-between'}}>
@@ -141,8 +141,8 @@ const TextStyles = StyleSheet.create({
     width: "70%",
     fontWeight: "400",
     padding: 10,
-    fontSize: 16,
-    color: "#595959",
+    fontSize: 14,
+    color: "#612EFE",
   },
   PriceInfo:{
     fontWeight: "600",
