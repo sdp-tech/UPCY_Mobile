@@ -15,6 +15,7 @@ import MarketTabView from '../components/Home/Market/MarketTabView';
 import DetailPageScreen from '../components/Home/Market/DetailPage';
 import QuotationForm from '../components/Home/Quotation/QuotationForm';
 import RegistrationPage from '../components/Home/Market/ServiceRegistration';
+import TempStorage from '../components/Home/Market/TempStorage';
 
 export type HomeStackParams = {
   Home: undefined;
@@ -24,6 +25,7 @@ export type HomeStackParams = {
   };
   Quotation: undefined;
   RegistrationPage: undefined;
+  TempStorage: undefined;
 };
 
 const HomeStack = createStackNavigator<HomeStackParams>();
@@ -42,6 +44,7 @@ const HomeScreen = ({
       <HomeStack.Screen name='DetailPage' component={DetailPageScreen} />
       <HomeStack.Screen name='Quotation' component={QuotationForm} />
       <HomeStack.Screen name='RegistrationPage' component={RegistrationPage} />
+      <HomeStack.Screen name='TempStorage' component={TempStorage} />
     </HomeStack.Navigator>
   );
 };
