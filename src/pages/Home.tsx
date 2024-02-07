@@ -100,10 +100,16 @@ const HomeScreen = ({
   );
 };
 
+interface HomeMainScreenProps extends StackScreenProps<HomeStackParams, 'Home'> {
+  selectedTab: 'Product' | 'Market';
+  setSelectedTab: (tab: 'Product' | 'Market') => void;
+}
+
 const HomeMainScreen = ({
   navigation,
 }: StackScreenProps<HomeStackParams, 'Home'>) => {
-
+  
+  const [selectedTab, setSelectedTab] = useState<'Product' | 'Market'>('Product');
   
   return (
     <SafeAreaView>
@@ -113,12 +119,13 @@ const HomeMainScreen = ({
           <Logo />
           <View style={{flex: 1}}>
           <ToggleBox>
-            <ToggleButton>
+            <ToggleButton pressed={selectedTab === 'Product'} onPress={() => setSelectedTab('Product')}>
               <Text style={{ fontSize: 16, fontWeight: '500', marginRight: 5 }}>상품</Text>
             </ToggleButton>
-            <ToggleButton>
+            <ToggleButton pressed={selectedTab === 'Market'} onPress={() => setSelectedTab('Market')}>
               <Text style={{ fontSize: 16, fontWeight: '500', marginRight: 5 }}>마켓</Text>
             </ToggleButton>
+            
           </ToggleBox>
           </View>
           <Search />
