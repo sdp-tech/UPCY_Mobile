@@ -20,13 +20,13 @@ export type DetailPageStackParams = {
 
 const DetailPageStack = createStackNavigator<DetailPageStackParams>();
 
-const DetailPageScreen = ({ navigation, route }: StackScreenProps<HomeStackParams, 'DetailPage'>) => {
+const GoodsDetailPageScreen = ({ navigation, route }: StackScreenProps<HomeStackParams, 'GoodsDetailPage'>) => {
   return (
     <DetailPageStack.Navigator
       screenOptions={() => ({
         headerShown: false,
       })}>
-      <DetailPageStack.Screen name='DetailPage' component={DetailPageMainScreen}/>
+      <DetailPageStack.Screen name='DetailPage' component={GoodsDetailPageMainScreen}/>
     </DetailPageStack.Navigator>
   );
 };
@@ -60,7 +60,7 @@ const ProfileSection = ({ navigation }: {navigation:any}) => {
         {/* 컴포넌트로 변경 예정 */}
         <View style={TextStyles.borderBottom}>
           <Text style={TextStyles.Sub}>#키워드 #키워드 #키워드 #키워드 #키워드</Text>
-          <Text style={TextStyles.Title}>서비스 이름</Text>
+          <Text style={TextStyles.Title}>상품 이름</Text>
           <Text style={TextStyles.PriceInfo}>기본: <Text style={TextStyles.Price}>20000원</Text></Text>
           <Text style={TextStyles.PriceInfo}>최대: <Text style={TextStyles.Price}>20000원</Text></Text>
         </View>
@@ -78,7 +78,7 @@ const ProfileSection = ({ navigation }: {navigation:any}) => {
   )
 }
 
-const DetailPageMainScreen = ({ navigation }: StackScreenProps<DetailPageStackParams, 'DetailPage'>) => {
+const GoodsDetailPageMainScreen = ({ navigation }: StackScreenProps<DetailPageStackParams, 'DetailPage'>) => {
   const layout = useWindowDimensions();
   const [index, setIndex] = useState<number>(0);
   const [routes] = useState([
@@ -171,4 +171,4 @@ const TextStyles = StyleSheet.create({
   }
 });
 
-export default DetailPageScreen;
+export default GoodsDetailPageScreen;

@@ -80,7 +80,7 @@ const FillerSection = styled.View`
   height: 250px;
   background-color: white;
   margin:10px;
-  border:1px solid #612FEF;
+  border:1px solid #222;
   border-radius: 20px;
 `
 
@@ -141,7 +141,7 @@ const FilterSection = ({ label, items }: FilterSectionProps) => {
 }
 
 
-const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeStackParams, 'ServiceRegistrationPage'>) => {
+const GoodsRegistrationPage = ({ navigation, route }: StackScreenProps<HomeStackParams, 'GoodsRegistrationPage'>) => {
   const materials = ['폴리에스테르', '면', '스웨이드', '울', '캐시미어', '가죽', '데님', '추가 요청사항에 기재']
   const styles = ["빈티지", "미니멀", "캐주얼", "페미닌", "글램", "스트릿", "키치", "스포티", "홈웨어", "걸리시"]
   const category = ["아우터", "상의", "하의", "가방", "모자", "잡화"]
@@ -151,7 +151,6 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
   const [name, setName] = useState<string>('');
   const [hashTag, setHashTag] = useState<string>('');
   const [price, setPrice] = useState<string>('1000');
-  const [maxPrice, setMaxPrice] = useState<string>('1000');
   const [detail, setDetail] = useState<string>('');
   const [addPrice, setAddprice] = useState<string>("1000");
   const [optionExplain, setOptionExplain] = useState<string>("");
@@ -173,7 +172,7 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
           <Arrow color='black' />
         </BackButton>
         <View>
-          <Body16B style={{fontSize:18,textAlign:"center"}}>서비스 등록</Body16B>
+          <Body16B style={{fontSize:18,textAlign:"center"}}>상품 등록</Body16B>
         </View>
         <TouchableOpacity onPress={() => {navigation.navigate("TempStorage")}}>
           <Body14M style={{color:"#929292"}}>임시저장 | 5</Body14M>
@@ -187,7 +186,7 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
         </UploadButton>
       </UploadSection>
       <View style={{padding:10,borderBottomWidth:3, borderBottomColor: "#dcdcdc"}}>
-        <Body16B style={{margin: 10}}>서비스 이름</Body16B>
+        <Body16B style={{margin: 10}}>상품 이름</Body16B>
         <View style={{margin: 10}}>
           <InputBox style={{height:50}} value={name} setValue={setName} placeholder='상품 이름을 입력해주세요' long/>
         </View>
@@ -222,52 +221,51 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
             value={makingTime} onChangeText={setMakingTime} placeholder='제작 기간을 선택하세요'/>
           </View>
         </View>
-        <Body16B style={{margin: 10}}>서비스 상세</Body16B>
+        <Body16B style={{margin: 10}}>상품 상세</Body16B>
         <FillerSection style={{borderWidth:2,borderColor:"#dcdcdc", backgroundColor:"#FFF"}}>
           <UploadButton style={{backgroundColor:"#dcdcdc"}}>
-            <Subtitle16B>작성하기</Subtitle16B>
+            <Subtitle16M>작성하기</Subtitle16M>
           </UploadButton>
         </FillerSection>
       </View>
       <View style={{padding:10,borderBottomWidth:3, borderBottomColor: "#dcdcdc"}}>
-        <Body16B style={{margin: 10}}>옵션 별 추가 금액</Body16B>
-        <Body14M style={{margin: 10}}>설명글 (특별한 기술이나 소재가 사용된 부분을 설명해주세요</Body14M>
+        <Body16B style={{margin: 10}}>가격 책정 기준</Body16B>
         <View style={{margin: 10}}>
           <FillerSection style={{flexDirection:"column", height:350}}>
             <View style={{flexDirection:"row", justifyContent: "space-between", alignItems:"center", width:"90%", marginBottom:10}}>
-              <Body16B>옵션명</Body16B>
+              <Body16B>디테일</Body16B>
               <TextInput 
               value={detail}
               onChangeText={setDetail}
-              style={{borderWidth:1, borderColor:"#828282", borderRadius:20, flex:.84}} placeholder="입력해주세요"/>
+              style={{borderWidth:2, borderColor:"#828282", borderRadius:10, flex:.84}} placeholder="입력해주세요"/>
             </View>
             <View style={{flexDirection:"row", justifyContent: "space-between", alignItems:"center", width:"90%", marginBottom:10}}>
-              <Body16B>추가금액</Body16B>
+              <Body16B>금액</Body16B>
               <TextInput 
               value = {addPrice}
               onChangeText={setAddprice}
-              style={{borderWidth:1, borderColor:"#828282", borderRadius:20, flex:.9}} placeholder="추가 금액을 입력해주세요"/>
+              style={{borderWidth:2, borderColor:"#828282", borderRadius:10, flex:.8}} placeholder="추가 금액을 입력해주세요"/>
             </View>
             <View style={{  width:"90%", marginBottom:10}}>
               <View style={{flexDirection: 'row'}}>
                 <Body16B>상세 설명</Body16B>
                 <Body14M>    이미지 1장 첨부 가능합니다.</Body14M>
               </View>
-              <InputBox value={optionExplain} setValue={setOptionExplain} placeholder="옵션 명을 입력해주세요"/>
+              <InputBox value={optionExplain} setValue={setOptionExplain} placeholder="50자 이내로 입력해주세요"/>
             </View>
             <ButtonSection style={{width:"90%", justifyContent: "space-between"}}>
-              <UploadButton style={{backgroundColor: "#612FEF", height: "100%"}}><Subtitle16B>📷</Subtitle16B></UploadButton>
-              <UploadButton style={{backgroundColor: "#612FEF", height: "100%"}}><Subtitle16M style={{color:"white"}}>등록하기</Subtitle16M></UploadButton>
+              <UploadButton style={{backgroundColor: "#DBFC72", height: "100%"}}><Subtitle16B>📷</Subtitle16B></UploadButton>
+              <UploadButton style={{backgroundColor: "#DBFC72", height: "100%"}}><Subtitle16M style={{color:"#222"}}>등록하기</Subtitle16M></UploadButton>
             </ButtonSection>
           </FillerSection>
         </View>
       </View>
       <View style={{padding:10,borderBottomWidth:3, borderBottomColor: "#dcdcdc"}}>
-        <Body16B style={{margin: 10}}>등록된 옵션 목록</Body16B>
+        <Body16B style={{margin: 10}}>등록된 기준 목록</Body16B>
         <View>
           {registList.map((item, idx) => (
             <FillerSection key = {idx} style={{flexDirection:"column"}}>
-              <Text style={{color:"#612FEF"}}>option {idx+1}</Text>
+              <Text style={{color:"#222"}}>detail {idx+1}</Text>
               <View style={{flexDirection:"row", justifyContent:"space-between", width:"90%", marginBottom:5}}>
                 <Body16B>{item.option}</Body16B>
                 <Body16B>{item.price}원</Body16B>
@@ -276,8 +274,8 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
                 <Body14M>{item.detail}</Body14M>
               </View>
               <ButtonSection style={{width:"90%", justifyContent: "space-between"}}>
-                <UploadButton style={{backgroundColor: "#612FEF", height: "100%"}}><Subtitle16B style={{color:"white"}}>🗑️</Subtitle16B></UploadButton>
-                <UploadButton style={{backgroundColor: "#612FEF", height: "100%"}}><Subtitle16M style={{color:"white"}}>수정하기</Subtitle16M></UploadButton>
+                <UploadButton style={{backgroundColor: "#DBFC72", height: "100%"}}><Subtitle16B>🗑️</Subtitle16B></UploadButton>
+                <UploadButton style={{backgroundColor: "#DBFC72", height: "100%"}}><Subtitle16M style={{color:"#222"}}>수정하기</Subtitle16M></UploadButton>
               </ButtonSection>
             </FillerSection>
           ))}
@@ -286,10 +284,8 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
       <View style={{padding:10,borderBottomWidth:3, borderBottomColor: "#dcdcdc"}}>
         <View style={{flexDirection:'row', alignItems: 'center' }}>
           <Body16B style={{margin: 10}}>가격</Body16B>
-          <Body14B style={{color:"#929292"}}>최대 가격은 옵션 추가 시에 가능한 상한선입니다.</Body14B>
         </View>
-        <View style={{ alignItems:"center", flexDirection:"row", margin: 10}}>
-          <Body16B style={{marginRight:20}}>기본 가격</Body16B>
+        <View style={{alignItems:"center", flexDirection:"row", margin: 10}}>
           <TextInput
            style={{
             flex:1,
@@ -300,19 +296,6 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
             paddingTop: 10
           }}
            value={price} onChangeText={setPrice} placeholder='입력해주세요' />
-        </View>
-        <View style={{alignItems:"center", flexDirection:"row", margin: 10}}>
-          <Body16B style={{marginRight:20}}>최대 가격</Body16B>
-          <TextInput
-           style={{
-            flex:1,
-            borderWidth: 1,
-            borderColor: BLACK2,
-            borderRadius: 5,
-            paddingHorizontal: 16,
-            paddingTop: 10
-          }}
-           value={maxPrice} onChangeText={setMaxPrice} placeholder='입력해주세요' />
         </View>
       </View>
       <View style={{padding:10,borderBottomWidth:3, borderBottomColor: "#612FEF"}}>
@@ -333,4 +316,4 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
   )
 }
 
-export default ServiceRegistrationPage
+export default GoodsRegistrationPage
