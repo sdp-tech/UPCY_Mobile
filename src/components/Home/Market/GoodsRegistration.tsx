@@ -223,7 +223,7 @@ const GoodsRegistrationPage = ({ navigation, route }: StackScreenProps<HomeStack
         </View>
         <Body16B style={{margin: 10}}>상품 상세</Body16B>
         <FillerSection style={{borderWidth:2,borderColor:"#dcdcdc", backgroundColor:"#FFF"}}>
-          <UploadButton style={{backgroundColor:"#dcdcdc"}}>
+          <UploadButton onPress={() => navigation.navigate("WriteDetailPage")}style={{backgroundColor:"#dcdcdc"}}>
             <Subtitle16M>작성하기</Subtitle16M>
           </UploadButton>
         </FillerSection>
