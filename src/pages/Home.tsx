@@ -18,6 +18,7 @@ import ServiceRegistrationPage from '../components/Home/Market/ServiceRegistrati
 import ServiceDetailPageScreen from '../components/Home/Market/ServiceDetailPage';
 import GoodsDetailPageScreen from '../components/Home/Market/GoodsDetailPage';
 import GoodsRegistrationPage from '../components/Home/Market/GoodsRegistration';
+import TempStorageEdit from '../components/Home/Market/TempStorageEdit';
 
 export type HomeStackParams = {
   Home: undefined;
@@ -30,6 +31,7 @@ export type HomeStackParams = {
   ServiceRegistrationPage: undefined;
   GoodsRegistrationPage: undefined;
   TempStorage: undefined;
+  TempStorageEdit: undefined;
 };
 
 const HomeStack = createStackNavigator<HomeStackParams>();
@@ -51,6 +53,7 @@ const HomeScreen = ({
       <HomeStack.Screen name='GoodsDetailPage' component={GoodsDetailPageScreen} />
       <HomeStack.Screen name='GoodsRegistrationPage' component={GoodsRegistrationPage} />
       <HomeStack.Screen name='TempStorage' component={TempStorage} />
+      <HomeStack.Screen name='TempStorageEdit' component={TempStorageEdit} />
     </HomeStack.Navigator>
   );
 };
