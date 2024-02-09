@@ -224,7 +224,7 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
         </View>
         <Body16B style={{margin: 10}}>서비스 상세</Body16B>
         <FillerSection style={{borderWidth:2,borderColor:"#dcdcdc", backgroundColor:"#FFF"}}>
-          <UploadButton style={{backgroundColor:"#dcdcdc"}}>
+          <UploadButton onPress={() => navigation.navigate("WriteDetailPage")} style={{backgroundColor:"#dcdcdc"}}>
             <Subtitle16B>작성하기</Subtitle16B>
           </UploadButton>
         </FillerSection>
