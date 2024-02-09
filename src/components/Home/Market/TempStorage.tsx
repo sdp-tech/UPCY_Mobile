@@ -52,7 +52,7 @@ const TempStorage = ({navigation}: StackScreenProps<any>) => {
         <View>
           <Body16B style={{fontSize:18,textAlign:"center"}}>임시저장</Body16B>
         </View>
-        <TouchableOpacity onPress={() => {}}>
+        <TouchableOpacity onPress={() => navigation.navigate("TempStorageEdit")}>
           <Body14M style={{color:"#929292"}}>편집</Body14M>
         </TouchableOpacity>
       </View>

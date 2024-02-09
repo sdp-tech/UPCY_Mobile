@@ -17,6 +17,7 @@
     "axios": "^1.6.3",
     "react": "18.2.0",
     "react-native": "0.73.2",
+    "react-native-bouncy-checkbox": "^3.0.7",
     "react-native-collapsible-tab-view": "^6.2.1",
     "react-native-dotenv": "^3.4.9",
     "react-native-gesture-handler": "^2.14.0",
