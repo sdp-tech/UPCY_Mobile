@@ -4,11 +4,12 @@ import {
   Dimensions,
   TextInput,
   Platform,
+  TouchableOpacity,
 } from 'react-native';
 import { GREEN, PURPLE } from '../../styles/GlobalColor';
 import { useState } from 'react';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import Request from '../../common/requests';
+import Logo from '../../assets/common/Logo.svg';
 import { Body16B, Caption11M } from '../../styles/GlobalText';
 
 interface LoginProps {
@@ -47,7 +48,7 @@ export default function Login({ navigation, route }: LoginProps) {
   const [form, setForm] = useState({ id: '', pw: '' });
   const request = Request();
   const handleLogin = async () => {
-    const response = await request.get(`login`, form);
+    // const response = await request.get(`login`, form);
   };
 
   return (
@@ -63,7 +64,8 @@ export default function Login({ navigation, route }: LoginProps) {
           marginTop: Platform.OS === 'ios' ? height * 0.09 : 0,
           alignItems: 'center',
         }}>
-        <View style={{ marginTop: height * 0.2 }}>
+        <Logo color="#fff" width="100px" style={{ marginTop: height * 0.17 }} />
+        <View style={{ marginTop: height * 0.02 }}>
           <LoginInput
             placeholder="아이디"
             onChangeText={value => {
