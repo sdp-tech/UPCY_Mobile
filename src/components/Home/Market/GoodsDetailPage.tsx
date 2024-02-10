@@ -2,6 +2,7 @@ import { Dimensions, SafeAreaView, ScrollView, Text, TouchableOpacity, View, Sty
 import { StackScreenProps, createStackNavigator } from '@react-navigation/stack';
 import { HomeStackParams } from '../../../pages/Home';
 import Arrow from '../../../assets/common/Arrow.svg';
+import Search from '../../../assets/common/Search.svg';
 import UnFilledLike from '../../../assets/common/UnFilledLike.svg';
 import { useRef, useState } from 'react';
 import DetailBox from './DetailBox';
@@ -35,11 +36,16 @@ const ProfileSection = ({ navigation }: {navigation:any}) => {
   const [data, setData] = useState([]);
   return (
     <View>
-    <View style={{flexDirection: "row", height: 50, alignItems: 'center'}}>
+    <View style={{flexDirection: "row", height: 50, alignItems: 'center', justifyContent:"space-between"}}>
         <TouchableOpacity onPress={() => {
           navigation.goBack();
         }}>
           <Arrow color='black' />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => {
+          navigation.goBack();
+        }}>
+          <Search stroke={"black"}/>
         </TouchableOpacity>
       </View>
       <CardView // 데이터 들어오면 렌더링

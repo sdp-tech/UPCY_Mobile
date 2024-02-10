@@ -84,7 +84,6 @@ const TempStorageEdit = ({navigation}:StackScreenProps<any>) => {
       <View>
         <Body14B style={{padding:10}}>총 {storage.length}개</Body14B>
         {storage.map((item, idx) => (
-          <>
           <TempView style={{borderBottomWidth:1, borderColor:"#dcdcdc"}}key={idx}>
             <BouncyCheckbox
               size={25}
@@ -96,7 +95,6 @@ const TempStorageEdit = ({navigation}:StackScreenProps<any>) => {
               onPress={(isChecked: boolean) => {}}
             />
           </TempView>
-          </>
         ))}
       </View>
       <ButtonSection style={{flex:1}}>
