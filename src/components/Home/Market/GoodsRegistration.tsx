@@ -12,6 +12,7 @@ import Filter from "../../../common/Filter";
 import Hashtag from "../../../common/Hashtag";
 import Photo from "../../../assets/common/Photo.svg"
 import TempStorage from "./TempStorage";
+import Slider from "@react-native-community/slider";
 
 const statusBarHeight = getStatusBarHeight(true);
 
@@ -147,7 +148,7 @@ const GoodsRegistrationPage = ({ navigation, route }: StackScreenProps<HomeStack
   const category = ["아우터", "상의", "하의", "가방", "모자", "잡화"]
   const fit = ["노멀", "타이트", "오버사이즈", "와이드"]
   const detailStyle = ["지퍼", "단추", "셔링", "포켓", "워싱", "집업", "프릴","보(리본)", "크롭","칼라", "금속", "비즈"]
-  const [makingTime, setMakingTime] = useState<string>("")
+  const [makingTime, setMakingTime] = useState<number>(0);
   const [name, setName] = useState<string>('');
   const [hashTag, setHashTag] = useState<string>('');
   const [price, setPrice] = useState<string>('1000');
@@ -209,16 +210,18 @@ const GoodsRegistrationPage = ({ navigation, route }: StackScreenProps<HomeStack
         <View style={{flexDirection:"row", alignItems:"center"}}>
           <Body16B style={{margin: 10}}>제작기간</Body16B>
           <View style={{margin: 10, flex:1}}>
-            <TextInput
-            style={{
-              flex:1,
-              borderWidth: 1,
-              borderColor: BLACK2,
-              borderRadius: 5,
-              paddingHorizontal: 16,
-              paddingTop: 10
-            }}
-            value={makingTime} onChangeText={setMakingTime} placeholder='제작 기간을 선택하세요'/>
+            <Slider
+              style={{flex:1, height: 40}}
+              value={makingTime}
+              onValueChange={setMakingTime}
+              minimumValue={0}
+              step={1}
+              maximumValue={5}
+              minimumTrackTintColor="#612FEF"
+              maximumTrackTintColor="#612FEF"
+              thumbTintColor="#612FEF"
+            />
+            <Text>{makingTime}</Text>
           </View>
         </View>
         <Body16B style={{margin: 10}}>상품 상세</Body16B>
