@@ -9,6 +9,7 @@ import {
 
 import HomeScreen from './src/pages/Home';
 import MyPageScreen from './src/pages/MyPage';
+import useLoginGuard from './src/hooks/useLoginGuard';
 
 import HomeIcon from './src/assets/navbar/Home.svg';
 import MyPageIcon from './src/assets/navbar/MyPage.svg';
@@ -44,6 +45,8 @@ export type TabProps = {
 };
 
 const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
+  const loginGuard = useLoginGuard();
+
   return (
     <View
       style={{
@@ -74,7 +77,7 @@ const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
         return (
           <TouchableOpacity
             key={index}
-            onPress={onPress}
+            onPress={loginGuard(onPress)}
             style={{
               width: '20%',
               display: 'flex',
