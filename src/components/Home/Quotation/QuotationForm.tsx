@@ -1,4 +1,4 @@
-import { SetStateAction, useState, Dispatch } from 'react';
+import { SetStateAction, useState, Dispatch, useEffect } from 'react';
 import { ScrollView, View, Text, TouchableOpacity, ImageBackground } from 'react-native';
 import styled from 'styled-components/native';
 import { BLACK, LIGHTGRAY, PURPLE } from '../../../styles/GlobalColor';
@@ -16,6 +16,8 @@ import { HomeStackParams } from '../../../pages/Home';
 import Arrow from '../../../assets/common/Arrow.svg';
 import Search from '../../../assets/common/Search.svg';
 import Photo from '../../../assets/common/Photo.svg';
+import PhotoOptions, { PhotoResultProps } from '../../../common/PhotoOptions';
+import Carousel from '../../../common/Carousel';
 
 const statusBarHeight = getStatusBarHeight(true);
 
@@ -45,6 +47,21 @@ const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 
   const sizes = ['XS(85)', 'S(90)', 'M(95)', 'L(100)', 'XL(105)', 'XXL(110)']
   const options = ['프릴 추가', '단추 추가', '지퍼 추가', '주머니 추가']
   const [text, setText] = useState<string>('');
+  const [photos, setPhotos] = useState<PhotoResultProps[]>([]);
+  const [refPhotos, setRefPhotos] = useState<PhotoResultProps[]>([]);
+
+  // 한 줄에 2개씩 아이템 배치
+  const splitArrayIntoPairs = (arr: any[], pairSize: number) => {
+    return arr.reduce((result, item, index) => {
+      if (index % pairSize === 0) {
+        result.push([]);
+      }
+      result[result.length - 1].push(item);
+      return result;
+    }, []);
+  };
+  const splitPhotos = splitArrayIntoPairs(photos, 2);
+  const splitRefPhotos = splitArrayIntoPairs(refPhotos, 2);
 
   return (
     <ScrollView>
@@ -65,25 +82,77 @@ const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 
          <Body16M style={{color: 'white'}}>마켓 소개글</Body16M>
         </View>
       </ImageBackground>
-      <View style={{alignItems: 'center', justifyContent: 'center'}}>
-        <Subtitle16B style={{paddingVertical: 20}}>견적서 작성</Subtitle16B>
-        <PhotoButton style={{paddingVertical: 12}}>
-          <Photo />
-          <Body14M style={{marginLeft: 10}}>작업할 사진 첨부</Body14M>
-        </PhotoButton>
+      <View style={{justifyContent: 'center'}}>
+        <Subtitle16B style={{textAlign: 'center', paddingVertical: 20}}>견적서 작성</Subtitle16B>
+        {photos.length > 0 && 
+          <Carousel
+            data={splitPhotos}
+            renderItem={({item}: any) => {
+              return (
+                <View style={{ flexDirection: 'row' }}>
+                  {item.map((subItem: any) => (
+                    <View style={{width: '50%', paddingHorizontal: 20}}>
+                      <ImageBackground
+                        key={subItem.id} 
+                        source={{uri: subItem.uri}}
+                        style={{width: '100%', height: 170 }}
+                        alt={subItem.fileName}
+                      />
+                    </View>
+                  ))}
+                </View>
+              )
+            }}
+            slider
+          />
+        }
+        <View style={{alignSelf: 'center', marginTop: 10}}>
+          <PhotoOptions
+            max={4}
+            photo={photos}
+            setPhoto={setPhotos}
+            buttonLabel='작업할 사진 첨부'
+          />
+        </View>
       </View>
       <View style={{height: 8, backgroundColor: '#F4F4F4'}} />
       <FilterSection label='재질 선택' items={materials} />
       <FilterSection label='희망 사이즈 선택' items={sizes} />
       <FilterSection label='옵션 선택' items={options} />
       <View style={{height: 8, backgroundColor: '#F4F4F4'}} />
-      <View style={{paddingHorizontal: 15, paddingVertical: 20, alignItems: 'flex-start', borderBottomWidth: 0.5, borderColor: '#D9D9D9'}}>
-        <Subtitle18M style={{marginBottom: 10}}>추가 요청사항</Subtitle18M>
-        <PhotoButton style={{paddingVertical: 6}}>
-          <Photo />
-          <Body14M style={{marginLeft: 10}}>참고 사진 첨부</Body14M>
-        </PhotoButton>
-        <InputBox value={text} setValue={setText} placeholder='입력해주세요' long />
+      <View style={{paddingVertical: 20, borderBottomWidth: 0.5, borderColor: '#D9D9D9'}}>
+        <Subtitle18M style={{paddingHorizontal: 15, marginBottom: 5}}>추가 요청사항</Subtitle18M>
+        {refPhotos.length > 0 && 
+          <Carousel
+            data={splitRefPhotos}
+            renderItem={({item}: any) => {
+              return (
+                <View style={{ flexDirection: 'row' }}>
+                  {item.map((subItem: any) => (
+                    <View style={{width: '50%', paddingHorizontal: 20}}>
+                      <ImageBackground
+                        key={subItem.id} 
+                        source={{uri: subItem.uri}}
+                        style={{width: '100%', height: 170 }}
+                        alt={subItem.fileName}
+                      />
+                    </View>
+                  ))}
+                </View>
+              )
+            }}
+            slider
+          />
+        }
+        <View style={{paddingHorizontal: 15, marginTop: 15}}>
+          <PhotoOptions
+            max={4}
+            photo={refPhotos}
+            setPhoto={setRefPhotos}
+            buttonLabel='참고 사진 첨부'
+          />
+          <InputBox value={text} setValue={setText} placeholder='입력해주세요' long />
+        </View>
       </View>
       <View style={{paddingHorizontal: 15, paddingVertical: 20, borderBottomWidth: 8, borderColor: '#F4F4F4'}}>
         <Subtitle18M style={{marginBottom: 10}}>포트폴리오 사용 가능 여부</Subtitle18M>
