@@ -77,7 +77,7 @@ const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
         return (
           <TouchableOpacity
             key={index}
-            onPress={loginGuard(onPress)}
+            onPress={route.name == '마이페이지' ? loginGuard(onPress) : onPress}
             style={{
               width: '20%',
               display: 'flex',
