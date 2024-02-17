@@ -1,10 +1,15 @@
-import { SafeAreaView, View, Dimensions, ViewStyle } from 'react-native';
+import {
+  SafeAreaView,
+  View,
+  Dimensions,
+  ViewStyle,
+  TouchableOpacity,
+} from 'react-native';
 import { Body14M, Body16B, Title20B } from '../../styles/GlobalText';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { BLACK, GREEN, PURPLE } from '../../styles/GlobalColor';
 
 import RightArrow from '../../assets/common/RightArrow.svg';
-import LeftArrow from '../../assets/common/LeftArrow.svg';
+import LeftArrow from '../../assets/common/Arrow.svg';
 
 interface SignupProps {
   navigation: any;
@@ -69,7 +74,7 @@ export default function Signup({ navigation, route }: SignupProps) {
         <TouchableOpacity
           onPress={() => navigation.pop()}
           style={{ marginVertical: height * 0.02 }}>
-          <LeftArrow />
+          <LeftArrow color={BLACK} />
         </TouchableOpacity>
         <View style={{ marginTop: height * 0.06, marginLeft: width * 0.02 }}>
           <View>

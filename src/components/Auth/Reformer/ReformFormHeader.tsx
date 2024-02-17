@@ -1,7 +1,7 @@
 import { View, Dimensions, Platform, TouchableOpacity } from 'react-native';
 import { Title20B } from '../../../styles/GlobalText';
 import { PURPLE } from '../../../styles/GlobalColor';
-import LeftArrow from '../../../assets/common/LeftArrow.svg';
+import LeftArrow from '../../../assets/common/Arrow.svg';
 
 interface ReformFormHeaderProps {
   step: number;

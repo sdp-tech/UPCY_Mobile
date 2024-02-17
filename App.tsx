@@ -2,13 +2,18 @@ import React from 'react';
 import { View, TouchableOpacity, Text } from 'react-native';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { BottomTabBarProps, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {
+  BottomTabBarProps,
+  createBottomTabNavigator,
+} from '@react-navigation/bottom-tabs';
 
 import HomeScreen from './src/pages/Home';
 import MyPageScreen from './src/pages/MyPage';
+import useLoginGuard from './src/hooks/useLoginGuard';
 
 import HomeIcon from './src/assets/navbar/Home.svg';
 import MyPageIcon from './src/assets/navbar/MyPage.svg';
+import SignIn from './src/components/Auth/SignIn';
 
 const Stack = createNativeStackNavigator();
 
@@ -16,9 +21,9 @@ const GlobalTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    background: 'white'
-  }
-}
+    background: 'white',
+  },
+};
 
 function App(): React.JSX.Element {
   return (
@@ -28,7 +33,7 @@ function App(): React.JSX.Element {
           headerShown: false,
         })}>
         <Stack.Screen name="Home" component={HomeTab} />
-        {/* <Stack.Screen name="Login" component={LoginScreen} /> */}
+        <Stack.Screen name="Login" component={SignIn} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -40,6 +45,8 @@ export type TabProps = {
 };
 
 const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
+  const loginGuard = useLoginGuard();
+
   return (
     <View
       style={{
@@ -49,8 +56,7 @@ const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
         justifyContent: 'space-around',
         backgroundColor: '#FFFFFF',
         paddingHorizontal: 10,
-      }}
-    >
+      }}>
       {state.routes.map((route, index) => {
         const isFocused = state.index == index;
         const onPress = () => {
@@ -71,18 +77,17 @@ const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
         return (
           <TouchableOpacity
             key={index}
-            onPress={onPress}
+            onPress={route.name == '마이페이지' ? loginGuard(onPress) : onPress}
             style={{
               width: '20%',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-            }}
-          >
+            }}>
             {
               {
-                0: <HomeIcon color='#000000' opacity={isFocused ? 1 : 0.4} />,
-                1: <MyPageIcon color='#000000' opacity={isFocused ? 1 : 0.4} />,
+                0: <HomeIcon color="#000000" opacity={isFocused ? 1 : 0.4} />,
+                1: <MyPageIcon color="#000000" opacity={isFocused ? 1 : 0.4} />,
               }[index]
             }
 
@@ -92,23 +97,22 @@ const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
                 opacity: isFocused ? 1 : 0.4,
                 marginVertical: 5,
                 fontSize: 12,
-              }}
-            >
+              }}>
               {route.name}
             </Text>
           </TouchableOpacity>
         );
       })}
     </View>
-  )
-}
+  );
+};
 
 const Tab = createBottomTabNavigator<TabProps>();
 const HomeTab = (): JSX.Element => {
   return (
     <Tab.Navigator
-      tabBar={(props) => <CustomTab {...props} />}
-      initialRouteName='홈'
+      tabBar={props => <CustomTab {...props} />}
+      initialRouteName="홈"
       screenOptions={() => ({
         headerShown: false,
       })}>

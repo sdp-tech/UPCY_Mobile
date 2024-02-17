@@ -4,11 +4,13 @@ import {
   Dimensions,
   TextInput,
   Platform,
+  TouchableOpacity,
 } from 'react-native';
-import { GREEN, PURPLE } from '../../styles/GlobalColor';
-import { useState } from 'react';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { GREEN, PURPLE, BLACK } from '../../styles/GlobalColor';
+import { useState, Fragment } from 'react';
 import Request from '../../common/requests';
+import Logo from '../../assets/common/Logo.svg';
+import LeftArrow from '../../assets/common/Arrow.svg';
 import { Body16B, Caption11M } from '../../styles/GlobalText';
 
 interface LoginProps {
@@ -18,10 +20,15 @@ interface LoginProps {
 
 interface LoginInputProps {
   placeholder: string;
+  secure?: boolean;
   onChangeText: (text: string) => void;
 }
 
-function LoginInput({ placeholder, onChangeText }: LoginInputProps) {
+function LoginInput({
+  placeholder,
+  secure = false,
+  onChangeText,
+}: LoginInputProps) {
   const { width, height } = Dimensions.get('window');
 
   return (
@@ -35,10 +42,15 @@ function LoginInput({ placeholder, onChangeText }: LoginInputProps) {
         borderRadius: 5,
         padding: 15,
         marginVertical: 6,
+        color: '#ffffff',
       }}
       placeholder={placeholder}
       placeholderTextColor="#ffffff"
-      onChangeText={onChangeText}></TextInput>
+      onChangeText={onChangeText}
+      secureTextEntry={secure}
+      autoCapitalize="none"
+      autoComplete="off"
+      autoCorrect={false}></TextInput>
   );
 }
 
@@ -47,23 +59,33 @@ export default function Login({ navigation, route }: LoginProps) {
   const [form, setForm] = useState({ id: '', pw: '' });
   const request = Request();
   const handleLogin = async () => {
-    const response = await request.get(`login`, form);
+    // const response = await request.get(`login`, form, {});
+
+    const parentNav = navigation.getParent();
+    if (parentNav != undefined) parentNav.goBack();
+    else navigation.navigate('Home');
   };
 
   return (
-    <View
-      style={{
-        width: width,
-        height: height,
-        backgroundColor: PURPLE,
-      }}>
+    <Fragment>
+      <SafeAreaView style={{ flex: 0, backgroundColor: PURPLE }} />
       <SafeAreaView
         style={{
-          // safe area view 작동 안됨
-          marginTop: Platform.OS === 'ios' ? height * 0.09 : 0,
+          flex: 1,
+          backgroundColor: PURPLE,
           alignItems: 'center',
         }}>
-        <View style={{ marginTop: height * 0.2 }}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={{
+            alignSelf: 'flex-start',
+            marginTop: height * 0.02,
+            marginLeft: width * 0.03,
+          }}>
+          <LeftArrow color="#fff" />
+        </TouchableOpacity>
+        <Logo color="#fff" width="100px" style={{ marginTop: height * 0.17 }} />
+        <View style={{ marginTop: height * 0.02 }}>
           <LoginInput
             placeholder="아이디"
             onChangeText={value => {
@@ -77,7 +99,8 @@ export default function Login({ navigation, route }: LoginProps) {
               setForm(prev => {
                 return { ...prev, pw: value };
               });
-            }}></LoginInput>
+            }}
+            secure={true}></LoginInput>
           <TouchableOpacity
             style={{
               width: width * 0.8,
@@ -136,6 +159,6 @@ export default function Login({ navigation, route }: LoginProps) {
             }}></TouchableOpacity>
         </View>
       </SafeAreaView>
-    </View>
+    </Fragment>
   );
 }
