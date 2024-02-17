@@ -1,5 +1,5 @@
 import { SetStateAction, useState, Dispatch, useEffect } from 'react';
-import { ScrollView, View, Text, TouchableOpacity, ImageBackground } from 'react-native';
+import { ScrollView, View, Text, TouchableOpacity, ImageBackground, Modal } from 'react-native';
 import styled from 'styled-components/native';
 import { BLACK, LIGHTGRAY, PURPLE } from '../../../styles/GlobalColor';
 import { Body14M, Body16M, Caption11M, Caption12M, Subtitle16B, Subtitle18B, Subtitle18M, Title20B } from '../../../styles/GlobalText';
@@ -18,6 +18,8 @@ import Search from '../../../assets/common/Search.svg';
 import Photo from '../../../assets/common/Photo.svg';
 import PhotoOptions, { PhotoResultProps } from '../../../common/PhotoOptions';
 import Carousel from '../../../common/Carousel';
+import InputInfo from './InputInfo';
+import Rejection from './Rejection';
 
 const statusBarHeight = getStatusBarHeight(true);
 
@@ -42,13 +44,14 @@ const FilterSection = ({ label, items }: FilterSectionProps) => {
   )
 }
 
-const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 'Quotation'>) => {
+const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 'QuotationForm'>) => {
   const materials = ['폴리에스테르', '면', '스웨이드', '울', '캐시미어', '가죽', '데님', '추가 요청사항에 기재']
   const sizes = ['XS(85)', 'S(90)', 'M(95)', 'L(100)', 'XL(105)', 'XXL(110)']
   const options = ['프릴 추가', '단추 추가', '지퍼 추가', '주머니 추가']
   const [text, setText] = useState<string>('');
   const [photos, setPhotos] = useState<PhotoResultProps[]>([]);
   const [refPhotos, setRefPhotos] = useState<PhotoResultProps[]>([]);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
 
   // 한 줄에 2개씩 아이템 배치
   const splitArrayIntoPairs = (arr: any[], pairSize: number) => {
@@ -167,8 +170,12 @@ const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 
         </FilterBox>
       </View>
       <View style={{paddingHorizontal: 45, paddingVertical: 20}}>
-        <BottomButton value='다음' pressed={false} onPress={() => {}} />
+        <BottomButton value='다음' pressed={false} onPress={() => setModalVisible(true)} />
       </View>
+      <Modal visible={modalVisible}>
+        {/* 소비자일 경우 */}
+        <InputInfo onClose={() => setModalVisible(false)} onNavigate={() => { setModalVisible(false); navigation.navigate('QuotationPage')}} />
+      </Modal>
     </ScrollView>
   )
 }

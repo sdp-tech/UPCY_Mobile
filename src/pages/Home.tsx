@@ -13,6 +13,8 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import CustomHeader from '../common/CustomHeader';
 import MarketTabView from '../components/Home/Market/MarketTabView';
 import QuotationForm from '../components/Home/Quotation/QuotationForm';
+import QuotationPage from '../components/Home/Quotation/QuotationPage';
+import SentQuotation from '../components/Home/Quotation/SentQuotation';
 import TempStorage from '../components/Home/Market/TempStorage';
 import ServiceRegistrationPage from '../components/Home/Market/ServiceRegistration';
 import ServiceDetailPageScreen from '../components/Home/Market/ServiceDetailPage';
@@ -28,7 +30,9 @@ export type HomeStackParams = {
     id?: number;
   };
   GoodsDetailPage: undefined;
-  Quotation: undefined;
+  QuotationForm: undefined;
+  QuotationPage: undefined;
+  SentQuotation: undefined;
   ServiceRegistrationPage: undefined;
   GoodsRegistrationPage: undefined;
   TempStorage: undefined;
@@ -51,7 +55,9 @@ const HomeScreen = ({
       <HomeStack.Screen name='Market' component={MarketTabView} />
       <HomeStack.Screen name='ServiceDetailPage' component={ServiceDetailPageScreen} />
       <HomeStack.Screen name='ServiceRegistrationPage' component={ServiceRegistrationPage} />
-      <HomeStack.Screen name='Quotation' component={QuotationForm} />
+      <HomeStack.Screen name='QuotationForm' component={QuotationForm} />
+      <HomeStack.Screen name='QuotationPage' component={QuotationPage} />
+      <HomeStack.Screen name='SentQuotation' component={SentQuotation} />
       <HomeStack.Screen name='GoodsDetailPage' component={GoodsDetailPageScreen} />
       <HomeStack.Screen name='GoodsRegistrationPage' component={GoodsRegistrationPage} />
       <HomeStack.Screen name='TempStorage' component={TempStorage} />
@@ -71,8 +77,11 @@ const HomeMainScreen = ({
       <TouchableOpacity onPress={() => navigation.navigate('Market')}>
         <Text>마켓</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('Quotation')}>
+      <TouchableOpacity onPress={() => navigation.navigate('QuotationForm')}>
         <Text>견적서</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('QuotationPage')}>
+        <Text>견적서 확인</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate('ServiceDetailPage', {})}>
         <Text>서비스 디테일</Text>
