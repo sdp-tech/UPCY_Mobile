@@ -42,7 +42,7 @@ const FilterSection = ({ label, items }: FilterSectionProps) => {
   )
 }
 
-const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 'Quotation'>) => {
+const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 'QuotationForm'>) => {
   const materials = ['폴리에스테르', '면', '스웨이드', '울', '캐시미어', '가죽', '데님', '추가 요청사항에 기재']
   const sizes = ['XS(85)', 'S(90)', 'M(95)', 'L(100)', 'XL(105)', 'XXL(110)']
   const options = ['프릴 추가', '단추 추가', '지퍼 추가', '주머니 추가']
