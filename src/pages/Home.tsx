@@ -14,6 +14,7 @@ import CustomHeader from '../common/CustomHeader';
 import MarketTabView from '../components/Home/Market/MarketTabView';
 import QuotationForm from '../components/Home/Quotation/QuotationForm';
 import QuotationPage from '../components/Home/Quotation/QuotationPage';
+import SentQuotation from '../components/Home/Quotation/SentQuotation';
 import TempStorage from '../components/Home/Market/TempStorage';
 import ServiceRegistrationPage from '../components/Home/Market/ServiceRegistration';
 import ServiceDetailPageScreen from '../components/Home/Market/ServiceDetailPage';
@@ -31,6 +32,7 @@ export type HomeStackParams = {
   GoodsDetailPage: undefined;
   QuotationForm: undefined;
   QuotationPage: undefined;
+  SentQuotation: undefined;
   ServiceRegistrationPage: undefined;
   GoodsRegistrationPage: undefined;
   TempStorage: undefined;
@@ -55,6 +57,7 @@ const HomeScreen = ({
       <HomeStack.Screen name='ServiceRegistrationPage' component={ServiceRegistrationPage} />
       <HomeStack.Screen name='QuotationForm' component={QuotationForm} />
       <HomeStack.Screen name='QuotationPage' component={QuotationPage} />
+      <HomeStack.Screen name='SentQuotation' component={SentQuotation} />
       <HomeStack.Screen name='GoodsDetailPage' component={GoodsDetailPageScreen} />
       <HomeStack.Screen name='GoodsRegistrationPage' component={GoodsRegistrationPage} />
       <HomeStack.Screen name='TempStorage' component={TempStorage} />

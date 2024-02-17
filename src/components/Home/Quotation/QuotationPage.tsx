@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ScrollView, View, Text, TouchableOpacity, ImageBackground, Dimensions } from 'react-native';
+import { ScrollView, View, Text, TouchableOpacity, ImageBackground, Dimensions, Modal, Image } from 'react-native';
 import styled from 'styled-components/native';
 import { getStatusBarHeight } from 'react-native-safearea-height';
 
@@ -13,11 +13,20 @@ import { Body14R, Body16M, Caption11M, Caption12M, Filter14M, Subtitle16M, Title
 import Carousel from '../../../common/Carousel';
 import CheckBox from '../../../common/CheckBox';
 import BottomButton from '../../../common/BottomButton';
+import Rejection from './Rejection';
 
 const statusBarHeight = getStatusBarHeight(true);
 const { width, height } = Dimensions.get('window');
 
 const QuotationPage = ({ navigation, route }: StackScreenProps<HomeStackParams, 'QuotationPage'>) => {
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [finishModal, setFinishModal] = useState<boolean>(false);
+  const showModal = () => {
+    setFinishModal(true);
+    setTimeout(() => {
+      setFinishModal(false);
+    }, 3000);
+  };
   const quotation = [
     {key: '재질', data: '니트'},
     {key: '희망 사이즈', data: '여성 55'},
@@ -107,11 +116,26 @@ const QuotationPage = ({ navigation, route }: StackScreenProps<HomeStackParams, 
           <CheckBox style={{paddingHorizontal: 30, alignSelf: 'center', marginVertical: 5}} pressed={false} onPress={() => {}} text='리폼 제품이 서비스 내의 포트폴리오에 사용되는 것에 동의합니다.' />
         </View>
         <View style={{padding: 10, marginVertical: 30}}>
-          <BottomButton value={'견적서 보내기'} pressed={false} onPress={() => {}} />
+          <BottomButton value={'견적서 보내기'} pressed={false}
+            // onPress={showModal}
+            onPress={() => navigation.navigate('SentQuotation')}
+            />
           <View style={{marginVertical: 5}} />
-          <BottomButton value={'취소하기'} pressed={true} onPress={() => {}} />
+          <BottomButton value={'취소하기'} pressed={true} onPress={() => setModalVisible(true)} />
         </View>
       </ImageBackground>
+      <Modal visible={finishModal} transparent={true}>
+        {/* 리폼러일 경우 */}
+        <View style={{backgroundColor: 'black', opacity: 0.8, height: '100%', alignItems: 'center', justifyContent: 'center'}}>
+          <Title20B style={{color: 'white'}}>카톡 링크를 전송했어요!</Title20B>
+          <Image source={require('../../../assets/rocket.png')} style={{width: 230, height: 230}} />
+          <Subtitle16M style={{color: 'white', textAlign: 'center'}}>의뢰인이 카톡 링크를 통해{'\n'}상담을 신청할 거예요</Subtitle16M>
+        </View>
+      </Modal>
+      <Modal visible={modalVisible}>
+        {/* 리폼러일 경우 */}
+        <Rejection onClose={() => setModalVisible(false)} />
+      </Modal>
     </ScrollView>
   )
 }
