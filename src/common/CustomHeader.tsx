@@ -55,17 +55,19 @@ const Toggletag = ({pressable} : ToggleButtonParams) => {
 }
 
 const CustomHeader = ({ onSearch, onAlarm }: CustomHeaderProps) => {
+  
+  const [selectedTab, setSelectedTab] = useState<'Product' | 'Market'>('Product');
   return (
     <FrameBox>
       <Logo />
       <View style={{flex: 1}}>
         <ToggleBox>
-          <ToggleButton>
-            <Text style={{ fontSize: 16, fontWeight: '500', marginRight: 5 }}>상품</Text>
-          </ToggleButton>
-          <ToggleButton>
-            <Text style={{ fontSize: 16, fontWeight: '500', marginRight: 5 }}>마켓</Text>
-          </ToggleButton>
+        <ToggleButton pressed={selectedTab === 'Product'} onPress={() => setSelectedTab('Product')}>
+              <Text style={{ fontSize: 16, fontWeight: '500', marginRight: 5 }}>상품</Text>
+            </ToggleButton>
+            <ToggleButton pressed={selectedTab === 'Market'} onPress={() => setSelectedTab('Market')}>
+              <Text style={{ fontSize: 16, fontWeight: '500', marginRight: 5 }}>마켓</Text>
+            </ToggleButton>
         </ToggleBox>
       </View>
       <Search />
