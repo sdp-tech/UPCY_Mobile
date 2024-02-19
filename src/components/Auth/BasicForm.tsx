@@ -1,4 +1,4 @@
-import { SafeAreaView, View, Dimensions } from 'react-native';
+import { SafeAreaView, View, Dimensions, TouchableOpacity } from 'react-native';
 import {
   Body16B,
   Caption11M,
@@ -10,7 +10,6 @@ import { GRAY, PURPLE } from '../../styles/GlobalColor';
 import CheckIcon from '../../assets/common/CheckIcon.svg';
 import { FormProps } from './SignIn';
 import { useState } from 'react';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import InputBox from '../../common/InputBox';
 
 const InputView = styled.View`
@@ -52,25 +51,17 @@ export default function BasicForm({ navigation, route }: FormProps) {
         </InputView>
         <InputView>
           <InputBox
-            title="비밀번호"
             placeholder="입력해 주세요"
-            text={route.params.form.password}
-            onChangeText={text =>
-              route.params.setForm((prev: any) => {
-                return { ...prev, password: text };
-              })
-            }
-            secure={true}
+            value={temp}
+            setValue={setTemp}
           />
           <Caption11M style={{ color: GRAY }}>비밀번호 조합</Caption11M>
         </InputView>
         <InputView>
           <InputBox
-            title="비밀번호 확인"
             placeholder="입력해 주세요"
-            text={temp}
-            onChangeText={text => setTemp(text)}
-            secure={true}
+            value={temp}
+            setValue={setTemp}
           />
         </InputView>
         <InputView>
