@@ -6,6 +6,7 @@ import Logo from '../assets/common/Logo.svg';
 import Bell from '../assets/common/Bell.svg';
 import styled from 'styled-components/native';
 
+
 const FrameBox = styled. View`
   display: flex;
   flex-direction: row;
@@ -13,13 +14,13 @@ const FrameBox = styled. View`
   padding: 0px 16px;
   align-items: center;
   justify-content: center;
-  background: #E7E0FD;
+  background: #612FEF;
 `
 const ToggleBox = styled. View `
   display: flex;
   flex-direction: row;
   padding: 2px;
-  width: 140px;
+  width: 210px;
   justify-content: center;
   align-items: center;
   border-radius: 12px;
@@ -29,12 +30,14 @@ const ToggleBox = styled. View `
 
 const ToggleButton = styled. TouchableOpacity<{pressed: boolean}>`
   display: flex;
+  width:100px;
   height: 28px;
   justify-content: center;
   align-items: center;
   border-radius: 12px;
   background:  ${(props: { pressed: boolean }) => props.pressed ? '#DBFC72' : '#FFF' };
 `
+
 
 interface CustomHeaderProps {
   onSearch: () => void;
@@ -54,25 +57,34 @@ const Toggletag = ({pressable} : ToggleButtonParams) => {
   )
 }
 
-const CustomHeader = ({ onSearch, onAlarm }: CustomHeaderProps) => {
+
+const CustomHeader = ({ onSearch, onAlarm, }: CustomHeaderProps) => {
   
-  const [selectedTab, setSelectedTab] = useState<'Product' | 'Market'>('Product');
-  return (
+  
+  const [selectedTab, setSelectedTab] = useState<'Goods' | 'Market'>('Goods');
+  
+  return (<>
+
     <FrameBox>
       <Logo />
       <View style={{flex: 1}}>
         <ToggleBox>
-        <ToggleButton pressed={selectedTab === 'Product'} onPress={() => setSelectedTab('Product')}>
+          <ToggleButton pressed={selectedTab === 'Goods'} onPress={() => setSelectedTab('Goods')}>
+
               <Text style={{ fontSize: 16, fontWeight: '500', marginRight: 5 }}>상품</Text>
             </ToggleButton>
             <ToggleButton pressed={selectedTab === 'Market'} onPress={() => setSelectedTab('Market')}>
               <Text style={{ fontSize: 16, fontWeight: '500', marginRight: 5 }}>마켓</Text>
             </ToggleButton>
         </ToggleBox>
+        
       </View>
       <Search />
       <Bell />
     </FrameBox>
+    
+    
+    </>
   )
 }
 
