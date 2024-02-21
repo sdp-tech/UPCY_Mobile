@@ -64,11 +64,13 @@ const CustomHeader = ({ onSearch, onAlarm, }: CustomHeaderProps) => {
   const [selectedTab, setSelectedTab] = useState<'Goods' | 'Market'>('Goods');
   
   return (<>
+
     <FrameBox>
       <Logo />
       <View style={{flex: 1}}>
         <ToggleBox>
           <ToggleButton pressed={selectedTab === 'Goods'} onPress={() => setSelectedTab('Goods')}>
+
               <Text style={{ fontSize: 16, fontWeight: '500', marginRight: 5 }}>상품</Text>
             </ToggleButton>
             <ToggleButton pressed={selectedTab === 'Market'} onPress={() => setSelectedTab('Market')}>
