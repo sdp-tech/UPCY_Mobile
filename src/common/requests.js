@@ -1,7 +1,12 @@
 import { UPCY_API_URL } from 'react-native-dotenv';
 import axios from 'axios';
 import { Alert } from 'react-native';
-import { getAccessToken, getRefreshToken, removeAccessToken, setAccessToken } from './storage';
+import {
+  getAccessToken,
+  getRefreshToken,
+  removeAccessToken,
+  setAccessToken,
+} from './storage';
 
 export default function Request() {
   const defaultRequest = async (path, body) => {
@@ -12,13 +17,17 @@ export default function Request() {
 
     let headerValue;
 
-    if (accessToken === null || accessToken === undefined || accessToken === false) {
+    if (
+      accessToken === null ||
+      accessToken === undefined ||
+      accessToken === false
+    ) {
       headerValue = 'No Auth';
     } else {
       headerValue = `Bearer ${accessToken}`;
     }
 
-    console.log(headerValue)
+    console.log(headerValue);
 
     try {
       const response = await body(url, headerValue);
@@ -70,7 +79,7 @@ export default function Request() {
   };
 
   const get = async (path, params, headers) => {
-    return await this.defaultRequest(path, async (url, headerValue) => {
+    return await defaultRequest(path, async (url, headerValue) => {
       const response = await axios.get(url, {
         params: params,
 

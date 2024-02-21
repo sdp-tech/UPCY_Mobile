@@ -5,6 +5,7 @@ import {
   TextInput,
   Platform,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import { GREEN, PURPLE, BLACK } from '../../styles/GlobalColor';
 import { useState, Fragment } from 'react';
@@ -12,6 +13,7 @@ import Request from '../../common/requests';
 import Logo from '../../assets/common/Logo.svg';
 import LeftArrow from '../../assets/common/Arrow.svg';
 import { Body16B, Caption11M } from '../../styles/GlobalText';
+import { UPCY_API_URL } from 'react-native-dotenv';
 
 interface LoginProps {
   navigation: any;
@@ -59,11 +61,15 @@ export default function Login({ navigation, route }: LoginProps) {
   const [form, setForm] = useState({ id: '', pw: '' });
   const request = Request();
   const handleLogin = async () => {
-    // const response = await request.get(`login`, form, {});
-
-    const parentNav = navigation.getParent();
-    if (parentNav != undefined) parentNav.goBack();
-    else navigation.navigate('Home');
+    const response = await request.get(UPCY_API_URL + `login/`, form, {});
+    if (response?.status === 200) {
+      const parentNav = navigation.getParent();
+      if (parentNav != undefined) parentNav.goBack();
+      else navigation.navigate('Home');
+    } else {
+      console.log(response);
+      Alert.alert('로그인에 실패했습니다.');
+    }
   };
 
   return (
