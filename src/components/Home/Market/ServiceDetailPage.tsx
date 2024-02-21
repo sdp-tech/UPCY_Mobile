@@ -2,6 +2,7 @@ import { Dimensions, SafeAreaView, ScrollView, Text, TouchableOpacity, View, Sty
 import { StackScreenProps, createStackNavigator } from '@react-navigation/stack';
 import { HomeStackParams } from '../../../pages/Home';
 import Arrow from '../../../assets/common/Arrow.svg';
+import Search from '../../../assets/common/Search.svg';
 import UnFilledLike from '../../../assets/common/UnFilledLike.svg';
 import { useRef, useState } from 'react';
 import DetailBox from './DetailBox';
@@ -20,13 +21,13 @@ export type DetailPageStackParams = {
 
 const DetailPageStack = createStackNavigator<DetailPageStackParams>();
 
-const DetailPageScreen = ({ navigation, route }: StackScreenProps<HomeStackParams, 'DetailPage'>) => {
+const ServiceDetailPageScreen = ({ navigation, route }: StackScreenProps<HomeStackParams, 'ServiceDetailPage'>) => {
   return (
     <DetailPageStack.Navigator
       screenOptions={() => ({
         headerShown: false,
       })}>
-      <DetailPageStack.Screen name='DetailPage' component={DetailPageMainScreen}/>
+      <DetailPageStack.Screen name='DetailPage' component={ServiceDetailPageMainScreen}/>
     </DetailPageStack.Navigator>
   );
 };
@@ -35,11 +36,16 @@ const ProfileSection = ({ navigation }: {navigation:any}) => {
   const [data, setData] = useState([]);
   return (
     <View>
-    <View style={{flexDirection: "row", height: 50, alignItems: 'center'}}>
+      <View style={{justifyContent:"space-between",flexDirection: "row", height: 50, alignItems: 'center'}}>
         <TouchableOpacity onPress={() => {
           navigation.goBack();
         }}>
           <Arrow color='black' />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => {
+          navigation.goBack();
+        }}>
+          <Search stroke={'black'}/>
         </TouchableOpacity>
       </View>
       <CardView // 데이터 들어오면 렌더링
@@ -59,10 +65,10 @@ const ProfileSection = ({ navigation }: {navigation:any}) => {
       />
         {/* 컴포넌트로 변경 예정 */}
         <View style={TextStyles.borderBottom}>
+          <Text style={TextStyles.Sub}>#키워드 #키워드 #키워드 #키워드 #키워드</Text>
           <Text style={TextStyles.Title}>서비스 이름</Text>
-          <Text style={TextStyles.Sub}>#키워드 #키워드 # 키워드</Text>
-          <Text style={TextStyles.PriceInfo}>기본: <Text style={TextStyles.Price}>가격</Text></Text>
-          <Text style={TextStyles.PriceInfo}>최대: <Text style={TextStyles.Price}>가격</Text></Text>
+          <Text style={TextStyles.PriceInfo}>기본: <Text style={TextStyles.Price}>20000원</Text></Text>
+          <Text style={TextStyles.PriceInfo}>최대: <Text style={TextStyles.Price}>20000원</Text></Text>
         </View>
         {/* 컴포넌트로 변경 예정 */}
         <View style={{...TextStyles.borderBottom, justifyContent: 'space-between'}}>
@@ -78,7 +84,7 @@ const ProfileSection = ({ navigation }: {navigation:any}) => {
   )
 }
 
-const DetailPageMainScreen = ({ navigation }: StackScreenProps<DetailPageStackParams, 'DetailPage'>) => {
+const ServiceDetailPageMainScreen = ({ navigation }: StackScreenProps<DetailPageStackParams, 'DetailPage'>) => {
   const layout = useWindowDimensions();
   const [index, setIndex] = useState<number>(0);
   const [routes] = useState([
@@ -141,8 +147,8 @@ const TextStyles = StyleSheet.create({
     width: "70%",
     fontWeight: "400",
     padding: 10,
-    fontSize: 16,
-    color: "#595959",
+    fontSize: 14,
+    color: "#612EFE",
   },
   PriceInfo:{
     fontWeight: "600",
@@ -171,4 +177,4 @@ const TextStyles = StyleSheet.create({
   }
 });
 
-export default DetailPageScreen;
+export default ServiceDetailPageScreen;

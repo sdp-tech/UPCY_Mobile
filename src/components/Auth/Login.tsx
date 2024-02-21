@@ -6,6 +6,7 @@ import {
   Platform,
   TouchableOpacity,
   Alert,
+
 } from 'react-native';
 import { GREEN, PURPLE, BLACK } from '../../styles/GlobalColor';
 import { useState, Fragment } from 'react';
@@ -70,6 +71,7 @@ export default function Login({ navigation, route }: LoginProps) {
       console.log(response);
       Alert.alert('로그인에 실패했습니다.');
     }
+
   };
 
   return (

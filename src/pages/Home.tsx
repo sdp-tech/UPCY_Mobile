@@ -12,18 +12,32 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import CustomHeader from '../common/CustomHeader';
 import MarketTabView from '../components/Home/Market/MarketTabView';
-import DetailPageScreen from '../components/Home/Market/DetailPage';
 import QuotationForm from '../components/Home/Quotation/QuotationForm';
-import RegistrationPage from '../components/Home/Market/ServiceRegistration';
+import QuotationPage from '../components/Home/Quotation/QuotationPage';
+import SentQuotation from '../components/Home/Quotation/SentQuotation';
+import TempStorage from '../components/Home/Market/TempStorage';
+import ServiceRegistrationPage from '../components/Home/Market/ServiceRegistration';
+import ServiceDetailPageScreen from '../components/Home/Market/ServiceDetailPage';
+import GoodsDetailPageScreen from '../components/Home/Market/GoodsDetailPage';
+import GoodsRegistrationPage from '../components/Home/Market/GoodsRegistration';
+import TempStorageEdit from '../components/Home/Market/TempStorageEdit';
+import WriteDetailPage from '../components/Home/Market/WriteDetailPage';
 
 export type HomeStackParams = {
   Home: undefined;
   Market: undefined;
-  DetailPage: {
+  ServiceDetailPage: {
     id?: number;
   };
-  Quotation: undefined;
-  RegistrationPage: undefined;
+  GoodsDetailPage: undefined;
+  QuotationForm: undefined;
+  QuotationPage: undefined;
+  SentQuotation: undefined;
+  ServiceRegistrationPage: undefined;
+  GoodsRegistrationPage: undefined;
+  TempStorage: undefined;
+  TempStorageEdit: undefined;
+  WriteDetailPage: undefined;
 };
 
 const HomeStack = createStackNavigator<HomeStackParams>();
@@ -39,9 +53,16 @@ const HomeScreen = ({
       })}>
       <HomeStack.Screen name='Home' component={HomeMainScreen} />
       <HomeStack.Screen name='Market' component={MarketTabView} />
-      <HomeStack.Screen name='DetailPage' component={DetailPageScreen} />
-      <HomeStack.Screen name='Quotation' component={QuotationForm} />
-      <HomeStack.Screen name='RegistrationPage' component={RegistrationPage} />
+      <HomeStack.Screen name='ServiceDetailPage' component={ServiceDetailPageScreen} />
+      <HomeStack.Screen name='ServiceRegistrationPage' component={ServiceRegistrationPage} />
+      <HomeStack.Screen name='QuotationForm' component={QuotationForm} />
+      <HomeStack.Screen name='QuotationPage' component={QuotationPage} />
+      <HomeStack.Screen name='SentQuotation' component={SentQuotation} />
+      <HomeStack.Screen name='GoodsDetailPage' component={GoodsDetailPageScreen} />
+      <HomeStack.Screen name='GoodsRegistrationPage' component={GoodsRegistrationPage} />
+      <HomeStack.Screen name='TempStorage' component={TempStorage} />
+      <HomeStack.Screen name='TempStorageEdit' component={TempStorageEdit} />
+      <HomeStack.Screen name='WriteDetailPage' component={WriteDetailPage} />
     </HomeStack.Navigator>
   );
 };
@@ -53,16 +74,25 @@ const HomeMainScreen = ({
     <SafeAreaView>
       <CustomHeader onSearch={() => {}} />
       <Text>홈</Text>
-      <TouchableOpacity onPress={() => navigation.navigate('DetailPage', {})}>
-        <Text>상품 디테일</Text>
-      </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate('Market')}>
         <Text>마켓</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('Quotation')}>
+      <TouchableOpacity onPress={() => navigation.navigate('QuotationForm')}>
         <Text>견적서</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('RegistrationPage')}>
+      <TouchableOpacity onPress={() => navigation.navigate('QuotationPage')}>
+        <Text>견적서 확인</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('ServiceDetailPage', {})}>
+        <Text>서비스 디테일</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('ServiceRegistrationPage')}>
+        <Text>서비스등록</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('GoodsDetailPage')}>
+        <Text>상품 디테일</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('GoodsRegistrationPage')}>
         <Text>상품등록</Text>
       </TouchableOpacity>
     </SafeAreaView>
