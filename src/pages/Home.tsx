@@ -11,6 +11,7 @@ import { TabProps } from '../../App';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import CustomHeader from '../common/CustomHeader';
+import HomeTabView from '../components/Home/HomeMain';
 import MarketTabView from '../components/Home/Market/MarketTabView';
 import QuotationForm from '../components/Home/Quotation/QuotationForm';
 import QuotationPage from '../components/Home/Quotation/QuotationPage';
@@ -73,7 +74,7 @@ const HomeMainScreen = ({
   return (
     <SafeAreaView>
       <CustomHeader onSearch={() => {}} />
-      <Text>홈</Text>
+      <HomeTabView onSearch={() => {}} />
       <TouchableOpacity onPress={() => navigation.navigate('Market')}>
         <Text>마켓</Text>
       </TouchableOpacity>
