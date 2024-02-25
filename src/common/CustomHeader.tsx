@@ -7,6 +7,7 @@ import Bell from '../assets/common/Bell.svg';
 import styled from 'styled-components/native';
 
 
+
 const FrameBox = styled. View`
   display: flex;
   flex-direction: row;
@@ -15,11 +16,13 @@ const FrameBox = styled. View`
   align-items: center;
   justify-content: center;
   background: #612FEF;
+  background: #612FEF;
 `
 const ToggleBox = styled. View `
   display: flex;
   flex-direction: row;
   padding: 2px;
+  width: 210px;
   width: 210px;
   justify-content: center;
   align-items: center;
@@ -31,12 +34,14 @@ const ToggleBox = styled. View `
 const ToggleButton = styled. TouchableOpacity<{pressed: boolean}>`
   display: flex;
   width:100px;
+  width:100px;
   height: 28px;
   justify-content: center;
   align-items: center;
   border-radius: 12px;
   background:  ${(props: { pressed: boolean }) => props.pressed ? '#DBFC72' : '#FFF' };
 `
+
 
 
 interface CustomHeaderProps {
@@ -60,6 +65,9 @@ const Toggletag = ({pressable} : ToggleButtonParams) => {
 
 const CustomHeader = ({ onSearch, onAlarm, }: CustomHeaderProps) => {
   
+
+const CustomHeader = ({ onSearch, onAlarm, }: CustomHeaderProps) => {
+  
   
   const [selectedTab, setSelectedTab] = useState<'Goods' | 'Market'>('Goods');
  
@@ -78,6 +86,7 @@ const CustomHeader = ({ onSearch, onAlarm, }: CustomHeaderProps) => {
             </ToggleButton>
         </ToggleBox>
         
+        
       </View>
       <Search />
       <Bell />
@@ -86,6 +95,6 @@ const CustomHeader = ({ onSearch, onAlarm, }: CustomHeaderProps) => {
     
     </>
   )
-}
+}}
 
 export default CustomHeader;
