@@ -65,8 +65,6 @@ const Toggletag = ({pressable} : ToggleButtonParams) => {
 
 const CustomHeader = ({ onSearch, onAlarm, }: CustomHeaderProps) => {
   
-
-const CustomHeader = ({ onSearch, onAlarm, }: CustomHeaderProps) => {
   
   
   const [selectedTab, setSelectedTab] = useState<'Goods' | 'Market'>('Goods');
@@ -95,6 +93,6 @@ const CustomHeader = ({ onSearch, onAlarm, }: CustomHeaderProps) => {
     
     </>
   )
-}}
+}
 
 export default CustomHeader;
