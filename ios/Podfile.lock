@@ -958,7 +958,7 @@ PODS:
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
-  - react-native-webview (13.7.1):
+  - react-native-webview (13.8.1):
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
@@ -1384,7 +1384,7 @@ SPEC CHECKSUMS:
   Flipper-PeerTalk: 116d8f857dc6ef55c7a5a75ea3ceaafe878aadc9
   FlipperKit: 37525a5d056ef9b93d1578e04bc3ea1de940094f
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
-  glog: c5d68082e772fa1c511173d6b30a9de2c05a69a2
+  glog: 035f1e36e53b355cf70f6434d161b36e7d21fecd
   hermes-engine: 34df9d5034e90bd9bf1505e1ca198760373935af
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
@@ -1413,7 +1413,7 @@ SPEC CHECKSUMS:
   react-native-pager-view: d81ab2060b9caf57ca8c3a0d57467ff407cdb825
   react-native-safe-area-context: 0ee144a6170530ccc37a0fd9388e28d06f516a89
   react-native-slider: 7d387c7e8dd0b4c12bf49c975c8666435f082a33
-  react-native-webview: d35380fcc2e1385cebc5b90fb96eebcdd1f2548e
+  react-native-webview: 0f93dc8f4208ae5365884922c3cd14da5037ca4c
   React-nativeconfig: d753fbbc8cecc8ae413d615599ac378bbf6999bb
   React-NativeModulesApple: 964f4eeab1b4325e8b6a799cf4444c3fd4eb0a9c
   React-perflogger: 29efe63b7ef5fbaaa50ef6eaa92482f98a24b97e
@@ -1444,4 +1444,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: eb490ed861c0caf2f2649ac9503532c4cce2d3d8
 
-COCOAPODS: 1.14.3
+COCOAPODS: 1.12.1
