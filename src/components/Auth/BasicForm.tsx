@@ -21,6 +21,7 @@ import { FormProps } from './SignIn';
 import { useState } from 'react';
 import InputBox from '../../common/InputBox';
 import BottomButton from '../../common/BottomButton';
+import Dropdown from '../../common/Dropdown';
 
 interface SignupProps {
   mail: string;
@@ -35,6 +36,7 @@ interface CheckBtnProps {
 }
 
 const InputView = styled.View`
+  position: relative;
   margin-top: 10;
   margin-bottom: 10;
 `;
@@ -91,6 +93,7 @@ export default function BasicForm({ navigation, route }: FormProps) {
     d: false,
   });
   const [checkPw, setCheckPw] = useState('');
+  const [domainOpen, setDomainOpen] = useState(false);
 
   const handleSubmit = () => {};
 
@@ -102,7 +105,7 @@ export default function BasicForm({ navigation, route }: FormProps) {
           marginHorizontal: width * 0.04,
           flex: 1,
         }}>
-        <InputView>
+        <InputView style={{ zIndex: 1 }}>
           <Body16B>이메일</Body16B>
           <MailView>
             <InputBox
@@ -131,7 +134,24 @@ export default function BasicForm({ navigation, route }: FormProps) {
                 autoCapitalize="none"
                 autoCorrect={false}
               />
-              <TouchableOpacity>
+              <Dropdown
+                open={domainOpen}
+                setOpen={setDomainOpen}
+                value={form.domain}
+                setValue={text =>
+                  setForm(prev => {
+                    return { ...prev, domain: text };
+                  })
+                }
+                items={['gmail.com', 'naver.com', 'kakao.com']}
+                style={{ width: '100%', top: 44 }}
+              />
+              <TouchableOpacity
+                onPress={() =>
+                  setDomainOpen(prev => {
+                    return !prev;
+                  })
+                }>
                 <DownArrow />
               </TouchableOpacity>
             </SelectView>
