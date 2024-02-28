@@ -21,7 +21,6 @@ import { FormProps } from './SignIn';
 import { useState } from 'react';
 import InputBox from '../../common/InputBox';
 import BottomButton from '../../common/BottomButton';
-import { oneOfType } from 'prop-types';
 
 interface SignupProps {
   mail: string;

@@ -15,7 +15,12 @@ import HomeIcon from './src/assets/navbar/Home.svg';
 import MyPageIcon from './src/assets/navbar/MyPage.svg';
 import SignIn from './src/components/Auth/SignIn';
 
-const Stack = createNativeStackNavigator();
+export type StackProps = {
+  Home: undefined;
+  Signin: undefined;
+};
+
+const Stack = createNativeStackNavigator<StackProps>();
 
 const GlobalTheme = {
   ...DefaultTheme,
@@ -33,7 +38,7 @@ function App(): React.JSX.Element {
           headerShown: false,
         })}>
         <Stack.Screen name="Home" component={HomeTab} />
-        <Stack.Screen name="Login" component={SignIn} />
+        <Stack.Screen name="Signin" component={SignIn} />
       </Stack.Navigator>
     </NavigationContainer>
   );
