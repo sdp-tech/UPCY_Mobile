@@ -50,7 +50,7 @@ const HomeTabView = ({onSearch}:HomeTabViewProps) => {
                 labelStyle={{
                   color: '#DBFC72',
                   fontWeight: '700',
-                  fontSize: 16
+                  fontSize: 12
                 }}/>)}
               >
                 {routes.map(route =>
