@@ -1,72 +1,95 @@
 import { useEffect, useState } from 'react';
 import { Filter14M } from '../../styles/GlobalText';
-import {Text, View, TouchableOpacity, Dimensions } from 'react-native';
+import {Text, View, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
 import CustomHeader from '../../common/CustomHeader';
 import {Tabs, MaterialTabBar} from 'react-native-collapsible-tab-view';
 import { StackScreenProps } from '@react-navigation/stack';
 import { HomeStackParams } from '../../pages/Home';
 
-import TabViewSpot from '../../../assets/common/TabViewSpot.svg';
+import TabViewSpot from '../../assets/common/TabViewSpot.svg';
 import styled from 'styled-components/native';
 import { PURPLE } from '../../styles/GlobalColor';
 
-const { width } = Dimensions.get('window'); //411
 
 const HomeTabViewBox = styled.View `
-    width: 762px;
-    height: 36px;
-    overflow-x: auto;
-`
+  display: flex;  
+  flex-direction: row;
+  width: 712px;
+  height: 36px;
+  background:#612FEF;
 
+`
+const HomeTabViewButton = styled.TouchableOpacity<{pressed: boolean}> `
+  display: flex;
+  flex-direction: row;
+  padding: 6px 36px;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+`
 interface HomeTabViewProps {
-    onSearch: () => void;
-      
+    onSearch: () => void;     
 }
+
+interface HomeTabViewButtonParams {
+  pressable?: boolean;
+}
+
+const HomeTabViewtag =  ({pressable} : HomeTabViewButtonParams) => {
+  const [pressed, setPressed] = useState<boolean>(false);
+  return (
+    <HomeTabViewButton pressed={pressed} onPress={() => setPressed(!pressed)} disabled={!pressable}>
+      <Filter14M style={{color: pressed ?'#222' : '#929292'}}></Filter14M>
+    </HomeTabViewButton>
+  )
+}
+
 const HomeTabView = ({onSearch}:HomeTabViewProps) => {
-    const [routes] = useState([
-        { key: 'all', title: '전체' },
-        { key: 'outer', title: '아우터' },
-        { key: 'top', title: '상의' },
-        { key: 'bottom', title: '하의' },
-        { key: 'bag', title: '가방' },
-        { key: 'hat', title: '모자' },
-        { key: 'accessories', title: '잡화' }
-      ]);
+
+  const [selectedTabView, setSelectedTabView] = useState <'all'|'outer'|'top'|'bottom'|'bag'|'hat'|'accessories'>('all');
     
-    return(
+  //글자 간격 수정 필요!
+    return(<>
+    
+    <ScrollView horizontal showsHorizontalScrollIndicator={false}><View style= {{flex:1}}>
         <HomeTabViewBox>
-            <Tabs.Container
-            
-            renderTabBar={props => (
-              <MaterialTabBar
-                {...props}
-                indicatorStyle={{
-                  backgroundColor: '#BDBDBD',
-                  height: 2
-                }}
-                style={{
-                  backgroundColor: '#612FEF',
-                }}
-                labelStyle={{
-                  color: '#DBFC72',
-                  fontWeight: '700',
-                  fontSize: 12
-                }}/>)}
-              >
-                {routes.map(route =>
-                    (<Tabs.Tab key={route.key} name={route.title}>
-                        {route.key === 'all' }
-                        {route.key === 'outer' }
-                        {route.key === 'top' }
-                        {route.key === 'bottom' }
-                        {route.key === 'bag'  }
-                        {route.key === 'hat' }
-                        {route.key === 'accessories' }
-                    </Tabs.Tab>)
-                 )}
-            </Tabs.Container>
+          
+            <HomeTabViewButton pressed={selectedTabView === 'all'} onPress={() => setSelectedTabView('all')}>
+             {selectedTabView === 'all' && <TabViewSpot />} 
+             <Text style={{fontSize: 14, fontWeight: '700', color: selectedTabView == 'all'? '#DBFC72': '#FFF'}}>전체</Text> 
+            </HomeTabViewButton>
+            <HomeTabViewButton pressed={selectedTabView === 'outer'} onPress={() => setSelectedTabView('outer')}>
+              {selectedTabView === 'outer' && <TabViewSpot />} 
+              <Text style={{fontSize: 14, fontWeight: '700', color: selectedTabView == 'outer'? '#DBFC72': '#FFF'}}>아우터</Text>
+            </HomeTabViewButton>
+            <HomeTabViewButton pressed={selectedTabView === 'top'} onPress={() => setSelectedTabView('top')}>
+              {selectedTabView === 'top' && <TabViewSpot />} 
+              <Text style={{fontSize: 14, fontWeight: '700', color: selectedTabView == 'top'? '#DBFC72': '#FFF'}}>상의</Text>
+            </HomeTabViewButton>
+            <HomeTabViewButton pressed={selectedTabView === 'bottom'} onPress={() => setSelectedTabView('bottom')}>
+              {selectedTabView === 'bottom' && <TabViewSpot />} 
+              <Text style={{fontSize: 14, fontWeight: '700', color: selectedTabView == 'bottom'? '#DBFC72': '#FFF'}}>하의</Text>
+            </HomeTabViewButton>
+            <HomeTabViewButton pressed={selectedTabView === 'bag'} onPress={() => setSelectedTabView('bag')}>
+              {selectedTabView === 'bag' && <TabViewSpot />} 
+              <Text style={{fontSize: 14, fontWeight: '700', color: selectedTabView == 'bag'? '#DBFC72': '#FFF'}}>가방</Text>
+            </HomeTabViewButton>
+            <HomeTabViewButton pressed={selectedTabView === 'hat'} onPress={() => setSelectedTabView('hat')}>
+              {selectedTabView === 'hat' && <TabViewSpot />} 
+              <Text style={{fontSize: 14, fontWeight: '700', color: selectedTabView == 'hat'? '#DBFC72': '#FFF'}}>모자</Text>
+            </HomeTabViewButton>
+            <HomeTabViewButton pressed={selectedTabView === 'accessories'} onPress={() => setSelectedTabView('accessories')}>
+              {selectedTabView === 'accessories' && <TabViewSpot />} 
+              <Text style={{fontSize: 14, fontWeight: '700', color: selectedTabView == 'accessories'? '#DBFC72': '#FFF'}}>잡화</Text>
+            </HomeTabViewButton>
+           
         </HomeTabViewBox>
+        </View></ScrollView> 
+        
+        </>
     )
 }
 
 export default HomeTabView;
+

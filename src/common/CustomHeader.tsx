@@ -16,7 +16,6 @@ const FrameBox = styled. View`
   align-items: center;
   justify-content: center;
   background: #612FEF;
-  background: #612FEF;
 `
 const ToggleBox = styled. View `
   display: flex;
