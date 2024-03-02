@@ -28,6 +28,31 @@ const HomeTabViewButton = styled.TouchableOpacity<{pressed: boolean}> `
   gap: 4px;
   flex-shrink: 0;
 `
+
+const CategoryBox = styled.View` 
+  display: flex;
+  flex-direction: row;
+  width: 720px; 
+  height: 52px;
+  padding: 12px 16px;
+  align-items: flex-start;
+  gap: 12px;
+  background: #FFF;
+`
+
+const CategoryButton = styled.TouchableOpacity<{pressed: boolean}>`
+  display: flex;
+  height: 28px;
+  padding: 0px 12px;
+  justify-content: center;  
+  align-items: center;
+  gap: 8px;
+  border-radius: 12px;
+  border-width: 1px;
+  border-color: #612FEF;
+`
+
+
 interface HomeTabViewProps {
     onSearch: () => void;     
 }
@@ -86,7 +111,29 @@ const HomeTabView = ({onSearch}:HomeTabViewProps) => {
            
         </HomeTabViewBox>
         </View></ScrollView> 
-        
+
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}><View style= {{flex:1}}>
+        <CategoryBox>
+          <CategoryButton>
+            <Text style={{fontSize: 14, fontWeight: '500', color: '222'}}>스타일</Text>
+          </CategoryButton>
+          <CategoryButton>
+            <Text style={{fontSize: 14, fontWeight: '500', color: '222'}}>재질</Text>
+          </CategoryButton>
+          <CategoryButton>
+            <Text style={{fontSize: 14, fontWeight: '500', color: '222'}}>핏</Text>
+          </CategoryButton>
+          <CategoryButton>
+            <Text style={{fontSize: 14, fontWeight: '500', color: '222'}}>디테일</Text>
+          </CategoryButton>
+          <CategoryButton>
+            <Text style={{fontSize: 14, fontWeight: '500', color: '222'}}>금액별</Text>
+          </CategoryButton>
+          <CategoryButton>
+            <Text style={{fontSize: 14, fontWeight: '500', color: '222'}}>수선 요구 기간</Text>
+          </CategoryButton>
+        </CategoryBox>
+        </View></ScrollView> 
         </>
     )
 }
