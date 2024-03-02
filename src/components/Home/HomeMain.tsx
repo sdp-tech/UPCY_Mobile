@@ -7,6 +7,7 @@ import { StackScreenProps } from '@react-navigation/stack';
 import { HomeStackParams } from '../../pages/Home';
 
 import TabViewSpot from '../../assets/common/TabViewSpot.svg';
+import CategoryDownButton from '../../assets/common/CategoryDownButton.svg';
 import styled from 'styled-components/native';
 import { PURPLE } from '../../styles/GlobalColor';
 
@@ -42,6 +43,7 @@ const CategoryBox = styled.View`
 
 const CategoryButton = styled.TouchableOpacity<{pressed: boolean}>`
   display: flex;
+  flex-direction:row;
   height: 28px;
   padding: 0px 12px;
   justify-content: center;  
@@ -116,21 +118,27 @@ const HomeTabView = ({onSearch}:HomeTabViewProps) => {
         <CategoryBox>
           <CategoryButton>
             <Text style={{fontSize: 14, fontWeight: '500', color: '222'}}>스타일</Text>
+            <CategoryDownButton/>
           </CategoryButton>
           <CategoryButton>
             <Text style={{fontSize: 14, fontWeight: '500', color: '222'}}>재질</Text>
+            <CategoryDownButton/>
           </CategoryButton>
           <CategoryButton>
             <Text style={{fontSize: 14, fontWeight: '500', color: '222'}}>핏</Text>
+            <CategoryDownButton/>
           </CategoryButton>
           <CategoryButton>
             <Text style={{fontSize: 14, fontWeight: '500', color: '222'}}>디테일</Text>
+            <CategoryDownButton/>
           </CategoryButton>
           <CategoryButton>
             <Text style={{fontSize: 14, fontWeight: '500', color: '222'}}>금액별</Text>
+            <CategoryDownButton/>
           </CategoryButton>
           <CategoryButton>
             <Text style={{fontSize: 14, fontWeight: '500', color: '222'}}>수선 요구 기간</Text>
+            <CategoryDownButton/>
           </CategoryButton>
         </CategoryBox>
         </View></ScrollView> 
