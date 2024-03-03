@@ -14,8 +14,14 @@ import useLoginGuard from './src/hooks/useLoginGuard';
 import HomeIcon from './src/assets/navbar/Home.svg';
 import MyPageIcon from './src/assets/navbar/MyPage.svg';
 import SignIn from './src/components/Auth/SignIn';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-const Stack = createNativeStackNavigator();
+export type StackProps = {
+  Home: undefined;
+  Signin: undefined;
+};
+
+const Stack = createNativeStackNavigator<StackProps>();
 
 const GlobalTheme = {
   ...DefaultTheme,
@@ -27,15 +33,17 @@ const GlobalTheme = {
 
 function App(): React.JSX.Element {
   return (
-    <NavigationContainer theme={GlobalTheme}>
-      <Stack.Navigator
-        screenOptions={() => ({
-          headerShown: false,
-        })}>
-        <Stack.Screen name="Home" component={HomeTab} />
-        <Stack.Screen name="Login" component={SignIn} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <NavigationContainer theme={GlobalTheme}>
+        <Stack.Navigator
+          screenOptions={() => ({
+            headerShown: false,
+          })}>
+          <Stack.Screen name="Home" component={HomeTab} />
+          <Stack.Screen name="Signin" component={SignIn} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </GestureHandlerRootView>
   );
 }
 

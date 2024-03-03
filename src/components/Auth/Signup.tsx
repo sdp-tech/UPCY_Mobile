@@ -101,7 +101,7 @@ export default function Signup({ navigation, route }: SignupProps) {
           />
           <StartBtn
             onPress={() => {
-              navigation.navigate('Reformer');
+              navigation.navigate('Basic');
             }}
             subtext="전문성으로 수익을 창출하고 싶다면"
             text="리폼러로 가입"
