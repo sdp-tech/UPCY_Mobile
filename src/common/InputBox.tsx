@@ -1,8 +1,8 @@
 import { Dispatch, SetStateAction } from 'react';
-import { TextInput } from 'react-native';
+import { TextInput, TextInputProps } from 'react-native';
 import { BLACK2 } from '../styles/GlobalColor';
 
-interface InputBoxProps {
+interface InputBoxProps extends TextInputProps {
   value: string;
   setValue: (value: string) => void;
   placeholder: string;
@@ -18,6 +18,7 @@ const InputBox = ({
   long,
   style,
   secure,
+  ...props
 }: InputBoxProps) => {
   return (
     <TextInput
@@ -39,6 +40,7 @@ const InputBox = ({
         paddingHorizontal: 16,
         ...style,
       }}
+      {...props}
     />
   );
 };

@@ -34,9 +34,9 @@ export default function Dropdown({
         ...style,
       }}>
       {open &&
-        items.map(item => {
+        items.map((item, index) => {
           return (
-            <View>
+            <View key={index}>
               <TouchableOpacity
                 onPress={() => {
                   handleSelect(item);
