@@ -93,7 +93,9 @@ export default function Signup({ navigation, route }: SignupProps) {
         <View style={{ marginTop: 'auto', marginBottom: height * 0.04 }}>
           <StartBtn
             containerStyle={{ marginBottom: 10 }}
-            onPress={() => {}}
+            onPress={() => {
+              navigation.navigate('Basic');
+            }}
             subtext="폐의류를 맡기고 싶다면"
             text="의뢰인으로 가입"
             colorBack={GREEN}
@@ -101,7 +103,7 @@ export default function Signup({ navigation, route }: SignupProps) {
           />
           <StartBtn
             onPress={() => {
-              navigation.navigate('Basic');
+              navigation.navigate('Reformer');
             }}
             subtext="전문성으로 수익을 창출하고 싶다면"
             text="리폼러로 가입"

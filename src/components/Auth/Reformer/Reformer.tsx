@@ -1,5 +1,11 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useState } from 'react';
+import {
+  Dispatch,
+  SetStateAction,
+  createContext,
+  useContext,
+  useState,
+} from 'react';
 import ReformFormHeader from './ReformFormHeader';
 import BasicForm from '../BasicForm';
 import ReformFormProfile from './ReformFormProfile';
@@ -10,16 +16,8 @@ export interface ReformProps {
 }
 
 export type ReformStackParams = {
-  Basic: {
-    form: BasicFormProp;
-    setForm: React.Dispatch<React.SetStateAction<BasicFormProp>>;
-    handleSubmit: () => void;
-  };
-  Profile: {
-    goBack: () => void;
-    goNext: () => void;
-    title: string;
-  };
+  Basic: {};
+  Profile: {};
 };
 
 interface BasicFormProp {
@@ -30,44 +28,48 @@ interface BasicFormProp {
   marketing: boolean;
 }
 
-export default function Reformer() {
-  const [steps, setSteps] = useState(1);
-  const [basicform, setBasicform] = useState({
-    email: '',
-    mailDomain: '',
-    password: '',
-    region: '',
-    marketing: false,
-  });
-  const Stack = createNativeStackNavigator<ReformStackParams>();
+type ReformProfileType = {
+  nickname: string;
+  market: string;
+};
 
-  const handleSubmit = () => {
-    console.log(basicform);
+export type RpContextType = {
+  value: ReformProfileType;
+  setValue: Dispatch<SetStateAction<ReformProfileType>>;
+};
+
+export const ReformProfileContext = createContext<RpContextType | null>(null);
+
+export default function Reformer() {
+  const defaultProfile: ReformProfileType = {
+    nickname: '',
+    market: '',
   };
+  const [steps, setSteps] = useState(1);
+  const Stack = createNativeStackNavigator<ReformStackParams>();
+  const [profileForm, setProfileForm] = useState(defaultProfile);
 
   return (
-    <Stack.Navigator
-      initialRouteName="Basic"
-      screenOptions={{
-        header: ({ navigation, route }) => (
-          <ReformFormHeader step={steps} navigation={navigation} />
-        ),
-      }}>
-      <Stack.Screen
-        name="Basic"
-        component={BasicForm}
-        options={{ headerShown: false }}
-        initialParams={{
-          form: basicform,
-          setForm: setBasicform,
-          handleSubmit: handleSubmit,
-        }}
-      />
-      <Stack.Screen
-        name="Profile"
-        component={ReformFormProfile}
-        initialParams={{ goNext: () => setSteps(2), title: '테스트' }}
-      />
-    </Stack.Navigator>
+    <ReformProfileContext.Provider
+      value={{ value: profileForm, setValue: setProfileForm }}>
+      <Stack.Navigator
+        initialRouteName="Profile"
+        screenOptions={{
+          header: ({ navigation, route }) => (
+            <ReformFormHeader step={steps} navigation={navigation} />
+          ),
+        }}>
+        <Stack.Screen
+          name="Basic"
+          component={BasicForm}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Profile"
+          component={ReformFormProfile}
+          initialParams={{ title: '테스트' }}
+        />
+      </Stack.Navigator>
+    </ReformProfileContext.Provider>
   );
 }

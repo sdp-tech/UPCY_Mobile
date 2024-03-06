@@ -2,6 +2,7 @@ import { View, Dimensions, Platform, TouchableOpacity } from 'react-native';
 import { Title20B } from '../../../styles/GlobalText';
 import { PURPLE } from '../../../styles/GlobalColor';
 import LeftArrow from '../../../assets/common/Arrow.svg';
+import Slider from '../../../common/Slider';
 
 interface ReformFormHeaderProps {
   step: number;
@@ -38,14 +39,7 @@ export default function ReformFormHeader({
         <Title20B>프로필 등록/수정</Title20B>
         <View style={{ flex: 1 }} />
       </View>
-      <View
-        style={{
-          alignSelf: 'flex-start',
-          height: 8,
-          width: (width / total) * step,
-          backgroundColor: PURPLE,
-        }}
-      />
+      <Slider total={3} page={1} rating={true} />
     </View>
   );
 }

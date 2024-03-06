@@ -1,14 +1,23 @@
 import { SafeAreaView, View, Dimensions, TouchableOpacity } from 'react-native';
 import { Title20B } from '../../../styles/GlobalText';
-import { ReformProps, ReformStackParams } from './Reformer';
+import {
+  ReformProps,
+  ReformStackParams,
+  ReformProfileContext,
+  RpContextType,
+} from './Reformer';
+import { useContext } from 'react';
+import useCustomContext from '../../../hooks/useCustomContext';
 
 export default function ReformFormProfile({ navigation, route }: ReformProps) {
+  const { value, setValue } = useCustomContext<RpContextType>({
+    givenContext: ReformProfileContext,
+  });
+
   return (
     <SafeAreaView>
       <Title20B>리포머 프로필</Title20B>
-      <TouchableOpacity onPress={route.params.goNext}>
-        <Title20B>{route.params.title}</Title20B>
-      </TouchableOpacity>
+      <Title20B>{value.nickname}</Title20B>
     </SafeAreaView>
   );
 }
