@@ -5,7 +5,7 @@ import { BLACK2 } from '../styles/GlobalColor';
 interface InputBoxProps extends TextInputProps {
   value: string;
   setValue: (value: string) => void;
-  placeholder: string;
+  placeholder?: string;
   long?: boolean;
   style?: any;
   secure?: boolean;
@@ -25,7 +25,7 @@ const InputBox = ({
       secureTextEntry={secure}
       value={value}
       onChangeText={setValue}
-      placeholder={placeholder}
+      placeholder={placeholder ? placeholder : '입력해 주세요.'}
       placeholderTextColor={BLACK2}
       multiline={long}
       autoCapitalize="none"

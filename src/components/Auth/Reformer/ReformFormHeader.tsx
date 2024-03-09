@@ -1,6 +1,12 @@
-import { View, Dimensions, Platform, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Dimensions,
+  Platform,
+  TouchableOpacity,
+  Text,
+} from 'react-native';
 import { Title20B } from '../../../styles/GlobalText';
-import { PURPLE } from '../../../styles/GlobalColor';
+import { BLACK, BLACK2, PURPLE } from '../../../styles/GlobalColor';
 import LeftArrow from '../../../assets/common/Arrow.svg';
 import Slider from '../../../common/Slider';
 
@@ -28,13 +34,13 @@ export default function ReformFormHeader({
           flexDirection: 'row',
           justifyContent: 'center',
         }}>
-        <TouchableOpacity
-          style={{
-            flex: 1,
-          }}
-          onPress={() => navigation.pop()}>
-          <LeftArrow stroke="#000000" />
-        </TouchableOpacity>
+        <View style={{ flex: 1 }}>
+          <TouchableOpacity
+            onPress={() => navigation.pop()}
+            style={{ width: 24 }}>
+            <LeftArrow color={BLACK} />
+          </TouchableOpacity>
+        </View>
 
         <Title20B>프로필 등록/수정</Title20B>
         <View style={{ flex: 1 }} />

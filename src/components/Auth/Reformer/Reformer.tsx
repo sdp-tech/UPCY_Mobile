@@ -9,6 +9,13 @@ import {
 import ReformFormHeader from './ReformFormHeader';
 import BasicForm from '../BasicForm';
 import ReformFormProfile from './ReformFormProfile';
+import {
+  CareerType,
+  EducType,
+  MaterialType,
+  RegionType,
+  StyleType,
+} from '../../../types/UserTypes';
 
 export interface ReformProps {
   navigation: any;
@@ -29,8 +36,16 @@ interface BasicFormProp {
 }
 
 type ReformProfileType = {
+  picture: any;
   nickname: string;
   market: string;
+  introduce: string;
+  link: string;
+  region: RegionType;
+  style: StyleType;
+  material: MaterialType;
+  education: EducType[];
+  career: CareerType;
 };
 
 export type RpContextType = {
@@ -42,8 +57,16 @@ export const ReformProfileContext = createContext<RpContextType | null>(null);
 
 export default function Reformer() {
   const defaultProfile: ReformProfileType = {
+    picture: null,
     nickname: '',
     market: '',
+    introduce: '',
+    link: '',
+    region: undefined,
+    style: [],
+    material: [],
+    education: [],
+    career: undefined,
   };
   const [steps, setSteps] = useState(1);
   const Stack = createNativeStackNavigator<ReformStackParams>();
