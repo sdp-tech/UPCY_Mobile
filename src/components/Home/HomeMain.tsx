@@ -23,7 +23,8 @@ const HomeTabViewBox = styled.View `
 const HomeTabViewButton = styled.TouchableOpacity<{pressed: boolean}> `
   display: flex;
   flex-direction: row;
-  padding: 6px 36px;
+  padding: 6px 0px;
+  width:72px;
   justify-content: center;
   align-items: center;
   gap: 4px;
