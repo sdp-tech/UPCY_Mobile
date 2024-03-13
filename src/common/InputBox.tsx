@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from 'react';
-import { TextInput, TextInputProps } from 'react-native';
+import { TextInput, TextInputProps, TextStyle } from 'react-native';
 import { BLACK2 } from '../styles/GlobalColor';
 
 export interface InputBoxProps extends TextInputProps {
@@ -7,7 +7,7 @@ export interface InputBoxProps extends TextInputProps {
   setValue: (value: string) => void;
   placeholder?: string;
   long?: boolean;
-  style?: any;
+  style?: TextStyle;
   secure?: boolean;
 }
 

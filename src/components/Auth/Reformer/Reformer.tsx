@@ -16,6 +16,7 @@ import {
   RegionType,
   StyleType,
 } from '../../../types/UserTypes';
+import ProfileSubmit from './ProfileSubmit';
 
 export interface ReformProps {
   navigation: any;
@@ -25,6 +26,7 @@ export interface ReformProps {
 export type ReformStackParams = {
   Basic: {};
   Profile: {};
+  tmp: {};
 };
 
 interface BasicFormProp {
@@ -92,6 +94,7 @@ export default function Reformer() {
           component={ReformFormProfile}
           initialParams={{ title: '테스트' }}
         />
+        <Stack.Screen name="tmp" component={ProfileSubmit} />
       </Stack.Navigator>
     </ReformProfileContext.Provider>
   );
