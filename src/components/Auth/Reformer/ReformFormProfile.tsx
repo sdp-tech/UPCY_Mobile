@@ -84,6 +84,7 @@ export default function ReformFormProfile({ navigation, route }: ReformProps) {
             });
           }}
           info="마켓을 소개해 주세요"
+          long={true}
         />
         <InputView
           title="상담 링크"

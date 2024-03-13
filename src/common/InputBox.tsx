@@ -33,7 +33,8 @@ const InputBox = ({
       style={{
         marginVertical: 5,
         width: '100%',
-        height: 44,
+        height: long ? 100 : 44,
+        paddingTop: long ? 10 : 0,
         borderWidth: 2,
         borderColor: BLACK2,
         borderRadius: 5,

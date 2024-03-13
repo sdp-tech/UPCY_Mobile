@@ -15,6 +15,7 @@ const InputView = ({
   info,
   value,
   setValue,
+  long,
   ...props
 }: InputViewProps) => {
   return (
@@ -27,6 +28,7 @@ const InputView = ({
         value={value}
         setValue={setValue}
         style={{ marginTop: 8 }}
+        long={long}
         {...props}
       />
     </View>
