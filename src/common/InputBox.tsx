@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from 'react';
 import { TextInput, TextInputProps } from 'react-native';
 import { BLACK2 } from '../styles/GlobalColor';
 
-interface InputBoxProps extends TextInputProps {
+export interface InputBoxProps extends TextInputProps {
   value: string;
   setValue: (value: string) => void;
   placeholder?: string;
@@ -33,7 +33,7 @@ const InputBox = ({
       style={{
         marginVertical: 5,
         width: '100%',
-        height: 100,
+        height: 44,
         borderWidth: 2,
         borderColor: BLACK2,
         borderRadius: 5,
