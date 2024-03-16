@@ -9,19 +9,24 @@ import { Title20B } from '../../../styles/GlobalText';
 import { BLACK, BLACK2, PURPLE } from '../../../styles/GlobalColor';
 import LeftArrow from '../../../assets/common/Arrow.svg';
 import Slider from '../../../common/Slider';
+import useCustomContext from '../../../hooks/useCustomContext';
+import { useNavigation, NavigationContext } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { ReformStackParams } from './Reformer';
+import { useContext } from 'react';
 
 interface ReformFormHeaderProps {
   step: number;
-  navigation: any;
+  onPressLeft: () => void;
 }
 
 export default function ReformFormHeader({
   step,
-  navigation,
+  onPressLeft,
 }: ReformFormHeaderProps) {
+  const navigation = useContext(NavigationContext);
   const { width, height } = Dimensions.get('window');
   const total = 3;
-
   return (
     <View
       style={{
@@ -35,9 +40,7 @@ export default function ReformFormHeader({
           justifyContent: 'center',
         }}>
         <View style={{ flex: 1 }}>
-          <TouchableOpacity
-            onPress={() => navigation.pop()}
-            style={{ width: 24 }}>
+          <TouchableOpacity onPress={onPressLeft} style={{ width: 24 }}>
             <LeftArrow color={BLACK} />
           </TouchableOpacity>
         </View>
@@ -45,7 +48,7 @@ export default function ReformFormHeader({
         <Title20B>프로필 등록/수정</Title20B>
         <View style={{ flex: 1 }} />
       </View>
-      <Slider total={3} page={1} rating={true} />
+      <Slider total={4} page={step} rating={true} />
     </View>
   );
 }

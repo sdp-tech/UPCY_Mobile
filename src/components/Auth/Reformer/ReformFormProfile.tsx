@@ -1,11 +1,10 @@
 import { SafeAreaView, View, Dimensions, TouchableOpacity } from 'react-native';
 import { Title20B } from '../../../styles/GlobalText';
 import { ReformProps } from './Reformer';
-import useCustomContext from '../../../hooks/useCustomContext';
-import InputBox from '../../../common/InputBox';
 import BottomButton from '../../../common/BottomButton';
 import PencilIcon from '../../../assets/common/Pencil.svg';
 import InputView from '../../../common/InputView';
+import { useEffect } from 'react';
 
 function ProfilePic({}) {
   return (
@@ -44,8 +43,12 @@ function ProfilePic({}) {
   );
 }
 
-export default function ReformFormProfile({ navigation, route }: ReformProps) {
-  const { value, setValue } = useCustomContext({ context: 'ReformerProfile' });
+export default function ReformFormProfile({
+  page,
+  setPage,
+  form,
+  setForm,
+}: ReformProps) {
   const { width } = Dimensions.get('screen');
 
   return (
@@ -58,18 +61,18 @@ export default function ReformFormProfile({ navigation, route }: ReformProps) {
         <ProfilePic />
         <InputView
           title="닉네임"
-          value={value.nickname}
+          value={form.nickname}
           setValue={v => {
-            setValue(prev => {
+            setForm(prev => {
               return { ...prev, nickname: v };
             });
           }}
         />
         <InputView
           title="마켓명"
-          value={value.market}
+          value={form.market}
           setValue={v => {
-            setValue(prev => {
+            setForm(prev => {
               return { ...prev, market: v };
             });
           }}
@@ -77,9 +80,9 @@ export default function ReformFormProfile({ navigation, route }: ReformProps) {
         />
         <InputView
           title="마켓 소개글"
-          value={value.introduce}
+          value={form.introduce}
           setValue={v => {
-            setValue(prev => {
+            setForm(prev => {
               return { ...prev, introduce: v };
             });
           }}
@@ -89,9 +92,9 @@ export default function ReformFormProfile({ navigation, route }: ReformProps) {
         <InputView
           title="상담 링크"
           placeholder="http://"
-          value={value.link}
+          value={form.link}
           setValue={v => {
-            setValue(prev => {
+            setForm(prev => {
               return { ...prev, link: v };
             });
           }}
@@ -101,7 +104,7 @@ export default function ReformFormProfile({ navigation, route }: ReformProps) {
           value="다음"
           pressed={false}
           onPress={() => {
-            navigation.navigate('tmp');
+            setPage('style');
           }}
           style={{ width: '75%', alignSelf: 'center', marginTop: 'auto' }}
         />

@@ -6,6 +6,8 @@ import {
   useContext,
   useState,
 } from 'react';
+import { View } from 'react-native';
+import { FormProps } from '../SignIn';
 import ReformFormHeader from './ReformFormHeader';
 import BasicForm from '../BasicForm';
 import ReformFormProfile from './ReformFormProfile';
@@ -18,9 +20,13 @@ import {
 } from '../../../types/UserTypes';
 import ProfileSubmit from './ProfileSubmit';
 
+type page = 'profile' | 'style' | 'career';
+
 export interface ReformProps {
-  navigation: any;
-  route: any;
+  page: page;
+  setPage: Dispatch<SetStateAction<page>>;
+  form: ReformProfileType;
+  setForm: Dispatch<SetStateAction<ReformProfileType>>;
 }
 
 export type ReformStackParams = {
@@ -52,12 +58,14 @@ type ReformProfileType = {
 
 export type RpContextType = {
   value: ReformProfileType;
+  steps: number;
   setValue: Dispatch<SetStateAction<ReformProfileType>>;
+  setSteps: Dispatch<SetStateAction<number>>;
 };
 
 export const ReformProfileContext = createContext<RpContextType | null>(null);
 
-export default function Reformer() {
+export default function Reformer({ navigation }: FormProps) {
   const defaultProfile: ReformProfileType = {
     picture: null,
     nickname: '',
@@ -70,32 +78,50 @@ export default function Reformer() {
     education: [],
     career: undefined,
   };
-  const [steps, setSteps] = useState(1);
-  const Stack = createNativeStackNavigator<ReformStackParams>();
+  const [page, setPage] = useState<page>('profile');
   const [profileForm, setProfileForm] = useState(defaultProfile);
 
+  console.log('rerender');
+
   return (
-    <ReformProfileContext.Provider
-      value={{ value: profileForm, setValue: setProfileForm }}>
-      <Stack.Navigator
-        initialRouteName="Profile"
-        screenOptions={{
-          header: ({ navigation, route }) => (
-            <ReformFormHeader step={steps} navigation={navigation} />
+    <View style={{ flex: 1 }}>
+      <ReformFormHeader
+        step={{ profile: 1, style: 2, career: 3 }[page]}
+        onPressLeft={
+          {
+            profile: () => {
+              navigation.goBack();
+            },
+            style: () => {
+              setPage('profile');
+            },
+            career: () => {
+              setPage('style');
+            },
+          }[page]
+        }
+      />
+      {
+        {
+          profile: (
+            <ReformFormProfile
+              page={page}
+              setPage={setPage}
+              form={profileForm}
+              setForm={setProfileForm}
+            />
           ),
-        }}>
-        <Stack.Screen
-          name="Basic"
-          component={BasicForm}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Profile"
-          component={ReformFormProfile}
-          initialParams={{ title: '테스트' }}
-        />
-        <Stack.Screen name="tmp" component={ProfileSubmit} />
-      </Stack.Navigator>
-    </ReformProfileContext.Provider>
+          style: (
+            <ProfileSubmit
+              page={page}
+              setPage={setPage}
+              form={profileForm}
+              setForm={setProfileForm}
+            />
+          ),
+          career: <></>,
+        }[page]
+      }
+    </View>
   );
 }
