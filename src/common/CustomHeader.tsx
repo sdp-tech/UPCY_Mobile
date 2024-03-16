@@ -68,6 +68,10 @@ const CustomHeader = ({ onSearch, onAlarm, }: CustomHeaderProps) => {
   
   const [selectedTab, setSelectedTab] = useState<'Goods' | 'Market'>('Goods');
  
+  useEffect(() =>{
+    setSelectedTab(selectedTab);
+  }, [selectedTab])
+  
   //눌렀을 때 색 변경 및 font weight,size 변경 안 됨?
   return (<>
 
