@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Filter from './Filter';
 import { Subtitle18B } from '../styles/GlobalText';
 import { PURPLE, BLACK } from '../styles/GlobalColor';
@@ -13,9 +13,10 @@ interface filterBoxProps {
   list: string[];
   onPress: (value: string) => void;
   type: filterType;
+  label?: string;
 }
 
-const FilterBox = ({ list, onPress, type }: filterBoxProps) => {
+const FilterBox = ({ list, onPress, type, label }: filterBoxProps) => {
   const filterList: filterListType = {
     style: [
       '빈티지',
@@ -58,18 +59,26 @@ const FilterBox = ({ list, onPress, type }: filterBoxProps) => {
   };
   return (
     <View>
-      {filterList[type].map((value, index) => {
-        return (
-          <Filter
-            value={value}
-            pressed={list.includes(value)}
-            onPress={() => {
-              onPress(value);
-            }}
-            key={index}
-          />
-        );
-      })}
+      <Subtitle18B style={{ color: PURPLE }}>{label}</Subtitle18B>
+      <View
+        style={{
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          marginVertical: 12,
+        }}>
+        {filterList[type].map((value, index) => {
+          return (
+            <Filter
+              value={value}
+              pressed={list.includes(value)}
+              onPress={() => {
+                onPress(value);
+              }}
+              key={index}
+            />
+          );
+        })}
+      </View>
     </View>
   );
 };

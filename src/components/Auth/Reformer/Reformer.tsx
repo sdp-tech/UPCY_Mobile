@@ -19,6 +19,7 @@ import {
   StyleType,
 } from '../../../types/UserTypes';
 import ProfileSubmit from './ProfileSubmit';
+import ReformFormStyle from './ReformFormStyle';
 
 type page = 'profile' | 'style' | 'career';
 
@@ -112,7 +113,7 @@ export default function Reformer({ navigation }: FormProps) {
             />
           ),
           style: (
-            <ProfileSubmit
+            <ReformFormStyle
               page={page}
               setPage={setPage}
               form={profileForm}
