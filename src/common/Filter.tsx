@@ -6,11 +6,12 @@ interface FilterProps {
   value: string;
   pressed: boolean;
   onPress: () => void;
+  pressable?: boolean;
 }
 
-const Filter = ({ value, pressed, onPress }: FilterProps) => {
+const Filter = ({ value, pressed, onPress, pressable }: FilterProps) => {
   return (
-    <FilterContainer pressed={pressed} onPress={onPress}>
+    <FilterContainer pressed={pressed} onPress={onPress} disabled={!pressable}>
       <Filter14M style={{ color: pressed ? 'white' : BLACK }}>
         {value}
       </Filter14M>

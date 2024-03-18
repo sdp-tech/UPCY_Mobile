@@ -13,10 +13,17 @@ interface filterBoxProps {
   list: string[];
   onPress: (value: string) => void;
   type: filterType;
+  setPressable?: (value: string) => boolean;
   label?: string;
 }
 
-const FilterBox = ({ list, onPress, type, label }: filterBoxProps) => {
+const FilterBox = ({
+  list,
+  onPress,
+  type,
+  label,
+  setPressable,
+}: filterBoxProps) => {
   const filterList: filterListType = {
     style: [
       '빈티지',
@@ -71,6 +78,7 @@ const FilterBox = ({ list, onPress, type, label }: filterBoxProps) => {
             <Filter
               value={value}
               pressed={list.includes(value)}
+              pressable={setPressable ? setPressable(value) : true}
               onPress={() => {
                 onPress(value);
               }}

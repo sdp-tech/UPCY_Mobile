@@ -70,6 +70,11 @@ export default function ReformFormStyle({
     }
   };
 
+  const setPressable = (value: string) => {
+    if (list.length < 3 || list.includes(value)) return true;
+    else return false;
+  };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View
@@ -87,12 +92,14 @@ export default function ReformFormStyle({
               onPress={handlePress}
               type="style"
               label="스타일"
+              setPressable={setPressable}
             />
             <FilterBox
               list={list}
               onPress={handlePress}
               type="material"
               label="특수소재"
+              setPressable={setPressable}
             />
           </View>
         </View>
