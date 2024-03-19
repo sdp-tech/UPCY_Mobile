@@ -12,6 +12,7 @@ import CheckIcon from '../../assets/common/CheckIcon.svg';
 import DownArrow from '../../assets/common/DownArrow.svg';
 import RightArrow from '../../assets/common/RightArrow.svg';
 import LeftArrow from '../../assets/common/Arrow.svg';
+import Logo from '../../assets/common/Logo.svg';
 import { FormProps } from './SignIn';
 import { useState } from 'react';
 import InputBox from '../../common/InputBox';
@@ -34,8 +35,8 @@ interface CheckBtnProps {
 
 const InputView = styled.View`
   position: relative;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-top: 8px;
+  margin-bottom: 8px;
 `;
 
 const TermsView = styled(InputView)`
@@ -107,9 +108,14 @@ export default function BasicForm({ navigation, route }: FormProps) {
           }}>
           <LeftArrow color="#222" />
         </TouchableOpacity>
+        <Logo
+          color="#612FEF"
+          width={150}
+          height={40}
+          style={{ alignSelf: 'center', marginVertical: 20 }}
+        />
         <View
           style={{
-            marginTop: 70,
             marginHorizontal: width * 0.04,
             flex: 1,
           }}>

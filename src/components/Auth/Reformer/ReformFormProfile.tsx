@@ -8,7 +8,7 @@ function ProfilePic({}) {
   return (
     <View
       style={{
-        marginTop: 15,
+        marginTop: 30,
 
         alignSelf: 'center',
         position: 'relative',

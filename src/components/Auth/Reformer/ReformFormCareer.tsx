@@ -17,9 +17,11 @@ import { ReformProps } from './Reformer';
 import BottomButton from '../../../common/BottomButton';
 import RightArrow from '../../../assets/common/RightArrow.svg';
 import PlusIcon from '../../../assets/common/Plus.svg';
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import FilterBox from '../../../common/FilterBox';
 import { BLACK, BLACK2, GRAY } from '../../../styles/GlobalColor';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import EducationModal from './EducationModal';
 
 const SelectView = styled.View`
   display: flex;
@@ -61,6 +63,7 @@ const AddTouchable = styled.TouchableOpacity`
 
 export default function ReformCareer({ setPage, form, setForm }: ReformProps) {
   const { width } = Dimensions.get('screen');
+  const [educationModal, setEducationModal] = useState(false);
 
   const handleAddCareer = () => {};
 
@@ -74,7 +77,10 @@ export default function ReformCareer({ setPage, form, setForm }: ReformProps) {
           <View style={styles.formView}>
             <Subtitle16B>학력 전공을 작성해 주세요</Subtitle16B>
             <SelectView>
-              <SelectTouchable onPress={() => {}}>
+              <SelectTouchable
+                onPress={() => {
+                  setEducationModal(true);
+                }}>
                 {form.education.school === '' ? (
                   <Body14M style={{ color: BLACK2 }}>추가해 주세요</Body14M>
                 ) : (
@@ -123,6 +129,12 @@ export default function ReformCareer({ setPage, form, setForm }: ReformProps) {
           />
         </View>
       </View>
+      <EducationModal
+        open={educationModal}
+        setOpen={setEducationModal}
+        form={form}
+        setForm={setForm}
+      />
     </SafeAreaView>
   );
 }

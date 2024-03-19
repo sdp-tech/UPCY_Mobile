@@ -21,11 +21,18 @@ import {
 import ProfileSubmit from './ProfileSubmit';
 import ReformFormStyle from './ReformFormStyle';
 import ReformCareer from './ReformFormCareer';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 type page = 'profile' | 'style' | 'career';
 
 export interface ReformProps {
   setPage: Dispatch<SetStateAction<page>>;
+  form: ReformProfileType;
+  setForm: Dispatch<SetStateAction<ReformProfileType>>;
+}
+export interface ModalProps {
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
   form: ReformProfileType;
   setForm: Dispatch<SetStateAction<ReformProfileType>>;
 }
@@ -91,46 +98,48 @@ export default function Reformer({ navigation }: FormProps) {
 
   return (
     <View style={{ flex: 1 }}>
-      <ReformFormHeader
-        step={{ profile: 1, style: 2, career: 3 }[page]}
-        onPressLeft={
+      <BottomSheetModalProvider>
+        <ReformFormHeader
+          step={{ profile: 1, style: 2, career: 3 }[page]}
+          onPressLeft={
+            {
+              profile: () => {
+                navigation.goBack();
+              },
+              style: () => {
+                setPage('profile');
+              },
+              career: () => {
+                setPage('style');
+              },
+            }[page]
+          }
+        />
+        {
           {
-            profile: () => {
-              navigation.goBack();
-            },
-            style: () => {
-              setPage('profile');
-            },
-            career: () => {
-              setPage('style');
-            },
+            profile: (
+              <ReformFormProfile
+                setPage={setPage}
+                form={profileForm}
+                setForm={setProfileForm}
+              />
+            ),
+            style: (
+              <ReformFormStyle
+                setPage={setPage}
+                form={profileForm}
+                setForm={setProfileForm}
+              />
+            ),
+            career: (
+              <ReformCareer
+                setPage={setPage}
+                form={profileForm}
+                setForm={setProfileForm}></ReformCareer>
+            ),
           }[page]
         }
-      />
-      {
-        {
-          profile: (
-            <ReformFormProfile
-              setPage={setPage}
-              form={profileForm}
-              setForm={setProfileForm}
-            />
-          ),
-          style: (
-            <ReformFormStyle
-              setPage={setPage}
-              form={profileForm}
-              setForm={setProfileForm}
-            />
-          ),
-          career: (
-            <ReformCareer
-              setPage={setPage}
-              form={profileForm}
-              setForm={setProfileForm}></ReformCareer>
-          ),
-        }[page]
-      }
+      </BottomSheetModalProvider>
     </View>
   );
 }
