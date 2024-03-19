@@ -20,11 +20,11 @@ import {
 } from '../../../types/UserTypes';
 import ProfileSubmit from './ProfileSubmit';
 import ReformFormStyle from './ReformFormStyle';
+import ReformCareer from './ReformFormCareer';
 
 type page = 'profile' | 'style' | 'career';
 
 export interface ReformProps {
-  page: page;
   setPage: Dispatch<SetStateAction<page>>;
   form: ReformProfileType;
   setForm: Dispatch<SetStateAction<ReformProfileType>>;
@@ -51,9 +51,9 @@ type ReformProfileType = {
   introduce: string;
   link: string;
   region: RegionType;
-  style: StyleType;
-  material: MaterialType;
-  education: EducType[];
+  style: string[];
+  material: string[];
+  education: EducType;
   career: CareerType;
 };
 
@@ -76,8 +76,13 @@ export default function Reformer({ navigation }: FormProps) {
     region: undefined,
     style: [],
     material: [],
-    education: [],
-    career: undefined,
+    education: {
+      school: '',
+      major: '',
+      status: undefined,
+      file: undefined,
+    },
+    career: [],
   };
   const [page, setPage] = useState<page>('profile');
   const [profileForm, setProfileForm] = useState(defaultProfile);
@@ -106,7 +111,6 @@ export default function Reformer({ navigation }: FormProps) {
         {
           profile: (
             <ReformFormProfile
-              page={page}
               setPage={setPage}
               form={profileForm}
               setForm={setProfileForm}
@@ -114,13 +118,17 @@ export default function Reformer({ navigation }: FormProps) {
           ),
           style: (
             <ReformFormStyle
-              page={page}
               setPage={setPage}
               form={profileForm}
               setForm={setProfileForm}
             />
           ),
-          career: <></>,
+          career: (
+            <ReformCareer
+              setPage={setPage}
+              form={profileForm}
+              setForm={setProfileForm}></ReformCareer>
+          ),
         }[page]
       }
     </View>

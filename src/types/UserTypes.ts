@@ -6,10 +6,41 @@ export type RegionType = '서울 전체' | '광진구' | '관악구' | undefined
 export type EducType = {
   school: string;
   major: string;
-  status: '재학' | '휴학' | '졸업' | '수료';
+  status: '재학' | '휴학' | '졸업' | '수료' | undefined;
   file: undefined;
   // 파일 형식 추가
 };
 
-export type CareerType = undefined;
+type Careers = {
+  name: string;
+  file: undefined;
+};
+type FreelancerType = Careers & {};
+type InternType = Careers & {
+  team: string;
+  position: string;
+  start: string;
+  end: string;
+};
+type ContestType = Careers & {
+  host: string;
+  date: string;
+};
+type CertificateType = Careers & {
+  host: string;
+  date: string;
+};
+type OutsourcingType = Careers & {
+  client: string;
+  content: string;
+  start: string;
+  end: string;
+};
+export type CareerType = (
+  | FreelancerType
+  | InternType
+  | ContestType
+  | CertificateType
+  | OutsourcingType
+)[];
 // 종류별 타입 정의
