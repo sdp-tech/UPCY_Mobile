@@ -5,18 +5,13 @@ import {
   TouchableOpacity,
   TextInput,
 } from 'react-native';
-import {
-  Body16B,
-  Body16M,
-  Caption11M,
-  Subtitle16B,
-  Title20B,
-} from '../../styles/GlobalText';
+import { Body16B, Body16M, Caption11M } from '../../styles/GlobalText';
 import styled from 'styled-components/native';
 import { BLACK, BLACK2, GRAY, PURPLE } from '../../styles/GlobalColor';
 import CheckIcon from '../../assets/common/CheckIcon.svg';
 import DownArrow from '../../assets/common/DownArrow.svg';
 import RightArrow from '../../assets/common/RightArrow.svg';
+import LeftArrow from '../../assets/common/Arrow.svg';
 import { FormProps } from './SignIn';
 import { useState } from 'react';
 import InputBox from '../../common/InputBox';
@@ -24,7 +19,6 @@ import BottomButton from '../../common/BottomButton';
 import Dropdown from '../../common/Dropdown';
 import RegionModal from './RegionModal';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 interface SignupProps {
   mail: string;
@@ -104,9 +98,18 @@ export default function BasicForm({ navigation, route }: FormProps) {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <BottomSheetModalProvider>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={{
+            alignSelf: 'flex-start',
+            marginTop: height * 0.02,
+            marginLeft: width * 0.03,
+          }}>
+          <LeftArrow color="#222" />
+        </TouchableOpacity>
         <View
           style={{
-            marginTop: 100,
+            marginTop: 70,
             marginHorizontal: width * 0.04,
             flex: 1,
           }}>

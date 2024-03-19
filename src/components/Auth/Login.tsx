@@ -6,7 +6,6 @@ import {
   Platform,
   TouchableOpacity,
   Alert,
-
 } from 'react-native';
 import { GREEN, PURPLE, BLACK } from '../../styles/GlobalColor';
 import { useState, Fragment } from 'react';
@@ -71,7 +70,6 @@ export default function Login({ navigation, route }: LoginProps) {
       console.log(response);
       Alert.alert('로그인에 실패했습니다.');
     }
-
   };
 
   return (
@@ -92,7 +90,12 @@ export default function Login({ navigation, route }: LoginProps) {
           }}>
           <LeftArrow color="#fff" />
         </TouchableOpacity>
-        <Logo color="#fff" width="100px" style={{ marginTop: height * 0.17 }} />
+        <Logo
+          color="#fff"
+          width="90px"
+          height="40px"
+          style={{ marginTop: height * 0.17, marginBottom: 20 }}
+        />
         <View style={{ marginTop: height * 0.02 }}>
           <LoginInput
             placeholder="아이디"
