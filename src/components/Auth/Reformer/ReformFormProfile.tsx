@@ -1,10 +1,8 @@
 import { SafeAreaView, View, Dimensions, TouchableOpacity } from 'react-native';
-import { Title20B } from '../../../styles/GlobalText';
 import { ReformProps } from './Reformer';
 import BottomButton from '../../../common/BottomButton';
 import PencilIcon from '../../../assets/common/Pencil.svg';
 import InputView from '../../../common/InputView';
-import { useEffect } from 'react';
 
 function ProfilePic({}) {
   return (
@@ -44,7 +42,6 @@ function ProfilePic({}) {
 }
 
 export default function ReformFormProfile({
-  page,
   setPage,
   form,
   setForm,

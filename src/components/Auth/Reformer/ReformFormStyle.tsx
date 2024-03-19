@@ -1,60 +1,12 @@
-import {
-  SafeAreaView,
-  View,
-  Dimensions,
-  TouchableOpacity,
-  StyleSheet,
-} from 'react-native';
+import { SafeAreaView, View, Dimensions, StyleSheet } from 'react-native';
 import { Caption11M, Title20B } from '../../../styles/GlobalText';
 import { ReformProps } from './Reformer';
 import BottomButton from '../../../common/BottomButton';
-import PencilIcon from '../../../assets/common/Pencil.svg';
-import InputView from '../../../common/InputView';
-import { useEffect, useState } from 'react';
-import Hashtag from '../../../common/Hashtag';
-import Filter from '../../../common/Filter';
+import { useState } from 'react';
 import FilterBox from '../../../common/FilterBox';
 import { BLACK } from '../../../styles/GlobalColor';
 
-function ProfilePic({}) {
-  return (
-    <View
-      style={{
-        marginTop: 15,
-
-        alignSelf: 'center',
-        position: 'relative',
-      }}>
-      <TouchableOpacity>
-        <View
-          style={{
-            width: 82,
-            height: 82,
-            borderRadius: 100,
-            backgroundColor: '#D9D9D9',
-          }}></View>
-      </TouchableOpacity>
-      <View
-        style={{
-          position: 'absolute',
-          backgroundColor: '#303441',
-          width: 32,
-          height: 32,
-          borderRadius: 100,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          bottom: 0,
-          right: 0,
-        }}>
-        <PencilIcon strokeWidth={1} />
-      </View>
-    </View>
-  );
-}
-
 export default function ReformFormStyle({
-  page,
   setPage,
   form,
   setForm,
@@ -62,16 +14,37 @@ export default function ReformFormStyle({
   const { width } = Dimensions.get('screen');
   const [list, setList] = useState<string[]>([]);
 
-  const handlePress = (value: string) => {
-    if (list.includes(value)) {
-      setList(list.filter(v => v !== value));
+  const handleStylePress = (value: string) => {
+    if (form.style.includes(value)) {
+      setForm(prev => {
+        return { ...prev, style: prev.style.filter(v => v !== value) };
+      });
     } else {
-      setList(prev => [...prev, value]);
+      setForm(prev => {
+        return { ...prev, style: [...prev.style, value] };
+      });
+    }
+  };
+
+  const handleMaterialPress = (value: string) => {
+    if (form.material.includes(value)) {
+      setForm(prev => {
+        return { ...prev, material: prev.material.filter(v => v !== value) };
+      });
+    } else {
+      setForm(prev => {
+        return { ...prev, material: [...prev.material, value] };
+      });
     }
   };
 
   const setPressable = (value: string) => {
-    if (list.length < 3 || list.includes(value)) return true;
+    if (
+      form.style.length + form.material.length < 3 ||
+      form.style.includes(value) ||
+      form.material.includes(value)
+    )
+      return true;
     else return false;
   };
 
@@ -88,15 +61,15 @@ export default function ReformFormStyle({
           </View>
           <View>
             <FilterBox
-              list={list}
-              onPress={handlePress}
+              list={form.style}
+              onPress={handleStylePress}
               type="style"
               label="스타일"
               setPressable={setPressable}
             />
             <FilterBox
-              list={list}
-              onPress={handlePress}
+              list={form.material}
+              onPress={handleMaterialPress}
               type="material"
               label="특수소재"
               setPressable={setPressable}
@@ -105,7 +78,7 @@ export default function ReformFormStyle({
         </View>
         <View style={styles.bottomView}>
           <Caption11M style={{ color: 'white' }}>
-            최대 선택 개수 {list.length}/3개
+            최대 선택 개수 {form.style.length + form.material.length}/3개
           </Caption11M>
         </View>
         <View style={{ marginHorizontal: width * 0.04 }}>
