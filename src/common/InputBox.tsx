@@ -1,13 +1,13 @@
 import { Dispatch, SetStateAction } from 'react';
-import { TextInput, TextInputProps } from 'react-native';
+import { TextInput, TextInputProps, TextStyle } from 'react-native';
 import { BLACK2 } from '../styles/GlobalColor';
 
-interface InputBoxProps extends TextInputProps {
+export interface InputBoxProps extends TextInputProps {
   value: string;
   setValue: (value: string) => void;
-  placeholder: string;
+  placeholder?: string;
   long?: boolean;
-  style?: any;
+  style?: TextStyle;
   secure?: boolean;
 }
 
@@ -25,7 +25,7 @@ const InputBox = ({
       secureTextEntry={secure}
       value={value}
       onChangeText={setValue}
-      placeholder={placeholder}
+      placeholder={placeholder ? placeholder : '입력해 주세요.'}
       placeholderTextColor={BLACK2}
       multiline={long}
       autoCapitalize="none"
@@ -33,7 +33,8 @@ const InputBox = ({
       style={{
         marginVertical: 5,
         width: '100%',
-        height: 100,
+        height: long ? 100 : 44,
+        paddingTop: long ? 10 : 0,
         borderWidth: 2,
         borderColor: BLACK2,
         borderRadius: 5,

@@ -5,18 +5,14 @@ import {
   TouchableOpacity,
   TextInput,
 } from 'react-native';
-import {
-  Body16B,
-  Body16M,
-  Caption11M,
-  Subtitle16B,
-  Title20B,
-} from '../../styles/GlobalText';
+import { Body16B, Body16M, Caption11M } from '../../styles/GlobalText';
 import styled from 'styled-components/native';
 import { BLACK, BLACK2, GRAY, PURPLE } from '../../styles/GlobalColor';
 import CheckIcon from '../../assets/common/CheckIcon.svg';
 import DownArrow from '../../assets/common/DownArrow.svg';
 import RightArrow from '../../assets/common/RightArrow.svg';
+import LeftArrow from '../../assets/common/Arrow.svg';
+import Logo from '../../assets/common/Logo.svg';
 import { FormProps } from './SignIn';
 import { useState } from 'react';
 import InputBox from '../../common/InputBox';
@@ -24,7 +20,6 @@ import BottomButton from '../../common/BottomButton';
 import Dropdown from '../../common/Dropdown';
 import RegionModal from './RegionModal';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 interface SignupProps {
   mail: string;
@@ -40,8 +35,8 @@ interface CheckBtnProps {
 
 const InputView = styled.View`
   position: relative;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-top: 8px;
+  margin-bottom: 8px;
 `;
 
 const TermsView = styled(InputView)`
@@ -104,9 +99,23 @@ export default function BasicForm({ navigation, route }: FormProps) {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <BottomSheetModalProvider>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={{
+            alignSelf: 'flex-start',
+            marginTop: height * 0.02,
+            marginLeft: width * 0.03,
+          }}>
+          <LeftArrow color="#222" />
+        </TouchableOpacity>
+        <Logo
+          color="#612FEF"
+          width={150}
+          height={40}
+          style={{ alignSelf: 'center', marginVertical: 20 }}
+        />
         <View
           style={{
-            marginTop: 100,
             marginHorizontal: width * 0.04,
             flex: 1,
           }}>

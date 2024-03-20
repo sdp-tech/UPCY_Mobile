@@ -1,25 +1,46 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useState } from 'react';
+import {
+  Dispatch,
+  SetStateAction,
+  createContext,
+  useContext,
+  useState,
+} from 'react';
+import { View } from 'react-native';
+import { FormProps } from '../SignIn';
 import ReformFormHeader from './ReformFormHeader';
 import BasicForm from '../BasicForm';
 import ReformFormProfile from './ReformFormProfile';
+import {
+  CareerType,
+  EducType,
+  MaterialType,
+  RegionType,
+  StyleType,
+} from '../../../types/UserTypes';
+import ProfileSubmit from './ProfileSubmit';
+import ReformFormStyle from './ReformFormStyle';
+import ReformCareer from './ReformFormCareer';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+
+type page = 'profile' | 'style' | 'career';
 
 export interface ReformProps {
-  navigation: any;
-  route: any;
+  setPage: Dispatch<SetStateAction<page>>;
+  form: ReformProfileType;
+  setForm: Dispatch<SetStateAction<ReformProfileType>>;
+}
+export interface ModalProps {
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+  form: ReformProfileType;
+  setForm: Dispatch<SetStateAction<ReformProfileType>>;
 }
 
 export type ReformStackParams = {
-  Basic: {
-    form: BasicFormProp;
-    setForm: React.Dispatch<React.SetStateAction<BasicFormProp>>;
-    handleSubmit: () => void;
-  };
-  Profile: {
-    goBack: () => void;
-    goNext: () => void;
-    title: string;
-  };
+  Basic: {};
+  Profile: {};
+  tmp: {};
 };
 
 interface BasicFormProp {
@@ -30,44 +51,95 @@ interface BasicFormProp {
   marketing: boolean;
 }
 
-export default function Reformer() {
-  const [steps, setSteps] = useState(1);
-  const [basicform, setBasicform] = useState({
-    email: '',
-    mailDomain: '',
-    password: '',
-    region: '',
-    marketing: false,
-  });
-  const Stack = createNativeStackNavigator<ReformStackParams>();
+type ReformProfileType = {
+  picture: any;
+  nickname: string;
+  market: string;
+  introduce: string;
+  link: string;
+  region: RegionType;
+  style: string[];
+  material: string[];
+  education: EducType;
+  career: CareerType;
+};
 
-  const handleSubmit = () => {
-    console.log(basicform);
+export type RpContextType = {
+  value: ReformProfileType;
+  steps: number;
+  setValue: Dispatch<SetStateAction<ReformProfileType>>;
+  setSteps: Dispatch<SetStateAction<number>>;
+};
+
+export const ReformProfileContext = createContext<RpContextType | null>(null);
+
+export default function Reformer({ navigation }: FormProps) {
+  const defaultProfile: ReformProfileType = {
+    picture: null,
+    nickname: '',
+    market: '',
+    introduce: '',
+    link: '',
+    region: undefined,
+    style: [],
+    material: [],
+    education: {
+      school: '',
+      major: '',
+      status: undefined,
+      file: undefined,
+    },
+    career: [],
   };
+  const [page, setPage] = useState<page>('profile');
+  const [profileForm, setProfileForm] = useState(defaultProfile);
+
+  console.log('rerender');
 
   return (
-    <Stack.Navigator
-      initialRouteName="Basic"
-      screenOptions={{
-        header: ({ navigation, route }) => (
-          <ReformFormHeader step={steps} navigation={navigation} />
-        ),
-      }}>
-      <Stack.Screen
-        name="Basic"
-        component={BasicForm}
-        options={{ headerShown: false }}
-        initialParams={{
-          form: basicform,
-          setForm: setBasicform,
-          handleSubmit: handleSubmit,
-        }}
-      />
-      <Stack.Screen
-        name="Profile"
-        component={ReformFormProfile}
-        initialParams={{ goNext: () => setSteps(2), title: '테스트' }}
-      />
-    </Stack.Navigator>
+    <View style={{ flex: 1 }}>
+      <BottomSheetModalProvider>
+        <ReformFormHeader
+          step={{ profile: 1, style: 2, career: 3 }[page]}
+          onPressLeft={
+            {
+              profile: () => {
+                navigation.goBack();
+              },
+              style: () => {
+                setPage('profile');
+              },
+              career: () => {
+                setPage('style');
+              },
+            }[page]
+          }
+        />
+        {
+          {
+            profile: (
+              <ReformFormProfile
+                setPage={setPage}
+                form={profileForm}
+                setForm={setProfileForm}
+              />
+            ),
+            style: (
+              <ReformFormStyle
+                setPage={setPage}
+                form={profileForm}
+                setForm={setProfileForm}
+              />
+            ),
+            career: (
+              <ReformCareer
+                setPage={setPage}
+                form={profileForm}
+                setForm={setProfileForm}></ReformCareer>
+            ),
+          }[page]
+        }
+      </BottomSheetModalProvider>
+    </View>
   );
 }
