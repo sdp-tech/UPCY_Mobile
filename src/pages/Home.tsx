@@ -8,7 +8,7 @@ import {
   createStackNavigator,
 } from '@react-navigation/stack';
 import { TabProps } from '../../App';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 
 import CustomHeader from '../common/CustomHeader';
 import HomeTabView from '../components/Home/HomeMain';
@@ -73,31 +73,43 @@ const HomeMainScreen = ({
 }: StackScreenProps<HomeStackParams, 'Home'>) => {
   return (
     <SafeAreaView>
-      <CustomHeader onSearch={() => {}} />
-      <HomeTabView onSearch={() => {}} />
-      <TouchableOpacity onPress={() => navigation.navigate('Market')}>
-        <Text>마켓</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('QuotationForm')}>
-        <Text>견적서</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('QuotationPage')}>
-        <Text>견적서 확인</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('ServiceDetailPage', {})}>
-        <Text>서비스 디테일</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('ServiceRegistrationPage')}>
-        <Text>서비스등록</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('GoodsDetailPage')}>
-        <Text>상품 디테일</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('GoodsRegistrationPage')}>
-        <Text>상품등록</Text>
-      </TouchableOpacity>
+      <CustomHeader onSearch={() => { }} />
+      <HomeTabView onSearch={() => { }} />
+      <ScrollView>
+        <Button onPress={() => navigation.navigate('Market')}>
+          <Text>마켓</Text>
+        </Button>
+        <Button onPress={() => navigation.navigate('QuotationForm')}>
+          <Text>견적서</Text>
+        </Button>
+        <Button onPress={() => navigation.navigate('QuotationPage')}>
+          <Text>견적서 확인</Text>
+        </Button>
+        <Button onPress={() => navigation.navigate('ServiceDetailPage', {})}>
+          <Text>서비스 디테일</Text>
+        </Button>
+        <Button onPress={() => navigation.navigate('ServiceRegistrationPage')}>
+          <Text>서비스등록</Text>
+        </Button>
+        <Button onPress={() => navigation.navigate('GoodsDetailPage')}>
+          <Text>상품 디테일</Text>
+        </Button>
+        <Button onPress={() => navigation.navigate('GoodsRegistrationPage')}>
+          <Text>상품등록</Text>
+        </Button>
+      </ScrollView>
     </SafeAreaView>
   );
 };
+
+const Button = styled.TouchableOpacity`
+  background-color: white;
+  padding: 10px;
+  margin-top: 10px;
+  margin-left: 15px;
+  margin-right: 15px;
+  border: #612FEF;
+  border-radius: 14px;
+`
 
 export default HomeScreen;
