@@ -27,16 +27,16 @@ const ServiceDetailPageScreen = ({ navigation, route }: StackScreenProps<HomeSta
       screenOptions={() => ({
         headerShown: false,
       })}>
-      <DetailPageStack.Screen name='DetailPage' component={ServiceDetailPageMainScreen}/>
+      <DetailPageStack.Screen name='DetailPage' component={ServiceDetailPageMainScreen} />
     </DetailPageStack.Navigator>
   );
 };
 
-const ProfileSection = ({ navigation }: {navigation:any}) => {
+const ProfileSection = ({ navigation }: { navigation: any }) => {
   const [data, setData] = useState([]);
   return (
     <View>
-      <View style={{justifyContent:"space-between",flexDirection: "row", height: 50, alignItems: 'center'}}>
+      <View style={{ justifyContent: "space-between", flexDirection: "row", height: 50, alignItems: 'center' }}>
         <TouchableOpacity onPress={() => {
           navigation.goBack();
         }}>
@@ -45,7 +45,7 @@ const ProfileSection = ({ navigation }: {navigation:any}) => {
         <TouchableOpacity onPress={() => {
           navigation.goBack();
         }}>
-          <Search stroke={'black'}/>
+          <Search stroke={'black'} />
         </TouchableOpacity>
       </View>
       <CardView // 데이터 들어오면 렌더링
@@ -55,7 +55,7 @@ const ProfileSection = ({ navigation }: {navigation:any}) => {
         pageWidth={width}
         dot={true}
         renderItem={({ item }: any) => (
-          <View style={{width: width, height: height * 0.4}}><UnFilledLike color={'black'}/></View>
+          <View style={{ width: width, height: height * 0.4 }}><UnFilledLike color={'black'} /></View>
           // <CurationItemCard
           //   rep={true}
           //   data={item}
@@ -63,24 +63,23 @@ const ProfileSection = ({ navigation }: {navigation:any}) => {
           // />
         )}
       />
-        {/* 컴포넌트로 변경 예정 */}
-        <View style={TextStyles.borderBottom}>
-          <Text style={TextStyles.Sub}>#키워드 #키워드 #키워드 #키워드 #키워드</Text>
-          <Text style={TextStyles.Title}>서비스 이름</Text>
-          <Text style={TextStyles.PriceInfo}>기본: <Text style={TextStyles.Price}>20000원</Text></Text>
-          <Text style={TextStyles.PriceInfo}>최대: <Text style={TextStyles.Price}>20000원</Text></Text>
-        </View>
-        {/* 컴포넌트로 변경 예정 */}
-        <View style={{...TextStyles.borderBottom, justifyContent: 'space-between'}}>
-          <View style={{ padding:15, flexDirection:'row'}}>
-            <View style={{backgroundColor:"gray", width:50, height:50, borderRadius:25}}></View>
-            <View style={{marginLeft: 20, justifyContent:'center'}}>
-              <Text style={{fontSize:16, padding: 3, fontWeight:'700', color:'#000'}}>마켓명 &gt;</Text>
-              <Text style={{fontSize:16, padding: 3, color:'#000'}}>리폼러닉네임</Text>
-            </View>
+      {/* 컴포넌트로 변경 예정 */}
+      <View style={TextStyles.borderBottom1}>
+        <Text style={TextStyles.Title}>서비스 이름</Text>
+        <Text style={TextStyles.PriceInfo}>기본: <Text style={TextStyles.Price}>20,000 원</Text></Text>
+        <Text style={TextStyles.PriceInfo}>최대: <Text style={TextStyles.Price}>20,000 원</Text></Text>
+      </View>
+      {/* 컴포넌트로 변경 예정 */}
+      <View style={{ ...TextStyles.borderBottom2, justifyContent: 'space-between' }}>
+        <View style={{ padding: 15, flexDirection: 'row' }}>
+          <View style={{ backgroundColor: "gray", width: 50, height: 50, borderRadius: 25 }}></View>
+          <View style={{ marginLeft: 20, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 16, padding: 3, fontWeight: '700', color: '#000' }}>마켓명 &gt;</Text>
+            <Text style={{ fontSize: 16, padding: 3, color: '#000' }}>리폼러닉네임</Text>
           </View>
         </View>
-        </View>
+      </View>
+    </View>
   )
 }
 
@@ -88,14 +87,14 @@ const ServiceDetailPageMainScreen = ({ navigation }: StackScreenProps<DetailPage
   const layout = useWindowDimensions();
   const [index, setIndex] = useState<number>(0);
   const [routes] = useState([
-    { key: 'detail', title: '상세설명'},
+    { key: 'detail', title: '상세설명' },
     { key: 'option', title: '필독사항' },
-    { key: 'review', title: '리뷰'}
+    { key: 'review', title: '리뷰' }
   ]);
-  
+
   return (
-    <View style={{flex:1}}>
-        <Tabs.Container
+    <View style={{ flex: 1 }}>
+      <Tabs.Container
         renderHeader={props => <ProfileSection navigation={navigation} />}
         headerContainerStyle={{
           shadowOpacity: 0,
@@ -121,14 +120,14 @@ const ServiceDetailPageMainScreen = ({ navigation }: StackScreenProps<DetailPage
         )}
       >
         {routes.map(route =>
-          (<Tabs.Tab key={route.key} name={route.title}>
-            {route.key === 'detail' && <DetailBox />}
-            {route.key === 'option' && <OptionBox />}
-            {route.key === 'review' && <ReviewPage />}
-          </Tabs.Tab>)
+        (<Tabs.Tab key={route.key} name={route.title}>
+          {route.key === 'detail' && <DetailBox />}
+          {route.key === 'option' && <OptionBox />}
+          {route.key === 'review' && <ReviewPage />}
+        </Tabs.Tab>)
         )}
       </Tabs.Container>
-      <Footer/>
+      <Footer />
     </View>
   )
 }
@@ -137,29 +136,39 @@ const TextStyles = StyleSheet.create({
   Title: {
     // fontFamily:"Inter",
     padding: 10,
-    color: '#000',
-    fontWeight: "600",
-    fontSize: 24,
-    lineHeight: 28,
+    color: '#222222',
+    fontWeight: "700",
+    fontSize: 18,
+    lineHeight: 24,
     width: "100%",
   },
   Sub: {
     width: "70%",
-    fontWeight: "400",
-    padding: 10,
+    fontWeight: "700",
+    paddingLeft: 10,
+    paddingTop: 10,
+    paddingRight: 10,
     fontSize: 14,
+    lineHeight: 24,
     color: "#612EFE",
   },
-  PriceInfo:{
+  PriceInfo: {
     fontWeight: "600",
-    fontSize: 16,
-    padding:10,
+    fontSize: 14,
+    paddingLeft: 10,
+    paddingTop: 5,
+    paddingRight: 10,
+    paddingBottom: 5,
+    color: 'rgba(34, 34, 34, 0.50)',
   },
   Price: {
-    fontWeight: "600",
+    fontWeight: "700",
     fontSize: 16,
-    padding:10,
-    color: '#000',
+    paddingLeft: 10,
+    paddingTop: 5,
+    paddingRight: 10,
+    paddingBottom: 5,
+    color: '#222222',
   },
   recommend: {
     color: "#FFFFFF",
@@ -171,9 +180,13 @@ const TextStyles = StyleSheet.create({
     overflow: "hidden",
     marginTop: 5,
   },
-  borderBottom: {
-    borderBottomWidth:5,
-    borderBlockColor:"#dcdcdc"
+  borderBottom1: {
+    borderBottomWidth: 1,
+    borderBlockColor: "#dcdcdc"
+  },
+  borderBottom2: {
+    borderBottomWidth: 6,
+    borderBlockColor: "#dcdcdc"
   }
 });
 
