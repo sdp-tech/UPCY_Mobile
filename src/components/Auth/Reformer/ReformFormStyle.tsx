@@ -4,6 +4,7 @@ import {
   Dimensions,
   StyleSheet,
   ScrollView,
+  Alert,
 } from 'react-native';
 import { Caption11M, Title20B } from '../../../styles/GlobalText';
 import { ReformProps } from './Reformer';
@@ -20,7 +21,10 @@ export default function ReformFormStyle({
   const { width, height } = Dimensions.get('screen');
 
   const handleStylePress = (value: string) => {
-    if (form.style.includes(value)) {
+    if (ifUnpressable(value)) {
+      Alert.alert('최대 세 개까지 선택 가능합니다.');
+      return;
+    } else if (form.style.includes(value)) {
       setForm(prev => {
         return { ...prev, style: prev.style.filter(v => v !== value) };
       });
@@ -32,7 +36,10 @@ export default function ReformFormStyle({
   };
 
   const handleMaterialPress = (value: string) => {
-    if (form.material.includes(value)) {
+    if (ifUnpressable(value)) {
+      Alert.alert('최대 세 개까지 선택 가능합니다.');
+      return;
+    } else if (form.material.includes(value)) {
       setForm(prev => {
         return { ...prev, material: prev.material.filter(v => v !== value) };
       });
@@ -43,14 +50,14 @@ export default function ReformFormStyle({
     }
   };
 
-  const setPressable = (value: string) => {
+  const ifUnpressable = (value: string) => {
     if (
       form.style.length + form.material.length < 3 ||
       form.style.includes(value) ||
       form.material.includes(value)
     )
-      return true;
-    else return false;
+      return false;
+    else return true;
   };
 
   return (
@@ -73,14 +80,12 @@ export default function ReformFormStyle({
                 onPress={handleStylePress}
                 type="style"
                 label="스타일"
-                setPressable={setPressable}
               />
               <FilterBox
                 list={form.material}
                 onPress={handleMaterialPress}
                 type="material"
                 label="특수소재"
-                setPressable={setPressable}
               />
             </View>
           </View>
