@@ -1,15 +1,7 @@
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import {
-  Dispatch,
-  SetStateAction,
-  createContext,
-  useContext,
-  useState,
-} from 'react';
+import { Dispatch, SetStateAction, createContext, useState } from 'react';
 import { View } from 'react-native';
 import { FormProps } from '../SignIn';
 import ReformFormHeader from './ReformFormHeader';
-import BasicForm from '../BasicForm';
 import ReformFormProfile from './ReformFormProfile';
 import {
   CareerType,
@@ -93,8 +85,6 @@ export default function Reformer({ navigation }: FormProps) {
   };
   const [page, setPage] = useState<page>('profile');
   const [profileForm, setProfileForm] = useState(defaultProfile);
-
-  console.log('rerender');
 
   return (
     <View style={{ flex: 1 }}>

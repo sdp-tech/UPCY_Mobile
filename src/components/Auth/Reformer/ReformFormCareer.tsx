@@ -22,6 +22,7 @@ import FilterBox from '../../../common/FilterBox';
 import { BLACK, BLACK2, GRAY } from '../../../styles/GlobalColor';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import EducationModal from './EducationModal';
+import SelectBox from '../../../common/SelectBox';
 
 const SelectView = styled.View`
   display: flex;
@@ -79,20 +80,13 @@ export default function ReformCareer({ setPage, form, setForm }: ReformProps) {
           <View style={{ marginHorizontal: width * 0.04 }}>
             <View style={styles.formView}>
               <Subtitle16B>학력 전공을 작성해 주세요</Subtitle16B>
-              <SelectView>
-                <SelectTouchable
-                  onPress={() => {
-                    setEducationModal(true);
-                  }}>
-                  {form.education.school === '' ? (
-                    <Body14M style={{ color: BLACK2 }}>추가해 주세요</Body14M>
-                  ) : (
-                    <Body14M>{form.education.school}</Body14M>
-                  )}
-
-                  <PlusIcon color={BLACK2} />
-                </SelectTouchable>
-              </SelectView>
+              <SelectBox
+                value={form.education.school}
+                onPress={() => {
+                  setEducationModal(true);
+                }}
+                add={true}
+              />
             </View>
             <View style={styles.formView}>
               <Subtitle16B>보유한 경력을 작성해 주세요</Subtitle16B>

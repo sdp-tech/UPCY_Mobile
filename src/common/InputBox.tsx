@@ -1,4 +1,3 @@
-import { Dispatch, SetStateAction } from 'react';
 import { TextInput, TextInputProps, TextStyle } from 'react-native';
 import { BLACK2 } from '../styles/GlobalColor';
 
