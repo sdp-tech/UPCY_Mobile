@@ -41,6 +41,7 @@ const ProfileSection = ({ navigation }: { navigation: any }) => {
   const [data, setData] = useState([]);
   return (
     <View>{/* 톱바 부분. 컴포넌트로 변경 필요 */}
+
       <View style={{ flexDirection: "column", height: 80, alignItems: 'center', justifyContent: "space-between" }}>
         <View style={ // To see the top line
           {
