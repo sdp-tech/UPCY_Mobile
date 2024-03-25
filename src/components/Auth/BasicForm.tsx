@@ -21,6 +21,7 @@ import BottomButton from '../../common/BottomButton';
 import Dropdown from '../../common/Dropdown';
 import RegionModal from './RegionModal';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import SelectBox from '../../common/SelectBox';
 
 interface SignupProps {
   mail: string;
@@ -215,17 +216,10 @@ export default function BasicForm({ navigation, route }: FormProps) {
               </InputView>
               <InputView>
                 <Body16B>지역</Body16B>
-                <SelectView style={{ marginVertical: 8, width: '100%' }}>
-                  <TextInput
-                    value={form.region}
-                    style={{ width: '70%' }}
-                    placeholder="선택해 주세요"
-                    placeholderTextColor={BLACK2}
-                    readOnly={true}></TextInput>
-                  <TouchableOpacity onPress={() => setModalOpen(true)}>
-                    <RightArrow stroke={BLACK2} />
-                  </TouchableOpacity>
-                </SelectView>
+                <SelectBox
+                  value={form.region}
+                  onPress={() => setModalOpen(true)}
+                />
               </InputView>
               <TermsView>
                 <Caption11M>만 19세 이상입니다. </Caption11M>

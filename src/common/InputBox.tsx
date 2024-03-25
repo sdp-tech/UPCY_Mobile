@@ -2,7 +2,7 @@ import { TextInput, TextInputProps, TextStyle } from 'react-native';
 import { BLACK2 } from '../styles/GlobalColor';
 
 export interface InputBoxProps extends TextInputProps {
-  value: string;
+  value?: string;
   setValue: (value: string) => void;
   placeholder?: string;
   long?: boolean;

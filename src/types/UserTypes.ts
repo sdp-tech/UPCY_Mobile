@@ -6,7 +6,7 @@ export type RegionType = '서울 전체' | '광진구' | '관악구' | undefined
 export type EducType = {
   school: string;
   major: string;
-  status: '재학' | '휴학' | '졸업' | '수료' | undefined;
+  status: string | undefined;
   file: undefined;
   // 파일 형식 추가
 };

@@ -7,7 +7,7 @@ import RightArrowIcon from '../assets/common/RightArrow.svg';
 import DownArrowIcon from '../assets/common/DownArrow.svg';
 
 export interface SelectBoxProps {
-  value: string;
+  value: string | undefined;
   onPress: () => void;
   add?: boolean;
 }
@@ -23,6 +23,7 @@ const SelectView = styled.View`
   border-color: #929292;
   border-radius: 5px;
   margin-top: 8px;
+  margin-bottom: 5px;
 `;
 
 const SelectTouchable = styled.TouchableOpacity`
@@ -40,12 +41,12 @@ const SelectBox = ({ value, onPress, add }: SelectBoxProps) => {
   return (
     <SelectView>
       <SelectTouchable onPress={onPress}>
-        {value === '' ? (
+        {value ? (
+          <Body14M>{value}</Body14M>
+        ) : (
           <Body14M style={{ color: BLACK2 }}>
             {add ? '추가해 주세요' : '선택해 주세요'}
           </Body14M>
-        ) : (
-          <Body14M>{value}</Body14M>
         )}
 
         {add ? <PlusIcon color={BLACK2} /> : <RightArrowIcon color={BLACK2} />}
