@@ -3,7 +3,6 @@ import { StackScreenProps, createStackNavigator } from '@react-navigation/stack'
 import { HomeStackParams } from '../../../pages/Home';
 import Arrow from '../../../assets/common/Arrow.svg';
 import Search from '../../../assets/common/Search.svg';
-import Community from '../../../assets/common/community.svg';
 import Review from "../../../assets/common/Review.svg";
 import UnFilledLike from '../../../assets/common/UnFilledLike.svg';
 import { useRef, useState } from 'react';
@@ -17,22 +16,23 @@ import ReviewPage from './ReviewPage';
 import styled from 'styled-components';
 
 
-
 const { width, height } = Dimensions.get("window");
 
 export type DetailPageStackParams = {
   DetailPage: undefined;
+  ReviewPage: undefined;
 }
 
 const DetailPageStack = createStackNavigator<DetailPageStackParams>();
 
-const GoodsDetailPageScreen = ({ navigation, route }: StackScreenProps<HomeStackParams, 'GoodsDetailPage'>) => {
+const GoodsDetailPageScreen = ({ navigation, route }: StackScreenProps<HomeStackParams, 'GoodsDetailPage', 'ReviewPage'>) => {
   return (
     <DetailPageStack.Navigator
       screenOptions={() => ({
         headerShown: false,
       })}>
       <DetailPageStack.Screen name='DetailPage' component={GoodsDetailPageMainScreen} />
+      <DetailPageStack.Screen name='ReviewPage' component={ReviewPage} />
     </DetailPageStack.Navigator>
   );
 };
@@ -40,7 +40,7 @@ const GoodsDetailPageScreen = ({ navigation, route }: StackScreenProps<HomeStack
 const ProfileSection = ({ navigation }: { navigation: any }) => {
   const [data, setData] = useState([]);
   return (
-    <View>
+    <View>{/* 톱바 부분. 컴포넌트로 변경 필요 */}
       <View style={{ flexDirection: "column", height: 80, alignItems: 'center', justifyContent: "space-between" }}>
         <View style={ // To see the top line
           {
@@ -104,7 +104,7 @@ const ProfileSection = ({ navigation }: { navigation: any }) => {
             justifyContent: 'center', alignItems: 'center'
           }}>
             <TouchableOpacity onPress={() => {
-              navigation.goBack();
+              navigation.navigate('ReviewPage');
             }}>
               <Review color={BLACK} />
             </TouchableOpacity>
@@ -138,7 +138,6 @@ const GoodsDetailPageMainScreen = ({ navigation }: StackScreenProps<DetailPageSt
   const [routes] = useState([
     { key: 'detail', title: '상세설명' },
     { key: 'option', title: '필독사항' },
-    { key: 'review', title: '리뷰' }
   ]);
 
   return (
@@ -172,7 +171,6 @@ const GoodsDetailPageMainScreen = ({ navigation }: StackScreenProps<DetailPageSt
         (<Tabs.Tab key={route.key} name={route.title}>
           {route.key === 'detail' && <DetailBox />}
           {route.key === 'option' && <OptionBox />}
-          {route.key === 'review' && <ReviewPage />}
         </Tabs.Tab>)
         )}
       </Tabs.Container>
