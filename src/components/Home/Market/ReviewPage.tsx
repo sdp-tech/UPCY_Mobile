@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native';
+import { View, Text, FlatList } from 'react-native';
 import { Tabs } from 'react-native-collapsible-tab-view';
 import styled from 'styled-components/native';
 import StarRating from '../../../common/StarRating';
@@ -10,22 +10,22 @@ import ReviewSummary from '../components/ReviewSummary';
 import Slider from '../../../common/Slider';
 
 const SummarySection = () => {
-  
+
 
   return (
-    <View style={{paddingVertical: 20, paddingHorizontal: 40, borderBottomColor: LIGHTGRAY, borderBottomWidth: 1}}>
-      <ItemContainer style={{marginBottom: 20}}>
-        <View style={{alignItems: 'center', justifyContent: 'center', paddingVertical: 15}}>
-          <Text style={{color: BLACK, fontSize: 40, fontWeight: '700'}}>4.0</Text>
+    <View style={{ paddingVertical: 20, paddingHorizontal: 40, borderBottomColor: LIGHTGRAY, borderBottomWidth: 1 }}>
+      <ItemContainer style={{ marginBottom: 20 }}>
+        <View style={{ alignItems: 'center', justifyContent: 'center', paddingVertical: 15 }}>
+          <Text style={{ color: BLACK, fontSize: 40, fontWeight: '700' }}>4.0</Text>
           <StarRating />
         </View>
-        <View style={{paddingHorizontal: 40, flex: 1}}>
+        <View style={{ paddingHorizontal: 40, flex: 1 }}>
           {[1, 2, 3, 4, 5].map((idx) => {
             return (
-              <ItemContainer style={{alignItems: 'center'}}>
-                <Caption11M style={{marginRight: 5}}>{idx}점</Caption11M>
+              <ItemContainer style={{ alignItems: 'center' }}>
+                <Caption11M style={{ marginRight: 5 }}>{idx}점</Caption11M>
                 <Slider total={20} page={3} rating />
-                <Caption11M style={{marginLeft: 5}}>3</Caption11M>
+                <Caption11M style={{ marginLeft: 5 }}>3</Caption11M>
               </ItemContainer>
             );
           })}
@@ -52,18 +52,18 @@ const ItemContainer = styled.View`
 `
 
 const ReviewPage = () => {
-  
+
   return (
-    <Tabs.FlatList
+    <FlatList
       data={[...new Array(3).keys()]}
       ListHeaderComponent={SummarySection}
-      renderItem={({item}:any) => {
+      renderItem={({ item }: any) => {
         return (
-          <ReviewItem onPress={() => {}} />
+          <ReviewItem onPress={() => { }} />
         )
       }}
       keyExtractor={(item, index) => index.toString()}
-      style={{marginBottom: 60}}
+      style={{ marginBottom: 60 }}
     />
   )
 }
