@@ -14,6 +14,7 @@ export type EducType = {
 type Careers = {
   name: string;
   file: undefined;
+  type: string | undefined;
 };
 type FreelancerType = Careers & {};
 type InternType = Careers & {

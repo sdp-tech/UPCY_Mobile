@@ -10,6 +10,7 @@ export interface SelectBoxProps {
   value: string | undefined;
   onPress: () => void;
   add?: boolean;
+  opened?: boolean;
 }
 
 const SelectView = styled.View`
@@ -37,7 +38,7 @@ const SelectTouchable = styled.TouchableOpacity`
   padding-right: 16px;
 `;
 
-const SelectBox = ({ value, onPress, add }: SelectBoxProps) => {
+const SelectBox = ({ value, onPress, add, opened }: SelectBoxProps) => {
   return (
     <SelectView>
       <SelectTouchable onPress={onPress}>
@@ -49,7 +50,13 @@ const SelectBox = ({ value, onPress, add }: SelectBoxProps) => {
           </Body14M>
         )}
 
-        {add ? <PlusIcon color={BLACK2} /> : <RightArrowIcon color={BLACK2} />}
+        {add ? (
+          <PlusIcon color={BLACK2} />
+        ) : opened ? (
+          <DownArrowIcon color={BLACK2} />
+        ) : (
+          <RightArrowIcon color={BLACK2} />
+        )}
       </SelectTouchable>
     </SelectView>
   );

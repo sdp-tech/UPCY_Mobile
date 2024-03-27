@@ -1,4 +1,6 @@
 import React, {
+  Dispatch,
+  SetStateAction,
   useCallback,
   useEffect,
   useMemo,
@@ -20,13 +22,29 @@ import BottomButton from '../../../common/BottomButton';
 import { ModalProps } from './Reformer';
 import InputView from '../../../common/InputView';
 import SelectBox from '../../../common/SelectBox';
+import Dropdown from '../../../common/Dropdown';
 
-export default function EducationModal({
+interface CareerModalProps extends ModalProps {
+  index: number;
+  setIndex: Dispatch<SetStateAction<number>>;
+}
+
+function CareerDetailSection({ type }: { type: string | undefined }) {
+  return (
+    <View>
+      <Body16B>{type}</Body16B>
+    </View>
+  );
+}
+
+export default function CareerModal({
   open,
   setOpen,
   form,
   setForm,
-}: ModalProps) {
+  index,
+  setIndex,
+}: CareerModalProps) {
   // ref
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const renderBackdrop = useCallback(
@@ -55,7 +73,10 @@ export default function EducationModal({
   }, []);
 
   const handleSheetChanges = useCallback((index: number) => {
-    if (index < 0) setOpen(false);
+    if (index < 0) {
+      setOpen(false);
+      setIndex(-1);
+    }
   }, []);
 
   const renderItem = useCallback(
@@ -63,16 +84,9 @@ export default function EducationModal({
       <View style={{ borderBottomColor: '#d9d9d9', borderBottomWidth: 0.5 }}>
         <TouchableOpacity
           style={styles.selectItem}
-          onPress={() =>
-            setForm(prev => {
-              return {
-                ...prev,
-                education: { ...prev.education, status: item },
-              };
-            })
-          }>
+          onPress={() => handleTypeChange(item)}>
           <Body16B>{item}</Body16B>
-          {item === form.education.status ? <Select /> : <Unselect />}
+          {item === form.career[index].type ? <Select /> : <Unselect />}
         </TouchableOpacity>
       </View>
     ),
@@ -83,8 +97,25 @@ export default function EducationModal({
     if (open) handlePresentModalPress();
   }, [open]);
 
-  const [section, setSection] = useState<'init' | 'status'>('init');
-  const statusList = ['재학', '휴학', '졸업', '수료'];
+  const [section, setSection] = useState<'init' | 'form'>(
+    form.career[index].type === undefined ? 'init' : 'form',
+  );
+  const [dropdown, setDropdown] = useState(false);
+  const statusList = [
+    '프리랜서',
+    '실무 / 인턴',
+    '공모전',
+    '자격증',
+    '기타 (외주)',
+  ];
+
+  const handleTypeChange = (type: string) => {
+    const prevCareer = form.career;
+    prevCareer[index] = { type: type, name: '', file: undefined };
+    setForm(prev => {
+      return { ...prev, career: prevCareer };
+    });
+  };
 
   // renders
   return (
@@ -95,6 +126,27 @@ export default function EducationModal({
       backdropComponent={renderBackdrop}
       onChange={handleSheetChanges}>
       {section === 'init' ? (
+        <>
+          <View style={styles.selectItem}>
+            <Title20B>보유한 경력을 선택해 주세요</Title20B>
+          </View>
+          <BottomSheetFlatList data={statusList} renderItem={renderItem} />
+          <View style={{ marginHorizontal: width * 0.04, marginTop: 'auto' }}>
+            <BottomButton
+              value="다음"
+              pressed={false}
+              disable={form.career[index].type === undefined}
+              onPress={() => setSection('form')}
+              style={{
+                width: '75%',
+                alignSelf: 'center',
+                marginTop: 10,
+                marginBottom: 30,
+              }}
+            />
+          </View>
+        </>
+      ) : (
         <ScrollView
           alwaysBounceVertical={false}
           contentContainerStyle={{ flexGrow: 1, minHeight: 700 }}>
@@ -106,39 +158,29 @@ export default function EducationModal({
               flex: 1,
             }}>
             <View style={{ ...styles.selectItem, paddingHorizontal: 0 }}>
-              <Title20B>학력 전공을 작성해 주세요</Title20B>
+              <Title20B>보유한 경력을 작성해 주세요</Title20B>
             </View>
-            <InputView
-              title="학교명"
-              value={form.education.school}
-              setValue={v =>
-                setForm(prev => {
-                  return {
-                    ...prev,
-                    education: { ...prev.education, school: v },
-                  };
-                })
-              }
-            />
-            <InputView
-              title="전공"
-              value={form.education.major}
-              setValue={v =>
-                setForm(prev => {
-                  return {
-                    ...prev,
-                    education: { ...prev.education, major: v },
-                  };
-                })
-              }
-            />
-            <View style={{ marginVertical: 10 }}>
-              <Body16B>상태</Body16B>
+            <View style={{ zIndex: 1 }}>
+              <Body16B>분류</Body16B>
               <SelectBox
-                value={form.education.status}
-                onPress={() => setSection('status')}
+                value={form.career[index].type}
+                onPress={() => {
+                  setDropdown(prev => {
+                    return !prev;
+                  });
+                }}
+                opened={dropdown}
+              />
+              <Dropdown
+                items={statusList}
+                value={form.career[index].type}
+                open={dropdown}
+                setOpen={setDropdown}
+                setValue={handleTypeChange}
+                style={{ width: '100%', height: 100, top: 80 }}
               />
             </View>
+            <CareerDetailSection type={form.career[index].type} />
             <View style={{ marginVertical: 10 }}>
               <View
                 style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
@@ -152,20 +194,7 @@ export default function EducationModal({
                 add={true}
               />
             </View>
-            <View style={styles.info}>
-              <Caption11M style={{ color: PURPLE }}>
-                증빙자료를 첨부하시면 담당자 검토 후, 확인 마크를 달아드립니다.
-              </Caption11M>
-              <Caption11M style={{ color: PURPLE }}>
-                첨부 가능 자료 : 재학증명서, 졸업증명서, 성적증명서
-              </Caption11M>
-              <Caption11M style={{ color: PURPLE, marginTop: 8 }}>
-                ~이하 ~파일만 등록 가능합니다.
-              </Caption11M>
-              <Caption11M style={{ color: PURPLE }}>
-                제출한 자료는 의뢰인에게 노출되지 않습니다.
-              </Caption11M>
-            </View>
+
             <View style={{ marginTop: 'auto' }}>
               <BottomButton
                 value="적용"
@@ -181,26 +210,6 @@ export default function EducationModal({
             </View>
           </View>
         </ScrollView>
-      ) : (
-        <>
-          <View style={styles.selectItem}>
-            <Title20B>학력의 상태를 선택해 주세요</Title20B>
-          </View>
-          <BottomSheetFlatList data={statusList} renderItem={renderItem} />
-          <View style={{ marginHorizontal: width * 0.04, marginTop: 'auto' }}>
-            <BottomButton
-              value="적용"
-              pressed={false}
-              onPress={() => setSection('init')}
-              style={{
-                width: '75%',
-                alignSelf: 'center',
-                marginTop: 10,
-                marginBottom: 30,
-              }}
-            />
-          </View>
-        </>
       )}
     </BottomSheetModal>
   );

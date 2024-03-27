@@ -22,7 +22,7 @@ const InputBox = ({
   return (
     <TextInput
       secureTextEntry={secure}
-      value={value}
+      defaultValue={value}
       onChangeText={setValue}
       placeholder={placeholder ? placeholder : '입력해 주세요.'}
       placeholderTextColor={BLACK2}
