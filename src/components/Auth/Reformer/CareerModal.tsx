@@ -23,18 +23,11 @@ import { ModalProps } from './Reformer';
 import InputView from '../../../common/InputView';
 import SelectBox from '../../../common/SelectBox';
 import Dropdown from '../../../common/Dropdown';
+import InputBox from '../../../common/InputBox';
 
 interface CareerModalProps extends ModalProps {
   index: number;
   setIndex: Dispatch<SetStateAction<number>>;
-}
-
-function CareerDetailSection({ type }: { type: string | undefined }) {
-  return (
-    <View>
-      <Body16B>{type}</Body16B>
-    </View>
-  );
 }
 
 export default function CareerModal({
@@ -93,6 +86,138 @@ export default function CareerModal({
     [form],
   );
 
+  const handleContentChange = (v: string, t: string) => {
+    const prevCareer = form.career;
+    prevCareer[index] = { ...prevCareer[index], [t]: v };
+    setForm(prev => {
+      return { ...prev, career: prevCareer };
+    });
+  };
+
+  const handleTypeChange = (type: string) => {
+    const prevCareer = form.career;
+    prevCareer[index] = { type: type, name: '', file: undefined };
+    setForm(prev => {
+      return { ...prev, career: prevCareer };
+    });
+  };
+
+  const FreeDetailSection = () => {
+    return <View key="freelancer" style={{ marginVertical: 10 }}></View>;
+  };
+
+  const InterDetailSection = () => {
+    return (
+      <View key="intership" style={{ marginVertical: 10 }}>
+        <InputView
+          title="회사명"
+          value={form.career[index].name}
+          setValue={v => {
+            handleContentChange(v, 'name');
+          }}
+        />
+        <InputView
+          title="근무부서"
+          value={form.career[index].team}
+          setValue={v => {
+            handleContentChange(v, 'team');
+          }}
+        />
+        <InputView
+          title="직위"
+          value={form.career[index].position}
+          setValue={v => {
+            handleContentChange(v, 'position');
+          }}
+        />
+      </View>
+    );
+  };
+
+  const CertDetailSection = () => {
+    return (
+      <View key="certificate" style={{ marginVertical: 10 }}>
+        <InputView
+          title="자격증명"
+          value={form.career[index].name}
+          setValue={v => {
+            handleContentChange(v, 'name');
+          }}
+        />
+        <InputView
+          title="발급기관"
+          value={form.career[index].host}
+          setValue={v => {
+            handleContentChange(v, 'host');
+          }}
+        />
+        <InputView
+          title="발급일"
+          value={form.career[index].date}
+          setValue={v => {
+            handleContentChange(v, 'date');
+          }}
+        />
+      </View>
+    );
+  };
+
+  const ContDetailSection = () => {
+    return (
+      <View key="contest" style={{ marginVertical: 10 }}>
+        <InputView
+          title="공모전명"
+          value={form.career[index].name}
+          setValue={v => {
+            handleContentChange(v, 'name');
+          }}
+        />
+        <InputView
+          title="주최"
+          value={form.career[index].host}
+          setValue={v => {
+            handleContentChange(v, 'host');
+          }}
+        />
+        <InputView
+          title="수상일"
+          value={form.career[index].date}
+          setValue={v => {
+            handleContentChange(v, 'date');
+          }}
+        />
+      </View>
+    );
+  };
+
+  const OutDetailSection = () => {
+    return (
+      <View key="outsourcing" style={{ marginVertical: 10 }}>
+        <InputView
+          title="프로젝트명"
+          value={form.career[index].name}
+          setValue={v => {
+            handleContentChange(v, 'name');
+          }}
+        />
+        <InputView
+          title="클라이언트"
+          value={form.career[index].client}
+          setValue={v => {
+            handleContentChange(v, 'client');
+          }}
+        />
+        <InputView
+          title="주요업무"
+          value={form.career[index].content}
+          setValue={v => {
+            handleContentChange(v, 'content');
+          }}
+        />
+      </View>
+    );
+  };
+
   useEffect(() => {
     if (open) handlePresentModalPress();
   }, [open]);
@@ -109,13 +234,20 @@ export default function CareerModal({
     '기타 (외주)',
   ];
 
-  const handleTypeChange = (type: string) => {
-    const prevCareer = form.career;
-    prevCareer[index] = { type: type, name: '', file: undefined };
-    setForm(prev => {
-      return { ...prev, career: prevCareer };
+  const sectionList = [
+    <FreeDetailSection />,
+    <InterDetailSection />,
+    <ContDetailSection />,
+    <CertDetailSection />,
+    <OutDetailSection />,
+  ];
+
+  const detailSection = useCallback(() => {
+    return statusList.map((v, idx) => {
+      if (idx === 0) console.log('rerender');
+      if (v === form.career[index].type) return sectionList[idx];
     });
-  };
+  }, [form.career[index].type]);
 
   // renders
   return (
@@ -171,16 +303,22 @@ export default function CareerModal({
                 }}
                 opened={dropdown}
               />
-              <Dropdown
-                items={statusList}
-                value={form.career[index].type}
-                open={dropdown}
-                setOpen={setDropdown}
-                setValue={handleTypeChange}
-                style={{ width: '100%', height: 100, top: 80 }}
-              />
+              {dropdown && (
+                <Dropdown
+                  items={statusList}
+                  value={form.career[index].type}
+                  open={dropdown}
+                  setOpen={setDropdown}
+                  setValue={handleTypeChange}
+                  style={{
+                    width: '100%',
+                    height: 100,
+                    top: 80,
+                  }}
+                />
+              )}
             </View>
-            <CareerDetailSection type={form.career[index].type} />
+            {detailSection()}
             <View style={{ marginVertical: 10 }}>
               <View
                 style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>

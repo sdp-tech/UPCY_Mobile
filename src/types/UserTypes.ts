@@ -15,6 +15,14 @@ type Careers = {
   name: string;
   file: undefined;
   type: string | undefined;
+  team?: string;
+  position?: string;
+  start?: string;
+  end?: string;
+  host?: string;
+  date?: string;
+  client?: string;
+  content?: string;
 };
 type FreelancerType = Careers & {};
 type InternType = Careers & {
@@ -37,11 +45,5 @@ type OutsourcingType = Careers & {
   start: string;
   end: string;
 };
-export type CareerType = (
-  | FreelancerType
-  | InternType
-  | ContestType
-  | CertificateType
-  | OutsourcingType
-)[];
+export type CareerType = Careers[];
 // 종류별 타입 정의

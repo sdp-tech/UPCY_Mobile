@@ -90,7 +90,7 @@ export default function ReformCareer({ setPage, form, setForm }: ReformProps) {
   };
 
   const handleDeleteCareer = (delIndex: number) => {
-    const newCareer = form.career.filter((_, index) => index !== delIndex);
+    const newCareer = form.career.filter((_, i) => i !== delIndex);
     setForm(prev => {
       return { ...prev, career: newCareer };
     });
