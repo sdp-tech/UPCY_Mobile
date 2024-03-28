@@ -24,6 +24,7 @@ import InputView from '../../../common/InputView';
 import SelectBox from '../../../common/SelectBox';
 import Dropdown from '../../../common/Dropdown';
 import InputBox from '../../../common/InputBox';
+import PeriodPicker from '../../../common/PeriodPicker';
 
 interface CareerModalProps extends ModalProps {
   index: number;
@@ -86,9 +87,10 @@ export default function CareerModal({
     [form],
   );
 
-  const handleContentChange = (v: string, t: string) => {
+  const handleContentChange = (v: any, t: string) => {
     const prevCareer = form.career;
     prevCareer[index] = { ...prevCareer[index], [t]: v };
+    console.dir(prevCareer[index]);
     setForm(prev => {
       return { ...prev, career: prevCareer };
     });
@@ -100,6 +102,24 @@ export default function CareerModal({
     setForm(prev => {
       return { ...prev, career: prevCareer };
     });
+  };
+
+  const WorkPeriod = () => {
+    return (
+      <View style={{ marginVertical: 10 }}>
+        <Body16B>근무기간 {form.career[index].start?.getDate()}</Body16B>
+        <PeriodPicker
+          start={form.career[index].start}
+          end={form.career[index].end}
+          setStart={d => {
+            handleContentChange(d, 'start');
+          }}
+          setEnd={d => {
+            handleContentChange(d, 'end');
+          }}
+        />
+      </View>
+    );
   };
 
   const FreeDetailSection = () => {
@@ -130,6 +150,7 @@ export default function CareerModal({
             handleContentChange(v, 'position');
           }}
         />
+        <WorkPeriod />
       </View>
     );
   };

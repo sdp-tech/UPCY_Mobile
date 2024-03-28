@@ -17,8 +17,8 @@ type Careers = {
   type: string | undefined;
   team?: string;
   position?: string;
-  start?: string;
-  end?: string;
+  start?: Date;
+  end?: Date;
   host?: string;
   date?: string;
   client?: string;
