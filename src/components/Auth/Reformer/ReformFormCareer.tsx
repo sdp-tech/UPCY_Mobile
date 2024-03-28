@@ -4,7 +4,8 @@ import {
   Dimensions,
   TouchableOpacity,
   StyleSheet,
-  TextInput,
+  ScrollView,
+  Alert,
 } from 'react-native';
 import styled from 'styled-components/native';
 import {
@@ -17,11 +18,14 @@ import { ReformProps } from './Reformer';
 import BottomButton from '../../../common/BottomButton';
 import RightArrow from '../../../assets/common/RightArrow.svg';
 import PlusIcon from '../../../assets/common/Plus.svg';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import FilterBox from '../../../common/FilterBox';
 import { BLACK, BLACK2, GRAY } from '../../../styles/GlobalColor';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import EducationModal from './EducationModal';
+import SelectBox from '../../../common/SelectBox';
+import CareerModal from './CareerModal';
+import { CareerType } from '../../../types/UserTypes';
 
 const SelectView = styled.View`
   display: flex;
@@ -64,77 +68,125 @@ const AddTouchable = styled.TouchableOpacity`
 export default function ReformCareer({ setPage, form, setForm }: ReformProps) {
   const { width } = Dimensions.get('screen');
   const [educationModal, setEducationModal] = useState(false);
+  const [careerModal, setCareerModal] = useState(false);
+  const [careerIndex, setCareerIndex] = useState(-1);
 
-  const handleAddCareer = () => {};
+  const handleAddCareer = () => {
+    const newIndex = form.career.length;
+    setForm(prev => {
+      return {
+        ...prev,
+        career: [
+          ...prev.career,
+          { name: '', file: undefined, type: undefined },
+        ],
+      };
+    });
+    setCareerIndex(newIndex);
+  };
+
+  const handleEditCareer = (index: number) => {
+    setCareerIndex(index);
+  };
+
+  const handleDeleteCareer = (delIndex: number) => {
+    const newCareer = form.career.filter((_, i) => i !== delIndex);
+    setForm(prev => {
+      return { ...prev, career: newCareer };
+    });
+  };
+
+  const handlePressCareer = (index: number) => {
+    Alert.alert('경력을 수정하시겠습니까?', undefined, [
+      { text: '수정하기', onPress: () => handleEditCareer(index) },
+      { text: '삭제하기', onPress: () => handleDeleteCareer(index) },
+    ]);
+  };
+
+  useEffect(() => {
+    if (careerIndex >= 0) setCareerModal(true);
+  }, [careerIndex]);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <View
-        style={{
-          flex: 1,
+      <ScrollView
+        alwaysBounceVertical={false}
+        contentContainerStyle={{
+          minHeight: 500,
+          flexGrow: 1,
         }}>
-        <View style={{ marginHorizontal: width * 0.04 }}>
-          <View style={styles.formView}>
-            <Subtitle16B>학력 전공을 작성해 주세요</Subtitle16B>
-            <SelectView>
-              <SelectTouchable
+        <View style={{ flexGrow: 1 }}>
+          <View style={{ marginHorizontal: width * 0.04 }}>
+            <View style={styles.formView}>
+              <Subtitle16B>학력 전공을 작성해 주세요</Subtitle16B>
+              <SelectBox
+                value={form.education.school}
                 onPress={() => {
                   setEducationModal(true);
-                }}>
-                {form.education.school === '' ? (
-                  <Body14M style={{ color: BLACK2 }}>추가해 주세요</Body14M>
-                ) : (
-                  <Body14M>{form.education.school}</Body14M>
-                )}
+                }}
+                add={true}
+              />
+            </View>
+            <View style={styles.formView}>
+              <Subtitle16B>보유한 경력을 작성해 주세요</Subtitle16B>
+              {form.career.map((item, index) => (
+                <SelectView key={index}>
+                  <SelectTouchable
+                    onPress={() => {
+                      handlePressCareer(index);
+                    }}>
+                    {item.name === '' && item.type === undefined ? (
+                      <Body14M style={{ color: BLACK2 }}>선택해 주세요</Body14M>
+                    ) : (
+                      <Body14M>
+                        {item.type} / {item.name}
+                      </Body14M>
+                    )}
 
-                <PlusIcon color={BLACK2} />
-              </SelectTouchable>
-            </SelectView>
+                    <RightArrow color={BLACK2} />
+                  </SelectTouchable>
+                </SelectView>
+              ))}
+              {form.career.length < 3 && (
+                <AddTouchable onPress={handleAddCareer}>
+                  <PlusIcon color={GRAY} />
+                </AddTouchable>
+              )}
+            </View>
           </View>
-          <View style={styles.formView}>
-            <Subtitle16B>보유한 경력을 작성해 주세요</Subtitle16B>
-            {form.career.map((item, index) => (
-              <SelectView key={index}>
-                <SelectTouchable onPress={() => {}}>
-                  {item.name === '' ? (
-                    <Body14M style={{ color: BLACK2 }}>선택해 주세요</Body14M>
-                  ) : (
-                    <Body14M>{form.education.school}</Body14M>
-                  )}
-
-                  <RightArrow stroke={BLACK2} />
-                </SelectTouchable>
-              </SelectView>
-            ))}
-            {form.career.length < 3 && (
-              <AddTouchable onPress={() => {}}>
-                <PlusIcon color={GRAY} />
-              </AddTouchable>
-            )}
+          <View style={styles.bottomView}>
+            <Caption11M style={{ color: 'white' }}>
+              최대 추가 개수 {form.career.length}/3개
+            </Caption11M>
+          </View>
+          <View style={{ marginHorizontal: width * 0.04 }}>
+            <BottomButton
+              value="다음"
+              pressed={false}
+              onPress={() => {
+                setPage('career');
+              }}
+              style={{ width: '75%', alignSelf: 'center', marginBottom: 10 }}
+            />
           </View>
         </View>
-        <View style={styles.bottomView}>
-          <Caption11M style={{ color: 'white' }}>
-            최대 추가 개수 {form.career.length}/3개
-          </Caption11M>
-        </View>
-        <View style={{ marginHorizontal: width * 0.04 }}>
-          <BottomButton
-            value="다음"
-            pressed={false}
-            onPress={() => {
-              setPage('career');
-            }}
-            style={{ width: '75%', alignSelf: 'center' }}
-          />
-        </View>
-      </View>
+      </ScrollView>
       <EducationModal
         open={educationModal}
         setOpen={setEducationModal}
         form={form}
         setForm={setForm}
       />
+      {careerIndex >= 0 && (
+        <CareerModal
+          open={careerModal}
+          setOpen={setCareerModal}
+          form={form}
+          setForm={setForm}
+          index={careerIndex}
+          setIndex={setCareerIndex}
+        />
+      )}
     </SafeAreaView>
   );
 }
