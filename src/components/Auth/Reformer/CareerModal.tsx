@@ -90,7 +90,7 @@ export default function CareerModal({
   const handleContentChange = (v: any, t: string) => {
     const prevCareer = form.career;
     prevCareer[index] = { ...prevCareer[index], [t]: v };
-    console.dir(prevCareer[index]);
+    console.log(prevCareer[index]);
     setForm(prev => {
       return { ...prev, career: prevCareer };
     });
@@ -104,10 +104,10 @@ export default function CareerModal({
     });
   };
 
-  const WorkPeriod = () => {
+  const WorkPeriod = useCallback(() => {
     return (
       <View style={{ marginVertical: 10 }}>
-        <Body16B>근무기간 {form.career[index].start?.getDate()}</Body16B>
+        <Body16B>근무기간</Body16B>
         <PeriodPicker
           start={form.career[index].start}
           end={form.career[index].end}
@@ -120,7 +120,7 @@ export default function CareerModal({
         />
       </View>
     );
-  };
+  }, [form.career[index].start, form.career[index].end]);
 
   const FreeDetailSection = () => {
     return <View key="freelancer" style={{ marginVertical: 10 }}></View>;
@@ -235,6 +235,7 @@ export default function CareerModal({
             handleContentChange(v, 'content');
           }}
         />
+        <WorkPeriod />
       </View>
     );
   };
@@ -265,7 +266,6 @@ export default function CareerModal({
 
   const detailSection = useCallback(() => {
     return statusList.map((v, idx) => {
-      if (idx === 0) console.log('rerender');
       if (v === form.career[index].type) return sectionList[idx];
     });
   }, [form.career[index].type]);
