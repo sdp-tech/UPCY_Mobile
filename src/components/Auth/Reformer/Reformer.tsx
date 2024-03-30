@@ -18,15 +18,16 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 type page = 'profile' | 'style' | 'career';
 
 export interface ReformProps {
-  setPage: Dispatch<SetStateAction<page>>;
   form: ReformProfileType;
   setForm: Dispatch<SetStateAction<ReformProfileType>>;
 }
-export interface ModalProps {
+
+export interface PageProps extends ReformProps {
+  setPage: Dispatch<SetStateAction<page>>;
+}
+export interface ModalProps extends ReformProps {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  form: ReformProfileType;
-  setForm: Dispatch<SetStateAction<ReformProfileType>>;
 }
 
 export type ReformStackParams = {
@@ -67,7 +68,7 @@ export const ReformProfileContext = createContext<RpContextType | null>(null);
 
 export default function Reformer({ navigation }: FormProps) {
   const defaultProfile: ReformProfileType = {
-    picture: null,
+    picture: undefined,
     nickname: '',
     market: '',
     introduce: '',

@@ -1,16 +1,11 @@
-import {
-  SafeAreaView,
-  View,
-  Dimensions,
-  TouchableOpacity,
-  ScrollView,
-} from 'react-native';
-import { ReformProps } from './Reformer';
+import { SafeAreaView, View, Dimensions, ScrollView } from 'react-native';
+import { PageProps, ReformProps } from './Reformer';
 import BottomButton from '../../../common/BottomButton';
 import PencilIcon from '../../../assets/common/Pencil.svg';
 import InputView from '../../../common/InputView';
+import PhotoOptions from '../../../common/PhotoOptions';
 
-function ProfilePic({}) {
+function ProfilePic({ form, setForm }: ReformProps) {
   return (
     <View
       style={{
@@ -19,15 +14,27 @@ function ProfilePic({}) {
         alignSelf: 'center',
         position: 'relative',
       }}>
-      <TouchableOpacity>
-        <View
-          style={{
-            width: 82,
-            height: 82,
-            borderRadius: 100,
-            backgroundColor: '#D9D9D9',
-          }}></View>
-      </TouchableOpacity>
+      <PhotoOptions
+        buttonLabel=""
+        photo={form.picture}
+        setPhoto={p => {
+          setForm(prev => {
+            return { ...prev, picture: p[0] };
+          });
+        }}
+        max={1}
+        style={{
+          position: 'relative',
+          width: 82,
+          height: 82,
+          borderRadius: 100,
+          backgroundColor: '#D9D9D9',
+          paddingVertical: 0,
+          paddingHorizontal: 0,
+          marginBottom: 0,
+        }}
+      />
+
       <View
         style={{
           position: 'absolute',
@@ -51,7 +58,7 @@ export default function ReformFormProfile({
   setPage,
   form,
   setForm,
-}: ReformProps) {
+}: PageProps) {
   const { width } = Dimensions.get('screen');
 
   return (
@@ -64,7 +71,7 @@ export default function ReformFormProfile({
           flexGrow: 1,
         }}>
         <View style={{ flexGrow: 1 }}>
-          <ProfilePic />
+          <ProfilePic form={form} setForm={setForm} />
           <InputView
             title="닉네임"
             value={form.nickname}

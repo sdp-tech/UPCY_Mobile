@@ -23,7 +23,6 @@ import { ModalProps } from './Reformer';
 import InputView from '../../../common/InputView';
 import SelectBox from '../../../common/SelectBox';
 import Dropdown from '../../../common/Dropdown';
-import InputBox from '../../../common/InputBox';
 import PeriodPicker from '../../../common/PeriodPicker';
 
 interface CareerModalProps extends ModalProps {
@@ -90,7 +89,7 @@ export default function CareerModal({
   const handleContentChange = (v: any, t: string) => {
     const prevCareer = form.career;
     prevCareer[index] = { ...prevCareer[index], [t]: v };
-    console.log(prevCareer[index]);
+    // console.log(prevCareer[index]);
     setForm(prev => {
       return { ...prev, career: prevCareer };
     });
@@ -257,11 +256,11 @@ export default function CareerModal({
   ];
 
   const sectionList = [
-    <FreeDetailSection />,
-    <InterDetailSection />,
-    <ContDetailSection />,
-    <CertDetailSection />,
-    <OutDetailSection />,
+    <FreeDetailSection key="freelancer" />,
+    <InterDetailSection key="internship" />,
+    <ContDetailSection key="contest" />,
+    <CertDetailSection key="certificate" />,
+    <OutDetailSection key="outsourcing" />,
   ];
 
   const detailSection = useCallback(() => {
