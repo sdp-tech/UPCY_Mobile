@@ -67,10 +67,7 @@ export default function ReformCareer({ setPage, form, setForm }: PageProps) {
     setForm(prev => {
       return {
         ...prev,
-        career: [
-          ...prev.career,
-          { name: '', file: undefined, type: undefined },
-        ],
+        career: [...prev.career, { name: '', file: [], type: undefined }],
       };
     });
     setCareerIndex(newIndex);

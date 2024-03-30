@@ -946,6 +946,8 @@ PODS:
     - React-debug
   - react-native-date-picker (5.0.0):
     - React-Core
+  - react-native-document-picker (9.1.1):
+    - React-Core
   - react-native-image-picker (7.1.1):
     - glog
     - RCT-Folly (= 2022.05.16.00)
@@ -1205,6 +1207,7 @@ DEPENDENCIES:
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
   - react-native-date-picker (from `../node_modules/react-native-date-picker`)
+  - react-native-document-picker (from `../node_modules/react-native-document-picker`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-pager-view (from `../node_modules/react-native-pager-view`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -1311,6 +1314,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   react-native-date-picker:
     :path: "../node_modules/react-native-date-picker"
+  react-native-document-picker:
+    :path: "../node_modules/react-native-document-picker"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
   react-native-pager-view:
@@ -1415,6 +1420,7 @@ SPEC CHECKSUMS:
   React-logger: 66b168e2b2bee57bd8ce9e69f739d805732a5570
   React-Mapbuffer: 9ee041e1d7be96da6d76a251f92e72b711c651d6
   react-native-date-picker: 656d78c3f8a5e79bc1642b8d1c587ce10aab2195
+  react-native-document-picker: 3599b238843369026201d2ef466df53f77ae0452
   react-native-image-picker: 1a7cd3224036e080fe46bcb955f2eb42fcbf7acc
   react-native-pager-view: d81ab2060b9caf57ca8c3a0d57467ff407cdb825
   react-native-safe-area-context: b97eb6f9e3b7f437806c2ce5983f479f8eb5de4b

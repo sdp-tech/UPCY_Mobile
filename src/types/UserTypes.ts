@@ -1,5 +1,7 @@
 type Styles = '빈티지' | '미니멀' | '캐주얼';
 type Materials = '가죽' | '스웨이드' | '벨벳' | '데님' | '퍼' | '실크' | '울';
+type File = any[];
+
 export type StyleType = Styles[];
 export type MaterialType = Materials[];
 export type RegionType = '서울 전체' | '광진구' | '관악구' | undefined;
@@ -7,13 +9,13 @@ export type EducType = {
   school: string;
   major: string;
   status: string | undefined;
-  file: undefined;
+  file: File;
   // 파일 형식 추가
 };
 
 type Careers = {
   name: string;
-  file: undefined;
+  file: File;
   type: string | undefined;
   team?: string;
   position?: string;

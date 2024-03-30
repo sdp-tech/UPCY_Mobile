@@ -30,12 +30,6 @@ export interface ModalProps extends ReformProps {
   setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-export type ReformStackParams = {
-  Basic: {};
-  Profile: {};
-  tmp: {};
-};
-
 interface BasicFormProp {
   email: string;
   mailDomain: string;
@@ -64,8 +58,6 @@ export type RpContextType = {
   setSteps: Dispatch<SetStateAction<number>>;
 };
 
-export const ReformProfileContext = createContext<RpContextType | null>(null);
-
 export default function Reformer({ navigation }: FormProps) {
   const defaultProfile: ReformProfileType = {
     picture: undefined,
@@ -80,7 +72,7 @@ export default function Reformer({ navigation }: FormProps) {
       school: '',
       major: '',
       status: undefined,
-      file: undefined,
+      file: [],
     },
     career: [],
   };

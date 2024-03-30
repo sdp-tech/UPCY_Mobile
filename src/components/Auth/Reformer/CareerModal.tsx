@@ -24,6 +24,7 @@ import InputView from '../../../common/InputView';
 import SelectBox from '../../../common/SelectBox';
 import Dropdown from '../../../common/Dropdown';
 import PeriodPicker from '../../../common/PeriodPicker';
+import FileBox from '../../../common/FileBox';
 
 interface CareerModalProps extends ModalProps {
   index: number;
@@ -97,7 +98,7 @@ export default function CareerModal({
 
   const handleTypeChange = (type: string) => {
     const prevCareer = form.career;
-    prevCareer[index] = { type: type, name: '', file: undefined };
+    prevCareer[index] = { type: type, name: '', file: [] };
     setForm(prev => {
       return { ...prev, career: prevCareer };
     });
@@ -345,12 +346,7 @@ export default function CareerModal({
                 <Body16B>증빙자료첨부</Body16B>
                 <Caption11M style={{ color: BLACK2 }}>선택사항</Caption11M>
               </View>
-              <SelectBox
-                value={form.education.file}
-                // 파일 첨부 구현
-                onPress={() => {}}
-                add={true}
-              />
+              <FileBox data={form.career[index].file} max={1} />
             </View>
 
             <View style={{ marginTop: 'auto' }}>

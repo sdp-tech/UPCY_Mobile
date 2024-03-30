@@ -59,13 +59,13 @@ const SelectView = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  height: 44;
+  height: 44px;
   width: 44%;
   border-width: 2px;
   border-color: #929292;
   border-radius: 5px;
-  padding-left: 16;
-  padding-right: 10;
+  padding-left: 16px;
+  padding-right: 10px;
 `;
 
 function CheckButton({ checked, onPress }: CheckBtnProps) {
