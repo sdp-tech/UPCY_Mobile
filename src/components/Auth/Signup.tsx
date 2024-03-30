@@ -54,7 +54,7 @@ function StartBtn({
           <Body14M style={{ color: color }}>{subtext}</Body14M>
           <Body16B style={{ color: color }}>{text}</Body16B>
         </View>
-        <RightArrow stroke={color} />
+        <RightArrow color={color} />
       </View>
     </TouchableOpacity>
   );

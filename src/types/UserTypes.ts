@@ -1,19 +1,30 @@
 type Styles = '빈티지' | '미니멀' | '캐주얼';
 type Materials = '가죽' | '스웨이드' | '벨벳' | '데님' | '퍼' | '실크' | '울';
+type File = any[];
+
 export type StyleType = Styles[];
 export type MaterialType = Materials[];
 export type RegionType = '서울 전체' | '광진구' | '관악구' | undefined;
 export type EducType = {
   school: string;
   major: string;
-  status: '재학' | '휴학' | '졸업' | '수료' | undefined;
-  file: undefined;
+  status: string | undefined;
+  file: File;
   // 파일 형식 추가
 };
 
 type Careers = {
   name: string;
-  file: undefined;
+  file: File;
+  type: string | undefined;
+  team?: string;
+  position?: string;
+  start?: Date;
+  end?: Date;
+  host?: string;
+  date?: string;
+  client?: string;
+  content?: string;
 };
 type FreelancerType = Careers & {};
 type InternType = Careers & {
@@ -36,11 +47,5 @@ type OutsourcingType = Careers & {
   start: string;
   end: string;
 };
-export type CareerType = (
-  | FreelancerType
-  | InternType
-  | ContestType
-  | CertificateType
-  | OutsourcingType
-)[];
+export type CareerType = Careers[];
 // 종류별 타입 정의

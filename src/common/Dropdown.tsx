@@ -2,14 +2,14 @@ import { Dispatch, SetStateAction } from 'react';
 import { View, TouchableOpacity, ViewStyle } from 'react-native';
 import { Body14M } from '../styles/GlobalText';
 
-type DropdownProps = {
+export interface DropdownProps {
   items: string[];
-  value: string | null;
+  value: string | undefined | null;
   setValue: (text: string) => void;
   setOpen: Dispatch<SetStateAction<boolean>>;
   open: boolean;
   style?: ViewStyle;
-};
+}
 
 export default function Dropdown({
   items,

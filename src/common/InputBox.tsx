@@ -1,9 +1,8 @@
-import { Dispatch, SetStateAction } from 'react';
 import { TextInput, TextInputProps, TextStyle } from 'react-native';
 import { BLACK2 } from '../styles/GlobalColor';
 
 export interface InputBoxProps extends TextInputProps {
-  value: string;
+  value?: string;
   setValue: (value: string) => void;
   placeholder?: string;
   long?: boolean;
@@ -23,7 +22,7 @@ const InputBox = ({
   return (
     <TextInput
       secureTextEntry={secure}
-      value={value}
+      defaultValue={value}
       onChangeText={setValue}
       placeholder={placeholder ? placeholder : '입력해 주세요.'}
       placeholderTextColor={BLACK2}

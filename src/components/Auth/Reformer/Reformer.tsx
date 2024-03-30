@@ -1,15 +1,7 @@
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import {
-  Dispatch,
-  SetStateAction,
-  createContext,
-  useContext,
-  useState,
-} from 'react';
+import { Dispatch, SetStateAction, createContext, useState } from 'react';
 import { View } from 'react-native';
 import { FormProps } from '../SignIn';
 import ReformFormHeader from './ReformFormHeader';
-import BasicForm from '../BasicForm';
 import ReformFormProfile from './ReformFormProfile';
 import {
   CareerType,
@@ -26,22 +18,17 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 type page = 'profile' | 'style' | 'career';
 
 export interface ReformProps {
-  setPage: Dispatch<SetStateAction<page>>;
-  form: ReformProfileType;
-  setForm: Dispatch<SetStateAction<ReformProfileType>>;
-}
-export interface ModalProps {
-  open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
   form: ReformProfileType;
   setForm: Dispatch<SetStateAction<ReformProfileType>>;
 }
 
-export type ReformStackParams = {
-  Basic: {};
-  Profile: {};
-  tmp: {};
-};
+export interface PageProps extends ReformProps {
+  setPage: Dispatch<SetStateAction<page>>;
+}
+export interface ModalProps extends ReformProps {
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+}
 
 interface BasicFormProp {
   email: string;
@@ -71,11 +58,9 @@ export type RpContextType = {
   setSteps: Dispatch<SetStateAction<number>>;
 };
 
-export const ReformProfileContext = createContext<RpContextType | null>(null);
-
 export default function Reformer({ navigation }: FormProps) {
   const defaultProfile: ReformProfileType = {
-    picture: null,
+    picture: undefined,
     nickname: '',
     market: '',
     introduce: '',
@@ -87,14 +72,12 @@ export default function Reformer({ navigation }: FormProps) {
       school: '',
       major: '',
       status: undefined,
-      file: undefined,
+      file: [],
     },
     career: [],
   };
   const [page, setPage] = useState<page>('profile');
   const [profileForm, setProfileForm] = useState(defaultProfile);
-
-  console.log('rerender');
 
   return (
     <View style={{ flex: 1 }}>
