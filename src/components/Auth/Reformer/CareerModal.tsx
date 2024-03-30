@@ -23,7 +23,8 @@ import { ModalProps } from './Reformer';
 import InputView from '../../../common/InputView';
 import SelectBox from '../../../common/SelectBox';
 import Dropdown from '../../../common/Dropdown';
-import InputBox from '../../../common/InputBox';
+import PeriodPicker from '../../../common/PeriodPicker';
+import FileBox from '../../../common/FileBox';
 
 interface CareerModalProps extends ModalProps {
   index: number;
@@ -86,9 +87,10 @@ export default function CareerModal({
     [form],
   );
 
-  const handleContentChange = (v: string, t: string) => {
+  const handleContentChange = (v: any, t: string) => {
     const prevCareer = form.career;
     prevCareer[index] = { ...prevCareer[index], [t]: v };
+    // console.log(prevCareer[index]);
     setForm(prev => {
       return { ...prev, career: prevCareer };
     });
@@ -96,11 +98,29 @@ export default function CareerModal({
 
   const handleTypeChange = (type: string) => {
     const prevCareer = form.career;
-    prevCareer[index] = { type: type, name: '', file: undefined };
+    prevCareer[index] = { type: type, name: '', file: [] };
     setForm(prev => {
       return { ...prev, career: prevCareer };
     });
   };
+
+  const WorkPeriod = useCallback(() => {
+    return (
+      <View style={{ marginVertical: 10 }}>
+        <Body16B>근무기간</Body16B>
+        <PeriodPicker
+          start={form.career[index].start}
+          end={form.career[index].end}
+          setStart={d => {
+            handleContentChange(d, 'start');
+          }}
+          setEnd={d => {
+            handleContentChange(d, 'end');
+          }}
+        />
+      </View>
+    );
+  }, [form.career[index].start, form.career[index].end]);
 
   const FreeDetailSection = () => {
     return <View key="freelancer" style={{ marginVertical: 10 }}></View>;
@@ -130,6 +150,7 @@ export default function CareerModal({
             handleContentChange(v, 'position');
           }}
         />
+        <WorkPeriod />
       </View>
     );
   };
@@ -214,6 +235,7 @@ export default function CareerModal({
             handleContentChange(v, 'content');
           }}
         />
+        <WorkPeriod />
       </View>
     );
   };
@@ -235,16 +257,15 @@ export default function CareerModal({
   ];
 
   const sectionList = [
-    <FreeDetailSection />,
-    <InterDetailSection />,
-    <ContDetailSection />,
-    <CertDetailSection />,
-    <OutDetailSection />,
+    <FreeDetailSection key="freelancer" />,
+    <InterDetailSection key="internship" />,
+    <ContDetailSection key="contest" />,
+    <CertDetailSection key="certificate" />,
+    <OutDetailSection key="outsourcing" />,
   ];
 
   const detailSection = useCallback(() => {
     return statusList.map((v, idx) => {
-      if (idx === 0) console.log('rerender');
       if (v === form.career[index].type) return sectionList[idx];
     });
   }, [form.career[index].type]);
@@ -325,12 +346,7 @@ export default function CareerModal({
                 <Body16B>증빙자료첨부</Body16B>
                 <Caption11M style={{ color: BLACK2 }}>선택사항</Caption11M>
               </View>
-              <SelectBox
-                value={form.education.file}
-                // 파일 첨부 구현
-                onPress={() => {}}
-                add={true}
-              />
+              <FileBox data={form.career[index].file} max={1} />
             </View>
 
             <View style={{ marginTop: 'auto' }}>

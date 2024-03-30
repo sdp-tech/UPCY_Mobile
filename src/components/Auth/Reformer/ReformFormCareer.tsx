@@ -2,30 +2,21 @@ import {
   SafeAreaView,
   View,
   Dimensions,
-  TouchableOpacity,
   StyleSheet,
   ScrollView,
   Alert,
 } from 'react-native';
 import styled from 'styled-components/native';
-import {
-  Body14M,
-  Caption11M,
-  Subtitle16B,
-  Title20B,
-} from '../../../styles/GlobalText';
-import { ReformProps } from './Reformer';
+import { Body14M, Caption11M, Subtitle16B } from '../../../styles/GlobalText';
+import { PageProps } from './Reformer';
 import BottomButton from '../../../common/BottomButton';
 import RightArrow from '../../../assets/common/RightArrow.svg';
 import PlusIcon from '../../../assets/common/Plus.svg';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import FilterBox from '../../../common/FilterBox';
+import { useEffect, useState } from 'react';
 import { BLACK, BLACK2, GRAY } from '../../../styles/GlobalColor';
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import EducationModal from './EducationModal';
 import SelectBox from '../../../common/SelectBox';
 import CareerModal from './CareerModal';
-import { CareerType } from '../../../types/UserTypes';
 
 const SelectView = styled.View`
   display: flex;
@@ -65,7 +56,7 @@ const AddTouchable = styled.TouchableOpacity`
   margin-top: 8px;
 `;
 
-export default function ReformCareer({ setPage, form, setForm }: ReformProps) {
+export default function ReformCareer({ setPage, form, setForm }: PageProps) {
   const { width } = Dimensions.get('screen');
   const [educationModal, setEducationModal] = useState(false);
   const [careerModal, setCareerModal] = useState(false);
@@ -76,10 +67,7 @@ export default function ReformCareer({ setPage, form, setForm }: ReformProps) {
     setForm(prev => {
       return {
         ...prev,
-        career: [
-          ...prev.career,
-          { name: '', file: undefined, type: undefined },
-        ],
+        career: [...prev.career, { name: '', file: [], type: undefined }],
       };
     });
     setCareerIndex(newIndex);
