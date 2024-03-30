@@ -105,11 +105,7 @@ export default function RegionModal({
       <View style={styles.selectItem}>
         <Title20B>지역을 선택해 주세요.</Title20B>
       </View>
-      <BottomSheetFlatList
-        data={regionList}
-        renderItem={renderItem}
-        style={styles.selectList}
-      />
+      <BottomSheetFlatList data={regionList} renderItem={renderItem} />
       <View style={{ marginHorizontal: width * 0.04 }}>
         <BottomButton
           value="적용"
@@ -134,7 +130,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: 'black',
   },
-  selectList: {},
   selectItem: {
     display: 'flex',
     flexDirection: 'row',

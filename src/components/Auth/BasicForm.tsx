@@ -4,19 +4,16 @@ import {
   Dimensions,
   TouchableOpacity,
   TextInput,
+  ScrollView,
 } from 'react-native';
-import {
-  Body16B,
-  Body16M,
-  Caption11M,
-  Subtitle16B,
-  Title20B,
-} from '../../styles/GlobalText';
+import { Body16B, Body16M, Caption11M } from '../../styles/GlobalText';
 import styled from 'styled-components/native';
 import { BLACK, BLACK2, GRAY, PURPLE } from '../../styles/GlobalColor';
 import CheckIcon from '../../assets/common/CheckIcon.svg';
 import DownArrow from '../../assets/common/DownArrow.svg';
 import RightArrow from '../../assets/common/RightArrow.svg';
+import LeftArrow from '../../assets/common/Arrow.svg';
+import Logo from '../../assets/common/Logo.svg';
 import { FormProps } from './SignIn';
 import { useState } from 'react';
 import InputBox from '../../common/InputBox';
@@ -24,7 +21,7 @@ import BottomButton from '../../common/BottomButton';
 import Dropdown from '../../common/Dropdown';
 import RegionModal from './RegionModal';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import SelectBox from '../../common/SelectBox';
 
 interface SignupProps {
   mail: string;
@@ -40,8 +37,8 @@ interface CheckBtnProps {
 
 const InputView = styled.View`
   position: relative;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-top: 8px;
+  margin-bottom: 8px;
 `;
 
 const TermsView = styled(InputView)`
@@ -102,198 +99,213 @@ export default function BasicForm({ navigation, route }: FormProps) {
   const handleSubmit = () => {};
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <BottomSheetModalProvider>
-        <View
-          style={{
-            marginTop: 100,
-            marginHorizontal: width * 0.04,
-            flex: 1,
-          }}>
-          <InputView style={{ zIndex: 1 }}>
-            <Body16B>이메일</Body16B>
-            <MailView>
-              <InputBox
-                value={form.mail}
-                setValue={text =>
-                  setForm(prev => {
-                    return { ...prev, mail: text };
-                  })
-                }
-                placeholder="입력해 주세요"
-                style={{ height: 44, marginTop: 8, width: '44%' }}
-              />
-              <Body16M style={{ color: BLACK2 }}>@</Body16M>
-              <SelectView>
-                <TextInput
-                  value={form.domain}
-                  onChangeText={text =>
-                    setForm(prev => {
-                      return { ...prev, domain: text };
-                    })
-                  }
-                  style={{ width: '70%' }}
-                  placeholder="직접 입력"
-                  placeholderTextColor={BLACK2}
-                  readOnly={false}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                />
-                <Dropdown
-                  open={domainOpen}
-                  setOpen={setDomainOpen}
-                  value={form.domain}
+    <BottomSheetModalProvider>
+      <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+        <ScrollView>
+          <View style={{ flex: 1, minHeight: 800 }}>
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={{
+                alignSelf: 'flex-start',
+                marginTop: height * 0.02,
+                marginLeft: width * 0.03,
+              }}>
+              <LeftArrow color="#222" />
+            </TouchableOpacity>
+            <Logo
+              color="#612FEF"
+              width={150}
+              height={40}
+              style={{ alignSelf: 'center', marginVertical: 20 }}
+            />
+            <View
+              style={{
+                marginHorizontal: width * 0.04,
+                flex: 1,
+              }}>
+              <InputView style={{ zIndex: 1 }}>
+                <Body16B>이메일</Body16B>
+                <MailView>
+                  <InputBox
+                    value={form.mail}
+                    setValue={text =>
+                      setForm(prev => {
+                        return { ...prev, mail: text };
+                      })
+                    }
+                    placeholder="입력해 주세요"
+                    style={{ height: 44, marginTop: 8, width: '44%' }}
+                  />
+                  <Body16M style={{ color: BLACK2 }}>@</Body16M>
+                  <SelectView>
+                    <TextInput
+                      value={form.domain}
+                      onChangeText={text =>
+                        setForm(prev => {
+                          return { ...prev, domain: text };
+                        })
+                      }
+                      style={{ width: '70%' }}
+                      placeholder="직접 입력"
+                      placeholderTextColor={BLACK2}
+                      readOnly={false}
+                      autoCapitalize="none"
+                      autoCorrect={false}
+                    />
+                    <Dropdown
+                      open={domainOpen}
+                      setOpen={setDomainOpen}
+                      value={form.domain}
+                      setValue={text =>
+                        setForm(prev => {
+                          return { ...prev, domain: text };
+                        })
+                      }
+                      items={['gmail.com', 'naver.com', 'kakao.com']}
+                      style={{ width: '100%', top: 44 }}
+                    />
+                    <TouchableOpacity
+                      onPress={() =>
+                        setDomainOpen(prev => {
+                          return !prev;
+                        })
+                      }>
+                      <DownArrow />
+                    </TouchableOpacity>
+                  </SelectView>
+                </MailView>
+              </InputView>
+              <InputView>
+                <Body16B>비밀번호</Body16B>
+                <InputBox
+                  value={form.password}
                   setValue={text =>
                     setForm(prev => {
-                      return { ...prev, domain: text };
+                      return { ...prev, password: text };
                     })
                   }
-                  items={['gmail.com', 'naver.com', 'kakao.com']}
-                  style={{ width: '100%', top: 44 }}
-                />
-                <TouchableOpacity
-                  onPress={() =>
-                    setDomainOpen(prev => {
-                      return !prev;
+                  placeholder="입력해 주세요"
+                  style={{ height: 44, marginTop: 8 }}
+                  secure={true}
+                  onEndEditing={e =>
+                    setCheckPw(prev => {
+                      return { ...prev, bool: true };
                     })
-                  }>
-                  <DownArrow />
-                </TouchableOpacity>
-              </SelectView>
-            </MailView>
-          </InputView>
-          <InputView>
-            <Body16B>비밀번호</Body16B>
-            <InputBox
-              value={form.password}
-              setValue={text =>
-                setForm(prev => {
-                  return { ...prev, password: text };
-                })
-              }
-              placeholder="입력해 주세요"
-              style={{ height: 44, marginTop: 8 }}
-              secure={true}
-              onEndEditing={e =>
-                setCheckPw(prev => {
-                  return { ...prev, bool: true };
-                })
-              }
-            />
-            <Caption11M style={{ color: GRAY }}>비밀번호 조합</Caption11M>
-          </InputView>
-          <InputView>
-            <Body16B>비밀번호 확인</Body16B>
-            <InputBox
-              value={checkPw.text}
-              setValue={text =>
-                setCheckPw(prev => {
-                  return { ...prev, text: text };
-                })
-              }
-              placeholder="입력해 주세요"
-              style={{ height: 44, marginTop: 8 }}
-              secure={true}
-            />
-            <Caption11M style={{ color: PURPLE }}>
-              {checkPw.text !== form.password && checkPw.bool
-                ? '비밀번호가 일치하지 않습니다.'
-                : ''}
-            </Caption11M>
-          </InputView>
-          <InputView>
-            <Body16B>지역</Body16B>
-            <SelectView style={{ marginVertical: 8, width: '100%' }}>
-              <TextInput
+                  }
+                />
+                <Caption11M style={{ color: GRAY }}>비밀번호 조합</Caption11M>
+              </InputView>
+              <InputView>
+                <Body16B>비밀번호 확인</Body16B>
+                <InputBox
+                  value={checkPw.text}
+                  setValue={text =>
+                    setCheckPw(prev => {
+                      return { ...prev, text: text };
+                    })
+                  }
+                  placeholder="입력해 주세요"
+                  style={{ height: 44, marginTop: 8 }}
+                  secure={true}
+                />
+                <Caption11M style={{ color: PURPLE }}>
+                  {checkPw.text !== form.password && checkPw.bool
+                    ? '비밀번호가 일치하지 않습니다.'
+                    : ''}
+                </Caption11M>
+              </InputView>
+              <InputView>
+                <Body16B>지역</Body16B>
+                <SelectBox
+                  value={form.region}
+                  onPress={() => setModalOpen(true)}
+                />
+              </InputView>
+              <TermsView>
+                <Caption11M>만 19세 이상입니다. </Caption11M>
+                <Caption11M style={{ color: PURPLE }}>(필수)</Caption11M>
+                <CheckButton
+                  checked={agreement.a}
+                  onPress={() =>
+                    setAgreement(prev => {
+                      return { ...prev, a: !prev.a };
+                    })
+                  }
+                />
+              </TermsView>
+              <TermsView>
+                <Caption11M>서비스 이용약관에 동의합니다.</Caption11M>
+                <Caption11M style={{ color: PURPLE }}>(필수)</Caption11M>
+                <CheckButton
+                  checked={agreement.b}
+                  onPress={() =>
+                    setAgreement(prev => {
+                      return { ...prev, b: !prev.b };
+                    })
+                  }
+                />
+              </TermsView>
+              <TermsView>
+                <Caption11M>개인정보 수집 이용에 동의합니다. </Caption11M>
+                <Caption11M style={{ color: PURPLE }}>(필수)</Caption11M>
+                <CheckButton
+                  checked={agreement.c}
+                  onPress={() =>
+                    setAgreement(prev => {
+                      return { ...prev, c: !prev.c };
+                    })
+                  }
+                />
+              </TermsView>
+              <TermsView>
+                <Caption11M>
+                  마케팅 수신 홍보 목적의 개인정보 수집 및 이용에 동의합니다.
+                  (선택){' '}
+                </Caption11M>
+                <CheckButton
+                  checked={agreement.d}
+                  onPress={() =>
+                    setAgreement(prev => {
+                      return { ...prev, d: !prev.d };
+                    })
+                  }
+                />
+              </TermsView>
+              <RegionModal
+                open={modalOpen}
+                setOpen={setModalOpen}
                 value={form.region}
-                style={{ width: '70%' }}
-                placeholder="선택해 주세요"
-                placeholderTextColor={BLACK2}
-                readOnly={true}></TextInput>
-              <TouchableOpacity onPress={() => setModalOpen(true)}>
-                <RightArrow stroke={BLACK2} />
-              </TouchableOpacity>
-            </SelectView>
-          </InputView>
-          <TermsView>
-            <Caption11M>만 19세 이상입니다. </Caption11M>
-            <Caption11M style={{ color: PURPLE }}>(필수)</Caption11M>
-            <CheckButton
-              checked={agreement.a}
-              onPress={() =>
-                setAgreement(prev => {
-                  return { ...prev, a: !prev.a };
-                })
-              }
-            />
-          </TermsView>
-          <TermsView>
-            <Caption11M>서비스 이용약관에 동의합니다.</Caption11M>
-            <Caption11M style={{ color: PURPLE }}>(필수)</Caption11M>
-            <CheckButton
-              checked={agreement.b}
-              onPress={() =>
-                setAgreement(prev => {
-                  return { ...prev, b: !prev.b };
-                })
-              }
-            />
-          </TermsView>
-          <TermsView>
-            <Caption11M>개인정보 수집 이용에 동의합니다. </Caption11M>
-            <Caption11M style={{ color: PURPLE }}>(필수)</Caption11M>
-            <CheckButton
-              checked={agreement.c}
-              onPress={() =>
-                setAgreement(prev => {
-                  return { ...prev, c: !prev.c };
-                })
-              }
-            />
-          </TermsView>
-          <TermsView>
-            <Caption11M>
-              마케팅 수신 홍보 목적의 개인정보 수집 및 이용에 동의합니다. (선택){' '}
-            </Caption11M>
-            <CheckButton
-              checked={agreement.d}
-              onPress={() =>
-                setAgreement(prev => {
-                  return { ...prev, d: !prev.d };
-                })
-              }
-            />
-          </TermsView>
-          <RegionModal
-            open={modalOpen}
-            setOpen={setModalOpen}
-            value={form.region}
-            setValue={text =>
-              setForm(prev => {
-                return { ...prev, region: text };
-              })
-            }
-          />
-          <View style={{ marginTop: 'auto' }}>
-            <BottomButton
-              disable={
-                !agreement.a ||
-                !agreement.b ||
-                !agreement.c ||
-                form.mail === '' ||
-                form.domain === '' ||
-                form.password === '' ||
-                form.password !== checkPw.text ||
-                form.region !== ''
-              }
-              value="다음"
-              pressed={false}
-              onPress={handleSubmit}
-              style={{ width: '75%', alignSelf: 'center' }}
-            />
+                setValue={text =>
+                  setForm(prev => {
+                    return { ...prev, region: text };
+                  })
+                }
+              />
+              <BottomButton
+                disable={
+                  !agreement.a ||
+                  !agreement.b ||
+                  !agreement.c ||
+                  form.mail === '' ||
+                  form.domain === '' ||
+                  form.password === '' ||
+                  form.password !== checkPw.text ||
+                  form.region !== ''
+                }
+                value="다음"
+                pressed={false}
+                onPress={handleSubmit}
+                style={{
+                  width: '75%',
+                  alignSelf: 'center',
+                  marginTop: 'auto',
+                  marginBottom: 30,
+                }}
+              />
+            </View>
           </View>
-        </View>
-      </BottomSheetModalProvider>
-    </SafeAreaView>
+        </ScrollView>
+      </SafeAreaView>
+    </BottomSheetModalProvider>
   );
 }
