@@ -10,7 +10,6 @@ import {
   RegionType,
   StyleType,
 } from '../../../types/UserTypes';
-import ProfileSubmit from './ProfileSubmit';
 import ReformFormStyle from './ReformFormStyle';
 import ReformCareer from './ReformFormCareer';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
@@ -23,7 +22,7 @@ export interface ReformProps {
 }
 
 export interface PageProps extends ReformProps {
-  setPage: Dispatch<SetStateAction<page>>;
+  setNext: () => void;
 }
 export interface ModalProps extends ReformProps {
   open: boolean;
@@ -79,6 +78,10 @@ export default function Reformer({ navigation }: FormProps) {
   const [page, setPage] = useState<page>('profile');
   const [profileForm, setProfileForm] = useState(defaultProfile);
 
+  const handleSubmit = () => {
+    navigation.navigate('ReformSubmit');
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <BottomSheetModalProvider>
@@ -102,21 +105,21 @@ export default function Reformer({ navigation }: FormProps) {
           {
             profile: (
               <ReformFormProfile
-                setPage={setPage}
+                setNext={() => setPage('style')}
                 form={profileForm}
                 setForm={setProfileForm}
               />
             ),
             style: (
               <ReformFormStyle
-                setPage={setPage}
+                setNext={() => setPage('career')}
                 form={profileForm}
                 setForm={setProfileForm}
               />
             ),
             career: (
               <ReformCareer
-                setPage={setPage}
+                setNext={() => handleSubmit()}
                 form={profileForm}
                 setForm={setProfileForm}></ReformCareer>
             ),

@@ -1,18 +1,9 @@
-import {
-  View,
-  Dimensions,
-  Platform,
-  TouchableOpacity,
-  Text,
-} from 'react-native';
+import { View, Dimensions, Platform, TouchableOpacity } from 'react-native';
 import { Title20B } from '../../../styles/GlobalText';
-import { BLACK, BLACK2, PURPLE } from '../../../styles/GlobalColor';
+import { BLACK } from '../../../styles/GlobalColor';
 import LeftArrow from '../../../assets/common/Arrow.svg';
 import Slider from '../../../common/Slider';
-import useCustomContext from '../../../hooks/useCustomContext';
-import { useNavigation, NavigationContext } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { ReformStackParams } from './Reformer';
+import { NavigationContext } from '@react-navigation/native';
 import { useContext } from 'react';
 
 interface ReformFormHeaderProps {
