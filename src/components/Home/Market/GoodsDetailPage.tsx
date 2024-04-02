@@ -40,15 +40,8 @@ const GoodsDetailPageScreen = ({ navigation, route }: StackScreenProps<HomeStack
 const ProfileSection = ({ navigation }: { navigation: any }) => {
   const [data, setData] = useState([]);
   return (
-    <View>{/* 톱바 부분. 컴포넌트로 변경 필요 */}
-
-      <View style={{ flexDirection: "column", height: 80, alignItems: 'center', justifyContent: "space-between" }}>
-        <View style={ // To see the top line
-          {
-            width: '100%', height: 30,
-            backgroundColor: '#00000066',
-            opacity: 0.5
-          }} />
+    <SafeAreaView>{/* 세이프에리어로 변경 */}
+      <View style={{ flexDirection: "column", height: 30, alignItems: 'center', justifyContent: "space-between" }}>
         <View // Top bar part: back arrow, service name, search
           style={{ flexDirection: "row", justifyContent: "space-between", alignItems: 'center' }}>
           <TouchableOpacity onPress={() => {
@@ -129,7 +122,7 @@ const ProfileSection = ({ navigation }: { navigation: any }) => {
           </View>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   )
 }
 
