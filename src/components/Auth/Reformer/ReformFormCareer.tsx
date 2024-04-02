@@ -56,7 +56,7 @@ const AddTouchable = styled.TouchableOpacity`
   margin-top: 8px;
 `;
 
-export default function ReformCareer({ setPage, form, setForm }: PageProps) {
+export default function ReformCareer({ setNext, form, setForm }: PageProps) {
   const { width } = Dimensions.get('screen');
   const [educationModal, setEducationModal] = useState(false);
   const [careerModal, setCareerModal] = useState(false);
@@ -151,9 +151,7 @@ export default function ReformCareer({ setPage, form, setForm }: PageProps) {
             <BottomButton
               value="다음"
               pressed={false}
-              onPress={() => {
-                setPage('career');
-              }}
+              onPress={setNext}
               style={{ width: '75%', alignSelf: 'center', marginBottom: 10 }}
             />
           </View>

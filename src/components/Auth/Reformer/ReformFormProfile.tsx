@@ -55,7 +55,7 @@ function ProfilePic({ form, setForm }: ReformProps) {
 }
 
 export default function ReformFormProfile({
-  setPage,
+  setNext,
   form,
   setForm,
 }: PageProps) {
@@ -116,9 +116,7 @@ export default function ReformFormProfile({
           <BottomButton
             value="다음"
             pressed={false}
-            onPress={() => {
-              setPage('style');
-            }}
+            onPress={setNext}
             style={{
               width: '75%',
               alignSelf: 'center',

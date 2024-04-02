@@ -4,6 +4,7 @@ import Login from './Login';
 import Signup from './Signup';
 import ReformForm from './Reformer/Reformer';
 import BasicForm from './BasicForm';
+import ReformFormSubmit from './Reformer/ReformFormSubmit';
 
 export interface FormProps {
   route: any;
@@ -15,6 +16,7 @@ export type SignInParams = {
   Signup: undefined;
   Reformer: undefined;
   Basic: undefined;
+  ReformSubmit: undefined;
 };
 
 export default function SignIn() {
@@ -26,6 +28,7 @@ export default function SignIn() {
       <Stack.Screen name="Signup" component={Signup} />
       <Stack.Screen name="Reformer" component={ReformForm} />
       <Stack.Screen name="Basic" component={BasicForm} />
+      <Stack.Screen name="ReformSubmit" component={ReformFormSubmit} />
     </Stack.Navigator>
   );
 }
