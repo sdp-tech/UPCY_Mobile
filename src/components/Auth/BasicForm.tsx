@@ -8,10 +8,9 @@ import {
 } from 'react-native';
 import { Body16B, Body16M, Caption11M } from '../../styles/GlobalText';
 import styled from 'styled-components/native';
-import { BLACK, BLACK2, GRAY, PURPLE } from '../../styles/GlobalColor';
+import { BLACK2, GRAY, PURPLE } from '../../styles/GlobalColor';
 import CheckIcon from '../../assets/common/CheckIcon.svg';
 import DownArrow from '../../assets/common/DownArrow.svg';
-import RightArrow from '../../assets/common/RightArrow.svg';
 import LeftArrow from '../../assets/common/Arrow.svg';
 import Logo from '../../assets/common/Logo.svg';
 import { FormProps } from './SignIn';
@@ -23,6 +22,7 @@ import RegionModal from './RegionModal';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import SelectBox from '../../common/SelectBox';
 import BasicSignupSplash from './BasicSignupSplash';
+import CustomScrollView from '../../common/CustomScrollView';
 
 interface SignupProps {
   mail: string;
@@ -112,7 +112,7 @@ export default function BasicForm({ navigation, route }: FormProps) {
         <BasicSignupSplash />
       ) : (
         <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-          <ScrollView>
+          <CustomScrollView>
             <View style={{ flex: 1, minHeight: 800 }}>
               <TouchableOpacity
                 onPress={() => navigation.goBack()}
@@ -316,7 +316,7 @@ export default function BasicForm({ navigation, route }: FormProps) {
                 />
               </View>
             </View>
-          </ScrollView>
+          </CustomScrollView>
         </SafeAreaView>
       )}
     </BottomSheetModalProvider>

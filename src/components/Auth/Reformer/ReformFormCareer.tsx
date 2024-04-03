@@ -3,7 +3,6 @@ import {
   View,
   Dimensions,
   StyleSheet,
-  ScrollView,
   Alert,
 } from 'react-native';
 import styled from 'styled-components/native';
@@ -17,6 +16,7 @@ import { BLACK, BLACK2, GRAY } from '../../../styles/GlobalColor';
 import EducationModal from './EducationModal';
 import SelectBox from '../../../common/SelectBox';
 import CareerModal from './CareerModal';
+import CustomScrollView from '../../../common/CustomScrollView';
 
 const SelectView = styled.View`
   display: flex;
@@ -97,12 +97,7 @@ export default function ReformCareer({ setNext, form, setForm }: PageProps) {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView
-        alwaysBounceVertical={false}
-        contentContainerStyle={{
-          minHeight: 500,
-          flexGrow: 1,
-        }}>
+      <CustomScrollView minHeight={500}>
         <View style={{ flexGrow: 1 }}>
           <View style={{ marginHorizontal: width * 0.04 }}>
             <View style={styles.formView}>
@@ -156,7 +151,7 @@ export default function ReformCareer({ setNext, form, setForm }: PageProps) {
             />
           </View>
         </View>
-      </ScrollView>
+      </CustomScrollView>
       <EducationModal
         open={educationModal}
         setOpen={setEducationModal}

@@ -25,6 +25,7 @@ import SelectBox from '../../../common/SelectBox';
 import Dropdown from '../../../common/Dropdown';
 import PeriodPicker from '../../../common/PeriodPicker';
 import FileBox from '../../../common/FileBox';
+import CustomScrollView from '../../../common/CustomScrollView';
 
 interface CareerModalProps extends ModalProps {
   index: number;
@@ -300,9 +301,7 @@ export default function CareerModal({
           </View>
         </>
       ) : (
-        <ScrollView
-          alwaysBounceVertical={false}
-          contentContainerStyle={{ flexGrow: 1, minHeight: 700 }}>
+        <CustomScrollView minHeight={700}>
           <View
             style={{
               marginHorizontal: width * 0.04,
@@ -363,7 +362,7 @@ export default function CareerModal({
               />
             </View>
           </View>
-        </ScrollView>
+        </CustomScrollView>
       )}
     </BottomSheetModal>
   );

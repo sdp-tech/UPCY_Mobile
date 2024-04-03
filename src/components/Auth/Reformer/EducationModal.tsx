@@ -21,6 +21,7 @@ import { ModalProps } from './Reformer';
 import InputView from '../../../common/InputView';
 import SelectBox from '../../../common/SelectBox';
 import FileBox from '../../../common/FileBox';
+import CustomScrollView from '../../../common/CustomScrollView';
 
 export default function EducationModal({
   open,
@@ -96,9 +97,7 @@ export default function EducationModal({
       backdropComponent={renderBackdrop}
       onChange={handleSheetChanges}>
       {section === 'init' ? (
-        <ScrollView
-          alwaysBounceVertical={false}
-          contentContainerStyle={{ flexGrow: 1, minHeight: 700 }}>
+        <CustomScrollView minHeight={700}>
           <View
             style={{
               marginHorizontal: width * 0.04,
@@ -176,7 +175,7 @@ export default function EducationModal({
               />
             </View>
           </View>
-        </ScrollView>
+        </CustomScrollView>
       ) : (
         <>
           <View style={styles.selectItem}>
