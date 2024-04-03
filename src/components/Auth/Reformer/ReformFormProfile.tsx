@@ -4,6 +4,7 @@ import BottomButton from '../../../common/BottomButton';
 import PencilIcon from '../../../assets/common/Pencil.svg';
 import InputView from '../../../common/InputView';
 import PhotoOptions from '../../../common/PhotoOptions';
+import CustomScrollView from '../../../common/CustomScrollView';
 
 function ProfilePic({ form, setForm }: ReformProps) {
   return (
@@ -63,12 +64,10 @@ export default function ReformFormProfile({
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView
-        alwaysBounceVertical={false}
+      <CustomScrollView
         contentContainerStyle={{
           minHeight: 650,
           marginHorizontal: width * 0.04,
-          flexGrow: 1,
         }}>
         <View style={{ flexGrow: 1 }}>
           <ProfilePic form={form} setForm={setForm} />
@@ -125,7 +124,7 @@ export default function ReformFormProfile({
             }}
           />
         </View>
-      </ScrollView>
+      </CustomScrollView>
     </SafeAreaView>
   );
 }
