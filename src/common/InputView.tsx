@@ -32,7 +32,6 @@ const InputView = ({
 
   const getViewMeasure = () => {
     ViewRef.current?.measureInWindow((x, y) => {
-      console.log(x, y);
       setPos({ top: y + 20, left: x + 50 });
     });
   };
