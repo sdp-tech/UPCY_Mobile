@@ -26,6 +26,7 @@ import Dropdown from '../../../common/Dropdown';
 import PeriodPicker from '../../../common/PeriodPicker';
 import FileBox from '../../../common/FileBox';
 import CustomScrollView from '../../../common/CustomScrollView';
+import DatePickerBox from '../../../common/DatePickerBox';
 
 interface CareerModalProps extends ModalProps {
   index: number;
@@ -173,13 +174,16 @@ export default function CareerModal({
             handleContentChange(v, 'host');
           }}
         />
-        <InputView
-          title="발급일"
-          value={form.career[index].date}
-          setValue={v => {
-            handleContentChange(v, 'date');
-          }}
-        />
+        <View style={{ marginVertical: 10 }}>
+          <Body16B>발급일</Body16B>
+          <DatePickerBox
+            title="발급일"
+            date={form.career[index].date}
+            setDate={v => {
+              handleContentChange(v, 'date');
+            }}
+          />
+        </View>
       </View>
     );
   };
@@ -201,13 +205,16 @@ export default function CareerModal({
             handleContentChange(v, 'host');
           }}
         />
-        <InputView
-          title="수상일"
-          value={form.career[index].date}
-          setValue={v => {
-            handleContentChange(v, 'date');
-          }}
-        />
+        <View style={{ marginVertical: 10 }}>
+          <Body16B>수상일</Body16B>
+          <DatePickerBox
+            title="수상일"
+            date={form.career[index].date}
+            setDate={v => {
+              handleContentChange(v, 'date');
+            }}
+          />
+        </View>
       </View>
     );
   };
