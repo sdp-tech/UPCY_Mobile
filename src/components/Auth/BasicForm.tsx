@@ -16,6 +16,7 @@ import Logo from '../../assets/common/Logo.svg';
 import { FormProps } from './SignIn';
 import { useState } from 'react';
 import InputBox from '../../common/InputBox';
+import InputView from '../../common/InputView';
 import BottomButton from '../../common/BottomButton';
 import Dropdown from '../../common/Dropdown';
 import RegionModal from './RegionModal';
@@ -36,13 +37,13 @@ interface CheckBtnProps {
   onPress: () => void;
 }
 
-const InputView = styled.View`
+const SectionView = styled.View`
   position: relative;
   margin-top: 8px;
   margin-bottom: 8px;
 `;
 
-const TermsView = styled(InputView)`
+const TermsView = styled(SectionView)`
   flex-direction: row;
   align-items: center;
 `;
@@ -93,7 +94,7 @@ export default function BasicForm({ navigation, route }: FormProps) {
     c: false,
     d: false,
   });
-  const [checkPw, setCheckPw] = useState({ text: '', bool: false });
+  const [checkPw, setCheckPw] = useState('');
   const [domainOpen, setDomainOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [splash, setSplash] = useState(false);
@@ -134,7 +135,7 @@ export default function BasicForm({ navigation, route }: FormProps) {
                   marginHorizontal: width * 0.04,
                   flex: 1,
                 }}>
-                <InputView style={{ zIndex: 1 }}>
+                <SectionView style={{ zIndex: 1 }}>
                   <Body16B>이메일</Body16B>
                   <MailView>
                     <InputBox
@@ -185,53 +186,43 @@ export default function BasicForm({ navigation, route }: FormProps) {
                       </TouchableOpacity>
                     </SelectView>
                   </MailView>
-                </InputView>
-                <InputView>
-                  <Body16B>비밀번호</Body16B>
-                  <InputBox
-                    value={form.password}
-                    setValue={text =>
-                      setForm(prev => {
-                        return { ...prev, password: text };
-                      })
-                    }
-                    placeholder="입력해 주세요"
-                    style={{ height: 44, marginTop: 8 }}
-                    secure={true}
-                    onEndEditing={e =>
-                      setCheckPw(prev => {
-                        return { ...prev, bool: true };
-                      })
-                    }
-                  />
-                  <Caption11M style={{ color: GRAY }}>비밀번호 조합</Caption11M>
-                </InputView>
-                <InputView>
-                  <Body16B>비밀번호 확인</Body16B>
-                  <InputBox
-                    value={checkPw.text}
-                    setValue={text =>
-                      setCheckPw(prev => {
-                        return { ...prev, text: text };
-                      })
-                    }
-                    placeholder="입력해 주세요"
-                    style={{ height: 44, marginTop: 8 }}
-                    secure={true}
-                  />
-                  <Caption11M style={{ color: PURPLE }}>
-                    {checkPw.text !== form.password && checkPw.bool
-                      ? '비밀번호가 일치하지 않습니다.'
-                      : ''}
-                  </Caption11M>
-                </InputView>
-                <InputView>
+                </SectionView>
+                <InputView
+                  title="비밀번호"
+                  value={form.password}
+                  setValue={text =>
+                    setForm(prev => {
+                      return { ...prev, password: text };
+                    })
+                  }
+                  placeholder="입력해 주세요"
+                  style={{ height: 44, marginTop: 8 }}
+                  secure={true}
+                  valid={form.password !== '' && form.password.length < 7}
+                  caption={{
+                    none: '비밀번호 조건',
+                    invalid: '비밀번호가 올바르지 않습니다.',
+                  }}
+                />
+
+                <InputView
+                  title="비밀번호 확인"
+                  value={checkPw}
+                  setValue={text => setCheckPw(text)}
+                  placeholder="입력해 주세요"
+                  style={{ height: 44, marginTop: 8 }}
+                  secure={true}
+                  valid={checkPw !== form.password && checkPw !== ''}
+                  caption={{ invalid: '비밀번호가 일치하지 않습니다.' }}
+                />
+
+                <SectionView>
                   <Body16B>지역</Body16B>
                   <SelectBox
                     value={form.region}
                     onPress={() => setModalOpen(true)}
                   />
-                </InputView>
+                </SectionView>
                 <TermsView>
                   <Caption11M>만 19세 이상입니다. </Caption11M>
                   <Caption11M style={{ color: PURPLE }}>(필수)</Caption11M>
@@ -301,7 +292,7 @@ export default function BasicForm({ navigation, route }: FormProps) {
                     // form.mail === '' ||
                     // form.domain === '' ||
                     // form.password === '' ||
-                    // form.password !== checkPw.text ||
+                    // form.password !== checkPw ||
                     // form.region !== ''
                   }
                   value="다음"

@@ -1,12 +1,18 @@
 import { View, ViewStyle } from 'react-native';
 import InputBox, { InputBoxProps } from './InputBox';
-import { Body16B } from '../styles/GlobalText';
+import { Body16B, Caption11M } from '../styles/GlobalText';
 import InfoIcon from '../assets/common/Info.svg';
+import { GRAY, PURPLE } from '../styles/GlobalColor';
 
 interface InputViewProps extends InputBoxProps {
   containerStyle?: ViewStyle;
   title?: string;
   info?: string;
+  valid?: boolean;
+  caption?: {
+    none?: string;
+    invalid?: string;
+  };
 }
 
 const InputView = ({
@@ -15,7 +21,8 @@ const InputView = ({
   info,
   value,
   setValue,
-  long,
+  valid,
+  caption,
   ...props
 }: InputViewProps) => {
   return (
@@ -28,9 +35,14 @@ const InputView = ({
         value={value}
         setValue={setValue}
         style={{ marginTop: 8 }}
-        long={long}
         {...props}
       />
+      {value === '' && caption?.none && (
+        <Caption11M style={{ color: GRAY }}>{caption.none}</Caption11M>
+      )}
+      {valid && caption?.invalid && (
+        <Caption11M style={{ color: PURPLE }}>{caption.invalid}</Caption11M>
+      )}
     </View>
   );
 };
