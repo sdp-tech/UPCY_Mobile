@@ -4,6 +4,7 @@ import BottomButton from '../../../common/BottomButton';
 import PencilIcon from '../../../assets/common/Pencil.svg';
 import InputView from '../../../common/InputView';
 import PhotoOptions from '../../../common/PhotoOptions';
+import CustomScrollView from '../../../common/CustomScrollView';
 
 function ProfilePic({ form, setForm }: ReformProps) {
   return (
@@ -55,7 +56,7 @@ function ProfilePic({ form, setForm }: ReformProps) {
 }
 
 export default function ReformFormProfile({
-  setPage,
+  setNext,
   form,
   setForm,
 }: PageProps) {
@@ -63,12 +64,10 @@ export default function ReformFormProfile({
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView
-        alwaysBounceVertical={false}
+      <CustomScrollView
         contentContainerStyle={{
           minHeight: 650,
           marginHorizontal: width * 0.04,
-          flexGrow: 1,
         }}>
         <View style={{ flexGrow: 1 }}>
           <ProfilePic form={form} setForm={setForm} />
@@ -116,9 +115,7 @@ export default function ReformFormProfile({
           <BottomButton
             value="다음"
             pressed={false}
-            onPress={() => {
-              setPage('style');
-            }}
+            onPress={setNext}
             style={{
               width: '75%',
               alignSelf: 'center',
@@ -127,7 +124,7 @@ export default function ReformFormProfile({
             }}
           />
         </View>
-      </ScrollView>
+      </CustomScrollView>
     </SafeAreaView>
   );
 }
