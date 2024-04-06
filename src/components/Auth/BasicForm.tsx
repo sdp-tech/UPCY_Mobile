@@ -198,10 +198,12 @@ export default function BasicForm({ navigation, route }: FormProps) {
                   placeholder="입력해 주세요"
                   style={{ height: 44, marginTop: 8 }}
                   secure={true}
-                  valid={form.password !== '' && form.password.length < 7}
                   caption={{
                     none: '비밀번호 조건',
-                    invalid: '비밀번호가 올바르지 않습니다.',
+                    invalid:
+                      form.password !== '' &&
+                      form.password.length < 7 &&
+                      '비밀번호가 올바르지 않습니다.',
                   }}
                 />
 
@@ -212,8 +214,12 @@ export default function BasicForm({ navigation, route }: FormProps) {
                   placeholder="입력해 주세요"
                   style={{ height: 44, marginTop: 8 }}
                   secure={true}
-                  valid={checkPw !== form.password && checkPw !== ''}
-                  caption={{ invalid: '비밀번호가 일치하지 않습니다.' }}
+                  caption={{
+                    invalid:
+                      checkPw !== form.password &&
+                      checkPw !== '' &&
+                      '비밀번호가 일치하지 않습니다.',
+                  }}
                 />
 
                 <SectionView>

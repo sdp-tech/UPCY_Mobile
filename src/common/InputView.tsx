@@ -8,10 +8,9 @@ interface InputViewProps extends InputBoxProps {
   containerStyle?: ViewStyle;
   title?: string;
   info?: string;
-  valid?: boolean;
   caption?: {
-    none?: string;
-    invalid?: string;
+    none?: false | string;
+    invalid?: false | string;
   };
 }
 
@@ -21,7 +20,6 @@ const InputView = ({
   info,
   value,
   setValue,
-  valid,
   caption,
   ...props
 }: InputViewProps) => {
@@ -40,7 +38,7 @@ const InputView = ({
       {value === '' && caption?.none && (
         <Caption11M style={{ color: GRAY }}>{caption.none}</Caption11M>
       )}
-      {valid && caption?.invalid && (
+      {caption?.invalid && (
         <Caption11M style={{ color: PURPLE }}>{caption.invalid}</Caption11M>
       )}
     </View>
