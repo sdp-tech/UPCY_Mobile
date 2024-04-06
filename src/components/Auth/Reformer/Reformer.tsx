@@ -10,7 +10,6 @@ import {
   RegionType,
   StyleType,
 } from '../../../types/UserTypes';
-import ProfileSubmit from './ProfileSubmit';
 import ReformFormStyle from './ReformFormStyle';
 import ReformCareer from './ReformFormCareer';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
@@ -18,22 +17,17 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 type page = 'profile' | 'style' | 'career';
 
 export interface ReformProps {
-  setPage: Dispatch<SetStateAction<page>>;
-  form: ReformProfileType;
-  setForm: Dispatch<SetStateAction<ReformProfileType>>;
-}
-export interface ModalProps {
-  open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
   form: ReformProfileType;
   setForm: Dispatch<SetStateAction<ReformProfileType>>;
 }
 
-export type ReformStackParams = {
-  Basic: {};
-  Profile: {};
-  tmp: {};
-};
+export interface PageProps extends ReformProps {
+  setNext: () => void;
+}
+export interface ModalProps extends ReformProps {
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+}
 
 interface BasicFormProp {
   email: string;
@@ -63,11 +57,9 @@ export type RpContextType = {
   setSteps: Dispatch<SetStateAction<number>>;
 };
 
-export const ReformProfileContext = createContext<RpContextType | null>(null);
-
 export default function Reformer({ navigation }: FormProps) {
   const defaultProfile: ReformProfileType = {
-    picture: null,
+    picture: undefined,
     nickname: '',
     market: '',
     introduce: '',
@@ -79,12 +71,16 @@ export default function Reformer({ navigation }: FormProps) {
       school: '',
       major: '',
       status: undefined,
-      file: undefined,
+      file: [],
     },
     career: [],
   };
   const [page, setPage] = useState<page>('profile');
   const [profileForm, setProfileForm] = useState(defaultProfile);
+
+  const handleSubmit = () => {
+    navigation.navigate('ReformSubmit');
+  };
 
   return (
     <View style={{ flex: 1 }}>
@@ -109,21 +105,21 @@ export default function Reformer({ navigation }: FormProps) {
           {
             profile: (
               <ReformFormProfile
-                setPage={setPage}
+                setNext={() => setPage('style')}
                 form={profileForm}
                 setForm={setProfileForm}
               />
             ),
             style: (
               <ReformFormStyle
-                setPage={setPage}
+                setNext={() => setPage('career')}
                 form={profileForm}
                 setForm={setProfileForm}
               />
             ),
             career: (
               <ReformCareer
-                setPage={setPage}
+                setNext={() => handleSubmit()}
                 form={profileForm}
                 setForm={setProfileForm}></ReformCareer>
             ),

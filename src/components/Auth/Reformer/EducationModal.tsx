@@ -20,6 +20,8 @@ import BottomButton from '../../../common/BottomButton';
 import { ModalProps } from './Reformer';
 import InputView from '../../../common/InputView';
 import SelectBox from '../../../common/SelectBox';
+import FileBox from '../../../common/FileBox';
+import CustomScrollView from '../../../common/CustomScrollView';
 
 export default function EducationModal({
   open,
@@ -95,9 +97,7 @@ export default function EducationModal({
       backdropComponent={renderBackdrop}
       onChange={handleSheetChanges}>
       {section === 'init' ? (
-        <ScrollView
-          alwaysBounceVertical={false}
-          contentContainerStyle={{ flexGrow: 1, minHeight: 700 }}>
+        <CustomScrollView minHeight={700}>
           <View
             style={{
               marginHorizontal: width * 0.04,
@@ -145,12 +145,7 @@ export default function EducationModal({
                 <Body16B>증빙자료첨부</Body16B>
                 <Caption11M style={{ color: BLACK2 }}>선택사항</Caption11M>
               </View>
-              <SelectBox
-                value={form.education.file}
-                // 파일 첨부 구현
-                onPress={() => {}}
-                add={true}
-              />
+              <FileBox data={form.education.file} max={1} />
             </View>
             <View style={styles.info}>
               <Caption11M style={{ color: PURPLE }}>
@@ -180,7 +175,7 @@ export default function EducationModal({
               />
             </View>
           </View>
-        </ScrollView>
+        </CustomScrollView>
       ) : (
         <>
           <View style={styles.selectItem}>

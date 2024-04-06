@@ -7,17 +7,12 @@ import {
   Alert,
 } from 'react-native';
 import { Caption11M, Title20B } from '../../../styles/GlobalText';
-import { ReformProps } from './Reformer';
+import { PageProps } from './Reformer';
 import BottomButton from '../../../common/BottomButton';
-import { useState } from 'react';
 import FilterBox from '../../../common/FilterBox';
 import { BLACK } from '../../../styles/GlobalColor';
 
-export default function ReformFormStyle({
-  setPage,
-  form,
-  setForm,
-}: ReformProps) {
+export default function ReformFormStyle({ setNext, form, setForm }: PageProps) {
   const { width, height } = Dimensions.get('screen');
 
   const handleStylePress = (value: string) => {
@@ -98,9 +93,7 @@ export default function ReformFormStyle({
             <BottomButton
               value="다음"
               pressed={false}
-              onPress={() => {
-                setPage('career');
-              }}
+              onPress={setNext}
               style={{ width: '75%', alignSelf: 'center', marginBottom: 10 }}
             />
           </View>

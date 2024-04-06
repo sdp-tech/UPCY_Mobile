@@ -1,16 +1,12 @@
-import {
-  SafeAreaView,
-  View,
-  Dimensions,
-  TouchableOpacity,
-  ScrollView,
-} from 'react-native';
-import { ReformProps } from './Reformer';
+import { SafeAreaView, View, Dimensions, ScrollView } from 'react-native';
+import { PageProps, ReformProps } from './Reformer';
 import BottomButton from '../../../common/BottomButton';
 import PencilIcon from '../../../assets/common/Pencil.svg';
 import InputView from '../../../common/InputView';
+import PhotoOptions from '../../../common/PhotoOptions';
+import CustomScrollView from '../../../common/CustomScrollView';
 
-function ProfilePic({}) {
+function ProfilePic({ form, setForm }: ReformProps) {
   return (
     <View
       style={{
@@ -19,15 +15,27 @@ function ProfilePic({}) {
         alignSelf: 'center',
         position: 'relative',
       }}>
-      <TouchableOpacity>
-        <View
-          style={{
-            width: 82,
-            height: 82,
-            borderRadius: 100,
-            backgroundColor: '#D9D9D9',
-          }}></View>
-      </TouchableOpacity>
+      <PhotoOptions
+        buttonLabel=""
+        photo={form.picture}
+        setPhoto={p => {
+          setForm(prev => {
+            return { ...prev, picture: p[0] };
+          });
+        }}
+        max={1}
+        style={{
+          position: 'relative',
+          width: 82,
+          height: 82,
+          borderRadius: 100,
+          backgroundColor: '#D9D9D9',
+          paddingVertical: 0,
+          paddingHorizontal: 0,
+          marginBottom: 0,
+        }}
+      />
+
       <View
         style={{
           position: 'absolute',
@@ -48,23 +56,21 @@ function ProfilePic({}) {
 }
 
 export default function ReformFormProfile({
-  setPage,
+  setNext,
   form,
   setForm,
-}: ReformProps) {
+}: PageProps) {
   const { width } = Dimensions.get('screen');
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView
-        alwaysBounceVertical={false}
+      <CustomScrollView
         contentContainerStyle={{
           minHeight: 650,
           marginHorizontal: width * 0.04,
-          flexGrow: 1,
         }}>
         <View style={{ flexGrow: 1 }}>
-          <ProfilePic />
+          <ProfilePic form={form} setForm={setForm} />
           <InputView
             title="닉네임"
             value={form.nickname}
@@ -109,9 +115,7 @@ export default function ReformFormProfile({
           <BottomButton
             value="다음"
             pressed={false}
-            onPress={() => {
-              setPage('style');
-            }}
+            onPress={setNext}
             style={{
               width: '75%',
               alignSelf: 'center',
@@ -120,7 +124,7 @@ export default function ReformFormProfile({
             }}
           />
         </View>
-      </ScrollView>
+      </CustomScrollView>
     </SafeAreaView>
   );
 }
