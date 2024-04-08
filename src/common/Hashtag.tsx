@@ -11,10 +11,11 @@ interface HashtagProps {
   onPress?: () => void;
 }
 
-const Hashtag = ({value, pressable, pressed, onPress} : HashtagProps) => {
+const Hashtag = ({ value, pressable, pressed, onPress }: HashtagProps) => {
   return (
     <HashtagContainer pressed={pressed} onPress={onPress} disabled={!pressable}>
-      <Subtitle16M style={{color: pressed ? 'white' : BLACK }}>{value}</Subtitle16M>
+      <Subtitle16M style={{ color: pressed ? 'white' : BLACK }}>{value}</Subtitle16M>
+      <Text style={{ color: GRAY, fontSize: 16, fontWeight: 'bold' }}> X</Text>
     </HashtagContainer>
   )
 }
@@ -22,6 +23,7 @@ const Hashtag = ({value, pressable, pressed, onPress} : HashtagProps) => {
 const HashtagContainer = styled.TouchableOpacity<{ pressed: boolean }>`
   display: flex;
   border-radius: 12px;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
   padding: 4px 16px;

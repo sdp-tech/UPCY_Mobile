@@ -1,6 +1,6 @@
 import { StackScreenProps } from "@react-navigation/stack"
 import { HomeStackParams } from "../../../pages/Home"
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, SafeAreaView } from "react-native"
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, SafeAreaView, Button, ImageBackground, Alert } from "react-native"
 import Arrow from '../../../assets/common/Arrow.svg';
 import styled from "styled-components/native";
 import { getStatusBarHeight } from "react-native-safearea-height";
@@ -13,6 +13,9 @@ import Hashtag from "../../../common/Hashtag";
 import Photo from "../../../assets/common/Photo.svg"
 import TempStorage from "./TempStorage";
 import Slider from "@react-native-community/slider";
+import PhotoOptions, { PhotoResultProps } from '../../../common/PhotoOptions';
+import Carousel from '../../../common/Carousel';
+import FilterElement from "./FilterElement";
 
 const statusBarHeight = getStatusBarHeight(true);
 
@@ -25,7 +28,7 @@ const StyledButton = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
   padding:12px;
-  padding-horizontal: 16px;
+  padding: 0px 16px 0px 16px;
   background: ${LIGHTGRAY};
   border-radius: 6px;
   margin-bottom: 20px;
@@ -42,7 +45,6 @@ const ButtonSection = styled.View`
 const UploadSection = styled.View`
   display: flex;
   flex-direction: row;
-  flex:1;
   justify-content:center;
   align-items:center;
   width: 100%;
@@ -54,7 +56,7 @@ const UploadButton = styled.TouchableOpacity`
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding-horizontal: 20px;
+  padding: 0px 20px 0px 20px;
   background: ${LIGHTGRAY};
   border-radius: 6px;
   margin-bottom: 20px;
@@ -81,7 +83,7 @@ const FillerSection = styled.View`
   background-color: white;
   margin:10px;
   border:1px solid #612FEF;
-  border-radius: 20px;
+  border-radius: 8px;
 `
 
 const TagContainer = styled.View`
@@ -140,57 +142,202 @@ const FilterSection = ({ label, items }: FilterSectionProps) => {
   )
 }
 
+interface Option {
+  option: string;
+  price: number;
+  optionExplain: string;
+}
 
 const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeStackParams, 'ServiceRegistrationPage'>) => {
-  const materials = ['폴리에스테르', '면', '스웨이드', '울', '캐시미어', '가죽', '데님', '추가 요청사항에 기재']
-  const styles = ["빈티지", "미니멀", "캐주얼", "페미닌", "글램", "스트릿", "키치", "스포티", "홈웨어", "걸리시"]
-  const category = ["아우터", "상의", "하의", "가방", "모자", "잡화"]
-  const fit = ["노멀", "타이트", "오버사이즈", "와이드"]
-  const detailStyle = ["지퍼", "단추", "셔링", "포켓", "워싱", "집업", "프릴", "보(리본)", "크롭", "칼라", "금속", "비즈"]
+  const [materials, setMaterials] = useState<string[]>([]);
+  const [styles, setStyles] = useState<string[]>([]);
+  const [fits, setFits] = useState<string[]>([]);
+  const [details, setDetails] = useState<string[]>([]);
+  const [category, setCategory] = useState<string[]>([]);
+  const ifUnpressable = (value: string) => {
+    if (
+      category.length == 1 || fits.length == 1 || materials.length == 1)
+      return true;
+    else return false;
+  };
+  const handleSeveralPress = (type: string, value: string): void => {
+    if (type == "style" && styles.includes(value)) {
+      const extractedStyles = styles.filter(v => v !== value);
+      setStyles([...new Set([...extractedStyles])]
+      );
+    }
+    else if (type == "style") {
+      setStyles(prevStyles => [...new Set([...prevStyles, value])])
+    }
+    else if (type == "detail" && details.includes(value)) {
+      const extractedDetails = details.filter(v => v !== value);
+      setDetails([...new Set([...extractedDetails])]
+      );
+    }
+    else if (type == "detail") {
+      setDetails(prevDetails => [...new Set([...prevDetails, value])])
+    };
+  }
+  const handleOnePress = (type: string, value: string) => {
+    if (ifUnpressable(value)) {
+      if (type == "fit") {
+        Alert.alert('한 개만 선택해주세요');
+        const extractedFits = fits.filter(v => v !== value);
+        setFits([...new Set([...extractedFits])]
+        );
+      }
+      else if (type == "category") {
+        Alert.alert('한 개만 선택해주세요');
+        const extractedCategory = category.filter(v => v !== value);
+        setCategory([...new Set([...extractedCategory])]
+        );
+      }
+      else if (type == "material") {
+        Alert.alert('한 개만 선택해주세요');
+        const extractedMaterials = materials.filter(v => v !== value);
+        setMaterials([...new Set([...extractedMaterials])]
+        );
+      }
+    }
+    else if (type == "fit" && fits.includes(value)) {
+      const extractedFits = fits.filter(v => v !== value);
+      setFits([...new Set([...extractedFits])]
+      );
+    }
+    else if (type == "fit") {
+      setFits(prevFits => [...new Set([...prevFits, value])])
+    }
+    else if (type == "category" && category.includes(value)) {
+      const extractedCategory = category.filter(v => v !== value);
+      setCategory([...new Set([...extractedCategory])]
+      );
+    }
+    else if (type == "category") {
+      setCategory(prevCategory => [...new Set([...prevCategory, value])])
+    }
+    else if (type == "material" && materials.includes(value)) {
+      const extractedMaterials = materials.filter(v => v !== value);
+      setMaterials([...new Set([...extractedMaterials])]
+      );
+    }
+    else if (type == "material") {
+      setMaterials(prevMaterials => [...new Set([...prevMaterials, value])])
+    };
+  }
   const [makingTime, setMakingTime] = useState<number>(0);
   const [name, setName] = useState<string>('');
-  const [hashTag, setHashTag] = useState<string>('');
   const [price, setPrice] = useState<string>('1000');
   const [maxPrice, setMaxPrice] = useState<string>('1000');
-  const [detail, setDetail] = useState<string>('');
+  const [option, setOption] = useState<string>('');
   const [addPrice, setAddprice] = useState<string>("1000");
   const [optionExplain, setOptionExplain] = useState<string>("");
   const [notice, setNotice] = useState<string>('');
-  const tag = ["#가방", "#어쩌구저쩌구", "#가방", "#가방", "#가방"]
+  const [photos, setPhotos] = useState<PhotoResultProps[]>([]);
+  const [optionList, setOptionList] = useState<Option[]>([]);
   const registList = [{
     option: "디테일 어쩌구",
     price: parseInt(price) + parseInt(addPrice),
-    detail: "가방 입구에 똑딱이 단추를 추가할 수 있어요."
+    optionExplain: "가방 입구에 똑딱이 단추를 추가할 수 있어요."
   }, {
     option: "디테일 어쩌구",
     price: parseInt(price) + parseInt(addPrice),
-    detail: "주머니에 귀여운 지퍼를 달아보세요."
+    optionExplain: "주머니에 귀여운 지퍼를 달아보세요."
   }]
+  const addOption = () => {
+    const newOption = { option: option, price: parseInt(price) + parseInt(addPrice), optionExplain: optionExplain };
+    setOptionList([...optionList, newOption]);
+    // 입력 필드 초기화
+    setOption('');
+    setAddprice('');
+    setOptionExplain('');
+    setPrice('');
+  }
+  const removeOption = (idx: number): void => {
+    const newList = [...optionList];
+    newList.splice(idx, 1); // index 위치에서 1개의 항목을 제거합니다.
+    setOptionList(newList);
+  }
+
+  const splitArrayIntoPairs = (arr: any[], pairSize: number) => {
+    return arr.reduce((result, item, index) => {
+      if (index % pairSize === 0) {
+        result.push([]);
+      }
+      result[result.length - 1].push(item);
+      return result;
+    }, []);
+  };
+  const splitPhotos = splitArrayIntoPairs(photos, 1);
   return (
     <SafeAreaView>
-      <ScrollView>
-        <View style={{ flexDirection: "row", borderBottomWidth: 1, borderBlockColor: "#000", alignItems: "center", justifyContent: "space-between" }}>
-          <View style={{ flex: 1 }}>
-            <BackButton onPress={() => navigation.goBack()}>
-              <Arrow color='black' />
-            </BackButton>
-          </View>
-          <View style={{ flex: 1 }}>
-            <Body16B style={{ fontSize: 18, textAlign: "center" }}>서비스 등록</Body16B>
-          </View>
-          <View style={{ flex: 1, alignItems: "flex-end" }}>
-            <TouchableOpacity style={{ paddingRight: 10 }} onPress={() => { navigation.navigate("TempStorage") }}>
-              <Body14M style={{ color: "#929292" }}>임시저장 | 5</Body14M>
-            </TouchableOpacity>
-          </View>
+      <SafeAreaView style={{
+        position: "relative", top: 0,
+        flexDirection: "row", borderBottomWidth: 1, borderBlockColor: "#000", alignItems: "center", justifyContent: "space-between"
+      }}>
+        <View style={{ flex: 1 }}>
+          <BackButton onPress={() => navigation.goBack()}>
+            <Arrow color='black' />
+          </BackButton>
         </View>
+        <View style={{ flex: 1 }}>
+          <Body16B style={{ fontSize: 18, textAlign: "center" }}>서비스 등록</Body16B>
+        </View>
+        <View style={{ flex: 1, alignItems: "flex-end" }}>
+          <TouchableOpacity style={{ paddingRight: 10 }} onPress={() => { navigation.navigate("TempStorage") }}>
+            <Body14M style={{ color: "#929292" }}>임시저장 | 5</Body14M>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+      <ScrollView>
         {/* 사진 업로드하는 컴포넌트 만들 것 */}
-        <UploadSection style={{ borderBottomWidth: 5, borderBottomColor: "#dcdcdc" }}>
-          <UploadButton>
-            <Photo />
-            <Subtitle16B>이미지 등록</Subtitle16B>
-          </UploadButton>
-        </UploadSection>
+        {photos.length == 0 &&
+          <UploadSection style={{ borderBottomWidth: 5, borderBottomColor: "#dcdcdc" }}>
+            <View style={{
+              backgroundColor: LIGHTGRAY,
+              borderRadius: 6,
+            }}>
+              <PhotoOptions
+                style={{ alignContent: "center", margin: 5, marginBottom: 5 }}
+                max={4}
+                setPhoto={setPhotos}
+                buttonLabel='이미지 첨부'
+              />
+            </View>
+          </UploadSection>
+        }
+        {photos.length > 0 &&
+          <View style={{ flex: 1 }}>
+            <Carousel
+              data={splitPhotos}
+              renderItem={({ item }: any) => {
+                return (
+                  <View >
+                    {item.map((subItem: any) => (
+                      <View style={{ height: 350, paddingLeft: 20, paddingRight: 20, paddingTop: 20 }}>
+                        <ImageBackground
+                          key={subItem.id}
+                          source={{ uri: subItem.uri }}
+                          style={{ width: "auto", height: "100%" }}
+                          alt={subItem.fileName}
+                        />
+                      </View>
+                    ))}
+                  </View>
+                )
+              }}
+              slider
+            />
+          </View>
+        }
+        {photos.length > 0 &&
+          <TouchableOpacity style={{ padding: 5, marginBottom: -40 }}>
+            <PhotoOptions
+              max={4}
+              setPhoto={setPhotos}
+              buttonLabel='등록한 이미지 수정'
+            />
+          </TouchableOpacity>
+        }
         <View style={{ padding: 10, borderBottomWidth: 3, borderBottomColor: "#dcdcdc" }}>
           <Body16B style={{ margin: 10 }}>서비스 이름</Body16B>
           <View style={{ margin: 10 }}>
@@ -198,20 +345,37 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
           </View>
         </View>
         <View style={{ padding: 10, borderBottomWidth: 3, borderBottomColor: "#dcdcdc" }}>
-          <Body16B style={{ margin: 10 }}>키워드 해시태그</Body16B>
-          {/* usestate 변경해야함 */}
-          <View style={{ margin: 10 }}>
-            <InputBox style={{ height: 50 }} value={hashTag} setValue={setHashTag} placeholder='#해시태그' long />
-          </View>
-          <FilterSection items={tag} />
-        </View>
-        <View style={{ padding: 10, borderBottomWidth: 3, borderBottomColor: "#dcdcdc" }}>
-          <Body16B style={{ margin: 10 }}>필터 설정</Body16B>
-          <FilterSection label='스타일' items={styles} />
-          <FilterSection label='카테고리' items={category} />
-          <FilterSection label='재질' items={materials} />
-          <FilterSection label='핏' items={fit} />
-          <FilterSection label='디테일' items={detailStyle} />
+          <Body16B style={{ margin: 10, marginBottom: -10 }}>필터 설정</Body16B>
+          <FilterElement
+            list={styles}
+            onPress={handleSeveralPress}
+            type="style"
+            label="스타일"
+          />
+          <FilterElement
+            list={category}
+            onPress={handleOnePress}
+            type="category"
+            label="카테고리"
+          />
+          <FilterElement
+            list={materials}
+            onPress={handleOnePress}
+            type="material"
+            label="재질"
+          />
+          <FilterElement
+            list={fits}
+            onPress={handleOnePress}
+            type="fit"
+            label="핏"
+          />
+          <FilterElement
+            list={details}
+            onPress={handleSeveralPress}
+            type="detail"
+            label="디테일"
+          />
           <View style={{ flex: 1 }}>
             <Body16B style={{ margin: 10 }}>제작기간</Body16B>
             <View style={{ margin: 10, flex: 1 }}>
@@ -239,52 +403,64 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
         <View style={{ padding: 10, borderBottomWidth: 3, borderBottomColor: "#dcdcdc" }}>
           <Body16B style={{ margin: 10 }}>옵션 별 추가 금액</Body16B>
           <Body14M style={{ margin: 10 }}>설명글 (특별한 기술이나 소재가 사용된 부분을 설명해주세요</Body14M>
-          <View style={{ margin: 10 }}>
-            <FillerSection style={{ flexDirection: "column", height: 350 }}>
-              <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", width: "90%", marginBottom: 10 }}>
-                <Body16B>옵션명</Body16B>
-                <TextInput
-                  value={detail}
-                  onChangeText={setDetail}
-                  style={{ borderWidth: 1, borderColor: "#828282", borderRadius: 20, flex: .84 }} placeholder="입력해주세요" />
-              </View>
-              <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", width: "90%", marginBottom: 10 }}>
-                <Body16B>추가금액</Body16B>
-                <TextInput
-                  value={addPrice}
-                  onChangeText={setAddprice}
-                  style={{ borderWidth: 1, borderColor: "#828282", borderRadius: 20, flex: .9 }} placeholder="추가 금액을 입력해주세요" />
-              </View>
-              <View style={{ width: "90%", marginBottom: 10 }}>
-                <View style={{ flexDirection: 'row' }}>
-                  <Body16B>상세 설명</Body16B>
-                  <Body14M>    이미지 1장 첨부 가능합니다.</Body14M>
+          <View >
+            <View style={{ flex: 1 }}>
+              <FillerSection style={{ flexDirection: "column", height: 350 }}>
+                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", width: "90%", marginBottom: 10 }}>
+                  <Body16B>옵션 명</Body16B>
+                  <InputBox
+                    value={option}
+                    onChangeText={setOption}
+                    style={{ borderWidth: 2, borderColor: "#828282", borderRadius: 5, flex: .84 }} placeholder="입력해주세요" />
                 </View>
-                <InputBox value={optionExplain} setValue={setOptionExplain} placeholder="옵션 명을 입력해주세요" />
-              </View>
-              <ButtonSection style={{ width: "90%", justifyContent: "space-between" }}>
-                <UploadButton style={{ backgroundColor: "#612FEF", height: "100%" }}><Subtitle16B>📷</Subtitle16B></UploadButton>
-                <UploadButton style={{ backgroundColor: "#612FEF", height: "100%" }}><Subtitle16M style={{ color: "white" }}>등록하기</Subtitle16M></UploadButton>
-              </ButtonSection>
-            </FillerSection>
+                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", width: "90%", marginBottom: 10 }}>
+                  <Body16B>추가금액</Body16B>
+                  <InputBox
+                    value={addPrice}
+                    onChangeText={setAddprice}
+                    style={{ borderWidth: 2, borderColor: "#828282", borderRadius: 5, flex: .88 }} placeholder="추가 금액을 입력해주세요" />
+                </View>
+                <View style={{ width: "90%", marginBottom: 10 }}>
+                  <View style={{ flexDirection: 'row' }}>
+                    <Body16B>상세 설명</Body16B>
+                    <Body14M>    이미지 1장 첨부 가능합니다.</Body14M>
+                  </View>
+                  <InputBox value={optionExplain} setValue={setOptionExplain} placeholder="50자 이내로 입력해주세요" long />
+                </View>
+                <ButtonSection style={{ width: "90%", justifyContent: "space-between" }}>
+                  <UploadButton style={{ backgroundColor: "#612FEF", height: "100%" }}><Subtitle16B>📷</Subtitle16B></UploadButton>
+                  <UploadButton style={{ backgroundColor: "#612FEF", height: "100%" }}
+                    onPress={addOption}><Subtitle16M style={{ color: "white" }}>등록하기</Subtitle16M>
+                  </UploadButton>
+                </ButtonSection>
+              </FillerSection>
+            </View>
           </View>
         </View>
         <View style={{ padding: 10, borderBottomWidth: 3, borderBottomColor: "#dcdcdc" }}>
           <Body16B style={{ margin: 10 }}>등록된 옵션 목록</Body16B>
           <View>
-            {registList.map((item, idx) => (
+            {optionList.map((item, idx) => (
               <FillerSection key={idx} style={{ flexDirection: "column" }}>
-                <Text style={{ color: "#612FEF" }}>option {idx + 1}</Text>
+                <View style={{ flexDirection: "row", alignContent: "flex-start", marginLeft: 16 }}>
+                  <Text style={{ flex: 1, color: "#612FEF", textAlign: "left" }}>option {idx + 1}</Text>
+                </View>
                 <View style={{ flexDirection: "row", justifyContent: "space-between", width: "90%", marginBottom: 5 }}>
                   <Body16B>{item.option}</Body16B>
                   <Body16B>{item.price}원</Body16B>
                 </View>
-                <View style={{ backgroundColor: "#F9F9F9", flex: 0.8, width: "90%", marginBottom: 5, alignItems: "center", justifyContent: "center" }}>
-                  <Body14M>{item.detail}</Body14M>
+                <View style={{ backgroundColor: "#F9F9F9", flex: 0.8, width: "90%", marginBottom: 5, alignItems: "center", justifyContent: "center", borderRadius: 8 }}>
+                  <Body14M>{item.optionExplain}</Body14M>
                 </View>
                 <ButtonSection style={{ width: "90%", justifyContent: "space-between" }}>
-                  <UploadButton style={{ backgroundColor: "#612FEF", height: "100%" }}><Subtitle16B style={{ color: "white" }}>🗑️</Subtitle16B></UploadButton>
-                  <UploadButton style={{ backgroundColor: "#612FEF", height: "100%" }}><Subtitle16M style={{ color: "white" }}>수정하기</Subtitle16M></UploadButton>
+                  {optionList.length > 0 &&
+                    <UploadButton style={{ backgroundColor: "#612FEF", height: "100%" }}
+                      onPress={removeOption}><Subtitle16B>🗑️</Subtitle16B>
+                    </UploadButton>
+                  }
+                  <UploadButton style={{ backgroundColor: "#612FEF", height: "100%" }}>
+                    <Subtitle16M style={{ color: "#dcdcdc" }}>수정하기</Subtitle16M>
+                  </UploadButton>
                 </ButtonSection>
               </FillerSection>
             ))}
