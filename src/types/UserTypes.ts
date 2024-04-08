@@ -22,7 +22,7 @@ type Careers = {
   start?: Date;
   end?: Date;
   host?: string;
-  date?: string;
+  date?: Date;
   client?: string;
   content?: string;
 };
