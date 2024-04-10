@@ -11,11 +11,13 @@ export type AddPortfolioParams = {
   PortfolioWrite: undefined;
 };
 
-export default function SignIn() {
+export default function AddPortfolio() {
   const Stack = createNativeStackNavigator<AddPortfolioParams>();
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator
+      screenOptions={{ headerShown: false }}
+      initialRouteName="PortfolioWrite">
       <Stack.Screen name="PortfolioWrite" component={PortfolioWrite} />
     </Stack.Navigator>
   );

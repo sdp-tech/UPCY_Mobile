@@ -23,6 +23,7 @@ import GoodsDetailPageScreen from '../components/Home/Market/GoodsDetailPage';
 import GoodsRegistrationPage from '../components/Home/Market/GoodsRegistration';
 import TempStorageEdit from '../components/Home/Market/TempStorageEdit';
 import WriteDetailPage from '../components/Home/Market/WriteDetailPage';
+import AddPortfolio from '../components/Home/Portfolio/AddPortfolio';
 
 export type HomeStackParams = {
   Home: undefined;
@@ -39,6 +40,7 @@ export type HomeStackParams = {
   TempStorage: undefined;
   TempStorageEdit: undefined;
   WriteDetailPage: undefined;
+  AddPortfolio: undefined;
 };
 
 const HomeStack = createStackNavigator<HomeStackParams>();
@@ -52,18 +54,31 @@ const HomeScreen = ({
       screenOptions={() => ({
         headerShown: false,
       })}>
-      <HomeStack.Screen name='Home' component={HomeMainScreen} />
-      <HomeStack.Screen name='Market' component={MarketTabView} />
-      <HomeStack.Screen name='ServiceDetailPage' component={ServiceDetailPageScreen} />
-      <HomeStack.Screen name='ServiceRegistrationPage' component={ServiceRegistrationPage} />
-      <HomeStack.Screen name='QuotationForm' component={QuotationForm} />
-      <HomeStack.Screen name='QuotationPage' component={QuotationPage} />
-      <HomeStack.Screen name='SentQuotation' component={SentQuotation} />
-      <HomeStack.Screen name='GoodsDetailPage' component={GoodsDetailPageScreen} />
-      <HomeStack.Screen name='GoodsRegistrationPage' component={GoodsRegistrationPage} />
-      <HomeStack.Screen name='TempStorage' component={TempStorage} />
-      <HomeStack.Screen name='TempStorageEdit' component={TempStorageEdit} />
-      <HomeStack.Screen name='WriteDetailPage' component={WriteDetailPage} />
+      <HomeStack.Screen name="Home" component={HomeMainScreen} />
+      <HomeStack.Screen name="Market" component={MarketTabView} />
+      <HomeStack.Screen
+        name="ServiceDetailPage"
+        component={ServiceDetailPageScreen}
+      />
+      <HomeStack.Screen
+        name="ServiceRegistrationPage"
+        component={ServiceRegistrationPage}
+      />
+      <HomeStack.Screen name="QuotationForm" component={QuotationForm} />
+      <HomeStack.Screen name="QuotationPage" component={QuotationPage} />
+      <HomeStack.Screen name="SentQuotation" component={SentQuotation} />
+      <HomeStack.Screen
+        name="GoodsDetailPage"
+        component={GoodsDetailPageScreen}
+      />
+      <HomeStack.Screen
+        name="GoodsRegistrationPage"
+        component={GoodsRegistrationPage}
+      />
+      <HomeStack.Screen name="TempStorage" component={TempStorage} />
+      <HomeStack.Screen name="TempStorageEdit" component={TempStorageEdit} />
+      <HomeStack.Screen name="WriteDetailPage" component={WriteDetailPage} />
+      <HomeStack.Screen name="AddPortfolio" component={AddPortfolio} />
     </HomeStack.Navigator>
   );
 };
@@ -73,8 +88,8 @@ const HomeMainScreen = ({
 }: StackScreenProps<HomeStackParams, 'Home'>) => {
   return (
     <SafeAreaView>
-      <CustomHeader onSearch={() => { }} />
-      <HomeTabView onSearch={() => { }} />
+      <CustomHeader onSearch={() => {}} />
+      <HomeTabView onSearch={() => {}} />
       <ScrollView>
         <Button onPress={() => navigation.navigate('Market')}>
           <Text>마켓</Text>
@@ -97,6 +112,9 @@ const HomeMainScreen = ({
         <Button onPress={() => navigation.navigate('GoodsRegistrationPage')}>
           <Text>상품등록</Text>
         </Button>
+        <Button onPress={() => navigation.navigate('AddPortfolio')}>
+          <Text>포트폴리오 등록</Text>
+        </Button>
       </ScrollView>
     </SafeAreaView>
   );
@@ -108,8 +126,8 @@ const Button = styled.TouchableOpacity`
   margin-top: 10px;
   margin-left: 15px;
   margin-right: 15px;
-  border: #612FEF;
+  border: #612fef;
   border-radius: 14px;
-`
+`;
 
 export default HomeScreen;
