@@ -34,6 +34,7 @@ function ProfilePic({ form, setForm }: ReformProps) {
           paddingHorizontal: 0,
           marginBottom: 0,
         }}
+        imageStyle={{ borderRadius: 100 }}
       />
 
       <View
