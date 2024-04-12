@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+
 import { SafeAreaView, Text, View } from 'react-native';
 import styled from 'styled-components/native';
 import { Filter14M } from '../styles/GlobalText';
@@ -24,6 +25,8 @@ import GoodsRegistrationPage from '../components/Home/Market/GoodsRegistration';
 import TempStorageEdit from '../components/Home/Market/TempStorageEdit';
 import WriteDetailPage from '../components/Home/Market/WriteDetailPage';
 import AddPortfolio from '../components/Home/Portfolio/AddPortfolio';
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
+import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 
 export type HomeStackParams = {
   Home: undefined;
@@ -48,7 +51,16 @@ const HomeStack = createStackNavigator<HomeStackParams>();
 const HomeScreen = ({
   navigation,
   route,
-}: StackScreenProps<TabProps, '홈'>) => {
+}: BottomTabScreenProps<TabProps, '홈'>) => {
+  React.useLayoutEffect(() => {
+    const routeName = getFocusedRouteNameFromRoute(route);
+    if (routeName === 'AddPortfolio') {
+      navigation.setOptions({ tabBarStyle: { display: 'none' } });
+    } else {
+      navigation.setOptions({ tabBarStyle: { display: 'flex' } });
+    }
+  }, [navigation, route]);
+
   return (
     <HomeStack.Navigator
       screenOptions={() => ({

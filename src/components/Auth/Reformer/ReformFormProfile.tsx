@@ -65,7 +65,7 @@ export default function ReformFormProfile({
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <CustomScrollView
-        contentContainerStyle={{
+        additionalStyles={{
           minHeight: 650,
           marginHorizontal: width * 0.04,
         }}>
