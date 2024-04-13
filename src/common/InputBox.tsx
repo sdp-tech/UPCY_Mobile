@@ -3,7 +3,7 @@ import { BLACK2 } from '../styles/GlobalColor';
 
 export interface InputBoxProps extends TextInputProps {
   value?: string;
-  setValue: (value: string) => void;
+  setValue?: (value: string) => void;
   placeholder?: string;
   long?: boolean;
   style?: TextStyle;

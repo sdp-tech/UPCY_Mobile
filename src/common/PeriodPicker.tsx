@@ -2,13 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 import { BLACK2, PURPLE } from '../styles/GlobalColor';
-import {
-  Body14B,
-  Body14M,
-  Body16B,
-  Caption11M,
-  Subtitle16M,
-} from '../styles/GlobalText';
+import { Body14M, Body16B, Caption11M } from '../styles/GlobalText';
 import DownArrowIcon from '../assets/common/DownArrow.svg';
 
 interface PeriodPickerProps {
@@ -31,7 +25,7 @@ const PeriodPicker = ({ start, end, setStart, setEnd }: PeriodPickerProps) => {
 
   useEffect(() => {
     if (curEnd !== undefined) setEnd(curEnd);
-  });
+  }, [curEnd]);
 
   return (
     <View>
