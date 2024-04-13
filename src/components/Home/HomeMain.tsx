@@ -1,21 +1,24 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useMemo, useRef, useEffect, useState } from 'react';
 import { Filter14M } from '../../styles/GlobalText';
 import {
   Text,
   View,
+  StyleSheet,
   TouchableOpacity,
   Dimensions,
   ScrollView,
 } from 'react-native';
+import BottomSheet, {BottomSheetView} from '@gorhom/bottom-sheet';
 import CustomHeader from '../../common/CustomHeader';
 import { Tabs, MaterialTabBar } from 'react-native-collapsible-tab-view';
 import { StackScreenProps } from '@react-navigation/stack';
 import { HomeStackParams } from '../../pages/Home';
-
 import TabViewSpot from '../../assets/common/TabViewSpot.svg';
 import CategoryDownButton from '../../assets/common/CategoryDownButton.svg';
 import styled from 'styled-components/native';
 import { PURPLE } from '../../styles/GlobalColor';
+import DetailModal from './Market/GoodsDetailOptionsModal';
+import RegionModal from '../Auth/RegionModal';
 
 const HomeTabViewBox = styled.View`
   display: flex;
@@ -27,8 +30,8 @@ const HomeTabViewBox = styled.View`
 const HomeTabViewButton = styled.TouchableOpacity<{ pressed: boolean }>`
   display: flex;
   flex-direction: row;
-  padding: 6px 0px;
-  width:72px;
+  width: 72px;
+  /* padding: 6px; */
   justify-content: center;
   align-items: center;
   gap: 4px;
@@ -188,8 +191,8 @@ const HomeTabView = ({ onSearch }: HomeTabViewProps) => {
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View style={{ flex: 1 }}>
           <CategoryBox>
-            <CategoryButton>
-              <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
+            <CategoryButton onPress = {RegionModal}>
+              <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }} >
                 스타일
               </Text>
               <CategoryDownButton />
@@ -227,8 +230,10 @@ const HomeTabView = ({ onSearch }: HomeTabViewProps) => {
           </CategoryBox>
         </View>
       </ScrollView>
+
     </>
   );
 };
+
 
 export default HomeTabView;
