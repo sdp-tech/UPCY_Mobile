@@ -1,35 +1,52 @@
-import { useCallback, useMemo, useRef } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
+import React, { Dispatch, SetStateAction, useMemo, useRef, useCallback, useEffect } from 'react';
+import { Text, View, Dimensions } from 'react-native';
+import { BottomSheetModal, BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
 
-const DetailModal = () => {
-    const snapPoints = useMemo(() => ['50%','75%', '100%'], []);
-  
-    const bottomSheetRef = useRef<BottomSheet>(null);
-  
-    const handleClosePress = () => bottomSheetRef.current?.close();
-    const handleOpenPress = () => bottomSheetRef.current?.expand();
-    return (
-      <View style={styles.container}>
-        <BottomSheet ref={bottomSheetRef} snapPoints={snapPoints}>
-          <BottomSheetView style={styles.contentContainer}>
-            <Text>Awesome 🎉</ Text>
-          </BottomSheetView>
-        </BottomSheet>
-      </View>
-    );
-  };
-  
-const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      padding: 24,
-      backgroundColor: 'grey',
-    },
-    contentContainer: {
-      flex: 1,
-      alignItems: 'center',
-    },
-});
+interface ModalProps {
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+}
 
-export default DetailModal;
+export default function DetailModal({
+  open,
+  setOpen
+}: ModalProps) {
+  // ref
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+
+  const renderBackdrop = useCallback(
+    (props: any) => (
+      <BottomSheetBackdrop
+        {...props}
+        pressBehavior="close"
+        disappearsOnIndex={-1}
+        opacity={1}
+      />
+    ),
+    [],
+  );
+
+  // variables
+  const snapPoints = useMemo(() => ['85%'], []);
+
+  // callbacks
+  const handlePresentModalPress = useCallback(() => {
+    bottomSheetModalRef.current?.present();
+  }, []);
+
+  useEffect(() => {
+    if (open) handlePresentModalPress();
+  }, [open, handlePresentModalPress]);
+
+  // renders
+  return (
+    <BottomSheetModal
+      ref={bottomSheetModalRef}
+      snapPoints={snapPoints}
+    >
+      <BottomSheetView style = {{ flex : 1}}>
+        <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}> 오예</Text>
+      </BottomSheetView>
+    </BottomSheetModal>
+  );
+}

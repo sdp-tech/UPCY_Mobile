@@ -18,7 +18,7 @@ import CategoryDownButton from '../../assets/common/CategoryDownButton.svg';
 import styled from 'styled-components/native';
 import { PURPLE } from '../../styles/GlobalColor';
 import DetailModal from './Market/GoodsDetailOptionsModal';
-import RegionModal from '../Auth/RegionModal';
+
 
 const HomeTabViewBox = styled.View`
   display: flex;
@@ -86,7 +86,7 @@ const HomeTabView = ({ onSearch }: HomeTabViewProps) => {
   const [selectedTabView, setSelectedTabView] = useState<
     'all' | 'outer' | 'top' | 'bottom' | 'bag' | 'hat' | 'accessories'
   >('all');
-
+  const [modalOpen, setModalOpen] = useState(false);
   //글자 간격 수정 필요!
   return (
     <>
@@ -191,7 +191,7 @@ const HomeTabView = ({ onSearch }: HomeTabViewProps) => {
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View style={{ flex: 1 }}>
           <CategoryBox>
-            <CategoryButton onPress = {RegionModal}>
+            <CategoryButton onPress = {() => setModalOpen(true)}>
               <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }} >
                 스타일
               </Text>
@@ -229,6 +229,9 @@ const HomeTabView = ({ onSearch }: HomeTabViewProps) => {
             </CategoryButton>
           </CategoryBox>
         </View>
+        {modalOpen && <DetailModal
+          open = {modalOpen}
+          setOpen={setModalOpen}/>}
       </ScrollView>
 
     </>
