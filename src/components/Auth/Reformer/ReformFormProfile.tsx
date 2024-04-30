@@ -34,6 +34,7 @@ function ProfilePic({ form, setForm }: ReformProps) {
           paddingHorizontal: 0,
           marginBottom: 0,
         }}
+        imageStyle={{ borderRadius: 100 }}
       />
 
       <View
@@ -65,7 +66,7 @@ export default function ReformFormProfile({
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <CustomScrollView
-        contentContainerStyle={{
+        additionalStyles={{
           minHeight: 650,
           marginHorizontal: width * 0.04,
         }}>

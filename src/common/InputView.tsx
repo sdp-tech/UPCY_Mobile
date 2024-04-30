@@ -76,13 +76,6 @@ const InputView = ({
       {caption?.invalid && (
         <Caption11M style={{ color: PURPLE }}>{caption.invalid}</Caption11M>
       )}
-      {/* {info && (
-        <InfoModal
-          content={info}
-          visible={infoModal}
-          setVisible={setInfoModal}
-        />
-      )} */}
     </View>
   );
 };

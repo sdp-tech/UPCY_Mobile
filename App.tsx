@@ -1,6 +1,10 @@
 import React from 'react';
 import { View, TouchableOpacity, Text } from 'react-native';
-import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
+import {
+  NavigationContainer,
+  DefaultTheme,
+  getFocusedRouteNameFromRoute,
+} from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {
   BottomTabBarProps,
@@ -54,12 +58,13 @@ export type TabProps = {
 
 const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
   const loginGuard = useLoginGuard();
+  const { options } = descriptors;
 
   return (
     <View
       style={{
-        height: 86,
         display: 'flex',
+        height: 86,
         flexDirection: 'row',
         justifyContent: 'space-around',
         backgroundColor: '#FFFFFF',
@@ -120,11 +125,16 @@ const HomeTab = (): JSX.Element => {
   return (
     <Tab.Navigator
       tabBar={props => <CustomTab {...props} />}
+      id="MainHome"
       initialRouteName="홈"
       screenOptions={() => ({
         headerShown: false,
       })}>
-      <Tab.Screen name={'홈'} component={HomeScreen} />
+      <Tab.Screen
+        name={'홈'}
+        component={HomeScreen}
+        options={{ tabBarStyle: { display: 'none' } }}
+      />
       <Tab.Screen name={'마이페이지'} component={MyPageScreen} />
     </Tab.Navigator>
   );

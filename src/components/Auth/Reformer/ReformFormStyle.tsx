@@ -11,6 +11,7 @@ import { PageProps } from './Reformer';
 import BottomButton from '../../../common/BottomButton';
 import FilterBox from '../../../common/FilterBox';
 import { BLACK } from '../../../styles/GlobalColor';
+import CustomScrollView from '../../../common/CustomScrollView';
 
 export default function ReformFormStyle({ setNext, form, setForm }: PageProps) {
   const { width, height } = Dimensions.get('screen');
@@ -57,12 +58,7 @@ export default function ReformFormStyle({ setNext, form, setForm }: PageProps) {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView
-        alwaysBounceVertical={false}
-        contentContainerStyle={{
-          minHeight: 500,
-          flexGrow: 1,
-        }}>
+      <CustomScrollView minHeight={500}>
         <View style={{ flexGrow: 1 }}>
           <View style={{ marginHorizontal: width * 0.04 }}>
             <View style={{ marginVertical: 24 }}>
@@ -98,7 +94,7 @@ export default function ReformFormStyle({ setNext, form, setForm }: PageProps) {
             />
           </View>
         </View>
-      </ScrollView>
+      </CustomScrollView>
     </SafeAreaView>
   );
 }
