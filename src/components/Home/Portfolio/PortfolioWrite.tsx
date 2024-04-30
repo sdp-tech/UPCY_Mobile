@@ -11,6 +11,7 @@ import useObjectUpdater from '../../../hooks/useObjectUpdater';
 import PeriodPicker from '../../../common/PeriodPicker';
 import BottomButton from '../../../common/BottomButton';
 import AgreeButton from '../../../common/AgreeButton';
+import HashtagInput from '../components/HashtagInput';
 
 type PortfolioFormType = {
   photo: any;
@@ -43,6 +44,18 @@ export default function PortfolioWrite({
 
   const formUpdater = useObjectUpdater(setForm);
 
+  const addHashtag = (v: string) => {
+    const newHashtags = form.hashtags;
+    newHashtags.push(v);
+    console.log(newHashtags);
+    formUpdater(newHashtags, 'hashtags');
+  };
+
+  const removeHashtag = (idx: number) => {
+    const newHashtags = form.hashtags.filter((v, index) => index !== idx);
+    formUpdater(newHashtags, 'hashtags');
+  };
+
   return (
     <SafeAreaView>
       <DetailScreenHeader
@@ -54,7 +67,7 @@ export default function PortfolioWrite({
         }}
         onPressRight={() => {}}
       />
-      <CustomScrollView minHeight={1500}>
+      <CustomScrollView minHeight={1430}>
         <PhotoOptions
           buttonLabel="이미지 등록"
           max={1}
@@ -89,6 +102,12 @@ export default function PortfolioWrite({
             value={form.title}
             setValue={v => formUpdater(v, 'title')}
           />
+          <HashtagInput
+            hashtags={form.hashtags}
+            addHashtag={addHashtag}
+            removeHashtag={removeHashtag}
+            max={5}
+          />
           <InputView
             title="작업 분야"
             value={form.domain}
@@ -110,7 +129,7 @@ export default function PortfolioWrite({
             value={form.information}
             setValue={v => formUpdater(v, 'information')}
             long={true}
-            style={{ height: 300, marginTop: 8 }}
+            style={{ height: 230, marginTop: 8 }}
           />
           <Caption12M style={{ color: BLACK2 }}>
             포트폴리오를 모두 작성했다면 [등록 완료]를 눌러 주세요. 심사
@@ -130,6 +149,7 @@ export default function PortfolioWrite({
             <BottomButton
               value="등록 완료"
               pressed={false}
+              style={{ width: '75%', alignSelf: 'center' }}
               onPress={() => {}}
             />
           </View>
