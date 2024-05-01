@@ -4,10 +4,11 @@ import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, SafeAr
 import Arrow from '../../../assets/common/Arrow.svg';
 import styled from "styled-components/native";
 import { getStatusBarHeight } from "react-native-safearea-height";
-import { Body14B, Body14M, Body16B, Caption11M, Subtitle16B, Subtitle16M, Subtitle18M } from "../../../styles/GlobalText";
+import { Body14B, Body14M, Body16B, Caption11M, Subtitle16B, Subtitle16M, Subtitle18B, Subtitle18M } from "../../../styles/GlobalText";
 import { BLACK2, GRAY, LIGHTGRAY, PURPLE } from "../../../styles/GlobalColor";
 import InputBox from "../../../common/InputBox";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import React from "react";
 import Filter from "../../../common/Filter";
 import FilterBox from '../../../common/FilterBox';
 import Hashtag from "../../../common/Hashtag";
@@ -18,24 +19,14 @@ import PhotoOptions, { PhotoResultProps } from '../../../common/PhotoOptions';
 import Carousel from '../../../common/Carousel';
 import FilterElement from "./FilterElement";
 import CustomScrollView from "../../../common/CustomScrollView";
+import { useBottomBar } from "../../../../contexts/BottomBarContext";
+import { CustomBackButton } from "../components/CustomBackButton";
 
 const statusBarHeight = getStatusBarHeight(true);
 
 const BackButton = styled.TouchableOpacity`
   padding: 10px;
   z-index: 1;
-`
-const StyledButton = styled.TouchableOpacity`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding:12px;
-  padding: 0px 16px 0px 16px;
-  background: ${LIGHTGRAY};
-  border-radius: 6px;
-  margin-bottom: 20px;
-  margin-top: 10px;
-  border: 1px solid #000;
 `
 
 const ButtonSection = styled.View`
@@ -88,61 +79,12 @@ const FillerSection = styled.View`
   border-radius: 8px;
 `
 
-const TagContainer = styled.View`
-  padding: 20px 15px;
-`
-
 const TagBox = styled.View`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   align-items: center;
 `
-
-const FilterContainer = styled.View`
-  padding: 20px 15px;
-  border-bottom-width: 1px;
-  border-color: #D9D9D9;
-`
-
-const FilterSquare = styled.View`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: center;
-`
-
-interface FilterSectionProps {
-  label?: string;
-  items: any[];
-  style?: any;
-}
-
-const FilterSection = ({ label, items }: FilterSectionProps) => {
-  return (
-    <>
-      {label ?
-        <FilterContainer>
-          <FilterSquare style={{ marginBottom: 5, justifyContent: 'space-between' }}>
-            <Subtitle18M>{label}</Subtitle18M>
-          </FilterSquare>
-          <FilterSquare>
-            {items.map((item, index) => (
-              <Filter key={index} value={item} pressed={false} onPress={() => { }} />
-            ))}
-          </FilterSquare>
-        </FilterContainer>
-        :
-        <TagContainer>
-          <TagBox>
-            {items.map((item, index) => (
-              <Hashtag key={index} value={item} pressed={false} onPress={() => { }} />
-            ))}
-          </TagBox>
-        </TagContainer>}
-    </>
-  )
-}
 
 interface Detail {
   detail: string;
@@ -151,6 +93,13 @@ interface Detail {
 }
 
 const GoodsRegistrationPage = ({ navigation, route }: StackScreenProps<HomeStackParams, 'GoodsRegistrationPage'>) => {
+  const { hideBottomBar, showBottomBar } = useBottomBar();
+
+  useEffect(() => {
+    hideBottomBar();
+    return () => showBottomBar();
+  }, []);
+
   const [materials, setMaterials] = useState<string[]>([]);
   const [styles, setStyles] = useState<string[]>([]);
   const [fits, setFits] = useState<string[]>([]);
@@ -238,13 +187,21 @@ const GoodsRegistrationPage = ({ navigation, route }: StackScreenProps<HomeStack
   const [photos, setPhotos] = useState<PhotoResultProps[]>([]);
   const [detailList, setDetailList] = useState<Detail[]>([]);
   const addDetail = () => {
-    const newDetail = { detail: detail, price: parseInt(price) + parseInt(addPrice), detailExplain: detailExplain };
-    setDetailList([...detailList, newDetail]);
-    // 입력 필드 초기화
-    setDetail('');
-    setAddprice('');
-    setDetalExplain('');
-    setPrice('');
+    if (detail == '' || addPrice == '' || detailExplain == '') {
+      Alert.alert("기준 사항을 모두 입력해주세요")
+    }
+    else if (price == '') {
+      Alert.alert("아래의 가격을 입력해주세요")
+    }
+    else {
+      const newDetail = { detail: detail, price: parseInt(price) + parseInt(addPrice), detailExplain: detailExplain };
+      setDetailList([...detailList, newDetail]);
+      // 입력 필드 초기화
+      setDetail('');
+      setAddprice('');
+      setDetalExplain('');
+      setPrice('');
+    }
   }
   const removeDetail = (idx: number): void => {
     const newList = [...detailList];
@@ -280,246 +237,29 @@ const GoodsRegistrationPage = ({ navigation, route }: StackScreenProps<HomeStack
     }, []);
   };
   const splitPhotos = splitArrayIntoPairs(photos, 1);
-  return (
+
+  const GoodsRegiHeader =
+    <SafeAreaView style={{
+      position: "relative", top: 0,
+      flexDirection: "row", borderBottomWidth: 1, borderBlockColor: "#000", alignItems: "center", justifyContent: "space-between"
+    }}>
+      <View style={{ flex: 1 }}>
+        <CustomBackButton />
+      </View>
+      <View style={{ flex: 1 }}>
+        <Body16B style={{ fontSize: 18, textAlign: "center" }}>상품 등록</Body16B>
+      </View>
+      <View style={{ flex: 1, alignItems: "flex-end" }}>
+        <TouchableOpacity style={{ paddingRight: 10 }} onPress={() => { navigation.navigate("TempStorage"); }}>
+          <Body14M style={{ color: "#929292" }}>임시저장 | 5</Body14M>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>;
+
+  const GoodsRegiBottomBar =
     <SafeAreaView>
-      <SafeAreaView style={{
-        position: "relative", top: 0,
-        flexDirection: "row", borderBottomWidth: 1, borderBlockColor: "#000", alignItems: "center", justifyContent: "space-between"
-      }}>
-        <View style={{ flex: 1 }}>
-          <BackButton onPress={() => navigation.goBack()}>
-            <Arrow color='black' />
-          </BackButton>
-        </View>
-        <View style={{ flex: 1 }}>
-          <Body16B style={{ fontSize: 18, textAlign: "center" }}>상품 등록</Body16B>
-        </View>
-        <View style={{ flex: 1, alignItems: "flex-end" }}>
-          <TouchableOpacity style={{ paddingRight: 10 }} onPress={() => { navigation.navigate("TempStorage") }}>
-            <Body14M style={{ color: "#929292" }}>임시저장 | 5</Body14M>
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
-      <CustomScrollView>
-        {/* 사진 업로드하는 컴포넌트 만들 것 */}
-        {photos.length == 0 &&
-          <UploadSection style={{ borderBottomWidth: 5, borderBottomColor: "#dcdcdc" }}>
-            <View style={{
-              backgroundColor: LIGHTGRAY,
-              borderRadius: 6,
-            }}>
-              <PhotoOptions
-                style={{ alignContent: "center", margin: 5, marginBottom: 5 }}
-                max={4}
-                setPhoto={setPhotos}
-                buttonLabel='이미지 첨부'
-              />
-            </View>
-          </UploadSection>
-        }
-        {photos.length > 0 &&
-          <View style={{ flex: 1 }}>
-            <Carousel
-              data={splitPhotos}
-              renderItem={({ item }: any) => {
-                return (
-                  <View >
-                    {item.map((subItem: any) => (
-                      <View style={{ height: 350, paddingLeft: 20, paddingRight: 20, paddingTop: 20 }}>
-                        <ImageBackground
-                          key={subItem.id}
-                          source={{ uri: subItem.uri }}
-                          style={{ width: "auto", height: "100%" }}
-                          alt={subItem.fileName}
-                        />
-                      </View>
-                    ))}
-                  </View>
-                )
-              }}
-              slider
-            />
-          </View>
-        }
-        {photos.length > 0 &&
-          <TouchableOpacity style={{ padding: 5, marginBottom: -40 }}>
-            <PhotoOptions
-              max={4}
-              setPhoto={setPhotos}
-              buttonLabel='등록한 이미지 수정'
-            />
-          </TouchableOpacity>
-        }
-        <View style={{ padding: 10, borderBottomWidth: 1, borderBottomColor: "#dcdcdc" }}>
-          <Body16B style={{ margin: 10 }}>상품 이름</Body16B>
-          <View style={{ margin: 10 }}>
-            <InputBox style={{ height: 50 }} value={name} setValue={setName} placeholder='상품 이름을 입력해주세요' long />
-          </View>
-        </View>
-        <View style={{ padding: 10, borderBottomWidth: 8, borderBottomColor: "#dcdcdc" }}>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Body16B style={{ margin: 10 }}>키워드 해시태그</Body16B>
-            <Text style={{ fontSize: 11, fontWeight: "700", color: "#929292" }}>({hashtags.length}/5)</Text>
-          </View>
-          {/* usestate 변경해야함 */}
-          <View style={{ margin: 10 }}>
-            <InputBox style={{ height: 50 }} value={inputText}
-              onChangeText={setInputText} placeholder='#공백없이작성, #해시태그들은공백으로구분, 엔터로 추가'
-              onSubmitEditing={handleExtractHashtags} // Enter를 눌렀을 때 해시태그 추출 
-              returnKeyType="done"
-            />
-          </View>
-          <View style={{ marginBottom: 5 }}>
-            <TagBox>
-              {hashtags.map((item, index) => (
-                <Hashtag key={index} pressable value={item} pressed={false} onPress={() => removeHashtag(index)} />
-              ))}
-            </TagBox>
-          </View>
-        </View>
-        <View style={{ padding: 10, borderBottomWidth: 3, borderBottomColor: "#dcdcdc" }}>
-          <Body16B style={{ margin: 10, marginBottom: -10 }}>필터 설정</Body16B>
-          <FilterElement
-            list={styles}
-            onPress={handleSeveralPress}
-            type="style"
-            label="스타일"
-          />
-          <FilterElement
-            list={category}
-            onPress={handleOnePress}
-            type="category"
-            label="카테고리"
-          />
-          <FilterElement
-            list={materials}
-            onPress={handleOnePress}
-            type="material"
-            label="재질"
-          />
-          <FilterElement
-            list={fits}
-            onPress={handleOnePress}
-            type="fit"
-            label="핏"
-          />
-          <FilterElement
-            list={details}
-            onPress={handleSeveralPress}
-            type="detail"
-            label="디테일"
-          />
-          <View style={{ flex: 1 }}>
-            <Body16B style={{ margin: 10 }}>제작기간</Body16B>
-            <View style={{ margin: 10, flex: 1 }}>
-              <Slider
-                style={{ flex: 1, height: 40 }}
-                value={makingTime}
-                onValueChange={setMakingTime}
-                minimumValue={0}
-                step={1}
-                maximumValue={5}
-                minimumTrackTintColor="#612FEF"
-                maximumTrackTintColor="#612FEF"
-                thumbTintColor="#612FEF"
-              />
-              <Text>{makingTime}</Text>
-            </View>
-          </View>
-          <Body16B style={{ margin: 10 }}>상품 상세</Body16B>
-          <FillerSection style={{ borderWidth: 2, borderColor: "#929292", backgroundColor: "#FFF" }}>
-            <UploadButton onPress={() => navigation.navigate("WriteDetailPage")} style={{ backgroundColor: "#dcdcdc" }}>
-              <Subtitle16M>작성하기</Subtitle16M>
-            </UploadButton>
-          </FillerSection>
-        </View>
-        <View style={{ padding: 10, borderBottomWidth: 8, borderBottomColor: "#dcdcdc" }}>
-          <Body16B style={{ margin: 10 }}>가격 책정 기준</Body16B>
-          <View style={{ borderBottomColor: "#dcdcdc", borderBottomWidth: 1 }}>
-            <View style={{ flex: 1 }}>
-              <FillerSection style={{ height: 350, flexDirection: "column", marginBottom: 20 }}>
-                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", width: "90%", marginBottom: 10 }}>
-                  <Body16B>디테일</Body16B>
-                  <InputBox
-                    value={detail}
-                    onChangeText={setDetail}
-                    style={{ borderWidth: 2, borderColor: "#828282", borderRadius: 5, flex: .84 }} placeholder="입력해주세요" />
-                </View>
-                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", width: "90%", marginBottom: 10 }}>
-                  <Body16B>금액</Body16B>
-                  <InputBox
-                    value={addPrice}
-                    onChangeText={setAddprice}
-                    style={{ borderWidth: 2, borderColor: "#828282", borderRadius: 5, flex: .8 }} placeholder="추가 금액을 입력해주세요" />
-                </View>
-                <View style={{ width: "90%", marginBottom: 10 }}>
-                  <View style={{ flexDirection: 'row' }}>
-                    <Body16B>상세 설명</Body16B>
-                    <Body14M>    이미지 1장 첨부 가능합니다.</Body14M>
-                  </View>
-                  <InputBox value={detailExplain} setValue={setDetalExplain} placeholder="50자 이내로 입력해주세요" long />
-                </View>
-                <ButtonSection style={{ width: "90%", justifyContent: "space-between" }}>
-                  <UploadButton style={{ backgroundColor: "#DBFC72", height: "100%" }}><Subtitle16B>📷</Subtitle16B></UploadButton>
-                  <UploadButton style={{ backgroundColor: "#DBFC72", height: "100%" }}
-                    onPress={addDetail}>
-                    <Subtitle16M style={{ color: "#222" }}>등록하기</Subtitle16M>
-                  </UploadButton>
-                </ButtonSection>
-              </FillerSection>
-            </View>
-          </View>
-          <Body16B style={{ margin: 10 }}>등록된 기준 목록</Body16B>
-          <View>
-            {detailList.map((item, idx) => (
-              <FillerSection key={idx} style={{ flexDirection: "column" }}>
-                <Text style={{ color: "#222", alignContent: "flex-start" }}>detail {idx + 1}</Text>
-                <View style={{ flexDirection: "row", justifyContent: "space-between", width: "90%", marginBottom: 5 }}>
-                  <Body16B>{item.detail}</Body16B>
-                  <Body16B>{item.price}원</Body16B>
-                </View>
-                <View style={{ backgroundColor: "#F9F9F9", flex: 0.8, width: "90%", marginBottom: 5, alignItems: "center", justifyContent: "center", borderRadius: 8 }}>
-                  <Body14M>{item.detailExplain}</Body14M>
-                </View>
-                <ButtonSection style={{ width: "90%", justifyContent: "space-between" }}>
-                  {detailList.length > 0 &&
-                    <UploadButton style={{ backgroundColor: "#DBFC72", height: "100%" }}
-                      onPress={removeDetail}><Subtitle16B>🗑️</Subtitle16B>
-                    </UploadButton>
-                  }
-                  <UploadButton style={{ backgroundColor: "#DBFC72", height: "100%" }}>
-                    <Subtitle16M style={{ color: "#222" }}>수정하기</Subtitle16M>
-                  </UploadButton>
-                </ButtonSection>
-              </FillerSection>
-            ))}
-          </View>
-        </View>
-        <View style={{ padding: 10, borderBottomWidth: 8, borderBottomColor: "#dcdcdc" }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Body16B style={{ margin: 10 }}>가격</Body16B>
-          </View>
-          <View style={{ alignItems: "center", flexDirection: "row", margin: 10 }}>
-            <TextInput
-              style={{
-                flex: 1,
-                borderWidth: 2,
-                borderColor: BLACK2,
-                borderRadius: 5,
-                padding: 10
-              }}
-              value={price} onChangeText={setPrice} placeholder=' 입력해주세요' />
-          </View>
-        </View>
-        <View style={{ padding: 10, borderBottomWidth: 3, borderBottomColor: "#612FEF" }}>
-          <Body16B style={{ margin: 10 }}>주문 시 유의사항</Body16B>
-          <View style={{ margin: 10 }}>
-            <InputBox value={notice} setValue={setNotice} placeholder='입력해주세요' long />
-          </View>
-        </View>
-      </CustomScrollView>
-      <SafeAreaView style={{ position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: "#ffffff" }}>
-        <ButtonSection style={{ flex: 1 }}>
+      <View style={{ alignContent: "center", position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: "#ffffff" }}>
+        <ButtonSection style={{ flex: 1, marginHorizontal: 10, marginBottom: 20 }}>
           <FooterButton style={{ flex: 0.3, backgroundColor: "#612FEF" }}>
             <Subtitle16B style={{ color: "#DBFC72" }}>임시저장</Subtitle16B>
           </FooterButton>
@@ -527,8 +267,263 @@ const GoodsRegistrationPage = ({ navigation, route }: StackScreenProps<HomeStack
             <Subtitle16B style={{ color: "#612FEF" }}>저장하기</Subtitle16B>
           </FooterButton>
         </ButtonSection>
+      </View>
+    </SafeAreaView>;
+
+  return (
+    <SafeAreaView style={{ flex: 1 }}>
+      {GoodsRegiHeader}
+      {/* 헤더부분 */}
+      <SafeAreaView >
+        <ScrollView bounces={false}>
+          {/* 사진 업로드하는 컴포넌트 만들 것 */}
+          {photos.length == 0 &&
+            <UploadSection style={{ borderBottomWidth: 5, borderBottomColor: "#dcdcdc" }}>
+              <View style={{
+                backgroundColor: LIGHTGRAY,
+                borderRadius: 6,
+              }}>
+                <PhotoOptions
+                  style={{ alignContent: "center", margin: 5, marginBottom: 5 }}
+                  max={4}
+                  setPhoto={setPhotos}
+                  buttonLabel='이미지 첨부'
+                />
+              </View>
+            </UploadSection>
+          }
+          {photos.length > 0 &&
+            <View style={{ flex: 1 }}>
+              <Carousel
+                data={splitPhotos}
+                renderItem={({ item }: any) => {
+                  return (
+                    <View >
+                      {item.map((subItem: any) => (
+                        <View style={{ height: 350, paddingLeft: 20, paddingRight: 20, paddingTop: 20 }}>
+                          <ImageBackground
+                            key={subItem.id}
+                            source={{ uri: subItem.uri }}
+                            style={{ width: "auto", height: "100%" }}
+                            alt={subItem.fileName}
+                          />
+                        </View>
+                      ))}
+                    </View>
+                  )
+                }}
+                slider
+              />
+            </View>
+          }
+          {photos.length > 0 &&
+            <TouchableOpacity style={{ padding: 5, marginBottom: -40 }}>
+              <PhotoOptions
+                max={4}
+                setPhoto={setPhotos}
+                buttonLabel='등록한 이미지 수정'
+              />
+            </TouchableOpacity>
+          }
+          <View style={{ padding: 10, borderBottomWidth: 1, borderBottomColor: "#dcdcdc" }}>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Body16B style={{ margin: 10 }}>상품 이름</Body16B>
+              <Subtitle18B style={{ color: PURPLE, marginLeft: "-1%" }}>*</Subtitle18B>
+            </View>
+            <View style={{ margin: 10 }}>
+              <InputBox style={{ height: 40 }} value={name} setValue={setName} placeholder='상품 이름을 입력해주세요' />
+            </View>
+          </View>
+          <View style={{ padding: 10, borderBottomWidth: 8, borderBottomColor: "#dcdcdc" }}>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Body16B style={{ margin: 10 }}>키워드 해시태그</Body16B>
+              <Subtitle18B style={{ color: PURPLE, marginLeft: "-1%", marginRight: "2%" }}>*</Subtitle18B>
+              <Text style={{ fontSize: 11, fontWeight: "700", color: "#929292" }}>({hashtags.length}/5)</Text>
+            </View>
+            {/* usestate 변경해야함 */}
+            <View style={{ margin: 10 }}>
+              <InputBox style={{ height: 50 }} value={inputText}
+                onChangeText={setInputText} placeholder='#공백없이작성, #해시태그들은공백으로구분, 엔터로 추가'
+                onSubmitEditing={handleExtractHashtags} // Enter를 눌렀을 때 해시태그 추출 
+                returnKeyType="done" // Enter가 줄바꿈이 아니라 제출 이벤트 일으키도록.
+              />
+            </View>
+            <View style={{ marginBottom: 5, marginHorizontal: 5 }}>
+              <TagBox>
+                {hashtags.map((item, index) => (
+                  <Hashtag key={index} pressable value={item} pressed={false} onPress={() => removeHashtag(index)} />
+                ))}
+              </TagBox>
+            </View>
+          </View>
+          <View style={{ padding: 10 }}>
+            <Body16B style={{ margin: 10, marginBottom: -10 }}>필터 설정</Body16B>
+            <FilterElement
+              list={styles}
+              onPress={handleSeveralPress}
+              type="style"
+              label="스타일"
+            />
+            <FilterElement
+              list={category}
+              onPress={handleOnePress}
+              type="category"
+              label="카테고리"
+            />
+            <FilterElement
+              list={materials}
+              onPress={handleOnePress}
+              type="material"
+              label="재질"
+            />
+            <FilterElement
+              list={fits}
+              onPress={handleOnePress}
+              type="fit"
+              label="핏"
+            />
+            <FilterElement
+              list={details}
+              onPress={handleSeveralPress}
+              type="detail"
+              label="디테일"
+            />
+          </View>
+          <View>
+            <View style={{ padding: 10, flex: 1, borderBottomWidth: 1, borderBottomColor: "#dcdcdc" }}>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <Body16B style={{ margin: 10, marginTop: 0 }}>제작기간</Body16B>
+                <Subtitle18B style={{ color: PURPLE, marginLeft: "-1%", marginTop: -10 }}>*</Subtitle18B>
+              </View>
+              <View style={{ margin: 10, flex: 1 }}>
+                <Slider
+                  style={{ flex: 1, height: 40 }}
+                  value={makingTime}
+                  onValueChange={setMakingTime}
+                  minimumValue={0}
+                  step={1}
+                  maximumValue={5}
+                  minimumTrackTintColor="#612FEF"
+                  maximumTrackTintColor="#E7E0FD"
+                  thumbTintColor="#612FEF"
+                />
+                <Text>{makingTime}</Text>
+              </View>
+            </View>
+            <View style={{ padding: 10, borderBottomWidth: 8, borderBottomColor: "#dcdcdc", flex: 1 }}>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <Body16B style={{ margin: 10 }}>상품 상세</Body16B>
+                <Subtitle18B style={{ color: PURPLE, marginLeft: "-1%" }}>*</Subtitle18B>
+              </View>
+              <FillerSection style={{ borderWidth: 2, borderColor: BLACK2, backgroundColor: "#FFF" }}>
+                <UploadButton onPress={() => navigation.navigate("WriteDetailPage")} style={{ backgroundColor: "#dcdcdc" }}>
+                  <Subtitle16B>작성하기</Subtitle16B>
+                </UploadButton>
+              </FillerSection>
+            </View>
+          </View>
+          <View style={{ padding: 10, borderBottomWidth: 8, borderBottomColor: "#dcdcdc" }}>
+            <Body16B style={{ margin: 10 }}>가격 책정 기준</Body16B>
+            {addDetailSection()}
+            {/* 디테일 추가 섹션 */}
+            <Body16B style={{ margin: 10 }}>등록된 기준 목록</Body16B>
+            {DetailListSection()}
+            {/* 등록된 기준 목록 섹션 */}
+          </View>
+          <View style={{ padding: 10, borderBottomWidth: 8, borderBottomColor: "#dcdcdc" }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Body16B style={{ margin: 10 }}>가격</Body16B>
+              <Subtitle18B style={{ color: PURPLE, marginLeft: "-1%" }}>*</Subtitle18B>
+            </View>
+            <View style={{ alignItems: "center", flexDirection: "row", margin: 10 }}>
+              <TextInput
+                style={{
+                  flex: 1,
+                  borderWidth: 2,
+                  borderColor: BLACK2,
+                  borderRadius: 5,
+                  padding: 10
+                }}
+                value={price} onChangeText={setPrice} placeholder=' 입력해주세요' />
+            </View>
+          </View>
+          <View style={{ padding: 10 }}>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Body16B style={{ margin: 10 }}>주문 시 유의사항</Body16B>
+              <Subtitle18B style={{ color: PURPLE, marginLeft: "-1%" }}>*</Subtitle18B>
+            </View>
+            <View style={{ margin: 10, marginBottom: "30%" }}>
+              <InputBox value={notice} setValue={setNotice} placeholder='입력해주세요' long />
+            </View>
+          </View>
+        </ScrollView>
       </SafeAreaView>
+      {GoodsRegiBottomBar}
+      {/* 바텀바 */}
     </SafeAreaView>
   )
+
+  function DetailListSection() {
+    return <View>
+      {detailList.map((item, idx) => (
+        <FillerSection key={idx} style={{ flexDirection: "column" }}>
+          <Text style={{ color: "#222", alignContent: "flex-start" }}>detail {idx + 1}</Text>
+          <View style={{ flexDirection: "row", justifyContent: "space-between", width: "90%", marginBottom: 5 }}>
+            <Body16B>{item.detail}</Body16B>
+            <Body16B>{item.price}원</Body16B>
+          </View>
+          <View style={{ backgroundColor: "#F9F9F9", flex: 0.8, width: "90%", marginBottom: 5, alignItems: "center", justifyContent: "center", borderRadius: 8 }}>
+            <Body14M>{item.detailExplain}</Body14M>
+          </View>
+          <ButtonSection style={{ width: "90%", justifyContent: "space-between" }}>
+            {detailList.length > 0 &&
+              <UploadButton style={{ backgroundColor: "#DBFC72", height: "100%" }}
+                onPress={removeDetail}><Subtitle16B>🗑️</Subtitle16B>
+              </UploadButton>}
+            <UploadButton style={{ backgroundColor: "#DBFC72", height: "100%" }}>
+              <Subtitle16M style={{ color: "#222" }}>수정하기</Subtitle16M>
+            </UploadButton>
+          </ButtonSection>
+        </FillerSection>
+      ))}
+    </View>;
+  }
+
+  function addDetailSection() {
+    return <View style={{ borderBottomColor: "#dcdcdc", borderBottomWidth: 1 }}>
+      <View style={{ flex: 1 }}>
+        <FillerSection style={{ height: 350, flexDirection: "column", marginBottom: 20 }}>
+          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", width: "90%", marginBottom: 10 }}>
+            <Body16B>디테일</Body16B>
+            <InputBox
+              value={detail}
+              onChangeText={setDetail}
+              style={{ borderWidth: 2, borderColor: "#828282", borderRadius: 5, flex: .84 }} placeholder="입력해주세요" />
+          </View>
+          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", width: "90%", marginBottom: 10 }}>
+            <Body16B>금액</Body16B>
+            <InputBox
+              value={addPrice}
+              onChangeText={setAddprice}
+              style={{ borderWidth: 2, borderColor: "#828282", borderRadius: 5, flex: .8 }} placeholder="추가 금액을 입력해주세요" />
+          </View>
+          <View style={{ width: "90%", marginBottom: 10 }}>
+            <View style={{ flexDirection: 'row' }}>
+              <Body16B>상세 설명</Body16B>
+              <Body14M>    이미지 1장 첨부 가능합니다.</Body14M>
+            </View>
+            <InputBox value={detailExplain} setValue={setDetalExplain} placeholder="50자 이내로 입력해주세요" long />
+          </View>
+          <ButtonSection style={{ width: "90%", justifyContent: "space-between" }}>
+            <UploadButton style={{ backgroundColor: "#DBFC72", height: "100%" }}><Subtitle16B>📷</Subtitle16B></UploadButton>
+            <UploadButton style={{ backgroundColor: "#DBFC72", height: "100%" }}
+              onPress={addDetail}>
+              <Subtitle16M style={{ color: "#222" }}>등록하기</Subtitle16M>
+            </UploadButton>
+          </ButtonSection>
+        </FillerSection>
+      </View>
+    </View>;
+  }
 }
 export default GoodsRegistrationPage;
