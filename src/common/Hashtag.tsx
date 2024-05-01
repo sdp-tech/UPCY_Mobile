@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
-import { Filter14M, Subtitle16B, Subtitle16M } from '../styles/GlobalText';
+import { Body14B } from '../styles/GlobalText';
+import DeleteButton from '../assets/common/Delete.svg';
 import { BLACK, BLACK2, GRAY, PURPLE } from '../styles/GlobalColor';
 
 interface HashtagProps {
@@ -14,21 +15,22 @@ interface HashtagProps {
 const Hashtag = ({ value, pressable, pressed, onPress }: HashtagProps) => {
   return (
     <HashtagContainer pressed={pressed} onPress={onPress} disabled={!pressable}>
-      <Subtitle16M style={{ color: pressed ? 'white' : BLACK }}>{value}</Subtitle16M>
-      <Text style={{ color: GRAY, fontSize: 16, fontWeight: 'bold' }}> X</Text>
+      <Body14B style={{ color: pressed ? 'white' : BLACK }}>{value}</Body14B>
+      <DeleteButton />
     </HashtagContainer>
-  )
-}
+  );
+};
 
 const HashtagContainer = styled.TouchableOpacity<{ pressed: boolean }>`
   display: flex;
   border-radius: 12px;
   flex-direction: row;
+  gap: 8px;
   justify-content: center;
   align-items: center;
-  padding: 4px 16px;
-  margin: 5px;
-  background: ${(props: { pressed: boolean }) => props.pressed ? 'white' : '#DBFC72'};
-`
+  padding: 4px 12px;
+  background: ${(props: { pressed: boolean }) =>
+    props.pressed ? 'white' : '#DBFC72'};
+`;
 
 export default Hashtag;

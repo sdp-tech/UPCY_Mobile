@@ -28,39 +28,44 @@ const Carousel = ({ data, renderItem, dot, slider }: CarouselProps) => {
       />
       {dot ? (
         <DotContainer>
-          {Array.from({length: data.length}, (_, i) => i).map((i) => (
+          {Array.from({ length: data.length }, (_, i) => i).map(i => (
             <Dot key={i} focused={i === page ? true : false} />
           ))}
         </DotContainer>
-      ):(<></>)}
+      ) : (
+        <></>
+      )}
       {slider ? (
         <SliderContainer>
-          <Slider total={data.length-1} page={page} />
+          <Slider total={data.length - 1} page={page} />
         </SliderContainer>
-      ):(<></>)}
+      ) : (
+        <></>
+      )}
     </>
-  )
-}
+  );
+};
 
 const Dot = styled.View<{ focused: boolean }>`
-  width: ${(props: { focused: boolean; }) => props.focused ? 10 : 7}px;
-  height: ${(props: { focused: boolean; }) => props.focused ? 10 : 7}px;
+  width: ${(props: { focused: boolean }) => (props.focused ? 10 : 7)}px;
+  height: ${(props: { focused: boolean }) => (props.focused ? 10 : 7)}px;
   margin: 0px 6px;
   border-radius: 16px;
-  background: ${(props: { focused: boolean; }) => props.focused ? PURPLE : LIGHTGRAY};
-  opacity: ${(props: { focused: boolean; }) => props.focused ? 1 : 0.5};
-`
+  background: ${(props: { focused: boolean }) =>
+    props.focused ? PURPLE : LIGHTGRAY};
+  opacity: ${(props: { focused: boolean }) => (props.focused ? 1 : 0.5)};
+`;
 
 const DotContainer = styled.View`
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
-`
+`;
 
 const SliderContainer = styled.View`
   display: flex;
   padding: 0px 20px;
-`
+`;
 
 export default Carousel;

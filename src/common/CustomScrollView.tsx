@@ -1,4 +1,4 @@
-import { DimensionValue } from 'react-native';
+import { DimensionValue, ViewStyle } from 'react-native';
 import {
   KeyboardAwareScrollViewProps,
   KeyboardAwareScrollView,
@@ -7,18 +7,24 @@ import {
 interface CustomScrollViewProps extends KeyboardAwareScrollViewProps {
   minHeight?: DimensionValue;
   children: any;
+  additionalStyles?: ViewStyle;
 }
 
 const CustomScrollView = ({
   minHeight,
   children,
+  additionalStyles,
   ...props
 }: CustomScrollViewProps) => {
   return (
     <KeyboardAwareScrollView
       extraScrollHeight={10}
       alwaysBounceVertical={false}
-      contentContainerStyle={{ flexGrow: 1, minHeight: minHeight }}
+      contentContainerStyle={{
+        ...additionalStyles,
+        flexGrow: 1,
+        minHeight: minHeight,
+      }}
       {...props}>
       {children}
     </KeyboardAwareScrollView>
