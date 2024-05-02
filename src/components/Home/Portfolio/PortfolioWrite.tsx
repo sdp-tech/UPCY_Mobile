@@ -150,7 +150,9 @@ export default function PortfolioWrite({
               value="등록 완료"
               pressed={false}
               style={{ width: '75%', alignSelf: 'center' }}
-              onPress={() => {}}
+              onPress={() => {
+                navigation.navigate('PortfolioSubmit');
+              }}
             />
           </View>
         </View>
