@@ -65,7 +65,9 @@ export default function PortfolioWrite({
         onPressLeft={() => {
           navigation.getParent()?.navigate('Home');
         }}
-        onPressRight={() => {}}
+        onPressRight={() => {
+          navigation.navigate('TempStorage');
+        }}
       />
       <CustomScrollView minHeight={1430}>
         <PhotoOptions
@@ -150,7 +152,9 @@ export default function PortfolioWrite({
               value="등록 완료"
               pressed={false}
               style={{ width: '75%', alignSelf: 'center' }}
-              onPress={() => {}}
+              onPress={() => {
+                navigation.navigate('Submit');
+              }}
             />
           </View>
         </View>
