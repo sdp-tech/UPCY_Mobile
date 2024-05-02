@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import PortfolioWrite from './PortfolioWrite';
 import PortfolioSubmit from './PortfolioSubmit';
+import TempStorage from '../Market/TempStorage';
 
 export interface AddPortfolioProps {
   route: any;
@@ -9,8 +10,9 @@ export interface AddPortfolioProps {
 }
 
 export type AddPortfolioParams = {
-  PortfolioWrite: undefined;
-  PortfolioSubmit: undefined;
+  Write: undefined;
+  Submit: undefined;
+  TempStorage: undefined;
 };
 
 export default function AddPortfolio() {
@@ -19,9 +21,10 @@ export default function AddPortfolio() {
   return (
     <Stack.Navigator
       screenOptions={{ headerShown: false }}
-      initialRouteName="PortfolioWrite">
-      <Stack.Screen name="PortfolioWrite" component={PortfolioWrite} />
-      <Stack.Screen name="PortfolioSubmit" component={PortfolioSubmit} />
+      initialRouteName="Write">
+      <Stack.Screen name="Write" component={PortfolioWrite} />
+      <Stack.Screen name="Submit" component={PortfolioSubmit} />
+      <Stack.Screen name="TempStorage" component={TempStorage} />
     </Stack.Navigator>
   );
 }
