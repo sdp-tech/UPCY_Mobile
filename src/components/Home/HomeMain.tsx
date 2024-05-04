@@ -191,6 +191,7 @@ const HomeTabView = ({ onSearch, onTabChange ,selectedTab }: HomeTabViewProps) =
         </View>
       </ScrollView>
       )}
+      {selectedTab === 'Goods' && (
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View style={{ flex: 1 }}>
           <CategoryBox>
@@ -236,7 +237,54 @@ const HomeTabView = ({ onSearch, onTabChange ,selectedTab }: HomeTabViewProps) =
           open = {modalOpen}
           setOpen={setModalOpen}/>}
       </ScrollView>
-    
+      )}
+      {selectedTab === 'Market' && (
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <View style={{ flex: 1 }}>
+          <CategoryBox>
+            <CategoryButton onPress = {() => setModalOpen(true)}>
+              <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }} >
+                스타일
+              </Text>
+              <CategoryDownButton />
+            </CategoryButton>
+            <CategoryButton>
+              <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
+                재질
+              </Text>
+              <CategoryDownButton />
+            </CategoryButton>
+            <CategoryButton>
+              <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
+                핏
+              </Text>
+              <CategoryDownButton />
+            </CategoryButton>
+            <CategoryButton>
+              <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
+                디테일
+              </Text>
+              <CategoryDownButton />
+            </CategoryButton>
+            <CategoryButton>
+              <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
+                금액별
+              </Text>
+              <CategoryDownButton />
+            </CategoryButton>
+            <CategoryButton>
+              <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
+                수선 요구 기간
+              </Text>
+              <CategoryDownButton />
+            </CategoryButton>
+          </CategoryBox>
+        </View>
+        {modalOpen && <DetailModal
+          open = {modalOpen}
+          setOpen={setModalOpen}/>}
+      </ScrollView>
+      )}
     </>
         
   );
