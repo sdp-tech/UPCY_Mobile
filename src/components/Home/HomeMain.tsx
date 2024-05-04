@@ -64,6 +64,8 @@ const CategoryButton = styled.TouchableOpacity<{ pressed: boolean }>`
 
 interface HomeTabViewProps {
   onSearch: () => void;
+  onTabChange: (tab: 'Goods' | 'Market') => void;
+  selectedTab: 'Goods' | 'Market';
 }
 
 interface HomeTabViewButtonParams {
@@ -82,7 +84,7 @@ const HomeTabViewtag = ({ pressable }: HomeTabViewButtonParams) => {
   );
 };
 
-const HomeTabView = ({ onSearch }: HomeTabViewProps) => {
+const HomeTabView = ({ onSearch, onTabChange ,selectedTab }: HomeTabViewProps) => {
   const [selectedTabView, setSelectedTabView] = useState<
     'all' | 'outer' | 'top' | 'bottom' | 'bag' | 'hat' | 'accessories'
   >('all');
@@ -90,6 +92,7 @@ const HomeTabView = ({ onSearch }: HomeTabViewProps) => {
   //글자 간격 수정 필요!
   return (
     <>
+      {selectedTab === 'Goods' && (
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View style={{ flex: 1 }}>
           <HomeTabViewBox>
@@ -187,7 +190,7 @@ const HomeTabView = ({ onSearch }: HomeTabViewProps) => {
           </HomeTabViewBox>
         </View>
       </ScrollView>
-
+      )}
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View style={{ flex: 1 }}>
           <CategoryBox>
@@ -233,8 +236,9 @@ const HomeTabView = ({ onSearch }: HomeTabViewProps) => {
           open = {modalOpen}
           setOpen={setModalOpen}/>}
       </ScrollView>
-
+    
     </>
+        
   );
 };
 

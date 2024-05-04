@@ -98,10 +98,15 @@ const HomeScreen = ({
 const HomeMainScreen = ({
   navigation,
 }: StackScreenProps<HomeStackParams, 'Home'>) => {
+  const [selectedTab, setSelectedTab] = useState<'Goods' | 'Market'>('Goods');
+
+  const handleTabChange = (tab: 'Goods' | 'Market') => {
+    setSelectedTab(tab);
+  }
   return (
     <SafeAreaView>
-      <CustomHeader onSearch={() => {}} />
-      <HomeTabView onSearch={() => {}} />
+      <CustomHeader onSearch={() => {}} onTabChange={handleTabChange} />
+      <HomeTabView onSearch={() => {}} selectedTab={selectedTab} onTabChange = {handleTabChange}/>
       <ScrollView>
         <Button onPress={() => navigation.navigate('Market')}>
           <Text>마켓</Text>

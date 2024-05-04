@@ -44,6 +44,7 @@ const ToggleButton = styled.TouchableOpacity<{ pressed: boolean }>`
 interface CustomHeaderProps {
   onSearch: () => void;
   onAlarm?: () => void;
+  onTabChange: (tab: 'Goods'| 'Market') => void;
 }
 
 interface ToggleButtonParams {
@@ -62,7 +63,7 @@ const Toggletag = ({ pressable }: ToggleButtonParams) => {
   );
 };
 
-const CustomHeader = ({ onSearch, onAlarm }: CustomHeaderProps) => {
+const CustomHeader = ({ onSearch, onAlarm, onTabChange }: CustomHeaderProps) => {
   const [selectedTab, setSelectedTab] = useState<'Goods' | 'Market'>('Goods');
  
   useEffect(() =>{
@@ -78,14 +79,14 @@ const CustomHeader = ({ onSearch, onAlarm }: CustomHeaderProps) => {
           <ToggleBox>
             <ToggleButton
               pressed={selectedTab === 'Goods'}
-              onPress={() => setSelectedTab('Goods')}>
+              onPress={() => {setSelectedTab('Goods'); onTabChange('Goods');}}>
               <Text style={{ fontSize: 16, fontWeight: '900', marginRight: 5 }}>
                 상품
               </Text>
             </ToggleButton>
             <ToggleButton
               pressed={selectedTab === 'Market'}
-              onPress={() => setSelectedTab('Market')}>
+              onPress={() => {setSelectedTab('Market'); onTabChange('Market');}}>
               <Text style={{ fontSize: 16, fontWeight: '900', marginRight: 5 }}>
                 마켓
               </Text>

@@ -50,3 +50,4 @@ export default function DetailModal({
     </BottomSheetModal>
   );
 }
+//bottom-sheet animated error
