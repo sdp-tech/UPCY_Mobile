@@ -5,6 +5,8 @@ import styled from "styled-components/native";
 import React from "react";
 import Arrow from '../../../assets/common/Arrow.svg';
 
+// 확인용
+
 const BackButton = styled.TouchableOpacity`
     padding: 10px;
     z-index: 1;
