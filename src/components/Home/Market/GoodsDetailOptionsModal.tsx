@@ -45,7 +45,7 @@ export default function DetailModal({
       snapPoints={snapPoints}
     >
       <BottomSheetView style = {{ flex : 1}}>
-        <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}> 오예</Text>
+        <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}> Text</Text>
       </BottomSheetView>
     </BottomSheetModal>
   );
