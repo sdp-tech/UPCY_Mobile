@@ -6,3 +6,4 @@ export const BLACK = '#222222';
 export const BLACK2 = '#929292';
 export const GRAY = '#BDBDBD';
 export const LIGHTGRAY = '#DFDFDF';
+export const LIGHTGRAY2 = '#EAEAEA';

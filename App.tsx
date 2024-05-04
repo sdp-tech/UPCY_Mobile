@@ -1,6 +1,10 @@
 import React from 'react';
 import { View, TouchableOpacity, Text } from 'react-native';
-import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
+import {
+  NavigationContainer,
+  DefaultTheme,
+  getFocusedRouteNameFromRoute,
+} from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {
   BottomTabBarProps,
@@ -15,6 +19,7 @@ import HomeIcon from './src/assets/navbar/Home.svg';
 import MyPageIcon from './src/assets/navbar/MyPage.svg';
 import SignIn from './src/components/Auth/SignIn';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { BottomBarProvider, useBottomBar } from './contexts/BottomBarContext';
 
 export type StackProps = {
   Home: undefined;
@@ -33,17 +38,19 @@ const GlobalTheme = {
 
 function App(): React.JSX.Element {
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <NavigationContainer theme={GlobalTheme}>
-        <Stack.Navigator
-          screenOptions={() => ({
-            headerShown: false,
-          })}>
-          <Stack.Screen name="Home" component={HomeTab} />
-          <Stack.Screen name="Signin" component={SignIn} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </GestureHandlerRootView>
+    <BottomBarProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <NavigationContainer theme={GlobalTheme}>
+          <Stack.Navigator
+            screenOptions={() => ({
+              headerShown: false,
+            })}>
+            <Stack.Screen name="Home" component={HomeTab} />
+            <Stack.Screen name="Signin" component={SignIn} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </GestureHandlerRootView>
+    </BottomBarProvider>
   );
 }
 
@@ -54,12 +61,18 @@ export type TabProps = {
 
 const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
   const loginGuard = useLoginGuard();
+  const { options } = descriptors;
+  const { isVisible } = useBottomBar(); // 바텀바 보임/숨김 상태를 가져옵니다.
+
+  if (!isVisible) {
+    return null; // isVisible이 false일 경우 탭바를 렌더링하지 않습니다.
+  }
 
   return (
     <View
       style={{
-        height: 86,
         display: 'flex',
+        height: 86,
         flexDirection: 'row',
         justifyContent: 'space-around',
         backgroundColor: '#FFFFFF',
@@ -120,11 +133,16 @@ const HomeTab = (): JSX.Element => {
   return (
     <Tab.Navigator
       tabBar={props => <CustomTab {...props} />}
+      id="MainHome"
       initialRouteName="홈"
       screenOptions={() => ({
         headerShown: false,
       })}>
-      <Tab.Screen name={'홈'} component={HomeScreen} />
+      <Tab.Screen
+        name={'홈'}
+        component={HomeScreen}
+        options={{ tabBarStyle: { display: 'none' } }}
+      />
       <Tab.Screen name={'마이페이지'} component={MyPageScreen} />
     </Tab.Navigator>
   );
