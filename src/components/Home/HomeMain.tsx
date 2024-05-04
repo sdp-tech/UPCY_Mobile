@@ -1,21 +1,24 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useMemo, useRef, useEffect, useState } from 'react';
 import { Filter14M } from '../../styles/GlobalText';
 import {
   Text,
   View,
+  StyleSheet,
   TouchableOpacity,
   Dimensions,
   ScrollView,
 } from 'react-native';
+import BottomSheet, {BottomSheetView} from '@gorhom/bottom-sheet';
 import CustomHeader from '../../common/CustomHeader';
 import { Tabs, MaterialTabBar } from 'react-native-collapsible-tab-view';
 import { StackScreenProps } from '@react-navigation/stack';
 import { HomeStackParams } from '../../pages/Home';
-
 import TabViewSpot from '../../assets/common/TabViewSpot.svg';
 import CategoryDownButton from '../../assets/common/CategoryDownButton.svg';
 import styled from 'styled-components/native';
 import { PURPLE } from '../../styles/GlobalColor';
+import DetailModal from './Market/GoodsDetailOptionsModal';
+
 
 const HomeTabViewBox = styled.View`
   display: flex;
@@ -61,6 +64,8 @@ const CategoryButton = styled.TouchableOpacity<{ pressed: boolean }>`
 
 interface HomeTabViewProps {
   onSearch: () => void;
+  onTabChange: (tab: 'Goods' | 'Market') => void;
+  selectedTab: 'Goods' | 'Market';
 }
 
 interface HomeTabViewButtonParams {
@@ -79,14 +84,15 @@ const HomeTabViewtag = ({ pressable }: HomeTabViewButtonParams) => {
   );
 };
 
-const HomeTabView = ({ onSearch }: HomeTabViewProps) => {
+const HomeTabView = ({ onSearch, onTabChange ,selectedTab }: HomeTabViewProps) => {
   const [selectedTabView, setSelectedTabView] = useState<
     'all' | 'outer' | 'top' | 'bottom' | 'bag' | 'hat' | 'accessories'
   >('all');
-
+  const [modalOpen, setModalOpen] = useState(false);
   //글자 간격 수정 필요!
   return (
     <>
+      {selectedTab === 'Goods' && (
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View style={{ flex: 1 }}>
           <HomeTabViewBox>
@@ -184,12 +190,13 @@ const HomeTabView = ({ onSearch }: HomeTabViewProps) => {
           </HomeTabViewBox>
         </View>
       </ScrollView>
-
+      )}
+      {selectedTab === 'Goods' && (
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View style={{ flex: 1 }}>
           <CategoryBox>
-            <CategoryButton>
-              <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
+            <CategoryButton onPress = {() => setModalOpen(true)}>
+              <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }} >
                 스타일
               </Text>
               <CategoryDownButton />
@@ -226,9 +233,62 @@ const HomeTabView = ({ onSearch }: HomeTabViewProps) => {
             </CategoryButton>
           </CategoryBox>
         </View>
+        {modalOpen && <DetailModal
+          open = {modalOpen}
+          setOpen={setModalOpen}/>}
       </ScrollView>
+      )}
+      {selectedTab === 'Market' && (
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <View style={{ flex: 1 }}>
+          <CategoryBox>
+            <CategoryButton onPress = {() => setModalOpen(true)}>
+              <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }} >
+                스타일
+              </Text>
+              <CategoryDownButton />
+            </CategoryButton>
+            <CategoryButton>
+              <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
+                재질
+              </Text>
+              <CategoryDownButton />
+            </CategoryButton>
+            <CategoryButton>
+              <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
+                핏
+              </Text>
+              <CategoryDownButton />
+            </CategoryButton>
+            <CategoryButton>
+              <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
+                디테일
+              </Text>
+              <CategoryDownButton />
+            </CategoryButton>
+            <CategoryButton>
+              <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
+                금액별
+              </Text>
+              <CategoryDownButton />
+            </CategoryButton>
+            <CategoryButton>
+              <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
+                수선 요구 기간
+              </Text>
+              <CategoryDownButton />
+            </CategoryButton>
+          </CategoryBox>
+        </View>
+        {modalOpen && <DetailModal
+          open = {modalOpen}
+          setOpen={setModalOpen}/>}
+      </ScrollView>
+      )}
     </>
+        
   );
 };
+
 
 export default HomeTabView;
