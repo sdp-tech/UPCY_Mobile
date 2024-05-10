@@ -14,14 +14,11 @@ import InputView from '../../../common/InputView';
 import PhotoOptions from '../../../common/PhotoOptions';
 import CustomScrollView from '../../../common/CustomScrollView';
 import { useEffect, useState } from 'react';
-import useImagePicker from '../../../hooks/useImagePicker';
+import { useImagePicker } from '../../../hooks/useImagePicker';
 
 function ProfilePic({ form, setForm }: ReformProps) {
   const [photo, setPhoto] = useState(form.picture);
-  const [handleAddButtonPress, handleImagePress] = useImagePicker(
-    photo,
-    setPhoto,
-  );
+  const [handleAddButtonPress, handleImagePress] = useImagePicker(setPhoto);
 
   useEffect(() => {
     setForm(prev => {
