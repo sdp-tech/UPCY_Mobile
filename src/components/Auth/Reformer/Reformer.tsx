@@ -13,6 +13,7 @@ import {
 import ReformFormStyle from './ReformFormStyle';
 import ReformCareer from './ReformFormCareer';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { PhotoType } from '../../../hooks/useImagePicker';
 
 type page = 'profile' | 'style' | 'career';
 
@@ -38,7 +39,7 @@ interface BasicFormProp {
 }
 
 type ReformProfileType = {
-  picture: any;
+  picture: undefined | PhotoType;
   nickname: string;
   market: string;
   introduce: string;
