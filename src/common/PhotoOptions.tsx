@@ -12,15 +12,12 @@ import {
   Text,
   ViewStyle,
   Image,
-  ImageStyle,
-  ImageBackground,
 } from 'react-native';
 import * as ImagePicker from 'react-native-image-picker';
 import styled from 'styled-components/native';
 import PhotoIcon from '../assets/common/Photo.svg';
 import { Body14M } from '../styles/GlobalText';
-import { LIGHTGRAY, LIGHTGRAY2 } from '../styles/GlobalColor';
-import Carousel from './Carousel';
+import { LIGHTGRAY } from '../styles/GlobalColor';
 
 const PhotosInput = styled.View`
   display: flex;
@@ -36,9 +33,7 @@ interface Action {
 interface PhotoProps {
   buttonLabel?: string;
   style?: ViewStyle;
-  imageStyle?: ImageStyle;
-  containerStyle?: ViewStyle;
-  photo?: undefined | PhotoResultProps[];
+  photo?: undefined | PhotoResultProps;
   setPhoto: (p: PhotoResultProps[]) => void;
   max: number;
 }
@@ -56,8 +51,6 @@ const PhotoOptions = ({
   setPhoto,
   max,
   style,
-  imageStyle,
-  containerStyle,
 }: PhotoProps) => {
   const CameraActions: Action[] = [
     //카메라 & 갤러리 세팅
@@ -65,7 +58,7 @@ const PhotoOptions = ({
       title: '카메라',
       type: 'capture',
       options: {
-        selectionLimit: max - (photo === undefined ? 0 : photo.length),
+        selectionLimit: max,
         mediaType: 'photo',
         includeBase64: false,
         maxHeight: 300,
@@ -76,7 +69,7 @@ const PhotoOptions = ({
       title: '앨범',
       type: 'library',
       options: {
-        selectionLimit: max - (photo === undefined ? 0 : photo.length),
+        selectionLimit: max,
         mediaType: 'photo',
         includeBase64: false,
         maxHeight: 300,
@@ -84,6 +77,24 @@ const PhotoOptions = ({
       },
     },
   ];
+  // const onButtonPress = useCallback(
+  //   (
+  //     type: string,
+  //     options: ImagePicker.CameraOptions | ImagePicker.ImageLibraryOptions
+  //   ) => {
+  //     //카메라 & 갤러리 열기
+  //     if (type === "capture") {
+  //       ImagePicker.launchCamera(options, (response) =>
+  //         setPhoto([...photo, response.assets])
+  //       );
+  //     } else {
+  //       ImagePicker.launchImageLibrary(options, (response) =>
+  //         setPhoto([...photo, response.assets])
+  //       );
+  //     }
+  //   },
+  //   []
+  // );
 
   const onButtonPress = useCallback(
     (
@@ -106,8 +117,7 @@ const PhotoOptions = ({
                   uri: asset.uri,
                 };
             });
-            if (photo === undefined) setPhoto(selectedPhotos);
-            else setPhoto(photo.concat(selectedPhotos));
+            setPhoto(selectedPhotos);
           }
         });
       } else {
@@ -126,8 +136,7 @@ const PhotoOptions = ({
                   uri: asset.uri,
                 };
             });
-            if (photo === undefined) setPhoto(selectedPhotos);
-            else setPhoto(photo.concat(selectedPhotos));
+            setPhoto(selectedPhotos);
           }
         });
       }
@@ -136,89 +145,47 @@ const PhotoOptions = ({
   );
 
   return (
-    <View style={{ backgroundColor: LIGHTGRAY2, ...containerStyle }}>
-      <PhotosInput>
-        <View style={{ flex: 1 }}>
-          <Carousel
-            data={
-              photo === undefined
-                ? [undefined]
-                : photo.length < max
-                  ? [photo, undefined]
-                  : photo
-            }
-            renderItem={({
-              item,
-              idx,
-            }: {
-              item: undefined | PhotoResultProps;
-              idx: number;
-            }) => {
-              return (
-                <View key={idx}>
-                  {item === undefined ? (
-                    <TouchableOpacity
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        paddingHorizontal: 16,
-                        backgroundColor: 'LIGHTGRAY',
-                        borderRadius: 6,
-                        marginBottom: 20,
-                        paddingVertical: 6,
-                        ...style,
-                      }}
-                      onPress={() => {
-                        Alert.alert('사진 선택', '', [
-                          {
-                            text: '카메라',
-                            onPress: () =>
-                              onButtonPress(
-                                CameraActions[0].type,
-                                CameraActions[0].options,
-                              ),
-                          },
-                          {
-                            text: '앨범',
-                            onPress: () =>
-                              onButtonPress(
-                                CameraActions[1].type,
-                                CameraActions[1].options,
-                              ),
-                          },
-                          { text: '취소', style: 'destructive' },
-                        ]);
-                      }}>
-                      {buttonLabel && (
-                        <>
-                          <PhotoIcon />
-                          <Body14M style={{ marginLeft: 10 }}>
-                            {buttonLabel}
-                          </Body14M>
-                        </>
-                      )}
-                    </TouchableOpacity>
-                  ) : (
-                    <></>
-                  )}
-                </View>
-                // item.map((subItem: any) => (
-                //   <View style={{ height: 350, paddingLeft: 20, paddingRight: 20, paddingTop: 20 }}>
-                //     <ImageBackground
-                //       key={subItem.id}
-                //       source={{ uri: subItem.uri }}
-                //       style={{ width: "auto", height: "100%" }}
-                //       alt={subItem.fileName}
-                //     />
-                //   </View>
-                // ))
-              );
-            }}
-            slider={photo !== undefined && photo.length > 0}
+    <PhotosInput>
+      <TouchableOpacity
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          paddingHorizontal: 16,
+          backgroundColor: 'LIGHTGRAY',
+          borderRadius: 6,
+          marginBottom: 20,
+          paddingVertical: 6,
+          ...style,
+        }}
+        onPress={() => {
+          Alert.alert('사진 선택', '', [
+            {
+              text: '카메라',
+              onPress: () =>
+                onButtonPress(CameraActions[0].type, CameraActions[0].options),
+            },
+            {
+              text: '앨범',
+              onPress: () =>
+                onButtonPress(CameraActions[1].type, CameraActions[1].options),
+            },
+            { text: '취소', style: 'destructive' },
+          ]);
+        }}>
+        {buttonLabel && (
+          <>
+            <PhotoIcon />
+            <Body14M style={{ marginLeft: 10 }}>{buttonLabel}</Body14M>
+          </>
+        )}
+        {photo !== undefined && (
+          <Image
+            source={{ uri: photo.uri }}
+            style={{ height: '100%', width: '100%', borderRadius: 100 }}
           />
-        </View>
-      </PhotosInput>
-    </View>
+        )}
+      </TouchableOpacity>
+    </PhotosInput>
   );
 };
 
