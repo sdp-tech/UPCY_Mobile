@@ -1,10 +1,9 @@
 import { Dimensions, Image, SafeAreaView, View } from 'react-native';
 import { AddPortfolioProps } from './AddPortfolio';
-import { Body14B, Body16B, Caption12M } from '../../../styles/GlobalText';
+import { Body14M, Body16B, Caption12M } from '../../../styles/GlobalText';
 import DetailScreenHeader from '../components/DetailScreenHeader';
-import PhotoOptions from '../../../common/PhotoOptions';
-import { useState } from 'react';
-import { BLACK2, GRAY, LIGHTGRAY } from '../../../styles/GlobalColor';
+import { useEffect, useState } from 'react';
+import { BLACK2, GRAY } from '../../../styles/GlobalColor';
 import InputView from '../../../common/InputView';
 import CustomScrollView from '../../../common/CustomScrollView';
 import useObjectUpdater from '../../../hooks/useObjectUpdater';
@@ -12,9 +11,12 @@ import PeriodPicker from '../../../common/PeriodPicker';
 import BottomButton from '../../../common/BottomButton';
 import AgreeButton from '../../../common/AgreeButton';
 import HashtagInput from '../components/HashtagInput';
+import PhotoIcon from '../../../assets/common/Photo.svg';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { PhotoType, useImagePicker } from '../../../hooks/useImagePicker';
 
 type PortfolioFormType = {
-  photo: any;
+  photo: undefined | PhotoType;
   title: string;
   hashtags: string[];
   domain: string;
@@ -40,9 +42,13 @@ export default function PortfolioWrite({
     information: '',
   };
   const [form, setForm] = useState<PortfolioFormType>(initForm);
+  const [image, setImage] = useState<PhotoType | undefined>(undefined);
   const [agreement, setAgreement] = useState(false);
 
   const formUpdater = useObjectUpdater(setForm);
+  const [handleAddButtonPress, handleImagePress] = useImagePicker(setImage);
+
+  useEffect(() => formUpdater(image, 'photo'), [image]);
 
   const addHashtag = (v: string) => {
     const newHashtags = form.hashtags;
@@ -69,29 +75,33 @@ export default function PortfolioWrite({
           navigation.navigate('TempStorage');
         }}
       />
-      <CustomScrollView minHeight={1430}>
-        <PhotoOptions
-          buttonLabel="이미지 등록"
-          max={1}
-          setPhoto={p =>
-            setForm(prev => {
-              return { ...prev, photo: p[0] };
-            })
-          }
-          containerStyle={{
+      <CustomScrollView minHeight={1400}>
+        <TouchableOpacity
+          style={{
             width: '100%',
             aspectRatio: 1,
             backgroundColor: GRAY,
             justifyContent: 'center',
             alignItems: 'center',
           }}
-          style={{
-            height: 40,
-            backgroundColor: LIGHTGRAY,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        />
+          onPress={
+            image === undefined ? handleAddButtonPress : handleImagePress
+          }>
+          {image === undefined ? (
+            <View
+              style={{
+                flexDirection: 'row',
+                height: 40,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <PhotoIcon />
+              <Body14M style={{ marginLeft: 10 }}>이미지 등록</Body14M>
+            </View>
+          ) : (
+            <Image src={image.uri} style={{ width: '100%', aspectRatio: 1 }} />
+          )}
+        </TouchableOpacity>
         <View
           style={{
             marginHorizontal: width * 0.04,
