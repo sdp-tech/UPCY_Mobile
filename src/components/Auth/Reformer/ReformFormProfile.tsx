@@ -1,42 +1,68 @@
-import { SafeAreaView, View, Dimensions, ScrollView } from 'react-native';
+import {
+  SafeAreaView,
+  View,
+  Dimensions,
+  ScrollView,
+  TouchableOpacity,
+  ImageBackground,
+  Image,
+} from 'react-native';
 import { PageProps, ReformProps } from './Reformer';
 import BottomButton from '../../../common/BottomButton';
 import PencilIcon from '../../../assets/common/Pencil.svg';
 import InputView from '../../../common/InputView';
 import PhotoOptions from '../../../common/PhotoOptions';
 import CustomScrollView from '../../../common/CustomScrollView';
+import { useEffect, useState } from 'react';
+import { useImagePicker } from '../../../hooks/useImagePicker';
 
 function ProfilePic({ form, setForm }: ReformProps) {
+  const [photo, setPhoto] = useState(form.picture);
+  const [handleAddButtonPress, handleImagePress] = useImagePicker(setPhoto);
+
+  useEffect(() => {
+    setForm(prev => {
+      return { ...prev, picture: photo };
+    });
+  }, [photo]);
+
   return (
     <View
       style={{
         marginTop: 30,
-
         alignSelf: 'center',
         position: 'relative',
       }}>
-      <PhotoOptions
-        buttonLabel=""
-        photo={form.picture}
-        setPhoto={p => {
-          setForm(prev => {
-            return { ...prev, picture: p[0] };
-          });
-        }}
-        max={1}
-        style={{
-          position: 'relative',
-          width: 82,
-          height: 82,
-          borderRadius: 100,
-          backgroundColor: '#D9D9D9',
-          paddingVertical: 0,
-          paddingHorizontal: 0,
-          marginBottom: 0,
-        }}
-        imageStyle={{ borderRadius: 100 }}
-      />
-
+      <TouchableOpacity
+        onPress={photo === undefined ? handleAddButtonPress : handleImagePress}>
+        <View
+          // buttonLabel=""
+          // photo={form.picture}
+          // setPhoto={p => {
+          //   setForm(prev => {
+          //     return { ...prev, picture: p[0] };
+          //   });
+          // }}
+          // max={1}
+          style={{
+            position: 'relative',
+            width: 82,
+            height: 82,
+            borderRadius: 100,
+            backgroundColor: '#D9D9D9',
+            paddingVertical: 0,
+            paddingHorizontal: 0,
+            marginBottom: 0,
+          }}>
+          {photo !== undefined && (
+            <Image
+              source={{ uri: photo.uri }}
+              style={{ width: 'auto', height: '100%', borderRadius: 100 }}
+              alt={photo.fileName}
+            />
+          )}
+        </View>
+      </TouchableOpacity>
       <View
         style={{
           position: 'absolute',
