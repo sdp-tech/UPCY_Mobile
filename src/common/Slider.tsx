@@ -22,34 +22,38 @@ const Slider = ({ total, page, rating }: SliderProps) => {
 
   const width = loaderValue.interpolate({
     inputRange: [0, 100],
-    outputRange: ['10%', '100%'],
-    extrapolate: 'clamp'
+    outputRange: ['0%', '100%'],
+    extrapolate: 'clamp',
   });
 
   useEffect(() => {
-    load(page)
+    load(page);
   }, [page]);
 
   return (
     <>
-      <SliderBar style={{borderRadius: rating ? 2 : 0, backgroundColor: rating ? LIGHTGRAY : BLACK2}}>
+      <SliderBar
+        style={{
+          borderRadius: rating ? 2 : 0,
+          backgroundColor: rating ? LIGHTGRAY : BLACK2,
+        }}>
         <Animated.View
           style={{
             backgroundColor: rating ? PURPLE : BLACK,
             width,
             height: 3,
-            borderRadius: rating ? 2 : 0
+            borderRadius: rating ? 2 : 0,
           }}
         />
       </SliderBar>
     </>
-  )
-}
+  );
+};
 
 const SliderBar = styled.View`
   width: 100%;
   height: 3px;
   background: ${BLACK2};
-`
+`;
 
 export default Slider;
