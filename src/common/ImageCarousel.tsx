@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import CarouselModule from 'react-native-snap-carousel';
 import { PhotoType, useImagePickers } from '../hooks/useImagePicker';
 import { Dimensions, Image, TouchableOpacity, View } from 'react-native';
@@ -16,14 +16,10 @@ interface ImageCarouselProps {
 
 const ImageCarousel = ({ images, setFormImages, max }: ImageCarouselProps) => {
   const { width } = Dimensions.get('screen');
-  const carouselRef = useRef<CarouselModule<PhotoType | undefined>>(null);
-  const containerRef = useRef<View>(null);
   const [page, setPage] = useState(0);
 
   const imagePickerCallback = (newPhotos: PhotoType[]) => {
     setFormImages(newPhotos);
-    carouselRef.current?.triggerRenderingHack();
-    containerRef.current?.forceUpdate;
   };
 
   const { handleAddButtonPress, handleImagePress } = useImagePickers(max);
@@ -33,7 +29,6 @@ const ImageCarousel = ({ images, setFormImages, max }: ImageCarouselProps) => {
   return (
     <View>
       <PhotoTypeCarousel
-        ref={carouselRef}
         data={images.length < max ? [...images, undefined] : images}
         renderItem={({
           item,
@@ -79,7 +74,7 @@ const ImageCarousel = ({ images, setFormImages, max }: ImageCarouselProps) => {
         keyExtractor={(item, index) => index.toString()}
         itemWidth={width}
         sliderWidth={width}></PhotoTypeCarousel>
-      <SliderContainer ref={containerRef}>
+      <SliderContainer>
         <Slider
           total={images.length < max ? images.length + 1 : max}
           page={page + 1}
