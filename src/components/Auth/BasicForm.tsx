@@ -4,12 +4,11 @@ import {
   Dimensions,
   TouchableOpacity,
   TextInput,
-  ScrollView,
   Alert,
 } from 'react-native';
 import { Body16B, Body16M, Caption11M } from '../../styles/GlobalText';
 import styled from 'styled-components/native';
-import { BLACK2, GRAY, PURPLE } from '../../styles/GlobalColor';
+import { BLACK2, PURPLE } from '../../styles/GlobalColor';
 import CheckIcon from '../../assets/common/CheckIcon.svg';
 import DownArrow from '../../assets/common/DownArrow.svg';
 import LeftArrow from '../../assets/common/Arrow.svg';
@@ -26,7 +25,6 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import SelectBox from '../../common/SelectBox';
 import BasicSignupSplash from './BasicSignupSplash';
 import CustomScrollView from '../../common/CustomScrollView';
-import { UPCY_API_URL } from 'react-native-dotenv';
 
 interface SignupProps {
   mail: string;
