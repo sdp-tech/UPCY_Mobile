@@ -17,6 +17,9 @@ import EducationModal from './EducationModal';
 import SelectBox from '../../../common/SelectBox';
 import CareerModal from './CareerModal';
 import CustomScrollView from '../../../common/CustomScrollView';
+import Request from '../../../common/requests';
+import { CareerType, Careers } from '../../../types/UserTypes';
+import { err } from 'react-native-svg';
 
 const SelectView = styled.View`
   display: flex;
@@ -61,6 +64,7 @@ export default function ReformCareer({ setNext, form, setForm }: PageProps) {
   const [educationModal, setEducationModal] = useState(false);
   const [careerModal, setCareerModal] = useState(false);
   const [careerIndex, setCareerIndex] = useState(-1);
+  const request = Request();
 
   const handleAddCareer = () => {
     const newIndex = form.career.length;
@@ -94,6 +98,75 @@ export default function ReformCareer({ setNext, form, setForm }: PageProps) {
   useEffect(() => {
     if (careerIndex >= 0) setCareerModal(true);
   }, [careerIndex]);
+
+  const handleCareerRegister = async (career: object, category: string) => {
+    const response = await request.post('users/' + category + '_register/', {});
+    if (response?.status !== 200) {
+      console.log(response);
+      throw Error('career register failed');
+    }
+  };
+
+  const handleSubmit = async () => {
+    let path = '';
+    let param = {};
+    form.career.map(value => {
+      if (value.type === '프리랜서') {
+        path = 'freelancer';
+        param = {
+          project_name: value.name,
+          client: value.client,
+          main_tasks: value.content,
+          // params 확인
+        };
+      } else if (value.type === '실무 / 인턴') {
+        path = 'internship';
+        param = {
+          company_name: value.name,
+          department: value.team,
+          position: value.position,
+          start_date: value.start,
+          end_date: value.end,
+        };
+      } else if (value.type === '공모전') {
+        path = 'competition';
+        param = {
+          name: value.name,
+          organizer: value.host,
+          award_date: value.date,
+        };
+      } else if (value.type === '자격증') {
+        path = 'certification';
+        param = {
+          name: value.name,
+          issuing_authority: value.host,
+          issue_date: value.date,
+        };
+      } else if (value.type === '기타 (외주)') {
+      }
+      try {
+        handleCareerRegister(param, path);
+      } catch (error) {
+        console.log(error);
+      }
+    });
+    const profileForm = {
+      nickname: form.nickname,
+      market_name: form.market,
+      market_intro: form.introduce,
+      links: form.link,
+      area: form.region,
+      work_style: form.style,
+      special_material: form.material,
+    };
+    const response = await request.post('users/profile_register/', profileForm);
+    if (response?.status === 200) {
+      setNext();
+    } else {
+      console.log(response);
+      Alert.alert('프로필 등록에 실패했습니다.');
+    }
+  };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -146,7 +219,7 @@ export default function ReformCareer({ setNext, form, setForm }: PageProps) {
             <BottomButton
               value="다음"
               pressed={false}
-              onPress={setNext}
+              onPress={handleSubmit}
               style={{ width: '75%', alignSelf: 'center', marginBottom: 10 }}
             />
           </View>

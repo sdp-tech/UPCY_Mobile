@@ -4,11 +4,11 @@ import {
   Dimensions,
   TouchableOpacity,
   TextInput,
-  ScrollView,
+  Alert,
 } from 'react-native';
 import { Body16B, Body16M, Caption11M } from '../../styles/GlobalText';
 import styled from 'styled-components/native';
-import { BLACK2, GRAY, PURPLE } from '../../styles/GlobalColor';
+import { BLACK2, PURPLE } from '../../styles/GlobalColor';
 import CheckIcon from '../../assets/common/CheckIcon.svg';
 import DownArrow from '../../assets/common/DownArrow.svg';
 import LeftArrow from '../../assets/common/Arrow.svg';
@@ -19,6 +19,7 @@ import InputBox from '../../common/InputBox';
 import InputView from '../../common/InputView';
 import BottomButton from '../../common/BottomButton';
 import Dropdown from '../../common/Dropdown';
+import Request from '../../common/requests';
 import RegionModal from './RegionModal';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import SelectBox from '../../common/SelectBox';
@@ -99,12 +100,26 @@ export default function BasicForm({ navigation, route }: FormProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [splash, setSplash] = useState(false);
 
-  const handleSubmit = () => {
-    // request
-    setSplash(true);
-    setTimeout(() => {
-      navigation.getParent()?.navigate('Home');
-    }, 3000);
+  const request = Request();
+
+  const handleSubmit = async () => {
+    const params = {
+      email: form.mail + '@' + form.domain,
+      password: form.password,
+      re_password: checkPw,
+      area: form.region,
+    };
+    const response = await request.post(`users/signup/`, params, {});
+    if (response?.status === 200) {
+      console.log(params);
+      setSplash(true);
+      setTimeout(() => {
+        navigation.getParent()?.navigate('Home');
+      }, 3000);
+    } else {
+      console.log(response);
+      Alert.alert('가입에 실패했습니다.');
+    }
   };
 
   return (
