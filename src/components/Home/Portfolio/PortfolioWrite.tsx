@@ -14,6 +14,7 @@ import HashtagInput from '../components/HashtagInput';
 import PhotoIcon from '../../../assets/common/Photo.svg';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { PhotoType, useImagePicker } from '../../../hooks/useImagePicker';
+import ImageCarousel from '../../../common/ImageCarousel';
 
 type PortfolioFormType = {
   photo: undefined | PhotoType;
@@ -43,6 +44,7 @@ export default function PortfolioWrite({
   };
   const [form, setForm] = useState<PortfolioFormType>(initForm);
   const [image, setImage] = useState<PhotoType | undefined>(undefined);
+  // const [images, setImages] = useState<PhotoType[]>([]);
   const [agreement, setAgreement] = useState(false);
 
   const formUpdater = useObjectUpdater(setForm);
@@ -76,6 +78,11 @@ export default function PortfolioWrite({
         }}
       />
       <CustomScrollView minHeight={1400}>
+        {/* <ImageCarousel
+          images={images}
+          setFormImages={newImages => setImages([...newImages])}
+          max={4}></ImageCarousel> */}
+
         <TouchableOpacity
           style={{
             width: '100%',
