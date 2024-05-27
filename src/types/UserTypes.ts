@@ -13,7 +13,7 @@ export type EducType = {
   // 파일 형식 추가
 };
 
-type Careers = {
+export type Careers = {
   name: string;
   file: File;
   type: string | undefined;
