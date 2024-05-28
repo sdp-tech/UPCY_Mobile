@@ -1,4 +1,4 @@
-import { View, Text, FlatList } from 'react-native';
+import { View, Text, FlatList, SafeAreaView } from 'react-native';
 import { Tabs } from 'react-native-collapsible-tab-view';
 import styled from 'styled-components/native';
 import StarRating from '../../../common/StarRating';
@@ -51,10 +51,16 @@ const ItemContainer = styled.View`
   padding: 5px;
 `
 
-const ReviewPage = () => {
+interface ReviewPageProps {
+  flatListRef: React.RefObject<FlatList<any>>;
+}
+
+const ReviewPage: React.FC<ReviewPageProps> = ({ flatListRef }) => {
 
   return (
-    <FlatList
+    <Tabs.FlatList
+      ref={flatListRef}
+      bounces={false} overScrollMode="never"
       data={[...new Array(3).keys()]}
       ListHeaderComponent={SummarySection}
       renderItem={({ item }: any) => {

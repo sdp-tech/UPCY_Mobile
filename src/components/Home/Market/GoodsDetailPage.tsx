@@ -5,90 +5,87 @@ import Arrow from '../../../assets/common/Arrow.svg';
 import Search from '../../../assets/common/Search.svg';
 import Review from "../../../assets/common/Review.svg";
 import UnFilledLike from '../../../assets/common/UnFilledLike.svg';
-import { useRef, useState } from 'react';
-import DetailBox from './DetailBox';
+import { useEffect, useRef, useState } from 'react';
+import DetailBox, { DetailBoxHandle } from './DetailBox';
 import OptionBox from './OptionBox';
 import CardView from '../../../common/CardView';
 import Footer from '../../../common/Footer';
 import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
 import { BLACK } from '../../../styles/GlobalColor';
-import ReviewPage from './ReviewPage';
 import styled from 'styled-components';
+import { useBottomBar } from '../../../../contexts/BottomBarContext';
+import { CustomBackButton } from '../components/CustomBackButton';
+import DetailScreenHeader from '../components/DetailScreenHeader';
 
 
 const { width, height } = Dimensions.get("window");
 
 export type DetailPageStackParams = {
   DetailPage: undefined;
-  ReviewPage: undefined;
 }
 
 const DetailPageStack = createStackNavigator<DetailPageStackParams>();
 
-const GoodsDetailPageScreen = ({ navigation, route }: StackScreenProps<HomeStackParams, 'GoodsDetailPage', 'ReviewPage'>) => {
+const GoodsDetailPageScreen = ({ navigation, route }: StackScreenProps<HomeStackParams, 'GoodsDetailPage'>) => {
   return (
     <DetailPageStack.Navigator
       screenOptions={() => ({
         headerShown: false,
       })}>
       <DetailPageStack.Screen name='DetailPage' component={GoodsDetailPageMainScreen} />
-      <DetailPageStack.Screen name='ReviewPage' component={ReviewPage} />
+
     </DetailPageStack.Navigator>
   );
 };
 
-const ProfileSection = ({ navigation }: { navigation: any }) => {
+type ProfileSectionProps = {
+  navigation: any;
+  onScrollToReviews: () => void;
+};
+
+const ProfileSection: React.FC<ProfileSectionProps> = ({ navigation, onScrollToReviews }: { navigation: any, onScrollToReviews: any }) => {
   const [data, setData] = useState([]);
+  const { hideBottomBar, showBottomBar } = useBottomBar();
+
+  useEffect(() => {
+    hideBottomBar();
+    return () => showBottomBar();
+  }, []);
   return (
     <SafeAreaView>{/* 세이프에리어로 변경 */}
-      <View style={{ flexDirection: "column", height: 30, alignItems: 'center', justifyContent: "space-between" }}>
-        <View // Top bar part: back arrow, service name, search
-          style={{ flexDirection: "row", justifyContent: "space-between", alignItems: 'center' }}>
-          <TouchableOpacity onPress={() => {
-            navigation.goBack();
-          }}>
-            <Arrow color='black' />
-          </TouchableOpacity>
-          <View // service name
-            style={{ width: '80%' }}>
-            <Text style={{ textAlign: 'center', fontSize: 18, fontWeight: '700' }}>
-              서비스 명 어쩌구
-            </Text>
-          </View>
-          <TouchableOpacity onPress={() => {
-            navigation.goBack();
-          }}>
-            <Search stroke={"black"} />
-          </TouchableOpacity>
-        </View >
-      </View>
-      <CardView // 데이터 들어오면 렌더링
+      <DetailScreenHeader
+        title=''
+        leftButton='CustomBack'
+        onPressLeft={() => { }}
+        rightButton='Search'
+        onPressRight={() => { }}
+      />
+      {/* <CardView // 데이터 들어오면 렌더링
         gap={0}
         offset={0}
         data={data}
         pageWidth={width}
         dot={true}
         renderItem={({ item }: any) => (
-          <View style={{ width: width, height: height * 0.4 }}><UnFilledLike color={'black'} /></View>
+          <View style={{ width: width, height: height * 0.3 }}><UnFilledLike color={'black'} /></View>
           // <CurationItemCard
           //   rep={true}
           //   data={item}
-          //   style={{ width: width, height: height * 0.4 }}
+          //   style={{ width: width, height: height * 0.3 }}
           // />
         )}
-      />
+      /> */}
       {/* 컴포넌트로 변경 예정 */}
-      <View >
+      <SafeAreaView >
         <ImageBackground // 임시 이미지 
           style={{ width: '100%', height: height * 0.3 }}
           imageStyle={{ height: height * 0.3 }}
           source={{ uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp' }}>
           <View style={{ width: '100%', height: height * 0.3, backgroundColor: '#00000066', opacity: 0.7 }} />
         </ImageBackground>
-      </View>
+      </SafeAreaView>
       <View style={TextStyles.borderBottom1}>
-        <View style={{ flex: 5, flexDirection: 'column' }}>
-          <Text style={TextStyles.Sub}>#키워드 #키워드 #키워드 #키워드</Text>
+        <View style={{ flex: 1, flexDirection: 'column' }}>
           <Text style={TextStyles.Title}>상품 이름</Text>
           <Text style={TextStyles.Price}>20,000 원</Text>
         </View>
@@ -97,9 +94,7 @@ const ProfileSection = ({ navigation }: { navigation: any }) => {
             marginBottom: 15, marginRight: 15, flexDirection: 'column',
             justifyContent: 'center', alignItems: 'center'
           }}>
-            <TouchableOpacity onPress={() => {
-              navigation.navigate('ReviewPage');
-            }}>
+            <TouchableOpacity onPress={onScrollToReviews}>
               <Review color={BLACK} />
             </TouchableOpacity>
             <Text style={{ marginTop: 8 }}>후기(3)</Text>
@@ -129,49 +124,41 @@ const ProfileSection = ({ navigation }: { navigation: any }) => {
 const GoodsDetailPageMainScreen = ({ navigation }: StackScreenProps<DetailPageStackParams, 'DetailPage'>) => {
   const layout = useWindowDimensions();
   const [index, setIndex] = useState<number>(0);
+  const detailBoxRef = useRef<DetailBoxHandle>(null);
+
+  const handleScrollToReviews = () => {
+    detailBoxRef.current?.scrollToReviews();
+  };
   const [routes] = useState([
     { key: 'detail', title: '상세설명' },
     { key: 'option', title: '필독사항' },
   ]);
 
   return (
-    <View style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1 }}>
       <Tabs.Container
-        renderHeader={props => <ProfileSection navigation={navigation} />}
-        headerContainerStyle={{
-          shadowOpacity: 0,
-          borderBottomWidth: 1,
-          borderColor: '#D9D9D9'
-        }}
-        renderTabBar={props => (
+        renderHeader={props => <ProfileSection navigation={navigation} onScrollToReviews={handleScrollToReviews} />}
+        allowHeaderOverscroll={false}
+        renderTabBar={(props) => (
           <MaterialTabBar
             {...props}
-            indicatorStyle={{
-              backgroundColor: '#BDBDBD',
-              height: 2
-            }}
-            style={{
-              backgroundColor: 'white',
-            }}
-            labelStyle={{
-              color: '#222222',
-              fontWeight: '700',
-              fontSize: 14
-            }}
+            indicatorStyle={{ backgroundColor: '#BDBDBD', height: 2 }}
+            style={{ backgroundColor: 'white' }}
+            labelStyle={{ color: '#222222', fontWeight: '700', fontSize: 14 }}
           />
         )}
       >
-        {routes.map(route =>
-        (<Tabs.Tab key={route.key} name={route.title}>
-          {route.key === 'detail' && <DetailBox />}
-          {route.key === 'option' && <OptionBox />}
-        </Tabs.Tab>)
-        )}
+        <Tabs.Tab name="상세설명">
+          <DetailBox ref={detailBoxRef} />
+        </Tabs.Tab>
+        <Tabs.Tab name="필독사항">
+          <OptionBox />
+        </Tabs.Tab>
       </Tabs.Container>
       <Footer />
-    </View>
-  )
-}
+    </SafeAreaView>
+  );
+};
 
 const TextStyles = StyleSheet.create({
   Title: {

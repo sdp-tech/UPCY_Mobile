@@ -21,6 +21,7 @@ import FilterElement from "./FilterElement";
 import CustomScrollView from "../../../common/CustomScrollView";
 import { useBottomBar } from "../../../../contexts/BottomBarContext";
 import { CustomBackButton } from "../components/CustomBackButton";
+import DetailScreenHeader from "../components/DetailScreenHeader";
 
 const statusBarHeight = getStatusBarHeight(true);
 
@@ -238,24 +239,6 @@ const GoodsRegistrationPage = ({ navigation, route }: StackScreenProps<HomeStack
   };
   const splitPhotos = splitArrayIntoPairs(photos, 1);
 
-  const GoodsRegiHeader =
-    <SafeAreaView style={{
-      position: "relative", top: 0,
-      flexDirection: "row", borderBottomWidth: 1, borderBlockColor: "#000", alignItems: "center", justifyContent: "space-between"
-    }}>
-      <View style={{ flex: 1 }}>
-        <CustomBackButton />
-      </View>
-      <View style={{ flex: 1 }}>
-        <Body16B style={{ fontSize: 18, textAlign: "center" }}>상품 등록</Body16B>
-      </View>
-      <View style={{ flex: 1, alignItems: "flex-end" }}>
-        <TouchableOpacity style={{ paddingRight: 10 }} onPress={() => { navigation.navigate("TempStorage"); }}>
-          <Body14M style={{ color: "#929292" }}>임시저장 | 5</Body14M>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>;
-
   const GoodsRegiBottomBar =
     <SafeAreaView>
       <View style={{ alignContent: "center", position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: "#ffffff" }}>
@@ -272,10 +255,18 @@ const GoodsRegistrationPage = ({ navigation, route }: StackScreenProps<HomeStack
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      {GoodsRegiHeader}
+      <DetailScreenHeader
+        title="상품 등록"
+        leftButton="CustomBack"
+        onPressLeft={() => { }}
+        rightButton="Save"
+        onPressRight={() => {
+          navigation.navigate('TempStorage');
+        }}
+        saved={0} />
       {/* 헤더부분 */}
       <SafeAreaView >
-        <ScrollView bounces={false}>
+        <ScrollView bounces={false} overScrollMode="never">
           {/* 사진 업로드하는 컴포넌트 만들 것 */}
           {photos.length == 0 &&
             <UploadSection style={{ borderBottomWidth: 5, borderBottomColor: "#dcdcdc" }}>
@@ -317,7 +308,7 @@ const GoodsRegistrationPage = ({ navigation, route }: StackScreenProps<HomeStack
             </View>
           }
           {photos.length > 0 &&
-            <TouchableOpacity style={{ padding: 5, marginBottom: -40 }}>
+            <TouchableOpacity style={{ padding: 10, marginBottom: -10 }}>
               <PhotoOptions
                 max={4}
                 setPhoto={setPhotos}

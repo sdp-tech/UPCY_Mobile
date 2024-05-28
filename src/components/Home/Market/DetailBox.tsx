@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, forwardRef, useRef, useImperativeHandle, Ref } from 'react';
 import { View, SafeAreaView, FlatList, Text, StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
 import { Body14R, Body16B, Caption11M, Body14B } from '../../../styles/GlobalText';
@@ -10,14 +10,27 @@ import StarRating from '../../../common/StarRating';
 import ReviewComment from '../components/ReviewComment';
 import ReviewItem from '../components/ReviewItem';
 import Reviews from './Reviews'
+import ScrollToTopButton from '../../../common/ScrollToTopButtonFlat';
 
+export type DetailBoxHandle = {
+  scrollToReviews: () => void;
+};
 
-const DetailBoxPage = () => {
+interface DetailBoxProps {
+  flatListRef: React.RefObject<FlatList<any>>;
+}
+
+const DetailBox = forwardRef<DetailBoxHandle, DetailBoxProps>(({ flatListRef }, ref) => {
+
+  // 외부에서 제어할 수 있도록 메서드 노출
+  useImperativeHandle(ref, () => ({
+    scrollToReviews: () => {
+      flatListRef.current?.scrollToEnd({ animated: true });
+    }
+  }));
   const data = [
-    { label: '카테고리', data: '아우터', end: 'no' },
-    { label: '재질', data: '데님', end: 'no' },
+    // { label: '카테고리', data: '아우터', end: 'no' },
     { label: '스타일', data: '빈티지', end: 'no' },
-    { label: '핏', data: '노멀', end: 'no' },
     { label: '제작 기간', data: '3주', end: 'no' },
     {
       label: '서비스 상세', data: `1958년에는 원예시험장을 설립하여 연구를 본격화하기 시작하였고, 1991년 말, 원예시험장에서 과수연구소를 분리하고 대구사과연구소를 신설하여 사과연구를 전담하도록 하였다.사과는 수확시기에 따라 조생종, 중생종, 만생종으로 나뉜다. 8월 하순 이전이 최성수확기인 조생종에는 미광, 조홍, 서홍, 쓰가루(아오리) 등이 있고, 최성수확기가 9월 상순에서 10월 중순까지인 중생종에는 홍로, 홍월, 양광, 추광, 골든딜리셔스, 세계일, 조나골드, 시나노스위트 등이 있다. 10월 하순 이후가 최성수확기인 만생종에는 후지(부사), 홍옥, 감홍, 화홍 등이 있다.
@@ -31,29 +44,31 @@ const DetailBoxPage = () => {
 
   return (
     <Tabs.FlatList
+      bounces={false} overScrollMode="never"
+      ref={flatListRef}
       data={data}
-      renderItem={({ item }: any) => {
-        if (item.end == 'no') return (
+      renderItem={({ item }) => {
+        if (item.end === 'no') return (
           <View>
             <View style={styles.information}>
-              <Body16B>{item.label}</Body16B>
-              <Body14R>{item.data}</Body14R>
+              <Text>{item.label}</Text>
+              <Text>{item.data}</Text>
             </View>
           </View>
-        ) // 조건문 추가 
+        );
         else return (
           <View>
             <View style={styles.service}>
-              <Body16B>{item.label}</Body16B>
-              <Body14R>{item.data}</Body14R>
+              <Text>{item.label}</Text>
+              <Text>{item.data}</Text>
             </View>
             <Reviews />
           </View>
-        )
+        );
       }}
     />
-  )
-}
+  );
+});
 
 const styles = StyleSheet.create({
   service: {
@@ -75,4 +90,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default DetailBoxPage;
+export default DetailBox;
