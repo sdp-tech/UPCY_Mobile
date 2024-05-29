@@ -27,6 +27,7 @@ import WriteDetailPage from '../components/Home/Market/WriteDetailPage';
 import AddPortfolio from '../components/Home/Portfolio/AddPortfolio';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
+import WriteReviewPage from '../components/Home/Market/WriteReviewPage';
 
 export type HomeStackParams = {
   Home: undefined;
@@ -44,6 +45,7 @@ export type HomeStackParams = {
   TempStorageEdit: undefined;
   WriteDetailPage: undefined;
   AddPortfolio: undefined;
+  WriteReviewPage: undefined;
 };
 
 const HomeStack = createStackNavigator<HomeStackParams>();
@@ -91,6 +93,7 @@ const HomeScreen = ({
       <HomeStack.Screen name="TempStorageEdit" component={TempStorageEdit} />
       <HomeStack.Screen name="WriteDetailPage" component={WriteDetailPage} />
       <HomeStack.Screen name="AddPortfolio" component={AddPortfolio} />
+      <HomeStack.Screen name="WriteReviewPage" component={WriteReviewPage} />
     </HomeStack.Navigator>
   );
 };
@@ -105,8 +108,8 @@ const HomeMainScreen = ({
   }
   return (
     <SafeAreaView>
-      <CustomHeader onSearch={() => {}} onTabChange={handleTabChange} />
-      <HomeTabView onSearch={() => {}} selectedTab={selectedTab} onTabChange = {handleTabChange}/>
+      <CustomHeader onSearch={() => { }} onTabChange={handleTabChange} />
+      <HomeTabView onSearch={() => { }} selectedTab={selectedTab} onTabChange={handleTabChange} />
       <ScrollView>
         <Button onPress={() => navigation.navigate('Market')}>
           <Text>마켓</Text>
@@ -131,6 +134,9 @@ const HomeMainScreen = ({
         </Button>
         <Button onPress={() => navigation.navigate('AddPortfolio')}>
           <Text>포트폴리오 등록</Text>
+        </Button>
+        <Button onPress={() => navigation.navigate('WriteReviewPage')}>
+          <Text>후기 작성 페이지</Text>
         </Button>
       </ScrollView>
     </SafeAreaView>

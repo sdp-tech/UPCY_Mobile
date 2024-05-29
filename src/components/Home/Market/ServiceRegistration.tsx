@@ -17,6 +17,7 @@ import Carousel from '../../../common/Carousel';
 import FilterElement from "./FilterElement";
 import { CustomBackButton } from "../components/CustomBackButton";
 import { useBottomBar } from "../../../../contexts/BottomBarContext";
+import DetailScreenHeader from "../components/DetailScreenHeader";
 
 const statusBarHeight = getStatusBarHeight(true);
 
@@ -263,6 +264,7 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
       setAddprice('');
       setOptionExplain('');
       setPrice('');
+      setMaxPrice('');
     }
   }
   const removeOption = (idx: number): void => {
@@ -315,7 +317,15 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      {ServiceRegiHeader}
+      <DetailScreenHeader
+        title="서비스 등록"
+        leftButton="CustomBack"
+        onPressLeft={() => { }}
+        rightButton="Save"
+        onPressRight={() => {
+          navigation.navigate('TempStorage');
+        }}
+        saved={0} />
       {/* 헤더부분 */}
       <SafeAreaView>
         <ScrollView bounces={false}>
@@ -447,7 +457,7 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
                   borderRadius: 5,
                   padding: 10
                 }}
-                value={price} onChangeText={setPrice} placeholder=' 입력해주세요' />
+                value={maxPrice} onChangeText={setMaxPrice} placeholder=' 입력해주세요' />
             </View>
           </View>
           <View style={{ padding: 10, }}>
@@ -497,7 +507,7 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
   function addOptionSection() {
     return <View style={{ padding: 10, borderBottomWidth: 1, borderBottomColor: "#dcdcdc" }}>
       <Body16B style={{ margin: 10 }}>옵션 별 추가 금액</Body16B>
-      <Body14M style={{ margin: 10 }}>설명글 (특별한 기술이나 소재가 사용된 부분을 설명해주세요</Body14M>
+      <Body14M style={{ margin: 10 }}>설명글 (특별한 기술이나 소재가 사용된 부분을 설명해주세요)</Body14M>
       <View>
         <View style={{ flex: 1 }}>
           <FillerSection style={{ flexDirection: "column", height: 350 }}>

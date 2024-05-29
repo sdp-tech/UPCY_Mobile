@@ -5,10 +5,11 @@ import { BLACK, LIGHTGRAY } from '../../../styles/GlobalColor';
 import LeftArrowIcon from '../../../assets/common/Arrow.svg';
 import CloseIcon from '../../../assets/header/Close.svg';
 import SearchIcon from '../../../assets/header/Search.svg';
+import { CustomBackButton } from './CustomBackButton';
 
 interface HeaderProps {
   title: string;
-  leftButton: 'LeftArrow' | 'Exit' | 'None';
+  leftButton: 'CustomBack' | 'LeftArrow' | 'Exit' | 'None';
   onPressLeft: () => void;
   rightButton: 'Save' | 'Search' | 'Edit' | 'Exit' | 'None';
   onPressRight: () => void;
@@ -31,6 +32,7 @@ const DetailScreenHeader = ({
     Edit: <Body14M style={{ color: '#929292', marginRight: 10 }}>편집</Body14M>,
     Exit: <CloseIcon color={BLACK} style={{ marginHorizontal: 5 }} />,
     LeftArrow: <LeftArrowIcon color={BLACK} />,
+    CustomBack: <CustomBackButton />,
     None: <></>,
   };
   return (
