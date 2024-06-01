@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-interface BottomBarContextType {
+export interface BottomBarContextType {
     isVisible: boolean;
     showBottomBar: () => void;
     hideBottomBar: () => void;

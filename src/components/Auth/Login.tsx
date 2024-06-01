@@ -3,17 +3,15 @@ import {
   View,
   Dimensions,
   TextInput,
-  Platform,
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import { GREEN, PURPLE, BLACK } from '../../styles/GlobalColor';
+import { GREEN, PURPLE } from '../../styles/GlobalColor';
 import { useState, Fragment } from 'react';
 import Request from '../../common/requests';
 import Logo from '../../assets/common/Logo.svg';
 import LeftArrow from '../../assets/common/Arrow.svg';
 import { Body16B, Caption11M } from '../../styles/GlobalText';
-import { UPCY_API_URL } from 'react-native-dotenv';
 
 interface LoginProps {
   navigation: any;
@@ -58,10 +56,10 @@ function LoginInput({
 
 export default function Login({ navigation, route }: LoginProps) {
   const { width, height } = Dimensions.get('window');
-  const [form, setForm] = useState({ id: '', pw: '' });
+  const [form, setForm] = useState({ email: '', password: '' });
   const request = Request();
   const handleLogin = async () => {
-    const response = await request.get(UPCY_API_URL + `login/`, form, {});
+    const response = await request.post(`users/login/`, form, {});
     if (response?.status === 200) {
       const parentNav = navigation.getParent();
       if (parentNav != undefined) parentNav.goBack();
@@ -101,14 +99,14 @@ export default function Login({ navigation, route }: LoginProps) {
             placeholder="아이디"
             onChangeText={value => {
               setForm(prev => {
-                return { ...prev, id: value };
+                return { ...prev, email: value };
               });
             }}></LoginInput>
           <LoginInput
             placeholder="비밀번호"
             onChangeText={value => {
               setForm(prev => {
-                return { ...prev, pw: value };
+                return { ...prev, password: value };
               });
             }}
             secure={true}></LoginInput>

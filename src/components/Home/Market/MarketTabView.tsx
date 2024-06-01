@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { SafeAreaView, ScrollView, View, FlatList, Text, TouchableOpacity, Image, ImageBackground } from 'react-native';
 import styled from 'styled-components/native';
 import { Tabs, MaterialTabBar } from 'react-native-collapsible-tab-view';
@@ -10,7 +10,7 @@ import { StackScreenProps } from '@react-navigation/stack';
 import { HomeStackParams } from '../../../pages/Home';
 
 import InfoPage from './InfoPage.tsx';
-import ProductPage from './ProductPage.tsx';
+import ProductPage from './ServicePage.tsx';
 import ReviewPage from './ReviewPage.tsx';
 
 import Hashtag from '../../../common/Hashtag.tsx';
@@ -18,59 +18,87 @@ import Footer from '../../../common/Footer.tsx';
 
 import Arrow from '../../../assets/common/Arrow.svg';
 import Pencil from '../../../assets/common/Pencil.svg';
+import ServicePage from './ServicePage.tsx';
+import { CustomBackButton } from '../components/CustomBackButton.tsx';
+import DetailScreenHeader from '../components/DetailScreenHeader.tsx';
+import { useBottomBar } from '../../../../contexts/BottomBarContext.tsx';
+import TextToggle from '../../../common/TextToggle.tsx';
+import ScrollToTopButton from '../../../common/ScrollToTopButtonFlat.tsx';
+import ScrollTopButton from '../../../common/ScrollTopButton.tsx';
+import ReviewComment from '../components/ReviewComment.tsx';
 
-const ProfileSection = ({ navigation }: {navigation: any}) => {
+const ProfileSection = ({ navigation }: { navigation: any }) => {
+  const { hideBottomBar, showBottomBar } = useBottomBar();
+
+  useEffect(() => {
+
+    return () => hideBottomBar();
+  }, []);
   const filter = ['스포티', '영캐주얼', '깔끔']
+  const markerName = '이하늘의 마켓';
+  const selfIntroduce = '안녕하세요 리폼러 이하늘입니다! 저는 업씨대학교 패션디자인학과에 수석입학했고요 짱짱 천재에요'
   return (
-    <View style={{alignItems: 'center'}}>
-      <BackButton onPress={() => navigation.goBack()}>
-        <Arrow color={'white'} />
-      </BackButton>
-      <EditButton>
-        <Pencil />
-      </EditButton>
+    <View style={{ alignItems: 'center' }}>
+      <DetailScreenHeader
+        title=''
+        leftButton='CustomBack'
+        onPressLeft={() => { }}
+        rightButton='Edit'
+        onPressRight={() => { }} />
       <ImageBackground
-        style={{width: '100%', height: 200}}
-        imageStyle={{height: 160}}
-        source={{uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp'}}>
-        <View style={{width: '100%', height: 160, backgroundColor: '#00000066', opacity: 0.7}} />
+        style={{ width: '100%', height: 200 }}
+        imageStyle={{ height: 160 }}
+        source={{ uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp' }}>
+        <View style={{ width: '100%', height: 160, backgroundColor: '#00000066', opacity: 0.7 }} />
         <Image
-          style={{alignSelf: 'center', width: 90, height: 90, borderRadius: 180, position: 'absolute', top: 110}}
-          source={{uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp'}}
+          style={{ alignSelf: 'center', width: 90, height: 90, borderRadius: 180, position: 'absolute', top: 110 }}
+          source={{ uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp' }}
         />
       </ImageBackground>
-        <Title20B style={{marginTop: 8}}>이하늘의 마켓</Title20B>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Body14R>안녕하세요 리폼러 이하늘입니다!</Body14R>
-          <TouchableOpacity>
-            <Caption11M style={{color: BLACK2, marginLeft: 5}}>...더보기</Caption11M>
-          </TouchableOpacity>
-        </View>
-        <FlatList
-          horizontal
-          scrollEnabled={false}
-          data={filter}
-          renderItem={({item}) => {
-            return (
-              <Hashtag value={item} pressable={false} />
-            )
-          }}
-        />
+      <Title20B style={{ marginTop: 8 }}>{markerName}</Title20B>
+      <View style={{ padding: 20, paddingTop: 0, paddingBottom: 0 }}>
+        <TextToggle text={selfIntroduce} />
+        {/* 이 밑에거 지우면 이상하게 에러남... 그냥 냅둬도 되는 거라 무시하셔도 됩니다.  */}
+        <TouchableOpacity>
+          <Caption11M style={{ color: BLACK2, marginLeft: 0 }}></Caption11M>
+        </TouchableOpacity>
+      </View>
+      <View style={{ flexDirection: 'row' }}>
+        <ReviewComment value='스포티' backgroundColor='#612FEF' />
+        <ReviewComment value='영캐주얼' backgroundColor='#612FEF' />
+        <ReviewComment value='깔끔' backgroundColor='#612FEF' />
+      </View>
+      {/* <FlatList
+        horizontal
+        scrollEnabled={false}
+        data={filter}
+        renderItem={({ item }) => {
+          return (
+            <Hashtag value={item} pressable={false} />
+          )
+        }}
+      /> */}
     </View>
   )
 }
 
-const statusBarHeight = getStatusBarHeight(true);
+const MarketTabView = ({ navigation, route }: StackScreenProps<HomeStackParams, 'Market'>) => {
+  const { hideBottomBar, showBottomBar } = useBottomBar();
 
-const MarketTabView = ({ navigation, route } : StackScreenProps<HomeStackParams, 'Market'>) => {
+  useEffect(() => {
+    hideBottomBar();
+    return () => showBottomBar();
+  }, []);
   const [routes] = useState([
-    { key: 'info', title: '정보'},
-    { key: 'product', title: '상품' },
+    { key: 'info', title: '정보' },
+    { key: 'service', title: '서비스' },
     { key: 'review', title: '리뷰' }
   ]);
+  const flatListRef = useRef<FlatList>(null);
+  const scrollRef = useRef<ScrollView | null>(null);
 
   return (
-    <View style={{flex: 1}}>
+    <SafeAreaView style={{ flex: 1 }}>
       <Tabs.Container
         renderHeader={props => <ProfileSection navigation={navigation} />}
         headerContainerStyle={{
@@ -97,15 +125,24 @@ const MarketTabView = ({ navigation, route } : StackScreenProps<HomeStackParams,
         )}
       >
         {routes.map(route =>
-          (<Tabs.Tab key={route.key} name={route.title}>
-            {route.key === 'info' && <InfoPage />}
-            {route.key === 'product' && <ProductPage />}
-            {route.key === 'review' && <ReviewPage />}
-          </Tabs.Tab>)
+        (<Tabs.Tab key={route.key} name={route.title}>
+          {route.key === 'info' && <InfoPage />}
+          {route.key === 'service' &&
+            <View>
+              <ServicePage scrollViewRef={scrollRef} />
+              <ScrollTopButton scrollViewRef={scrollRef} />
+            </View>
+          }
+          {route.key === 'review' &&
+            <View>
+              <ReviewPage flatListRef={flatListRef} />
+              <ScrollToTopButton flatListRef={flatListRef} />
+            </View>}
+        </Tabs.Tab>)
         )}
       </Tabs.Container>
       <Footer />
-    </View>
+    </SafeAreaView>
   )
 }
 
@@ -113,7 +150,6 @@ const BackButton = styled.TouchableOpacity`
   padding: 10px;
   position: absolute;
   left: 0px;
-  top: ${statusBarHeight-10}px;
   z-index: 1;
 `
 
@@ -121,7 +157,6 @@ const EditButton = styled.TouchableOpacity`
   padding: 10px;
   position: absolute;
   right: 7px;
-  top: ${statusBarHeight-10}px;
   z-index: 1;
 `
 
