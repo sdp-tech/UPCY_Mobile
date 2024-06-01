@@ -70,7 +70,7 @@ export const processLoginResponse = (
     const nickname = response.data.data.nickname;
     const accessToken = response.data.data.access;
     const refreshToken = response.data.data.refresh;
-    setNickname(nickname);
+    setNickname('임시 닉네임');
     setAccessToken(accessToken);
     setRefreshToken(refreshToken);
     console.log(nickname, accessToken, refreshToken);
