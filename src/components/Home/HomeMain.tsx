@@ -62,6 +62,12 @@ const CategoryButton = styled.TouchableOpacity<{ pressed: boolean }>`
   border-color: #612fef;
 `;
 
+interface SignupProps {
+  mail: string;
+  domain: string;
+  password: string;
+  region: string;
+}// 의미 없음
 interface HomeTabViewProps {
   onSearch: () => void;
   onTabChange: (tab: 'Goods' | 'Market') => void;
@@ -88,6 +94,12 @@ const HomeTabView = ({ onSearch, onTabChange ,selectedTab }: HomeTabViewProps) =
   const [selectedTabView, setSelectedTabView] = useState<
     'all' | 'outer' | 'top' | 'bottom' | 'bag' | 'hat' | 'accessories'
   >('all');
+  const [form, setForm] = useState<SignupProps>({
+    mail: '',
+    domain: '',
+    password: '',
+    region: '',
+  });
   const [modalOpen, setModalOpen] = useState(false);
   //글자 간격 수정 필요!
   return (
@@ -235,7 +247,14 @@ const HomeTabView = ({ onSearch, onTabChange ,selectedTab }: HomeTabViewProps) =
         </View>
         {modalOpen && <DetailModal
           open = {modalOpen}
-          setOpen={setModalOpen}/>}
+          setOpen={setModalOpen}
+          value={form.region}
+                  setValue={text =>
+                    setForm(prev => {
+                      return { ...prev, region: text };
+                    })
+                  }
+          />}
       </ScrollView>
       )}
       {selectedTab === 'Market' && (
@@ -282,7 +301,14 @@ const HomeTabView = ({ onSearch, onTabChange ,selectedTab }: HomeTabViewProps) =
         </View>
         {modalOpen && <DetailModal
           open = {modalOpen}
-          setOpen={setModalOpen}/>}
+          setOpen={setModalOpen}
+          value={form.region}
+                  setValue={text =>
+                    setForm(prev => {
+                      return { ...prev, region: text };
+                    })
+                  }
+          />}
       </ScrollView>
       )}
     </>
