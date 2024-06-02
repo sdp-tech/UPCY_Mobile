@@ -213,31 +213,31 @@ const HomeTabView = ({ onSearch, onTabChange ,selectedTab }: HomeTabViewProps) =
               </Text>
               <CategoryDownButton />
             </CategoryButton>
-            <CategoryButton>
+            <CategoryButton onPress = {() => setModalOpen(true)}>
               <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
                 재질
               </Text>
               <CategoryDownButton />
             </CategoryButton>
-            <CategoryButton>
+            <CategoryButton onPress = {() => setModalOpen(true)}>
               <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
                 핏
               </Text>
               <CategoryDownButton />
             </CategoryButton>
-            <CategoryButton>
+            <CategoryButton onPress = {() => setModalOpen(true)}>
               <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
                 디테일
               </Text>
               <CategoryDownButton />
             </CategoryButton>
-            <CategoryButton>
+            <CategoryButton onPress = {() => setModalOpen(true)}>
               <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
                 금액별
               </Text>
               <CategoryDownButton />
             </CategoryButton>
-            <CategoryButton>
+            <CategoryButton onPress = {() => setModalOpen(true)}>
               <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
                 수선 요구 기간
               </Text>
@@ -245,18 +245,15 @@ const HomeTabView = ({ onSearch, onTabChange ,selectedTab }: HomeTabViewProps) =
             </CategoryButton>
           </CategoryBox>
         </View>
+        </ScrollView>
+           )}
         {modalOpen && <DetailModal
           open = {modalOpen}
           setOpen={setModalOpen}
           value={form.region}
-                  setValue={text =>
-                    setForm(prev => {
-                      return { ...prev, region: text };
-                    })
-                  }
+          setValue={text => setForm(prev => ({ ...prev, region: text }))}
           />}
-      </ScrollView>
-      )}
+      
       {selectedTab === 'Market' && (
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View style={{ flex: 1 }}>
@@ -267,31 +264,31 @@ const HomeTabView = ({ onSearch, onTabChange ,selectedTab }: HomeTabViewProps) =
               </Text>
               <CategoryDownButton />
             </CategoryButton>
-            <CategoryButton>
+            <CategoryButton onPress = {() => setModalOpen(true)}>
               <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
                 재질
               </Text>
               <CategoryDownButton />
             </CategoryButton>
-            <CategoryButton>
+            <CategoryButton onPress = {() => setModalOpen(true)}>
               <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
                 핏
               </Text>
               <CategoryDownButton />
             </CategoryButton>
-            <CategoryButton>
+            <CategoryButton onPress = {() => setModalOpen(true)}>
               <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
                 디테일
               </Text>
               <CategoryDownButton />
             </CategoryButton>
-            <CategoryButton>
+            <CategoryButton onPress = {() => setModalOpen(true)}>
               <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
                 금액별
               </Text>
               <CategoryDownButton />
             </CategoryButton>
-            <CategoryButton>
+            <CategoryButton onPress = {() => setModalOpen(true)}>
               <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
                 수선 요구 기간
               </Text>
@@ -299,18 +296,15 @@ const HomeTabView = ({ onSearch, onTabChange ,selectedTab }: HomeTabViewProps) =
             </CategoryButton>
           </CategoryBox>
         </View>
-        {modalOpen && <DetailModal
+        </ScrollView>
+         )}
+        {modalOpen && <DetailModal 
           open = {modalOpen}
           setOpen={setModalOpen}
           value={form.region}
-                  setValue={text =>
-                    setForm(prev => {
-                      return { ...prev, region: text };
-                    })
-                  }
+          setValue={text => setForm(prev => ({ ...prev, region: text }))}
           />}
-      </ScrollView>
-      )}
+      
     </>
         
   );

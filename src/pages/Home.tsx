@@ -110,7 +110,7 @@ const HomeMainScreen = ({
     <SafeAreaView>
       <CustomHeader onSearch={() => { }} onTabChange={handleTabChange} />
       <HomeTabView onSearch={() => { }} selectedTab={selectedTab} onTabChange={handleTabChange} />
-      <ScrollView style = {{zIndex: 0}}>
+      <ScrollView>
         <Button onPress={() => navigation.navigate('Market')}>
           <Text>마켓</Text>
         </Button>

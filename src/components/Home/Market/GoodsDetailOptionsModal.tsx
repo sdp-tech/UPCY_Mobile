@@ -104,7 +104,6 @@ export default function DetailModal({
       snapPoints={snapPoints}
       backdropComponent={renderBackdrop}
       onChange={handleSheetChanges}
-      style = {{zIndex : 1000}}
       >
       
       <View style={styles.selectItem}>
@@ -121,6 +120,7 @@ export default function DetailModal({
             alignSelf: 'center',
             marginTop: 10,
             marginBottom: 30,
+            zIndex: 1000
           }}
         />
       </View>
