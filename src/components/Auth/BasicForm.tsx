@@ -110,12 +110,15 @@ export default function BasicForm({ navigation, route }: FormProps) {
       area: form.region,
     };
     const response = await request.post(`users/signup/`, params, {});
-    if (response?.status === 200) {
+    if (response?.status === 201) {
       console.log(params);
       setSplash(true);
       setTimeout(() => {
         navigation.getParent()?.navigate('Home');
       }, 3000);
+    } else if (response?.status === 500) {
+      console.log(response);
+      Alert.alert('이미 가입된 이메일입니다.');
     } else {
       console.log(response);
       Alert.alert('가입에 실패했습니다.');
