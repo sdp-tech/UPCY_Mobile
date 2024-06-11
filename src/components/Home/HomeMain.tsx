@@ -240,7 +240,7 @@ const HomeTabView = ({ onSearch, onTabChange ,selectedTab }: HomeTabViewProps) =
             <CategoryButton onPress = {() => setModalOpen(true)}>
               <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
                 수선 요구 기간
-              </Text>
+              </Text> 
               <CategoryDownButton />
             </CategoryButton>
           </CategoryBox>
