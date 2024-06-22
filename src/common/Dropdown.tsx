@@ -16,7 +16,8 @@ interface DropdownProps {
   value: string | undefined;
   setValue: (text: string) => void;
   items: string[];
-  width: DimensionValue;
+  index?: number | undefined;
+  width?: DimensionValue;
   style?: ViewStyle;
 }
 const ITEM_HEIGHT = 40;
@@ -27,7 +28,8 @@ export default function Dropdown({
   setValue,
   value,
   items,
-  width,
+  index = undefined,
+  width = '90%',
 }: DropdownProps) {
   const [open, setOpen] = useState(false);
 
@@ -41,7 +43,14 @@ export default function Dropdown({
   };
 
   return (
-    <View>
+    <View
+      style={{
+        position: 'relative',
+        height: ITEM_HEIGHT + 4,
+        backgroundColor: 'red',
+        marginVertical: 8,
+        zIndex: index,
+      }}>
       <View
         style={{
           width: width,
@@ -87,11 +96,12 @@ export default function Dropdown({
 
 const Styles = StyleSheet.create({
   container: {
-    marginVertical: 8,
+    position: 'absolute',
     alignSelf: 'center',
     borderWidth: 2,
     borderRadius: 8,
     borderColor: BLACK2,
+    backgroundColor: 'white',
   },
   item: {
     height: ITEM_HEIGHT,
