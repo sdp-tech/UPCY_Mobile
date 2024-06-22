@@ -28,6 +28,7 @@ import AddPortfolio from '../components/Home/Portfolio/AddPortfolio';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import WriteReviewPage from '../components/Home/Market/WriteReviewPage';
+import ComponentsTest from './ComponentsTest';
 
 export type HomeStackParams = {
   Home: undefined;
@@ -46,6 +47,8 @@ export type HomeStackParams = {
   WriteDetailPage: undefined;
   AddPortfolio: undefined;
   WriteReviewPage: undefined;
+
+  TestComponents: undefined;
 };
 
 const HomeStack = createStackNavigator<HomeStackParams>();
@@ -94,6 +97,7 @@ const HomeScreen = ({
       <HomeStack.Screen name="WriteDetailPage" component={WriteDetailPage} />
       <HomeStack.Screen name="AddPortfolio" component={AddPortfolio} />
       <HomeStack.Screen name="WriteReviewPage" component={WriteReviewPage} />
+      <HomeStack.Screen name="TestComponents" component={ComponentsTest} />
     </HomeStack.Navigator>
   );
 };
@@ -105,11 +109,15 @@ const HomeMainScreen = ({
 
   const handleTabChange = (tab: 'Goods' | 'Market') => {
     setSelectedTab(tab);
-  }
+  };
   return (
     <SafeAreaView>
-      <CustomHeader onSearch={() => { }} onTabChange={handleTabChange} />
-      <HomeTabView onSearch={() => { }} selectedTab={selectedTab} onTabChange={handleTabChange} />
+      <CustomHeader onSearch={() => {}} onTabChange={handleTabChange} />
+      <HomeTabView
+        onSearch={() => {}}
+        selectedTab={selectedTab}
+        onTabChange={handleTabChange}
+      />
       <ScrollView>
         <Button onPress={() => navigation.navigate('Market')}>
           <Text>마켓</Text>
@@ -137,6 +145,9 @@ const HomeMainScreen = ({
         </Button>
         <Button onPress={() => navigation.navigate('WriteReviewPage')}>
           <Text>후기 작성 페이지</Text>
+        </Button>
+        <Button onPress={() => navigation.navigate('TestComponents')}>
+          <Text>공통 컴포넌트 테스트</Text>
         </Button>
       </ScrollView>
     </SafeAreaView>
