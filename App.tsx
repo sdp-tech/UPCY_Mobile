@@ -21,10 +21,12 @@ import SignIn from './src/components/Auth/SignIn';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomBarProvider, useBottomBar } from './contexts/BottomBarContext';
 import { LoginProvider } from './src/common/Context';
+import Reformer from './src/components/Auth/Reformer/Reformer';
 
 export type StackProps = {
   Home: undefined;
   Signin: undefined;
+  ReformProfile: undefined;
 };
 
 const Stack = createNativeStackNavigator<StackProps>();
@@ -49,6 +51,7 @@ function App(): React.JSX.Element {
               })}>
               <Stack.Screen name="Home" component={HomeTab} />
               <Stack.Screen name="Signin" component={SignIn} />
+              <Stack.Screen name="ReformProfile" component={Reformer} />
             </Stack.Navigator>
           </NavigationContainer>
         </LoginProvider>
