@@ -1,27 +1,22 @@
 import { SafeAreaView, TouchableOpacity, View } from 'react-native';
 import Dropdown from '../common/Dropdown';
 import { useState } from 'react';
+import { Body16M } from '../styles/GlobalText';
 
 const TestDropdown = () => {
-  const [value, setValue] = useState<string>();
+  const [value, setValue] = useState<string | undefined>(undefined);
   const [open, setOpen] = useState(false);
-  const items = ['a', 'b', 'c'];
+  const items = ['a', 'b', 'c', 'd', 'e'];
 
   return (
-    <TouchableOpacity onPress={() => {}}>
+    <View>
       <Dropdown
-        items={items}
-        value={value}
+        title="서비스 선택하기"
         setValue={t => setValue(t)}
-        open={open}
-        setOpen={setOpen}
-        style={{
-          height: 40,
-          width: 500,
-          // backgroundColor: 'red',
-        }}
-      />
-    </TouchableOpacity>
+        value={value}
+        items={items}
+        width="90%"></Dropdown>
+    </View>
   );
 };
 
@@ -29,6 +24,7 @@ export default function ComponentsTest() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={{ flex: 1 }}>
+        <Body16M>테스트용 페이지</Body16M>
         <TestDropdown />
       </View>
     </SafeAreaView>
