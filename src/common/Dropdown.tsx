@@ -47,7 +47,6 @@ export default function Dropdown({
       style={{
         position: 'relative',
         height: ITEM_HEIGHT + 4,
-        backgroundColor: 'red',
         marginVertical: 8,
         zIndex: index,
       }}>
@@ -99,7 +98,7 @@ const Styles = StyleSheet.create({
     position: 'absolute',
     alignSelf: 'center',
     borderWidth: 2,
-    borderRadius: 8,
+    borderRadius: 5,
     borderColor: BLACK2,
     backgroundColor: 'white',
   },
