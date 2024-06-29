@@ -20,10 +20,13 @@ import MyPageIcon from './src/assets/navbar/MyPage.svg';
 import SignIn from './src/components/Auth/SignIn';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomBarProvider, useBottomBar } from './contexts/BottomBarContext';
+import { LoginProvider } from './src/common/Context';
+import Reformer from './src/components/Auth/Reformer/Reformer';
 
 export type StackProps = {
   Home: undefined;
   Signin: undefined;
+  ReformProfile: undefined;
 };
 
 const Stack = createNativeStackNavigator<StackProps>();
@@ -40,15 +43,18 @@ function App(): React.JSX.Element {
   return (
     <BottomBarProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <NavigationContainer theme={GlobalTheme}>
-          <Stack.Navigator
-            screenOptions={() => ({
-              headerShown: false,
-            })}>
-            <Stack.Screen name="Home" component={HomeTab} />
-            <Stack.Screen name="Signin" component={SignIn} />
-          </Stack.Navigator>
-        </NavigationContainer>
+        <LoginProvider>
+          <NavigationContainer theme={GlobalTheme}>
+            <Stack.Navigator
+              screenOptions={() => ({
+                headerShown: false,
+              })}>
+              <Stack.Screen name="Home" component={HomeTab} />
+              <Stack.Screen name="Signin" component={SignIn} />
+              <Stack.Screen name="ReformProfile" component={Reformer} />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </LoginProvider>
       </GestureHandlerRootView>
     </BottomBarProvider>
   );

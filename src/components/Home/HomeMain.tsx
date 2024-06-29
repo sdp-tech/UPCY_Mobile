@@ -62,6 +62,12 @@ const CategoryButton = styled.TouchableOpacity<{ pressed: boolean }>`
   border-color: #612fef;
 `;
 
+interface SignupProps {
+  mail: string;
+  domain: string;
+  password: string;
+  region: string;
+}// 의미 없음
 interface HomeTabViewProps {
   onSearch: () => void;
   onTabChange: (tab: 'Goods' | 'Market') => void;
@@ -88,6 +94,12 @@ const HomeTabView = ({ onSearch, onTabChange ,selectedTab }: HomeTabViewProps) =
   const [selectedTabView, setSelectedTabView] = useState<
     'all' | 'outer' | 'top' | 'bottom' | 'bag' | 'hat' | 'accessories'
   >('all');
+  const [form, setForm] = useState<SignupProps>({
+    mail: '',
+    domain: '',
+    password: '',
+    region: '',
+  });
   const [modalOpen, setModalOpen] = useState(false);
   //글자 간격 수정 필요!
   return (
@@ -201,31 +213,31 @@ const HomeTabView = ({ onSearch, onTabChange ,selectedTab }: HomeTabViewProps) =
               </Text>
               <CategoryDownButton />
             </CategoryButton>
-            <CategoryButton>
+            <CategoryButton onPress = {() => setModalOpen(true)}>
               <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
                 재질
               </Text>
               <CategoryDownButton />
             </CategoryButton>
-            <CategoryButton>
+            <CategoryButton onPress = {() => setModalOpen(true)}>
               <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
                 핏
               </Text>
               <CategoryDownButton />
             </CategoryButton>
-            <CategoryButton>
+            <CategoryButton onPress = {() => setModalOpen(true)}>
               <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
                 디테일
               </Text>
               <CategoryDownButton />
             </CategoryButton>
-            <CategoryButton>
+            <CategoryButton onPress = {() => setModalOpen(true)}>
               <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
                 금액별
               </Text>
               <CategoryDownButton />
             </CategoryButton>
-            <CategoryButton>
+            <CategoryButton onPress = {() => setModalOpen(true)}>
               <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
                 수선 요구 기간
               </Text>
@@ -233,11 +245,15 @@ const HomeTabView = ({ onSearch, onTabChange ,selectedTab }: HomeTabViewProps) =
             </CategoryButton>
           </CategoryBox>
         </View>
+        </ScrollView>
+           )}
         {modalOpen && <DetailModal
           open = {modalOpen}
-          setOpen={setModalOpen}/>}
-      </ScrollView>
-      )}
+          setOpen={setModalOpen}
+          value={form.region}
+          setValue={text => setForm(prev => ({ ...prev, region: text }))}
+          />}
+      
       {selectedTab === 'Market' && (
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View style={{ flex: 1 }}>
@@ -248,31 +264,31 @@ const HomeTabView = ({ onSearch, onTabChange ,selectedTab }: HomeTabViewProps) =
               </Text>
               <CategoryDownButton />
             </CategoryButton>
-            <CategoryButton>
+            <CategoryButton onPress = {() => setModalOpen(true)}>
               <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
                 재질
               </Text>
               <CategoryDownButton />
             </CategoryButton>
-            <CategoryButton>
+            <CategoryButton onPress = {() => setModalOpen(true)}>
               <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
                 핏
               </Text>
               <CategoryDownButton />
             </CategoryButton>
-            <CategoryButton>
+            <CategoryButton onPress = {() => setModalOpen(true)}>
               <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
                 디테일
               </Text>
               <CategoryDownButton />
             </CategoryButton>
-            <CategoryButton>
+            <CategoryButton onPress = {() => setModalOpen(true)}>
               <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
                 금액별
               </Text>
               <CategoryDownButton />
             </CategoryButton>
-            <CategoryButton>
+            <CategoryButton onPress = {() => setModalOpen(true)}>
               <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
                 수선 요구 기간
               </Text>
@@ -280,11 +296,15 @@ const HomeTabView = ({ onSearch, onTabChange ,selectedTab }: HomeTabViewProps) =
             </CategoryButton>
           </CategoryBox>
         </View>
-        {modalOpen && <DetailModal
+        </ScrollView>
+         )}
+        {modalOpen && <DetailModal 
           open = {modalOpen}
-          setOpen={setModalOpen}/>}
-      </ScrollView>
-      )}
+          setOpen={setModalOpen}
+          value={form.region}
+          setValue={text => setForm(prev => ({ ...prev, region: text }))}
+          />}
+      
     </>
         
   );

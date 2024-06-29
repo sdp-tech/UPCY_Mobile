@@ -7,11 +7,17 @@ import {
   Alert,
 } from 'react-native';
 import { GREEN, PURPLE } from '../../styles/GlobalColor';
-import { useState, Fragment } from 'react';
+import { useState, Fragment, useContext } from 'react';
 import Request from '../../common/requests';
 import Logo from '../../assets/common/Logo.svg';
 import LeftArrow from '../../assets/common/Arrow.svg';
 import { Body16B, Caption11M } from '../../styles/GlobalText';
+import {
+  setAccessToken,
+  setNickname,
+  setRefreshToken,
+} from '../../common/storage';
+import { LoginContext } from '../../common/Context';
 
 interface LoginProps {
   navigation: any;
@@ -54,20 +60,50 @@ function LoginInput({
   );
 }
 
+export const processLoginResponse = (
+  response: any,
+  navigate: () => void,
+  setLogin: (value: boolean) => void,
+) => {
+  // const navigation = useNavigation<StackNavigationProp<MyPageProps>>();
+  if (response.status == 200) {
+    const nickname = response.data.data.nickname;
+    const accessToken = response.data.data.access;
+    const refreshToken = response.data.data.refresh;
+    setNickname('임시 닉네임');
+    setAccessToken(accessToken);
+    setRefreshToken(refreshToken);
+    console.log(nickname, accessToken, refreshToken);
+    setLogin(true);
+    navigate();
+  } else if (response.status == 400) {
+    Alert.alert(
+      response.data.extra.fields !== undefined
+        ? response.data.extra.fields.detail
+        : response.data.message,
+    );
+  } else {
+    Alert.alert('예상치 못한 오류가 발생하였습니다.');
+  }
+};
+
 export default function Login({ navigation, route }: LoginProps) {
+  const { isLogin, setLogin } = useContext(LoginContext);
   const { width, height } = Dimensions.get('window');
   const [form, setForm] = useState({ email: '', password: '' });
   const request = Request();
+
   const handleLogin = async () => {
     const response = await request.post(`users/login/`, form, {});
-    if (response?.status === 200) {
-      const parentNav = navigation.getParent();
-      if (parentNav != undefined) parentNav.goBack();
-      else navigation.navigate('Home');
-    } else {
-      console.log(response);
-      Alert.alert('로그인에 실패했습니다.');
-    }
+    processLoginResponse(
+      response,
+      () => {
+        const parentNav = navigation.getParent();
+        if (parentNav != undefined) parentNav.goBack();
+        else navigation.navigate('Home');
+      },
+      setLogin,
+    );
   };
 
   return (

@@ -25,10 +25,11 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import SelectBox from '../../common/SelectBox';
 import BasicSignupSplash from './BasicSignupSplash';
 import CustomScrollView from '../../common/CustomScrollView';
+import DropdownWrite from '../../common/DropdownWrite';
 
 interface SignupProps {
   mail: string;
-  domain: string;
+  domain: string | undefined;
   password: string;
   region: string;
 }
@@ -85,7 +86,7 @@ export default function BasicForm({ navigation, route }: FormProps) {
   const { width, height } = Dimensions.get('window');
   const [form, setForm] = useState<SignupProps>({
     mail: '',
-    domain: '',
+    domain: undefined,
     password: '',
     region: '',
   });
@@ -110,12 +111,15 @@ export default function BasicForm({ navigation, route }: FormProps) {
       area: form.region,
     };
     const response = await request.post(`users/signup/`, params, {});
-    if (response?.status === 200) {
+    if (response?.status === 201) {
       console.log(params);
       setSplash(true);
       setTimeout(() => {
         navigation.getParent()?.navigate('Home');
       }, 3000);
+    } else if (response?.status === 500) {
+      console.log(response);
+      Alert.alert('이미 가입된 이메일입니다.');
     } else {
       console.log(response);
       Alert.alert('가입에 실패했습니다.');
@@ -152,7 +156,13 @@ export default function BasicForm({ navigation, route }: FormProps) {
                 }}>
                 <SectionView style={{ zIndex: 1 }}>
                   <Body16B>이메일</Body16B>
-                  <MailView>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      width: '100%',
+                    }}>
                     <InputBox
                       value={form.mail}
                       setValue={text =>
@@ -164,43 +174,18 @@ export default function BasicForm({ navigation, route }: FormProps) {
                       style={{ height: 44, marginTop: 8, width: '44%' }}
                     />
                     <Body16M style={{ color: BLACK2 }}>@</Body16M>
-                    <SelectView>
-                      <TextInput
-                        value={form.domain}
-                        onChangeText={text =>
-                          setForm(prev => {
-                            return { ...prev, domain: text };
-                          })
-                        }
-                        style={{ width: '70%' }}
-                        placeholder="직접 입력"
-                        placeholderTextColor={BLACK2}
-                        readOnly={false}
-                        autoCapitalize="none"
-                        autoCorrect={false}
-                      />
-                      <Dropdown
-                        open={domainOpen}
-                        setOpen={setDomainOpen}
-                        value={form.domain}
-                        setValue={text =>
-                          setForm(prev => {
-                            return { ...prev, domain: text };
-                          })
-                        }
-                        items={['gmail.com', 'naver.com', 'kakao.com']}
-                        style={{ width: '100%', top: 44 }}
-                      />
-                      <TouchableOpacity
-                        onPress={() =>
-                          setDomainOpen(prev => {
-                            return !prev;
-                          })
-                        }>
-                        <DownArrow />
-                      </TouchableOpacity>
-                    </SelectView>
-                  </MailView>
+                    <DropdownWrite
+                      title="직접 입력"
+                      width="44%"
+                      value={form.domain}
+                      setValue={text =>
+                        setForm(prev => {
+                          return { ...prev, domain: text };
+                        })
+                      }
+                      items={['gmail.com', 'naver.com', 'kakao.com']}
+                    />
+                  </View>
                 </SectionView>
                 <InputView
                   title="비밀번호"

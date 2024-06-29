@@ -31,7 +31,8 @@ import InputInfo from '../components/Home/Quotation/InputInfo';
 import QuotationConfirm from '../components/Home/Quotation/QuotationConfirm';
 import Rejection from '../components/Home/Quotation/Rejection';
 import SentRejection from '../components/Home/Quotation/SentRejection';
-
+import WriteReviewPage from '../components/Home/Market/WriteReviewPage';
+import ComponentsTest from './ComponentsTest';
 
 export type HomeStackParams = {
   Home: undefined;
@@ -53,6 +54,9 @@ export type HomeStackParams = {
   QuotationConfirm: undefined;
   Rejection: undefined;
   SentRejection: undefined;
+  WriteReviewPage: undefined;
+
+  TestComponents: undefined;
 };
 
 const HomeStack = createStackNavigator<HomeStackParams>();
@@ -106,7 +110,8 @@ const HomeScreen = ({
       <HomeStack.Screen name="QuotationConfirm" component={QuotationConfirm} />
       <HomeStack.Screen name="Rejection" component={Rejection} />
       <HomeStack.Screen name="SentRejection" component={SentRejection} />
-
+      <HomeStack.Screen name="WriteReviewPage" component={WriteReviewPage} />
+      <HomeStack.Screen name="TestComponents" component={ComponentsTest} />
     </HomeStack.Navigator>
   );
 };
@@ -135,11 +140,15 @@ const HomeMainScreen = ({
 
   const handleTabChange = (tab: 'Goods' | 'Market') => {
     setSelectedTab(tab);
-  }
+  };
   return (
     <SafeAreaView>
       <CustomHeader onSearch={() => {}} onTabChange={handleTabChange} />
-      <HomeTabView onSearch={() => {}} selectedTab={selectedTab} onTabChange = {handleTabChange}/>
+      <HomeTabView
+        onSearch={() => {}}
+        selectedTab={selectedTab}
+        onTabChange={handleTabChange}
+      />
       <ScrollView>
         <Button onPress={handlePopupButtonPress}>
             <ButtonText>팝업 표시</ButtonText>
@@ -167,6 +176,13 @@ const HomeMainScreen = ({
         </Button>
         <Button onPress={() => navigation.navigate('AddPortfolio')}>
           <Text>포트폴리오 등록</Text>
+        </Button>
+
+        <Button onPress={() => navigation.navigate('WriteReviewPage')}>
+          <Text>후기 작성 페이지</Text>
+        </Button>
+        <Button onPress={() => navigation.navigate('TestComponents')}>
+          <Text>공통 컴포넌트 테스트</Text>
         </Button>
       </ScrollView>
     </SafeAreaView>
