@@ -97,13 +97,13 @@ export default function DetailModal({
 
   // renders
   return (
-    <BottomSheetModalProvider>
     <BottomSheetModal 
       ref={bottomSheetModalRef}
       index={0}
       snapPoints={snapPoints}
       backdropComponent={renderBackdrop}
       onChange={handleSheetChanges}
+      containerStyle={styles.modalContainer}
       >
       
       <View style={styles.selectItem}>
@@ -120,12 +120,10 @@ export default function DetailModal({
             alignSelf: 'center',
             marginTop: 10,
             marginBottom: 30,
-            zIndex: 1000
           }}
         />
       </View>
     </BottomSheetModal>
-    </BottomSheetModalProvider>
   );
 }
 
@@ -135,13 +133,22 @@ const styles = StyleSheet.create({
     padding: 24,
     justifyContent: 'center',
     backgroundColor: 'black',
+    
   },
   selectItem: {
+    top: 0,
+    left: 0,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     height: 60,
     paddingHorizontal: 15,
+    
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'flex-end', // 맨 아래로 정렬
+    margin: 0, // 기본 마진 제거
   },
 });

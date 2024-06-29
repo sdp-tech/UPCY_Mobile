@@ -28,6 +28,9 @@ import AddPortfolio from '../components/Home/Portfolio/AddPortfolio';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import WriteReviewPage from '../components/Home/Market/WriteReviewPage';
+import { BottomBarProvider } from '../../contexts/BottomBarContext';
+import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 export type HomeStackParams = {
   Home: undefined;
@@ -106,10 +109,17 @@ const HomeMainScreen = ({
     setSelectedTab(tab);
   }
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{flex:1}}>
+    
       <CustomHeader onSearch={() => { }} onTabChange={handleTabChange} />
-      <HomeTabView onSearch={() => { }} selectedTab={selectedTab} onTabChange={handleTabChange} />
-      <ScrollView style = {{zIndex: 1}}>
+      <BottomSheetModalProvider>
+        <View>
+        <HomeTabView onSearch={() => { }} selectedTab={selectedTab} onTabChange={handleTabChange} /> 
+        </View>
+      
+
+      
+      <ScrollView>
         <Button onPress={() => navigation.navigate('Market')}>
           <Text>마켓</Text>
         </Button>
@@ -138,6 +148,7 @@ const HomeMainScreen = ({
           <Text>후기 작성 페이지</Text>
         </Button>
       </ScrollView>
+      </BottomSheetModalProvider>
     </SafeAreaView>
   );
 };
@@ -150,8 +161,8 @@ const Button = styled.TouchableOpacity`
   margin-right: 15px;
   border: #612fef;
   border-radius: 14px;
-  z-index: 2;
+  position: relative;
+  z-index:-1;
 `;
-
 
 export default HomeScreen;
