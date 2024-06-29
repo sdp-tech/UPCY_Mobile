@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { SafeAreaView, Text, View } from 'react-native';
+import { SafeAreaView, Text, View , Alert} from 'react-native';
 import styled from 'styled-components/native';
 import { Filter14M } from '../styles/GlobalText';
 
@@ -27,7 +27,11 @@ import WriteDetailPage from '../components/Home/Market/WriteDetailPage';
 import AddPortfolio from '../components/Home/Portfolio/AddPortfolio';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
-import WriteReviewPage from '../components/Home/Market/WriteReviewPage';
+import InputInfo from '../components/Home/Quotation/InputInfo';
+import QuotationConfirm from '../components/Home/Quotation/QuotationConfirm';
+import Rejection from '../components/Home/Quotation/Rejection';
+import SentRejection from '../components/Home/Quotation/SentRejection';
+
 
 export type HomeStackParams = {
   Home: undefined;
@@ -45,7 +49,10 @@ export type HomeStackParams = {
   TempStorageEdit: undefined;
   WriteDetailPage: undefined;
   AddPortfolio: undefined;
-  WriteReviewPage: undefined;
+  InputInfo: undefined;
+  QuotationConfirm: undefined;
+  Rejection: undefined;
+  SentRejection: undefined;
 };
 
 const HomeStack = createStackNavigator<HomeStackParams>();
@@ -62,6 +69,8 @@ const HomeScreen = ({
       navigation.setOptions({ tabBarStyle: { display: 'flex' } });
     }
   }, [navigation, route]);
+
+
 
   return (
     <HomeStack.Navigator
@@ -93,7 +102,11 @@ const HomeScreen = ({
       <HomeStack.Screen name="TempStorageEdit" component={TempStorageEdit} />
       <HomeStack.Screen name="WriteDetailPage" component={WriteDetailPage} />
       <HomeStack.Screen name="AddPortfolio" component={AddPortfolio} />
-      <HomeStack.Screen name="WriteReviewPage" component={WriteReviewPage} />
+      <HomeStack.Screen name="InputInfo" component={InputInfo} />
+      <HomeStack.Screen name="QuotationConfirm" component={QuotationConfirm} />
+      <HomeStack.Screen name="Rejection" component={Rejection} />
+      <HomeStack.Screen name="SentRejection" component={SentRejection} />
+
     </HomeStack.Navigator>
   );
 };
@@ -103,14 +116,34 @@ const HomeMainScreen = ({
 }: StackScreenProps<HomeStackParams, 'Home'>) => {
   const [selectedTab, setSelectedTab] = useState<'Goods' | 'Market'>('Goods');
 
+  const handlePopupButtonPress = () => {
+      Alert.alert(
+        "알림", // 팝업제목
+        "견적서가 들어왔어요. \n 확인해보시겠어요?",
+        [
+          {
+            text: "네",
+            onPress: () => {console.log("네 선택");
+            navigation.navigate('QuotationConfirm');
+            }
+          },
+          { text: "나중에요", onPress: () => console.log("나중에요 선택") ,   style: "cancel",}
+        ],
+        { cancelable: true } // 팝업 바깥을 터치하면 닫힘
+      );
+    };
+
   const handleTabChange = (tab: 'Goods' | 'Market') => {
     setSelectedTab(tab);
   }
   return (
     <SafeAreaView>
-      <CustomHeader onSearch={() => { }} onTabChange={handleTabChange} />
-      <HomeTabView onSearch={() => { }} selectedTab={selectedTab} onTabChange={handleTabChange} />
+      <CustomHeader onSearch={() => {}} onTabChange={handleTabChange} />
+      <HomeTabView onSearch={() => {}} selectedTab={selectedTab} onTabChange = {handleTabChange}/>
       <ScrollView>
+        <Button onPress={handlePopupButtonPress}>
+            <ButtonText>팝업 표시</ButtonText>
+        </Button>
         <Button onPress={() => navigation.navigate('Market')}>
           <Text>마켓</Text>
         </Button>
@@ -135,9 +168,6 @@ const HomeMainScreen = ({
         <Button onPress={() => navigation.navigate('AddPortfolio')}>
           <Text>포트폴리오 등록</Text>
         </Button>
-        <Button onPress={() => navigation.navigate('WriteReviewPage')}>
-          <Text>후기 작성 페이지</Text>
-        </Button>
       </ScrollView>
     </SafeAreaView>
   );
@@ -152,5 +182,11 @@ const Button = styled.TouchableOpacity`
   border: #612fef;
   border-radius: 14px;
 `;
+
+const ButtonText = styled.Text`
+  color: #612fef;
+  font-weight: bold;
+`;
+
 
 export default HomeScreen;

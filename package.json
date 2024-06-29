@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@actbase/react-daum-postcode": "^1.0.4",
     "@babel/plugin-proposal-nullish-coalescing-operator": "^7.0.0-0",
     "@babel/plugin-proposal-optional-chaining": "^7.0.0-0",
     "@babel/plugin-transform-arrow-functions": "^7.0.0-0",
@@ -17,6 +18,7 @@
     "@babel/plugin-transform-template-literals": "^7.0.0-0",
     "@gorhom/bottom-sheet": "^4.6.1",
     "@react-native-community/slider": "^4.5.0",
+    "@react-native-picker/picker": "^2.7.5",
     "@react-navigation/bottom-tabs": "^6.5.11",
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/native-stack": "^6.9.17",
@@ -35,6 +37,7 @@
     "react-native-image-picker": "^7.1.0",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-keychain": "8.1.2",
+    "react-native-modal": "^13.0.1",
     "react-native-pager-view": "^6.2.3",
     "react-native-pell-rich-editor": "^1.9.0",
     "react-native-reanimated": "^3.7.1",
@@ -42,6 +45,7 @@
     "react-native-safearea-height": "^1.0.6",
     "react-native-screens": "^3.30.1",
     "react-native-snap-carousel": "git+https://github.com/SJ-Kwak/react-native-snap-carousel.git",
+    "react-native-status-bar-height": "^2.6.0",
     "react-native-svg": "^14.1.0",
     "react-native-tab-view": "^3.5.2",
     "react-native-webview": "^13.7.1",
