@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { SafeAreaView, Text, View } from 'react-native';
+import { SafeAreaView, Text, View, StyleSheet} from 'react-native';
 import styled from 'styled-components/native';
 import { Filter14M } from '../styles/GlobalText';
 
@@ -62,7 +62,6 @@ const HomeScreen = ({
       navigation.setOptions({ tabBarStyle: { display: 'flex' } });
     }
   }, [navigation, route]);
-
   return (
     <HomeStack.Navigator
       screenOptions={() => ({
@@ -110,7 +109,7 @@ const HomeMainScreen = ({
     <SafeAreaView>
       <CustomHeader onSearch={() => { }} onTabChange={handleTabChange} />
       <HomeTabView onSearch={() => { }} selectedTab={selectedTab} onTabChange={handleTabChange} />
-      <ScrollView>
+      <ScrollView style = {{zIndex: 1}}>
         <Button onPress={() => navigation.navigate('Market')}>
           <Text>마켓</Text>
         </Button>
@@ -151,6 +150,8 @@ const Button = styled.TouchableOpacity`
   margin-right: 15px;
   border: #612fef;
   border-radius: 14px;
+  z-index: 2;
 `;
+
 
 export default HomeScreen;
