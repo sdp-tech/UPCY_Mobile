@@ -62,10 +62,15 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
     navigation.getParent()?.navigate('홈');
   };
 
+  const goReformRegister = () => {
+    navigation.navigate('ReformProfile');
+  };
+
   return (
     <SafeAreaView>
       <Text>마이페이지</Text>
       <Text>{userInfo.nickname}님 안녕하세요.</Text>
+      <Button onPress={goReformRegister} title="프로필 등록" />
       <Button onPress={handleLogout} title="로그아웃" />
     </SafeAreaView>
   );

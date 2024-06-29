@@ -179,6 +179,18 @@ export const Caption11M = ({ children, style }: any) => {
     </Text>
   )
 }
+export const Caption14M = ({ children, style }: any) => {
+  return (
+    <Text style={{
+      color: BLACK,
+      fontSize: 14,
+      fontWeight: '500',
+      ...style
+    }}>
+      {children}
+    </Text>
+  )
+}
 
 export const Filter14M = ({ children, style }: any) => {
   return (
