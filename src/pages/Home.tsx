@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
-import { SafeAreaView, Text, View , Alert} from 'react-native';
+
+import { SafeAreaView, Text, View , StyleSheet, Alert} from 'react-native';
 import styled from 'styled-components/native';
 import { Filter14M } from '../styles/GlobalText';
 
@@ -32,6 +33,9 @@ import QuotationConfirm from '../components/Home/Quotation/QuotationConfirm';
 import Rejection from '../components/Home/Quotation/Rejection';
 import SentRejection from '../components/Home/Quotation/SentRejection';
 import WriteReviewPage from '../components/Home/Market/WriteReviewPage';
+import { BottomBarProvider } from '../../contexts/BottomBarContext';
+import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import ComponentsTest from './ComponentsTest';
 
 export type HomeStackParams = {
@@ -73,6 +77,7 @@ const HomeScreen = ({
       navigation.setOptions({ tabBarStyle: { display: 'flex' } });
     }
   }, [navigation, route]);
+
 
 
 
@@ -142,13 +147,13 @@ const HomeMainScreen = ({
     setSelectedTab(tab);
   };
   return (
-    <SafeAreaView>
-      <CustomHeader onSearch={() => {}} onTabChange={handleTabChange} />
-      <HomeTabView
-        onSearch={() => {}}
-        selectedTab={selectedTab}
-        onTabChange={handleTabChange}
-      />
+    <SafeAreaView style={{flex:1}}>
+    
+      <CustomHeader onSearch={() => { }} onTabChange={handleTabChange} />
+      <BottomSheetModalProvider>
+        <View>
+        <HomeTabView onSearch={() => { }} selectedTab={selectedTab} onTabChange={handleTabChange} /> 
+        </View>
       <ScrollView>
         <Button onPress={handlePopupButtonPress}>
             <ButtonText>팝업 표시</ButtonText>
@@ -185,6 +190,7 @@ const HomeMainScreen = ({
           <Text>공통 컴포넌트 테스트</Text>
         </Button>
       </ScrollView>
+      </BottomSheetModalProvider>
     </SafeAreaView>
   );
 };
@@ -197,6 +203,8 @@ const Button = styled.TouchableOpacity`
   margin-right: 15px;
   border: #612fef;
   border-radius: 14px;
+  position: relative;
+  z-index:-1;
 `;
 
 const ButtonText = styled.Text`

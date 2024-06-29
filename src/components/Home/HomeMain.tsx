@@ -205,7 +205,7 @@ const HomeTabView = ({ onSearch, onTabChange ,selectedTab }: HomeTabViewProps) =
       )}
       {selectedTab === 'Goods' && (
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1}}>
           <CategoryBox>
             <CategoryButton onPress = {() => setModalOpen(true)}>
               <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }} >
@@ -240,20 +240,13 @@ const HomeTabView = ({ onSearch, onTabChange ,selectedTab }: HomeTabViewProps) =
             <CategoryButton onPress = {() => setModalOpen(true)}>
               <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
                 수선 요구 기간
-              </Text>
+              </Text> 
               <CategoryDownButton />
             </CategoryButton>
           </CategoryBox>
         </View>
         </ScrollView>
            )}
-        {modalOpen && <DetailModal
-          open = {modalOpen}
-          setOpen={setModalOpen}
-          value={form.region}
-          setValue={text => setForm(prev => ({ ...prev, region: text }))}
-          />}
-      
       {selectedTab === 'Market' && (
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View style={{ flex: 1 }}>
@@ -298,12 +291,16 @@ const HomeTabView = ({ onSearch, onTabChange ,selectedTab }: HomeTabViewProps) =
         </View>
         </ScrollView>
          )}
-        {modalOpen && <DetailModal 
+        <DetailModal
           open = {modalOpen}
           setOpen={setModalOpen}
           value={form.region}
-          setValue={text => setForm(prev => ({ ...prev, region: text }))}
-          />}
+          setValue={text => 
+            setForm(prev => {
+              return { ...prev, region: text };
+            })
+          }
+          />
       
     </>
         
