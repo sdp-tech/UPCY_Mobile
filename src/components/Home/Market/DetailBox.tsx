@@ -47,9 +47,9 @@ const DetailBox = forwardRef<DetailBoxHandle, DetailBoxProps>(({ flatListRef }, 
       bounces={false} overScrollMode="never"
       ref={flatListRef}
       data={data}
-      renderItem={({ item }) => {
+      renderItem={({ item, index }) => {
         if (item.end === 'no') return (
-          <View>
+          <View key={index}>
             <View style={styles.information}>
               <Text>{item.label}</Text>
               <Text>{item.data}</Text>
@@ -57,7 +57,7 @@ const DetailBox = forwardRef<DetailBoxHandle, DetailBoxProps>(({ flatListRef }, 
           </View>
         );
         else return (
-          <View>
+          <View key={index}>
             <View style={styles.service}>
               <Text>{item.label}</Text>
               <Text>{item.data}</Text>
