@@ -10,35 +10,31 @@ import { GREEN } from '../styles/GlobalColor';
 const FrameBox = styled.View`
   display: flex;
   flex-direction: row;
-  height: 51px;
-  padding: 0px 16px;
-  align-items: center;
-  justify-content: center;
+  height: 70px;
+  padding: 20px 16px;
+  align-items: flex-start;
+  justify-content: space-between;
   background: #612fef;
 `;
 const ToggleBox = styled.View`
   display: flex;
   flex-direction: row;
-  padding: 2px;
-  width: 210px;
-  width: 210px;
-  justify-content: center;
+  height: 52px;
+  padding: 12px 16px;
   align-items: center;
-  border-radius: 12px;
-  background: #fff;
-  align-self: center;
+  background: #612FEF;
 `;
 
 const ToggleButton = styled.TouchableOpacity<{ pressed: boolean }>`
   display: flex;
-  width: 100px;
-  width: 100px;
+  flex-direction: row;
   height: 28px;
+  padding: 0px 12px;
   justify-content: center;
   align-items: center;
-  border-radius: 12px;
-  background: ${(props: { pressed: boolean }) =>
-    props.pressed ? '#DBFC72' : '#FFF'};
+  gap: 8px;
+  border-bottom-width:2px;
+  border-color: #D9D9D9;
 `;
 
 interface CustomHeaderProps {
@@ -74,28 +70,29 @@ const CustomHeader = ({ onSearch, onAlarm, onTabChange }: CustomHeaderProps) => 
   return (
     <>
       <FrameBox>
-        <Logo color="#DBFC72" width={40} height={20} />
+        <Logo color="#DBFC72" width={41.572} height={18} />
         <View style={{ flex: 1 }}>
-          <ToggleBox>
-            <ToggleButton
-              pressed={selectedTab === 'Goods'}
-              onPress={() => {setSelectedTab('Goods'); onTabChange('Goods');}}>
-              <Text style={{ fontSize: 16, fontWeight: '900', marginRight: 5 }}>
-                상품
-              </Text>
-            </ToggleButton>
-            <ToggleButton
-              pressed={selectedTab === 'Market'}
-              onPress={() => {setSelectedTab('Market'); onTabChange('Market');}}>
-              <Text style={{ fontSize: 16, fontWeight: '900', marginRight: 5 }}>
-                마켓
-              </Text>
-            </ToggleButton>
-          </ToggleBox>
         </View>
+            
         <Search />
         <Bell />
       </FrameBox>
+      <ToggleBox>
+        <ToggleButton
+          pressed={selectedTab === 'Goods'}
+          onPress={() => {setSelectedTab('Goods'); onTabChange('Goods');}}>
+          <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '700', marginRight: 5 }}>
+            업씨몰
+          </Text>
+        </ToggleButton>
+        <ToggleButton
+          pressed={selectedTab === 'Market'}
+          onPress={() => {setSelectedTab('Market'); onTabChange('Market');}}>
+          <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '700', marginRight: 5 }}>
+            리폼러
+          </Text>
+        </ToggleButton>
+      </ToggleBox>
     </>
   );
 };
