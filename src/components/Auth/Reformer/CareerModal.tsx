@@ -321,7 +321,14 @@ export default function CareerModal({
             </View>
             <View style={{ zIndex: 1 }}>
               <Body16B>분류</Body16B>
-              <SelectBox
+              <Dropdown
+                title="선택하기"
+                width="100%"
+                value={form.career[index].type}
+                items={statusList}
+                setValue={handleTypeChange}
+              />
+              {/* <SelectBox
                 value={form.career[index].type}
                 onPress={() => {
                   setDropdown(prev => {
@@ -343,7 +350,7 @@ export default function CareerModal({
                     top: 80,
                   }}
                 />
-              )}
+              )} */}
             </View>
             {detailSection()}
             <View style={{ marginVertical: 10 }}>

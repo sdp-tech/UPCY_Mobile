@@ -1,28 +1,19 @@
-import { Dispatch, SetStateAction, useState } from 'react';
+import { useState } from 'react';
 import {
   View,
   TouchableOpacity,
-  ViewStyle,
   StyleSheet,
-  DimensionValue,
   ScrollView,
+  TextInput,
 } from 'react-native';
 import { Body14M } from '../styles/GlobalText';
-import { BLACK, BLACK2, GRAY } from '../styles/GlobalColor';
+import { BLACK2 } from '../styles/GlobalColor';
+import Dropdown from './Dropdown';
 import ArrowIcon from '../assets/common/Arrow.svg';
 
-interface DropdownProps {
-  title: string;
-  value: string | undefined;
-  setValue: (text: string) => void;
-  items: string[];
-  index?: number | undefined; // 동일 레벨에서 dropdown을 여러번 사용할 경우 z-index 사용
-  width?: DimensionValue;
-  style?: ViewStyle;
-}
 const ITEM_HEIGHT = 40;
 
-export default function Dropdown({
+export default function DropdownWrite({
   title,
   style,
   setValue,
@@ -30,7 +21,7 @@ export default function Dropdown({
   items,
   index = undefined,
   width = '90%',
-}: DropdownProps) {
+}: Parameters<typeof Dropdown>[0]) {
   const [open, setOpen] = useState(false);
 
   const handlePress = () => {
@@ -45,6 +36,7 @@ export default function Dropdown({
   return (
     <View
       style={{
+        width: width,
         position: 'relative',
         height: ITEM_HEIGHT + 4,
         marginVertical: 8,
@@ -52,17 +44,20 @@ export default function Dropdown({
       }}>
       <View
         style={{
-          width: width,
           ...style,
           ...Styles.container,
         }}>
-        <View style={{ ...Styles.item }}>
-          <TouchableOpacity
-            style={{
-              ...Styles.pressArea,
-            }}
-            onPress={handlePress}>
-            <Body14M>{value !== undefined ? value : title}</Body14M>
+        <View style={{ ...Styles.pressArea, ...Styles.item }}>
+          <TextInput
+            defaultValue={value}
+            onChangeText={setValue}
+            placeholderTextColor={BLACK2}
+            placeholder={title}
+            autoCapitalize="none"
+            autoCorrect={false}
+            style={{ flex: 1 }}
+          />
+          <TouchableOpacity onPress={handlePress}>
             <ArrowIcon
               color={BLACK2}
               style={{ transform: [{ rotate: open ? '270deg' : '180deg' }] }}
@@ -96,6 +91,9 @@ export default function Dropdown({
 const Styles = StyleSheet.create({
   container: {
     position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
     alignSelf: 'center',
     borderWidth: 2,
     borderRadius: 5,
@@ -105,7 +103,6 @@ const Styles = StyleSheet.create({
   item: {
     height: ITEM_HEIGHT,
     paddingHorizontal: 16,
-    borderColor: BLACK2,
   },
   pressArea: {
     flexDirection: 'row',
