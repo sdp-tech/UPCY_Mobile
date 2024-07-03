@@ -68,6 +68,7 @@ interface SignupProps {
   password: string;
   region: string;
 }// 의미 없음
+
 interface HomeTabViewProps {
   onSearch: () => void;
   onTabChange: (tab: 'Goods' | 'Market') => void;
@@ -105,203 +106,41 @@ const HomeTabView = ({ onSearch, onTabChange, selectedTab }: HomeTabViewProps) =
   return (
     <>
       {selectedTab === 'Goods' && (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View style={{ flex: 1 }}>
-            <HomeTabViewBox>
-              <HomeTabViewButton
-                pressed={selectedTabView === 'all'}
-                onPress={() => setSelectedTabView('all')}>
-                {selectedTabView === 'all' && <TabViewSpot />}
-                <Text
-                  style={{
-                    fontSize: 14,
-                    fontWeight: '700',
-                    color: selectedTabView == 'all' ? '#DBFC72' : '#FFF',
-                  }}>
-                  전체
-                </Text>
-              </HomeTabViewButton>
-              <HomeTabViewButton
-                pressed={selectedTabView === 'outer'}
-                onPress={() => setSelectedTabView('outer')}>
-                {selectedTabView === 'outer' && <TabViewSpot />}
-                <Text
-                  style={{
-                    fontSize: 14,
-                    fontWeight: '700',
-                    color: selectedTabView == 'outer' ? '#DBFC72' : '#FFF',
-                  }}>
-                  아우터
-                </Text>
-              </HomeTabViewButton>
-              <HomeTabViewButton
-                pressed={selectedTabView === 'top'}
-                onPress={() => setSelectedTabView('top')}>
-                {selectedTabView === 'top' && <TabViewSpot />}
-                <Text
-                  style={{
-                    fontSize: 14,
-                    fontWeight: '700',
-                    color: selectedTabView == 'top' ? '#DBFC72' : '#FFF',
-                  }}>
-                  상의
-                </Text>
-              </HomeTabViewButton>
-              <HomeTabViewButton
-                pressed={selectedTabView === 'bottom'}
-                onPress={() => setSelectedTabView('bottom')}>
-                {selectedTabView === 'bottom' && <TabViewSpot />}
-                <Text
-                  style={{
-                    fontSize: 14,
-                    fontWeight: '700',
-                    color: selectedTabView == 'bottom' ? '#DBFC72' : '#FFF',
-                  }}>
-                  하의
-                </Text>
-              </HomeTabViewButton>
-              <HomeTabViewButton
-                pressed={selectedTabView === 'bag'}
-                onPress={() => setSelectedTabView('bag')}>
-                {selectedTabView === 'bag' && <TabViewSpot />}
-                <Text
-                  style={{
-                    fontSize: 14,
-                    fontWeight: '700',
-                    color: selectedTabView == 'bag' ? '#DBFC72' : '#FFF',
-                  }}>
-                  가방
-                </Text>
-              </HomeTabViewButton>
-              <HomeTabViewButton
-                pressed={selectedTabView === 'hat'}
-                onPress={() => setSelectedTabView('hat')}>
-                {selectedTabView === 'hat' && <TabViewSpot />}
-                <Text
-                  style={{
-                    fontSize: 14,
-                    fontWeight: '700',
-                    color: selectedTabView == 'hat' ? '#DBFC72' : '#FFF',
-                  }}>
-                  모자
-                </Text>
-              </HomeTabViewButton>
-              <HomeTabViewButton
-                pressed={selectedTabView === 'accessories'}
-                onPress={() => setSelectedTabView('accessories')}>
-                {selectedTabView === 'accessories' && <TabViewSpot />}
-                <Text
-                  style={{
-                    fontSize: 14,
-                    fontWeight: '700',
-                    color: selectedTabView == 'accessories' ? '#DBFC72' : '#FFF',
-                  }}>
-                  잡화
-                </Text>
-              </HomeTabViewButton>
-            </HomeTabViewBox>
-          </View>
-        </ScrollView>
-      )}
-      {selectedTab === 'Goods' && (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View style={{ flex: 1 }}>
-            <CategoryBox>
-              <CategoryButton onPress={() => setModalOpen(true)}>
-                <Text style={{ fontSize: 14, fontWeight: '500', color: '#222222' }} >
-                  스타일
-                </Text>
-                <CategoryDownButton />
-              </CategoryButton>
-              <CategoryButton onPress={() => setModalOpen(true)}>
-                <Text style={{ fontSize: 14, fontWeight: '500', color: '#222222' }}>
-                  재질
-                </Text>
-                <CategoryDownButton />
-              </CategoryButton>
-              <CategoryButton onPress={() => setModalOpen(true)}>
-                <Text style={{ fontSize: 14, fontWeight: '500', color: '#222222' }}>
-                  핏
-                </Text>
-                <CategoryDownButton />
-              </CategoryButton>
-              <CategoryButton onPress={() => setModalOpen(true)}>
-                <Text style={{ fontSize: 14, fontWeight: '500', color: '#222222' }}>
-                  디테일
-                </Text>
-                <CategoryDownButton />
-              </CategoryButton>
-              <CategoryButton onPress={() => setModalOpen(true)}>
-                <Text style={{ fontSize: 14, fontWeight: '500', color: '#222222' }}>
-                  금액별
-                </Text>
-                <CategoryDownButton />
-              </CategoryButton>
-              <CategoryButton onPress={() => setModalOpen(true)}>
-                <Text style={{ fontSize: 14, fontWeight: '500', color: '#222222' }}>
-                  수선 요구 기간
-                </Text>
-                <CategoryDownButton />
-              </CategoryButton>
-            </CategoryBox>
-          </View>
-        </ScrollView>
-      )}
+        <View style={{ flex: 1}}>
+          <CategoryBox>
+            <CategoryButton onPress = {() => setModalOpen(true)}>
+              <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }} >
+                스타일
+              </Text>
+              <CategoryDownButton />
+            </CategoryButton>
+            
+          </CategoryBox>
+        </View>
+           )}
       {selectedTab === 'Market' && (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View style={{ flex: 1 }}>
-            <CategoryBox>
-              <CategoryButton onPress={() => setModalOpen(true)}>
-                <Text style={{ fontSize: 14, fontWeight: '500', color: '#222222' }} >
-                  스타일
-                </Text>
-                <CategoryDownButton />
-              </CategoryButton>
-              <CategoryButton onPress={() => setModalOpen(true)}>
-                <Text style={{ fontSize: 14, fontWeight: '500', color: '#222222' }}>
-                  재질
-                </Text>
-                <CategoryDownButton />
-              </CategoryButton>
-              <CategoryButton onPress={() => setModalOpen(true)}>
-                <Text style={{ fontSize: 14, fontWeight: '500', color: '#222222' }}>
-                  핏
-                </Text>
-                <CategoryDownButton />
-              </CategoryButton>
-              <CategoryButton onPress={() => setModalOpen(true)}>
-                <Text style={{ fontSize: 14, fontWeight: '500', color: '#222222' }}>
-                  디테일
-                </Text>
-                <CategoryDownButton />
-              </CategoryButton>
-              <CategoryButton onPress={() => setModalOpen(true)}>
-                <Text style={{ fontSize: 14, fontWeight: '500', color: '#222222' }}>
-                  금액별
-                </Text>
-                <CategoryDownButton />
-              </CategoryButton>
-              <CategoryButton onPress={() => setModalOpen(true)}>
-                <Text style={{ fontSize: 14, fontWeight: '500', color: '#222222' }}>
-                  수선 요구 기간
-                </Text>
-                <CategoryDownButton />
-              </CategoryButton>
-            </CategoryBox>
-          </View>
-        </ScrollView>
-      )}
-      <DetailModal
-        open={modalOpen}
-        setOpen={setModalOpen}
-        value={form.region}
-        setValue={text =>
-          setForm(prev => {
-            return { ...prev, region: text };
-          })
-        }
-      />
-
+        <View style={{ flex: 1 }}>
+          <CategoryBox>
+            <CategoryButton onPress = {() => setModalOpen(true)}>
+              <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }} >
+                스타일
+              </Text>
+              <CategoryDownButton />
+            </CategoryButton>
+            
+          </CategoryBox>
+        </View>
+         )}
+        <DetailModal
+          open = {modalOpen}
+          setOpen={setModalOpen}
+          value={form.region}
+          setValue={text => 
+            setForm(prev => {
+              return { ...prev, region: text };
+            })
+          }
+          />
     </>
 
   );
