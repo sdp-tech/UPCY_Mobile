@@ -20,15 +20,16 @@ const SummarySection = () => {
           <StarRating />
         </View>
         <View style={{ paddingHorizontal: 40, flex: 1 }}>
-          {[1, 2, 3, 4, 5].map((idx) => {
-            return (
+          {[1, 2, 3, 4, 5].map((idx) => (
+            <View key={idx}>
               <ItemContainer style={{ alignItems: 'center' }}>
                 <Caption11M style={{ marginRight: 5 }}>{idx}점</Caption11M>
                 <Slider total={20} page={3} rating />
                 <Caption11M style={{ marginLeft: 5 }}>3</Caption11M>
               </ItemContainer>
-            );
-          })}
+            </View>
+          )
+          )}
         </View>
       </ItemContainer>
       <ItemContainer>

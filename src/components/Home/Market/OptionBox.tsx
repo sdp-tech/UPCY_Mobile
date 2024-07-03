@@ -51,9 +51,9 @@ const OptionPage: React.FC<OptionBoxProps> = ({ flatListRef }) => {
         bounces={false} overScrollMode="never"
         data={data}
         ListHeaderComponent={() => <Body16B style={{ padding: 16 }}>옵션 별 추가 금액</Body16B>}
-        renderItem={({ item }: any) => {
+        renderItem={({ item, index }: any) => {
           return item.label == '옵션 별 추가 금액' ? (
-            <OptionInfo>
+            <OptionInfo key={index}>
               <View style={{ flexDirection: "row" }}>
                 <Body16B>{item.data.title}</Body16B>
                 <Body14R>{item.data.price}</Body14R>
@@ -61,7 +61,7 @@ const OptionPage: React.FC<OptionBoxProps> = ({ flatListRef }) => {
               <Body14R>{item.data.explain}</Body14R>
             </OptionInfo>
           ) : (
-            <NoticeBox>
+            <NoticeBox key={index}>
               <Body16B>{item.label}</Body16B>
               {item.data.map((item: any, idx: number) => (
                 <Body14R style={{ padding: 8 }}>

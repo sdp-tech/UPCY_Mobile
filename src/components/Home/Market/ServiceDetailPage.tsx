@@ -106,7 +106,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ navigation, onScrollToR
           <View style={{ backgroundColor: "gray", width: 50, height: 50, borderRadius: 25 }}></View>
           <View style={{ marginLeft: 20, justifyContent: 'center' }}>
             <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => navigation.navigate('Market')}>
-              <Text style={{ fontSize: 14, padding: 3, fontWeight: '700', color: '#22222' }}>마켓명 </Text>
+              <Text style={{ fontSize: 14, padding: 3, fontWeight: '700', color: '#222222' }}>마켓명 </Text>
               <Arrow // Arrow at the right side of 'marketname'
                 style={{ marginLeft: -7, transform: [{ scaleX: -1 }] }}
                 color={BLACK}>

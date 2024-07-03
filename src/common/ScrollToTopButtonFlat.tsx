@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { ScrollView, Button, StyleSheet, View, TouchableOpacity, Text, FlatList, Dimensions } from 'react-native';
-
+import Top from '../assets/common/Top.svg'
 
 interface ScrollToTopButtonProps {
     flatListRef: React.RefObject<FlatList<any>>;
@@ -13,7 +13,7 @@ const ScrollToTopButton: React.FC<ScrollToTopButtonProps> = ({ flatListRef }) =>
 
     return (
         <TouchableOpacity style={styles.floatingButton} onPress={handlePress}>
-            <Text style={styles.text}>Top</Text>
+            <Top></Top>
         </TouchableOpacity>
     );
 };

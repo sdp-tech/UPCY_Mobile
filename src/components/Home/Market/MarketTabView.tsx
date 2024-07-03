@@ -28,13 +28,11 @@ import ScrollTopButton from '../../../common/ScrollTopButton.tsx';
 import ReviewComment from '../components/ReviewComment.tsx';
 
 const ProfileSection = ({ navigation }: { navigation: any }) => {
-  const { hideBottomBar, showBottomBar } = useBottomBar();
 
-  useEffect(() => {
-
-    return () => hideBottomBar();
-  }, []);
-  const filter = ['스포티', '영캐주얼', '깔끔']
+  const filter = [
+    { id: 1, tag: '스포티' }, { id: 2, tag: '영캐주얼' }, { id: 3, tag: '깔끔' }
+  ]
+  const tagList = filter.map(item => item.tag);
   const markerName = '이하늘의 마켓';
   const selfIntroduce = '안녕하세요 리폼러 이하늘입니다! 저는 업씨대학교 패션디자인학과에 수석입학했고요 짱짱 천재에요'
   return (
@@ -63,32 +61,23 @@ const ProfileSection = ({ navigation }: { navigation: any }) => {
           <Caption11M style={{ color: BLACK2, marginLeft: 0 }}></Caption11M>
         </TouchableOpacity>
       </View>
-      <View style={{ flexDirection: 'row' }}>
-        <ReviewComment value='스포티' backgroundColor='#612FEF' />
-        <ReviewComment value='영캐주얼' backgroundColor='#612FEF' />
-        <ReviewComment value='깔끔' backgroundColor='#612FEF' />
-      </View>
-      {/* <FlatList
+      <FlatList
         horizontal
         scrollEnabled={false}
-        data={filter}
+        data={tagList}
+        keyExtractor={(index) => index.toString()}
         renderItem={({ item }) => {
           return (
-            <Hashtag value={item} pressable={false} />
+            <ReviewComment value={item} backgroundColor='#612FEF' />
           )
         }}
-      /> */}
+      />
     </View>
   )
 }
 
 const MarketTabView = ({ navigation, route }: StackScreenProps<HomeStackParams, 'Market'>) => {
-  const { hideBottomBar, showBottomBar } = useBottomBar();
 
-  useEffect(() => {
-    hideBottomBar();
-    return () => showBottomBar();
-  }, []);
   const [routes] = useState([
     { key: 'info', title: '정보' },
     { key: 'service', title: '서비스' },
