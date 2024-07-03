@@ -106,7 +106,6 @@ const HomeTabView = ({ onSearch, onTabChange ,selectedTab }: HomeTabViewProps) =
   return (
     <>
       {selectedTab === 'Goods' && (
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View style={{ flex: 1}}>
           <CategoryBox>
             <CategoryButton onPress = {() => setModalOpen(true)}>
@@ -118,10 +117,8 @@ const HomeTabView = ({ onSearch, onTabChange ,selectedTab }: HomeTabViewProps) =
             
           </CategoryBox>
         </View>
-        </ScrollView>
            )}
       {selectedTab === 'Market' && (
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View style={{ flex: 1 }}>
           <CategoryBox>
             <CategoryButton onPress = {() => setModalOpen(true)}>
@@ -133,7 +130,6 @@ const HomeTabView = ({ onSearch, onTabChange ,selectedTab }: HomeTabViewProps) =
             
           </CategoryBox>
         </View>
-        </ScrollView>
          )}
         <DetailModal
           open = {modalOpen}
