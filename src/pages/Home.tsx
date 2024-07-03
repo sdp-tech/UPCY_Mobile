@@ -78,6 +78,9 @@ const HomeScreen = ({
     }
   }, [navigation, route]);
 
+
+
+
   return (
     <HomeStack.Navigator
       screenOptions={() => ({
@@ -147,7 +150,10 @@ const HomeMainScreen = ({
     <SafeAreaView style={{flex:1}}>
     
       <CustomHeader onSearch={() => { }} onTabChange={handleTabChange} />
-      <HomeTabView onSearch={() => { }} selectedTab={selectedTab} onTabChange={handleTabChange} />
+      <BottomSheetModalProvider>
+        <View>
+        <HomeTabView onSearch={() => { }} selectedTab={selectedTab} onTabChange={handleTabChange} /> 
+        </View>
       <ScrollView>
         <Button onPress={handlePopupButtonPress}>
             <ButtonText>팝업 표시</ButtonText>
@@ -185,7 +191,6 @@ const HomeMainScreen = ({
         </Button>
       </ScrollView>
       </BottomSheetModalProvider>
-      </BottomSheetModalProvider>
     </SafeAreaView>
   );
 };
@@ -198,6 +203,13 @@ const Button = styled.TouchableOpacity`
   margin-right: 15px;
   border: #612fef;
   border-radius: 14px;
+  position: relative;
+  z-index:-1;
+`;
+
+const ButtonText = styled.Text`
+  color: #612fef;
+  font-weight: bold;
 `;
 
 
