@@ -51,9 +51,9 @@ const ServicePage: React.FC<ServicePageProps> = ({ scrollViewRef }) => {
           :
           <Carousel
             data={[...new Array(6).keys()]}
-            renderItem={({ item }: any) => {
+            renderItem={({ item, index }: any) => {
               return (
-                <ServiceItem onPress={() => { }} />
+                <ServiceItem onPress={() => { }} key={index} />
               )
             }}
             slider

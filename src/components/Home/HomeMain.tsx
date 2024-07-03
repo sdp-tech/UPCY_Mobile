@@ -8,7 +8,7 @@ import {
   Dimensions,
   ScrollView,
 } from 'react-native';
-import BottomSheet, {BottomSheetView} from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import CustomHeader from '../../common/CustomHeader';
 import { Tabs, MaterialTabBar } from 'react-native-collapsible-tab-view';
 import { StackScreenProps } from '@react-navigation/stack';
@@ -86,12 +86,12 @@ const HomeTabViewtag = ({ pressable }: HomeTabViewButtonParams) => {
       pressed={pressed}
       onPress={() => setPressed(!pressed)}
       disabled={!pressable}>
-      <Filter14M style={{ color: pressed ? '#222' : '#929292' }}></Filter14M>
+      <Filter14M style={{ color: pressed ? '#222222' : '#929292' }}></Filter14M>
     </HomeTabViewButton>
   );
 };
 
-const HomeTabView = ({ onSearch, onTabChange ,selectedTab }: HomeTabViewProps) => {
+const HomeTabView = ({ onSearch, onTabChange, selectedTab }: HomeTabViewProps) => {
   const [selectedTabView, setSelectedTabView] = useState<
     'all' | 'outer' | 'top' | 'bottom' | 'bag' | 'hat' | 'accessories'
   >('all');
@@ -141,9 +141,8 @@ const HomeTabView = ({ onSearch, onTabChange ,selectedTab }: HomeTabViewProps) =
             })
           }
           />
-      
     </>
-        
+
   );
 };
 

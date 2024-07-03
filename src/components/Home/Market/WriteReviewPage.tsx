@@ -169,7 +169,7 @@ const WriteReviewPage: React.FC<WriteReviewPageProps> = ({ scrollViewRef }) => {
       <DetailScreenHeader
         title="후기 작성"
         leftButton="CustomBack"
-        onPressLeft={() => {}}
+        onPressLeft={() => { }}
         rightButton="Exit"
         onPressRight={() => handleBackPress(navigation, showBottomBar)}
       />
@@ -276,8 +276,8 @@ const WriteReviewPage: React.FC<WriteReviewPageProps> = ({ scrollViewRef }) => {
                   }}>
                   <Text style={{ fontSize: 14, fontWeight: '700' }}>거래</Text>
                 </View>
-                {tradeFeed.map(item => (
-                  <View>
+                {tradeFeed.map((item, index): any => (
+                  <View key={index}>
                     <BouncyCheckbox
                       isChecked={item.isChecked || false}
                       size={25}
@@ -316,8 +316,8 @@ const WriteReviewPage: React.FC<WriteReviewPageProps> = ({ scrollViewRef }) => {
                     디자인
                   </Text>
                 </View>
-                {designFeed.map(item => (
-                  <View>
+                {designFeed.map((item, index): any => (
+                  <View key={index}>
                     <BouncyCheckbox
                       isChecked={item.isChecked || false}
                       size={25}

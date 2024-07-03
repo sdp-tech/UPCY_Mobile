@@ -116,7 +116,7 @@ const FilterElement = ({
         <View style={{ borderBottomWidth: 1, borderBottomColor: "#DFDFDF" }}>
             <View style={{ margin: 10, marginTop: 18 }}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', alignContent: 'center' }}>
-                    <Subtitle16M style={{ color: "#22222" }}>{label}
+                    <Subtitle16M style={{ color: "#121212212" }}>{label}
                         {(type == "style" || type == "category" || type == "material") &&
                             <Subtitle18B style={{ color: PURPLE }}> *</Subtitle18B>
                         }

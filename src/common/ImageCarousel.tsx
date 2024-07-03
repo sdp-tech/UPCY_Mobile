@@ -12,9 +12,14 @@ interface ImageCarouselProps {
   images: PhotoType[];
   setFormImages: (images: PhotoType[]) => void;
   max: number;
+  originalSize?: boolean;
+  originalHeight?: number;
+  originalWidth?: number;
+  unTouchable?: boolean
 }
 
-const ImageCarousel = ({ images, setFormImages, max }: ImageCarouselProps) => {
+const ImageCarousel = ({ images, setFormImages, max,
+  originalSize = false, originalHeight, originalWidth, unTouchable = false }: ImageCarouselProps) => {
   const { width } = Dimensions.get('screen');
   const [page, setPage] = useState(0);
 
@@ -43,7 +48,7 @@ const ImageCarousel = ({ images, setFormImages, max }: ImageCarouselProps) => {
                 backgroundColor: LIGHTGRAY2,
                 alignItems: 'center',
                 justifyContent: 'center',
-                height: 320,
+                height: originalSize ? originalHeight : 320,
               }}
               onPress={() => handleAddButtonPress(images, imagePickerCallback)}>
               <View
@@ -58,29 +63,35 @@ const ImageCarousel = ({ images, setFormImages, max }: ImageCarouselProps) => {
                   gap: 10,
                 }}>
                 <PhotoIcon />
-                <Body16B>이미지 첨부</Body16B>
+                {!originalSize &&
+                  <Body16B>이미지 첨부</Body16B>}
               </View>
             </TouchableOpacity>
-          ) : (
+          ) : (!unTouchable ? (
             <TouchableOpacity
               onPress={() =>
                 handleImagePress(index, images, imagePickerCallback)
               }>
-              <Image src={item.uri} style={{ height: 320, width: width }} />
+              <Image src={item.uri} style={{ height: originalSize ? originalHeight : 320, width: originalSize ? originalWidth : width }} />
             </TouchableOpacity>
+          ) : (
+            <Image src={item.uri} style={{ height: originalSize ? originalHeight : 320, width: originalSize ? originalWidth : width }} />
+          )
           );
         }}
         onSnapToItem={(index: number) => setPage(index)}
         keyExtractor={(item, index) => index.toString()}
-        itemWidth={width}
-        sliderWidth={width}></PhotoTypeCarousel>
-      <SliderContainer>
-        <Slider
-          total={images.length < max ? images.length + 1 : max}
-          page={page + 1}
-          rating={true}
-        />
-      </SliderContainer>
+        itemWidth={originalSize ? originalWidth : width}
+        sliderWidth={originalSize ? originalWidth : width}></PhotoTypeCarousel>
+      {!originalSize &&
+        <SliderContainer>
+          <Slider
+            total={images.length < max ? images.length + 1 : max}
+            page={page + 1}
+            rating={true}
+          />
+        </SliderContainer>
+      }
     </View>
   );
 };
