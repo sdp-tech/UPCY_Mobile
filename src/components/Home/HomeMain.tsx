@@ -41,7 +41,6 @@ const HomeTabViewButton = styled.TouchableOpacity<{ pressed: boolean }>`
 const CategoryBox = styled.View`
   display: flex;
   flex-direction: row;
-  width: 720px;
   height: 52px;
   padding: 12px 16px;
   align-items: flex-start;
@@ -106,30 +105,30 @@ const HomeTabView = ({ onSearch, onTabChange, selectedTab }: HomeTabViewProps) =
   return (
     <>
       {selectedTab === 'Goods' && (
-        <View style={{ flex: 1}}>
+        
           <CategoryBox>
+            <View>
             <CategoryButton onPress = {() => setModalOpen(true)}>
               <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }} >
                 스타일
               </Text>
               <CategoryDownButton />
             </CategoryButton>
-            
+            </View>
           </CategoryBox>
-        </View>
+        
            )}
       {selectedTab === 'Market' && (
-        <View style={{ flex: 1 }}>
-          <CategoryBox>
+            <CategoryBox>
+            <View>
             <CategoryButton onPress = {() => setModalOpen(true)}>
               <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }} >
                 스타일
               </Text>
               <CategoryDownButton />
             </CategoryButton>
-            
+            </View>
           </CategoryBox>
-        </View>
          )}
         <DetailModal
           open = {modalOpen}
