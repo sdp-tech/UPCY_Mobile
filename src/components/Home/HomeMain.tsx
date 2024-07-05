@@ -105,9 +105,10 @@ const HomeTabView = ({ onSearch, onTabChange, selectedTab }: HomeTabViewProps) =
   return (
     <>
       {selectedTab === 'Goods' && (
-        
           <CategoryBox>
             <View>
+        <View style={{ flex: 1}}>
+          <CategoryBox>
             <CategoryButton onPress = {() => setModalOpen(true)}>
               <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }} >
                 스타일
@@ -116,11 +117,16 @@ const HomeTabView = ({ onSearch, onTabChange, selectedTab }: HomeTabViewProps) =
             </CategoryButton>
             </View>
           </CategoryBox>
-        
            )}
       {selectedTab === 'Market' && (
             <CategoryBox>
-            <View>
+            <View>            
+          </CategoryBox>
+        </View>
+           )}
+      {selectedTab === 'Market' && (
+        <View style={{ flex: 1 }}>
+          <CategoryBox>
             <CategoryButton onPress = {() => setModalOpen(true)}>
               <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }} >
                 스타일
@@ -129,6 +135,9 @@ const HomeTabView = ({ onSearch, onTabChange, selectedTab }: HomeTabViewProps) =
             </CategoryButton>
             </View>
           </CategoryBox>
+            
+          </CategoryBox>
+        </View>
          )}
         <DetailModal
           open = {modalOpen}
