@@ -19,7 +19,6 @@ import styled from 'styled-components/native';
 import { PURPLE } from '../../styles/GlobalColor';
 import DetailModal from './Market/GoodsDetailOptionsModal';
 
-
 const HomeTabViewBox = styled.View`
   display: flex;
   flex-direction: row;
@@ -66,7 +65,7 @@ interface SignupProps {
   domain: string;
   password: string;
   region: string;
-}// 의미 없음
+} // 의미 없음
 
 interface HomeTabViewProps {
   onSearch: () => void;
@@ -90,7 +89,11 @@ const HomeTabViewtag = ({ pressable }: HomeTabViewButtonParams) => {
   );
 };
 
-const HomeTabView = ({ onSearch, onTabChange, selectedTab }: HomeTabViewProps) => {
+const HomeTabView = ({
+  onSearch,
+  onTabChange,
+  selectedTab,
+}: HomeTabViewProps) => {
   const [selectedTabView, setSelectedTabView] = useState<
     'all' | 'outer' | 'top' | 'bottom' | 'bag' | 'hat' | 'accessories'
   >('all');
@@ -105,54 +108,41 @@ const HomeTabView = ({ onSearch, onTabChange, selectedTab }: HomeTabViewProps) =
   return (
     <>
       {selectedTab === 'Goods' && (
-          <CategoryBox>
-            <View>
-        <View style={{ flex: 1}}>
-          <CategoryBox>
-            <CategoryButton onPress = {() => setModalOpen(true)}>
-              <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }} >
+        <CategoryBox>
+          <View>
+            <CategoryButton onPress={() => setModalOpen(true)}>
+              <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
                 스타일
               </Text>
               <CategoryDownButton />
             </CategoryButton>
-            </View>
-          </CategoryBox>
-           )}
+          </View>
+        </CategoryBox>
+      )}
       {selectedTab === 'Market' && (
-            <CategoryBox>
-            <View>            
-          </CategoryBox>
-        </View>
-           )}
-      {selectedTab === 'Market' && (
-        <View style={{ flex: 1 }}>
-          <CategoryBox>
-            <CategoryButton onPress = {() => setModalOpen(true)}>
-              <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }} >
+        <CategoryBox>
+          <View>
+            <CategoryButton onPress={() => setModalOpen(true)}>
+              <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
                 스타일
               </Text>
               <CategoryDownButton />
             </CategoryButton>
-            </View>
-          </CategoryBox>
-            
-          </CategoryBox>
-        </View>
-         )}
-        <DetailModal
-          open = {modalOpen}
-          setOpen={setModalOpen}
-          value={form.region}
-          setValue={text => 
-            setForm(prev => {
-              return { ...prev, region: text };
-            })
-          }
-          />
+          </View>
+        </CategoryBox>
+      )}
+      <DetailModal
+        open={modalOpen}
+        setOpen={setModalOpen}
+        value={form.region}
+        setValue={text =>
+          setForm(prev => {
+            return { ...prev, region: text };
+          })
+        }
+      />
     </>
-
   );
 };
-
 
 export default HomeTabView;
