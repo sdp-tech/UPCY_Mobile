@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, TouchableOpacity, Text } from 'react-native';
 import {
   NavigationContainer,
@@ -22,6 +22,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomBarProvider, useBottomBar } from './contexts/BottomBarContext';
 import { LoginProvider } from './src/common/Context';
 import Reformer from './src/components/Auth/Reformer/Reformer';
+import SplashScreen from './src/common/SplashScreen';
 
 export type StackProps = {
   Home: undefined;
@@ -40,19 +41,30 @@ const GlobalTheme = {
 };
 
 function App(): React.JSX.Element {
+  const [isSplashFinished, setIsSplashFinished] = useState(false);
+
+  const finishSplash = () => {
+    console.log('finished');
+    setIsSplashFinished(true);
+  };
+
   return (
     <BottomBarProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <LoginProvider>
           <NavigationContainer theme={GlobalTheme}>
-            <Stack.Navigator
-              screenOptions={() => ({
-                headerShown: false,
-              })}>
-              <Stack.Screen name="Home" component={HomeTab} />
-              <Stack.Screen name="Signin" component={SignIn} />
-              <Stack.Screen name="ReformProfile" component={Reformer} />
-            </Stack.Navigator>
+            {!isSplashFinished ? (
+              <SplashScreen onFinish={finishSplash} />
+            ) : (
+              <Stack.Navigator
+                screenOptions={() => ({
+                  headerShown: false,
+                })}>
+                <Stack.Screen name="Home" component={HomeTab} />
+                <Stack.Screen name="Signin" component={SignIn} />
+                <Stack.Screen name="ReformProfile" component={Reformer} />
+              </Stack.Navigator>
+            )}
           </NavigationContainer>
         </LoginProvider>
       </GestureHandlerRootView>
