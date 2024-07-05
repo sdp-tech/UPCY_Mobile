@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Filter14M } from '../styles/GlobalText';
-import { Text, View, TouchableOpacity } from 'react-native';
+import { Text, View, TouchableOpacity, Dimensions } from 'react-native';
 import Search from '../assets/common/Search.svg';
 import Logo from '../assets/common/Logo.svg';
 import Bell from '../assets/common/Bell.svg';
 import styled from 'styled-components/native';
+import Advertisment from '../assets/common/Advertisement.svg';
 import { GREEN } from '../styles/GlobalColor';
+
+const screenWidth = Dimensions.get('window').width;
 
 const FrameBox = styled.View`
   display: flex;
@@ -27,14 +30,23 @@ const ToggleBox = styled.View`
 
 const ToggleButton = styled.TouchableOpacity<{ pressed: boolean }>`
   display: flex;
-  flex-direction: row;
+  flex: 1;
+
   height: 28px;
   padding: 0px 12px;
   justify-content: center;
   align-items: center;
   gap: 8px;
-  border-bottom-width:2px;
-  border-color: #D9D9D9;
+  border-bottom-width: ${(props : {pressed: boolean}) => (props.pressed ? '2px' : '0px')};
+  border-color: ${(props : {pressed: boolean})  => (props.pressed ? '#FFFFFF' : 'transparent')};
+`;
+
+const AdvertisementBox = styled.View`
+  width: ${screenWidth}px;
+  height: 128px;
+  align-items: center;
+  justify-content: center;
+  padding:10px;
 `;
 
 interface CustomHeaderProps {
@@ -54,7 +66,6 @@ const Toggletag = ({ pressable }: ToggleButtonParams) => {
       pressed={pressed}
       onPress={() => setPressed(!pressed)}
       disabled={!pressable}>
-      <Filter14M style={{ color: pressed ? '#222' : '#929292' }}></Filter14M>
     </ToggleButton>
   );
 };
@@ -93,6 +104,9 @@ const CustomHeader = ({ onSearch, onAlarm, onTabChange }: CustomHeaderProps) => 
           </Text>
         </ToggleButton>
       </ToggleBox>
+      {selectedTab === 'Goods' && (
+        <Advertisment width = {screenWidth+10} height={128} preserveAspectRatio="none"/>
+      )}
     </>
   );
 };
