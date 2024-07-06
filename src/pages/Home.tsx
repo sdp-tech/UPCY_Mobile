@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-
+import React, { Fragment, useEffect, useState } from 'react';
 
 import { SafeAreaView, Text, View, StyleSheet, Alert } from 'react-native';
 import styled from 'styled-components/native';
@@ -37,6 +36,7 @@ import { BottomBarProvider } from '../../contexts/BottomBarContext';
 import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import ComponentsTest from './ComponentsTest';
+import { PURPLE } from '../styles/GlobalColor';
 
 export type HomeStackParams = {
   Home: undefined;
@@ -77,9 +77,6 @@ const HomeScreen = ({
       navigation.setOptions({ tabBarStyle: { display: 'flex' } });
     }
   }, [navigation, route]);
-
-
-
 
   return (
     <HomeStack.Navigator
@@ -128,19 +125,23 @@ const HomeMainScreen = ({
 
   const handlePopupButtonPress = () => {
     Alert.alert(
-      "알림", // 팝업제목
-      "견적서가 들어왔어요. \n 확인해보시겠어요?",
+      '알림', // 팝업제목
+      '견적서가 들어왔어요. \n 확인해보시겠어요?',
       [
         {
-          text: "네",
+          text: '네',
           onPress: () => {
-            console.log("네 선택");
+            console.log('네 선택');
             navigation.navigate('QuotationConfirm');
-          }
+          },
         },
-        { text: "나중에요", onPress: () => console.log("나중에요 선택"), style: "cancel", }
+        {
+          text: '나중에요',
+          onPress: () => console.log('나중에요 선택'),
+          style: 'cancel',
+        },
       ],
-      { cancelable: true } // 팝업 바깥을 터치하면 닫힘
+      { cancelable: true }, // 팝업 바깥을 터치하면 닫힘
     );
   };
 
@@ -148,51 +149,62 @@ const HomeMainScreen = ({
     setSelectedTab(tab);
   };
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <Fragment>
+      <SafeAreaView style={{ flex: 0, backgroundColor: PURPLE }} />
+      <SafeAreaView style={{ flex: 1 }}>
+        <CustomHeader onSearch={() => {}} onTabChange={handleTabChange} />
+        <BottomSheetModalProvider>
+          <View>
+            <HomeTabView
+              onSearch={() => {}}
+              selectedTab={selectedTab}
+              onTabChange={handleTabChange}
+            />
+          </View>
+          <ScrollView>
+            <Button onPress={handlePopupButtonPress}>
+              <ButtonText>팝업 표시</ButtonText>
+            </Button>
+            <Button onPress={() => navigation.navigate('Market')}>
+              <Text>마켓</Text>
+            </Button>
+            <Button onPress={() => navigation.navigate('QuotationForm')}>
+              <Text>견적서</Text>
+            </Button>
+            <Button onPress={() => navigation.navigate('QuotationPage')}>
+              <Text>견적서 확인</Text>
+            </Button>
+            <Button
+              onPress={() => navigation.navigate('ServiceDetailPage', {})}>
+              <Text>서비스 디테일</Text>
+            </Button>
+            <Button
+              onPress={() =>
+                navigation.navigate('ServiceRegistrationPage', {})
+              }>
+              <Text>서비스등록</Text>
+            </Button>
+            <Button onPress={() => navigation.navigate('GoodsDetailPage')}>
+              <Text>상품 디테일</Text>
+            </Button>
+            <Button
+              onPress={() => navigation.navigate('GoodsRegistrationPage')}>
+              <Text>상품등록</Text>
+            </Button>
+            <Button onPress={() => navigation.navigate('AddPortfolio')}>
+              <Text>포트폴리오 등록</Text>
+            </Button>
 
-      <CustomHeader onSearch={() => { }} onTabChange={handleTabChange} />
-      <BottomSheetModalProvider>
-        <View>
-          <HomeTabView onSearch={() => { }} selectedTab={selectedTab} onTabChange={handleTabChange} />
-        </View>
-        <ScrollView>
-          <Button onPress={handlePopupButtonPress}>
-            <ButtonText>팝업 표시</ButtonText>
-          </Button>
-          <Button onPress={() => navigation.navigate('Market')}>
-            <Text>마켓</Text>
-          </Button>
-          <Button onPress={() => navigation.navigate('QuotationForm')}>
-            <Text>견적서</Text>
-          </Button>
-          <Button onPress={() => navigation.navigate('QuotationPage')}>
-            <Text>견적서 확인</Text>
-          </Button>
-          <Button onPress={() => navigation.navigate('ServiceDetailPage', {})}>
-            <Text>서비스 디테일</Text>
-          </Button>
-          <Button onPress={() => navigation.navigate('ServiceRegistrationPage', {})}>
-            <Text>서비스등록</Text>
-          </Button>
-          <Button onPress={() => navigation.navigate('GoodsDetailPage')}>
-            <Text>상품 디테일</Text>
-          </Button>
-          <Button onPress={() => navigation.navigate('GoodsRegistrationPage')}>
-            <Text>상품등록</Text>
-          </Button>
-          <Button onPress={() => navigation.navigate('AddPortfolio')}>
-            <Text>포트폴리오 등록</Text>
-          </Button>
-
-          <Button onPress={() => navigation.navigate('WriteReviewPage')}>
-            <Text>후기 작성 페이지</Text>
-          </Button>
-          <Button onPress={() => navigation.navigate('TestComponents')}>
-            <Text>공통 컴포넌트 테스트</Text>
-          </Button>
-        </ScrollView>
-      </BottomSheetModalProvider>
-    </SafeAreaView>
+            <Button onPress={() => navigation.navigate('WriteReviewPage')}>
+              <Text>후기 작성 페이지</Text>
+            </Button>
+            <Button onPress={() => navigation.navigate('TestComponents')}>
+              <Text>공통 컴포넌트 테스트</Text>
+            </Button>
+          </ScrollView>
+        </BottomSheetModalProvider>
+      </SafeAreaView>
+    </Fragment>
   );
 };
 
@@ -205,13 +217,12 @@ const Button = styled.TouchableOpacity`
   border: #612fef;
   border-radius: 14px;
   position: relative;
-  z-index:-1;
+  z-index: -1;
 `;
 
 const ButtonText = styled.Text`
   color: #612fef;
   font-weight: bold;
 `;
-
 
 export default HomeScreen;

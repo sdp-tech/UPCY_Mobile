@@ -1,4 +1,11 @@
-import { useCallback, useMemo, useRef, useEffect, useState } from 'react';
+import {
+  useCallback,
+  useMemo,
+  useRef,
+  useEffect,
+  useState,
+  Fragment,
+} from 'react';
 import { Filter14M } from '../../styles/GlobalText';
 import {
   Text,
@@ -7,6 +14,7 @@ import {
   TouchableOpacity,
   Dimensions,
   ScrollView,
+  SafeAreaView,
 } from 'react-native';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import CustomHeader from '../../common/CustomHeader';
