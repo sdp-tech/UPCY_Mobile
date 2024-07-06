@@ -30,7 +30,8 @@ const ToggleBox = styled.View`
 
 const ToggleButton = styled.TouchableOpacity<{ pressed: boolean }>`
   display: flex;
-  flex: 1;
+  width: 100px;
+  width: 100px;
   height: 28px;
   padding: 0px 12px;
   justify-content: center;
