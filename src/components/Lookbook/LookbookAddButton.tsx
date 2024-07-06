@@ -1,6 +1,5 @@
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import PlusSquare from '../../assets/lookbook/plusSquare.svg';
-import { Container } from 'react-native-collapsible-tab-view';
 
 const LookbookAddButton = ({ onPress }: { onPress: () => void }) => {
   return (
