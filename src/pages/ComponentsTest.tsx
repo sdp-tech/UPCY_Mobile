@@ -2,6 +2,7 @@ import { SafeAreaView, TouchableOpacity, View } from 'react-native';
 import Dropdown from '../common/Dropdown';
 import { useState } from 'react';
 import { Body16M } from '../styles/GlobalText';
+import LookbookButton from '../components/Lookbook/LookbookButton';
 
 const TestDropdown = ({ index }: { index: number }) => {
   const [value, setValue] = useState<string | undefined>(undefined);
@@ -24,9 +25,7 @@ export default function ComponentsTest() {
     <SafeAreaView style={{ flex: 1 }}>
       <View style={{ flex: 1 }}>
         <Body16M>테스트용 페이지</Body16M>
-        <TestDropdown index={4} />
-        <Body16M>테스트용 페이지</Body16M>
-        <TestDropdown index={3} />
+        <LookbookButton />
       </View>
     </SafeAreaView>
   );
