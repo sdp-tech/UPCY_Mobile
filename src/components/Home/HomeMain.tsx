@@ -1,4 +1,11 @@
-import { useCallback, useMemo, useRef, useEffect, useState } from 'react';
+import {
+  useCallback,
+  useMemo,
+  useRef,
+  useEffect,
+  useState,
+  Fragment,
+} from 'react';
 import { Filter14M } from '../../styles/GlobalText';
 import {
   Text,
@@ -7,6 +14,7 @@ import {
   TouchableOpacity,
   Dimensions,
   ScrollView,
+  SafeAreaView,
 } from 'react-native';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import CustomHeader from '../../common/CustomHeader';
@@ -111,7 +119,7 @@ const HomeTabView = ({
         <CategoryBox>
           <View>
             <CategoryButton onPress={() => setModalOpen(true)}>
-              <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
+              <Text style={{ fontSize: 14, fontWeight: '500', color: '#222' }}>
                 스타일
               </Text>
               <CategoryDownButton />
@@ -123,7 +131,7 @@ const HomeTabView = ({
         <CategoryBox>
           <View>
             <CategoryButton onPress={() => setModalOpen(true)}>
-              <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
+              <Text style={{ fontSize: 14, fontWeight: '500', color: '#222' }}>
                 스타일
               </Text>
               <CategoryDownButton />
