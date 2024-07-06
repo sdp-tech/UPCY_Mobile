@@ -119,7 +119,7 @@ const HomeTabView = ({
         <CategoryBox>
           <View>
             <CategoryButton onPress={() => setModalOpen(true)}>
-              <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
+              <Text style={{ fontSize: 14, fontWeight: '500', color: '#222' }}>
                 스타일
               </Text>
               <CategoryDownButton />
@@ -131,7 +131,7 @@ const HomeTabView = ({
         <CategoryBox>
           <View>
             <CategoryButton onPress={() => setModalOpen(true)}>
-              <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }}>
+              <Text style={{ fontSize: 14, fontWeight: '500', color: '#222' }}>
                 스타일
               </Text>
               <CategoryDownButton />

@@ -78,11 +78,6 @@ export default function PortfolioWrite({
         }}
       />
       <CustomScrollView minHeight={1400}>
-        {/* <ImageCarousel
-          images={images}
-          setFormImages={newImages => setImages([...newImages])}
-          max={4}></ImageCarousel> */}
-
         <TouchableOpacity
           style={{
             width: '100%',
