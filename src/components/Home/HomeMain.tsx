@@ -108,7 +108,6 @@ const HomeTabView = ({
   return (
     <>
       {selectedTab === 'Goods' && (
-        
           <CategoryBox>
             <View>
             <CategoryButton onPress = {() => setModalOpen(true)}>
@@ -119,11 +118,10 @@ const HomeTabView = ({
             </CategoryButton>
             </View>
           </CategoryBox>
-        
            )}
       {selectedTab === 'Market' && (
-            <CategoryBox>
-            <View>
+        <CategoryBox>
+        <View>
             <CategoryButton onPress = {() => setModalOpen(true)}>
               <Text style={{ fontSize: 14, fontWeight: '500', color: '222' }} >
                 스타일
