@@ -1,7 +1,11 @@
 import { SafeAreaView, TouchableOpacity, View } from 'react-native';
 import Dropdown from '../common/Dropdown';
 import { useState } from 'react';
-import { Body16M } from '../styles/GlobalText';
+import { Body16M, Title20B } from '../styles/GlobalText';
+import LookbookButton from '../components/Lookbook/LookbookButton';
+import LookbookAddButton from '../components/Lookbook/LookbookAddButton';
+import TextToggle from '../common/TextToggle';
+import Toggle from '../common/Toggle';
 
 const TestDropdown = ({ index }: { index: number }) => {
   const [value, setValue] = useState<string | undefined>(undefined);
@@ -19,14 +23,19 @@ const TestDropdown = ({ index }: { index: number }) => {
   );
 };
 
+const TestToggle = () => {
+  const [isOn, setIsOn] = useState(true);
+  return <Toggle isOn={isOn} setIsOn={setIsOn} />;
+};
+
 export default function ComponentsTest() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <View style={{ flex: 1 }}>
-        <Body16M>테스트용 페이지</Body16M>
-        <TestDropdown index={4} />
-        <Body16M>테스트용 페이지</Body16M>
-        <TestDropdown index={3} />
+      <View style={{ flex: 1, padding: 20 }}>
+        <Title20B>룩북 컴포넌트</Title20B>
+        <LookbookButton />
+        <LookbookAddButton onPress={() => {}} />
+        <TestToggle />
       </View>
     </SafeAreaView>
   );
