@@ -97,11 +97,26 @@ export default function BasicForm({ navigation, route }: FormProps) {
     d: false,
   });
   const [checkPw, setCheckPw] = useState('');
-  const [domainOpen, setDomainOpen] = useState(false);
+  const [invalidPw, setInvalidPw] = useState<undefined | boolean>(undefined);
   const [modalOpen, setModalOpen] = useState(false);
   const [splash, setSplash] = useState(false);
 
   const request = Request();
+  const passwordRegExp = new RegExp(
+    '^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$',
+  );
+
+  const passwordValidation = (callback: () => void) => {
+    if (passwordRegExp.exec(form.password)) {
+      callback();
+    } else {
+      Alert.alert('비밀번호가 올바르지 않습니다.');
+      setForm(prev => {
+        return { ...prev, password: '' };
+      });
+      setCheckPw('');
+    }
+  };
 
   const handleSubmit = async () => {
     const params = {
@@ -199,11 +214,8 @@ export default function BasicForm({ navigation, route }: FormProps) {
                   style={{ height: 44, marginTop: 8 }}
                   secure={true}
                   caption={{
-                    none: '비밀번호 조건',
-                    invalid:
-                      form.password !== '' &&
-                      form.password.length < 7 &&
-                      '비밀번호가 올바르지 않습니다.',
+                    default:
+                      '숫자, 영문, 특수문자를 하나 이상 포함해 8자 이상 16자 이하로 설정해 주세요.',
                   }}
                 />
 
@@ -303,7 +315,7 @@ export default function BasicForm({ navigation, route }: FormProps) {
                   }
                   value="다음"
                   pressed={false}
-                  onPress={handleSubmit}
+                  onPress={() => passwordValidation(handleSubmit)}
                   style={{
                     width: '75%',
                     alignSelf: 'center',
