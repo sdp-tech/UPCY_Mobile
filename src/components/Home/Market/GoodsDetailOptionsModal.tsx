@@ -7,18 +7,43 @@ import React, {
   useRef,
 } from 'react';
 import { View, Text, StyleSheet, Button, Dimensions } from 'react-native';
+import styled from 'styled-components/native';
 import {
   BottomSheetModal,
   BottomSheetBackdrop,
   BottomSheetFlatList,
   BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet';
-import { Body16M, Title20B } from '../../../styles/GlobalText';
+import { Body16M, Subtitle16B, Filter11B, Filter14B} from '../../../styles/GlobalText';
 import Select from '../../../assets/common/Select.svg';
 import Unselect from '../../../assets/common/Unselect.svg';
+import Dot from '../../../assets/common/Dot.svg';
 import { PURPLE } from '../../../styles/GlobalColor';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import BottomButton from '../../../common/BottomButton';
+
+const screenWidth = Dimensions.get('window').width;
+
+const StyleBox = styled.View`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  align-content: flex-start;
+  gap: 12px;
+  padding: 0 {(screenWidth-324)/2}px;
+  flex-wrap: wrap;
+`
+//padding 계산 후 왼쪽 정렬
+const StyleButton = styled.TouchableOpacity<{pressed:boolean}>`
+  display: flex;
+  padding: 6px 16px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border-radius: 12px;
+  border: 1px solid #612FEF;
+`
 
 interface ModalProps {
   open: boolean;
@@ -48,7 +73,7 @@ export default function DetailModal({
   );
 
   // variables
-  const snapPoints = useMemo(() => ['85%'], []);
+  const snapPoints = useMemo(() => ['35%'], []);
   const { width } = Dimensions.get('screen');
 
   const regionList = [
@@ -107,22 +132,47 @@ export default function DetailModal({
       >
       
       <View style={styles.selectItem}>
-        <Title20B>지역을 선택해 주세요.</Title20B>
+        <Subtitle16B>스타일</Subtitle16B>
+        <View style = {styles.rightSection}>
+        <Dot/>
+        <Filter11B>중복가능</Filter11B>
+        </View>
       </View>
-      <BottomSheetFlatList data={regionList} renderItem={renderItem} />
-      <View style={{ marginHorizontal: width * 0.04 }}>
-        <BottomButton
-          value="적용"
-          pressed={false}
-          onPress={handlePresentModalClose}
-          style={{
-            width: '75%',
-            alignSelf: 'center',
-            marginTop: 10,
-            marginBottom: 30,
-          }}
-        />
-      </View>
+      <StyleBox>
+        <StyleButton>
+          <Filter14B>빈티지</Filter14B>
+        </StyleButton>
+        <StyleButton>
+          <Filter14B>미니멀</Filter14B>
+        </StyleButton>
+        <StyleButton>
+          <Filter14B>캐주얼</Filter14B>
+        </StyleButton>
+        <StyleButton>
+          <Filter14B>페미닌</Filter14B>
+        </StyleButton>
+        <StyleButton>
+          <Filter14B>글램</Filter14B>
+        </StyleButton>
+        <StyleButton>
+          <Filter14B>스트릿</Filter14B>
+        </StyleButton>
+        <StyleButton>
+          <Filter14B>키치</Filter14B>
+        </StyleButton>
+        <StyleButton>
+          <Filter14B>스포티</Filter14B>
+        </StyleButton>
+        <StyleButton>
+          <Filter14B>걸리시</Filter14B>
+        </StyleButton>
+        <StyleButton>
+          <Filter14B>홈웨어</Filter14B>
+        </StyleButton>
+        <StyleButton>
+          <Filter14B>+</Filter14B>
+        </StyleButton>
+      </StyleBox>
     </BottomSheetModal>
   );
 }
@@ -146,9 +196,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     
   },
+  rightSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   modalContainer: {
     flex: 1,
     justifyContent: 'flex-end', // 맨 아래로 정렬
     margin: 0, // 기본 마진 제거
   },
 });
+
+

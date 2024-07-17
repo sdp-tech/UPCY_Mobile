@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef, useEffect, useState } from 'react';
-import { Filter14M } from '../../styles/GlobalText';
+import { Filter14M, Filter11B, Title20B } from '../../styles/GlobalText';
 import {
   Text,
   View,
@@ -18,7 +18,7 @@ import CategoryDownButton from '../../assets/common/CategoryDownButton.svg';
 import styled from 'styled-components/native';
 import { PURPLE } from '../../styles/GlobalColor';
 import DetailModal from './Market/GoodsDetailOptionsModal';
-
+import CategoryDropDown from './Market/SortingOptionModal';
 const HomeTabViewBox = styled.View`
   display: flex;
   flex-direction: row;
@@ -94,9 +94,6 @@ const HomeTabView = ({
   onTabChange,
   selectedTab,
 }: HomeTabViewProps) => {
-  const [selectedTabView, setSelectedTabView] = useState<
-    'all' | 'outer' | 'top' | 'bottom' | 'bag' | 'hat' | 'accessories'
-  >('all');
   const [form, setForm] = useState<SignupProps>({
     mail: '',
     domain: '',
@@ -118,6 +115,7 @@ const HomeTabView = ({
             </CategoryButton>
             </View>
           </CategoryBox>
+          
            )}
       {selectedTab === 'Market' && (
         <CategoryBox>
@@ -141,8 +139,26 @@ const HomeTabView = ({
             })
           }
           />
+          
     </>
   );
 };
 
 export default HomeTabView;
+
+const styles = StyleSheet.create({
+  selectItem: {
+    top: 0,
+    left: 0,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    height: 60,
+    paddingHorizontal: 15,
+  },
+  rightSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+});
