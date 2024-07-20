@@ -1,5 +1,5 @@
 import { Text } from 'react-native';
-import { BLACK } from './GlobalColor';
+import { BLACK,White } from './GlobalColor';
 import { Children } from 'react';
 
 export const Title20B = ({ children, style }: any) => {
@@ -232,5 +232,31 @@ export const Upcymall12M = ({ children, style }: any) => {
       }}>
       {children}
     </Text>
-  );
-};
+  )
+}
+
+export const Filter11B = ({ children, style }: any) => {
+  return (
+    <Text style={{
+      fontSize: 11,
+      fontWeight: '700',
+      color: '#612FEF',
+      ...style
+    }}>
+      {children}
+    </Text>
+  )
+}
+
+export const Filter14B = ({ children, style }: any) => {
+  return (
+    <Text style={{
+      color: BLACK,
+      fontSize: 14,
+      fontWeight: '700',
+      ...style
+    }}>
+      {children}
+    </Text>
+  )
+}

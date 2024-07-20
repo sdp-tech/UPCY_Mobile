@@ -1,11 +1,4 @@
-import {
-  useCallback,
-  useMemo,
-  useRef,
-  useEffect,
-  useState,
-  Fragment,
-} from 'react';
+import { useCallback, useMemo, useRef, useEffect, useState } from 'react';
 import { Filter14M } from '../../styles/GlobalText';
 import {
   Text,
@@ -26,6 +19,8 @@ import CategoryDownButton from '../../assets/common/CategoryDownButton.svg';
 import styled from 'styled-components/native';
 import { PURPLE } from '../../styles/GlobalColor';
 import DetailModal from './Market/GoodsDetailOptionsModal';
+import CategoryDropDown from './Market/SortingOptionModal';
+import DropDown from '../../assets/common/DropDown.svg';
 
 const HomeTabViewBox = styled.View`
   display: flex;
@@ -38,7 +33,6 @@ const HomeTabViewButton = styled.TouchableOpacity<{ pressed: boolean }>`
   display: flex;
   flex-direction: row;
   width: 72px;
-  /* padding: 6px; */
   justify-content: center;
   align-items: center;
   gap: 4px;
@@ -48,10 +42,10 @@ const HomeTabViewButton = styled.TouchableOpacity<{ pressed: boolean }>`
 const CategoryBox = styled.View`
   display: flex;
   flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
   height: 52px;
   padding: 12px 16px;
-  align-items: flex-start;
-  gap: 12px;
   background: #fff;
 `;
 
@@ -66,6 +60,11 @@ const CategoryButton = styled.TouchableOpacity<{ pressed: boolean }>`
   border-radius: 12px;
   border-width: 1px;
   border-color: #612fef;
+  background-color: ${(props) => (props.pressed ? '#612FEF' : '#FFFFFF')};
+`;
+
+const CategoryButtonText = styled.Text<{ pressed: boolean }>`
+  color: ${(props) => (props.pressed ? '#FFFFFF' : '#222222')};
 `;
 
 interface SignupProps {
@@ -73,7 +72,7 @@ interface SignupProps {
   domain: string;
   password: string;
   region: string;
-} // 의미 없음
+}// 의미 없음
 
 interface HomeTabViewProps {
   onSearch: () => void;
@@ -102,9 +101,6 @@ const HomeTabView = ({
   onTabChange,
   selectedTab,
 }: HomeTabViewProps) => {
-  const [selectedTabView, setSelectedTabView] = useState<
-    'all' | 'outer' | 'top' | 'bottom' | 'bag' | 'hat' | 'accessories'
-  >('all');
   const [form, setForm] = useState<SignupProps>({
     mail: '',
     domain: '',
@@ -112,33 +108,51 @@ const HomeTabView = ({
     region: '',
   });
   const [modalOpen, setModalOpen] = useState(false);
-  //글자 간격 수정 필요!
+  const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
+  const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
+  const [selectedOption, setSelectedOption] = useState<string>('추천순');
+
+  const isStyleSelected = selectedStyles.length > 0;
+
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
+
+  const selectOption = (option: string) => {
+    setSelectedOption(option);
+    setDropdownOpen(false);
+  };
+
   return (
     <>
-      {selectedTab === 'Goods' && (
-        <CategoryBox>
-          <View>
-            <CategoryButton onPress={() => setModalOpen(true)}>
-              <Text style={{ fontSize: 14, fontWeight: '500', color: '#222' }}>
-                스타일
-              </Text>
-              <CategoryDownButton />
-            </CategoryButton>
-          </View>
-        </CategoryBox>
-      )}
-      {selectedTab === 'Market' && (
-        <CategoryBox>
-          <View>
-            <CategoryButton onPress={() => setModalOpen(true)}>
-              <Text style={{ fontSize: 14, fontWeight: '500', color: '#222' }}>
-                스타일
-              </Text>
-              <CategoryDownButton />
-            </CategoryButton>
-          </View>
-        </CategoryBox>
-      )}
+      <CategoryBox>
+        <View>
+          <CategoryButton pressed={isStyleSelected} onPress={() => setModalOpen(true)}>
+            <CategoryButtonText pressed={isStyleSelected}>
+              스타일
+            </CategoryButtonText>
+            <CategoryDownButton />
+          </CategoryButton>
+        </View>
+        <View style={{ flex: 1 }}>
+        </View>
+        <View style={styles.dropdownContainer}>
+          <TouchableOpacity onPress={toggleDropdown} style={styles.dropdownButton}>
+            <Text style={styles.dropdownButtonText}>{selectedOption}</Text>
+          </TouchableOpacity>
+          {dropdownOpen && (
+            <View style={styles.dropdownMenu}>
+              {['추천순', '인기순', '가격순', '최신순', '판매순'].map(option => (
+                <TouchableOpacity key={option} onPress={() => selectOption(option)} style={styles.dropdownOption}>
+                  <Text style={styles.dropdownOptionText}>{option}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            
+          )}
+        </View>
+        <DropDown/>
+      </CategoryBox>
       <DetailModal
         open={modalOpen}
         setOpen={setModalOpen}
@@ -148,9 +162,58 @@ const HomeTabView = ({
             return { ...prev, region: text };
           })
         }
+        selectedStyles={selectedStyles}
+        setSelectedStyles={setSelectedStyles}
       />
     </>
   );
 };
 
 export default HomeTabView;
+
+const styles = StyleSheet.create({
+  selectItem: {
+    top: 0,
+    left: 0,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    height: 60,
+    paddingHorizontal: 15,
+  },
+  rightSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  dropdownContainer: {
+    position: 'relative',
+  },
+  dropdownButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  dropdownButtonText: {
+    fontSize: 16,
+    marginRight: 5,
+  },
+  dropdownMenu: {
+    position: 'absolute',
+    top: 30,
+    right: 0,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 4,
+    zIndex: 1000,
+    width: 100,
+  },
+  dropdownOption: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  dropdownOptionText: {
+    fontSize: 16,
+  },
+});
