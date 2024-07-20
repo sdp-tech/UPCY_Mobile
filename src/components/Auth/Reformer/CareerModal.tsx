@@ -357,7 +357,9 @@ export default function CareerModal({
               <View
                 style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                 <Body16B>증빙자료첨부</Body16B>
-                <Caption11M style={{ color: BLACK2 }}>선택사항</Caption11M>
+                <Caption11M style={{ color: BLACK2 }}>
+                  선택사항 (pdf, 최대 20MB)
+                </Caption11M>
               </View>
               <FileBox
                 data={form.career[index].file}
