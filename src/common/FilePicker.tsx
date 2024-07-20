@@ -1,15 +1,14 @@
-import { ReactNode } from 'react';
-import { TouchableOpacity, ViewStyle } from 'react-native';
+import { Alert, TouchableOpacity, ViewStyle } from 'react-native';
 import {
-  DocumentPickerOptions,
   DocumentPickerResponse,
   pick,
+  types,
+  isCancel,
 } from 'react-native-document-picker';
 
 interface FilePickerProps {
   style?: ViewStyle;
   children?: any;
-  options?: DocumentPickerOptions<'android' | 'ios'>;
   callback: (r: DocumentPickerResponse) => void;
   disabled: boolean;
 }
@@ -17,16 +16,21 @@ interface FilePickerProps {
 const FilePicker = ({
   children,
   style,
-  options,
   callback,
   disabled,
 }: FilePickerProps) => {
+  const MEGABYTE = 1000000;
+
   const handleFile = async () => {
     try {
-      const [selectedFile] = await pick(options);
-      callback(selectedFile);
+      const [selectedFile] = await pick({ type: [types.pdf] });
+      if (selectedFile.size !== null && selectedFile.size > 20 * MEGABYTE) {
+        Alert.alert('크기 제한을 초과하는 파일입니다.');
+      } else {
+        callback(selectedFile);
+      }
     } catch (e: unknown) {
-      console.log(e);
+      if (!isCancel(e)) Alert.alert('파일 업로드에 실패했습니다.');
     }
   };
 

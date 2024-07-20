@@ -1,6 +1,10 @@
 type Styles = '빈티지' | '미니멀' | '캐주얼';
 type Materials = '가죽' | '스웨이드' | '벨벳' | '데님' | '퍼' | '실크' | '울';
-type File = any[];
+interface File {
+  name: string;
+  uri: string;
+}
+export type Files = File[];
 
 export type StyleType = Styles[];
 export type MaterialType = Materials[];
@@ -9,13 +13,13 @@ export type EducType = {
   school: string;
   major: string;
   status: string | undefined;
-  file: File;
+  file: Files;
   // 파일 형식 추가
 };
 
 export type Careers = {
   name: string;
-  file: File;
+  file: Files;
   type: string | undefined;
   team?: string;
   position?: string;
