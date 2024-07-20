@@ -359,7 +359,13 @@ export default function CareerModal({
                 <Body16B>증빙자료첨부</Body16B>
                 <Caption11M style={{ color: BLACK2 }}>선택사항</Caption11M>
               </View>
-              <FileBox data={form.career[index].file} max={1} />
+              <FileBox
+                data={form.career[index].file}
+                setData={r => {
+                  handleContentChange([r], 'file');
+                }}
+                max={1}
+              />
             </View>
 
             <View style={{ marginTop: 'auto' }}>

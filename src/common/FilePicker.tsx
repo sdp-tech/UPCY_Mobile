@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { TouchableOpacity, ViewStyle } from 'react-native';
+import { Alert, TouchableOpacity, ViewStyle } from 'react-native';
 import {
   DocumentPickerOptions,
   DocumentPickerResponse,
@@ -9,7 +9,6 @@ import {
 interface FilePickerProps {
   style?: ViewStyle;
   children?: any;
-  options?: DocumentPickerOptions<'android' | 'ios'>;
   callback: (r: DocumentPickerResponse) => void;
   disabled: boolean;
 }
@@ -17,16 +16,16 @@ interface FilePickerProps {
 const FilePicker = ({
   children,
   style,
-  options,
   callback,
   disabled,
 }: FilePickerProps) => {
   const handleFile = async () => {
     try {
-      const [selectedFile] = await pick(options);
+      const [selectedFile] = await pick();
       callback(selectedFile);
     } catch (e: unknown) {
       console.log(e);
+      Alert.alert('파일 업로드에 실패했습니다.');
     }
   };
 
