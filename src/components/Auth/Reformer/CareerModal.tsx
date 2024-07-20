@@ -92,7 +92,7 @@ export default function CareerModal({
   const handleContentChange = (v: any, t: string) => {
     const prevCareer = form.career;
     prevCareer[index] = { ...prevCareer[index], [t]: v };
-    // console.log(prevCareer[index]);
+    console.log(prevCareer[index]);
     setForm(prev => {
       return { ...prev, career: prevCareer };
     });
@@ -357,9 +357,17 @@ export default function CareerModal({
               <View
                 style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                 <Body16B>증빙자료첨부</Body16B>
-                <Caption11M style={{ color: BLACK2 }}>선택사항</Caption11M>
+                <Caption11M style={{ color: BLACK2 }}>
+                  선택사항 (pdf, 최대 20MB)
+                </Caption11M>
               </View>
-              <FileBox data={form.career[index].file} max={1} />
+              <FileBox
+                data={form.career[index].file}
+                setData={r => {
+                  handleContentChange(r, 'file');
+                }}
+                max={1}
+              />
             </View>
 
             <View style={{ marginTop: 'auto' }}>
