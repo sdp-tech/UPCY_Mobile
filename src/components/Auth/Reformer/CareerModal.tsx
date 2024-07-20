@@ -92,7 +92,7 @@ export default function CareerModal({
   const handleContentChange = (v: any, t: string) => {
     const prevCareer = form.career;
     prevCareer[index] = { ...prevCareer[index], [t]: v };
-    // console.log(prevCareer[index]);
+    console.log(prevCareer[index]);
     setForm(prev => {
       return { ...prev, career: prevCareer };
     });
@@ -362,7 +362,7 @@ export default function CareerModal({
               <FileBox
                 data={form.career[index].file}
                 setData={r => {
-                  handleContentChange([r], 'file');
+                  handleContentChange(r, 'file');
                 }}
                 max={1}
               />
