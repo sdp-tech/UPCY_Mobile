@@ -13,6 +13,7 @@ interface InputViewProps extends InputBoxProps {
   info?: string;
   caption?: {
     none?: false | string;
+    default?: false | string;
     invalid?: false | string;
   };
 }
@@ -72,6 +73,9 @@ const InputView = ({
       />
       {value === '' && caption?.none && (
         <Caption11M style={{ color: GRAY }}>{caption.none}</Caption11M>
+      )}
+      {caption?.default && (
+        <Caption11M style={{ color: GRAY }}>{caption.default}</Caption11M>
       )}
       {caption?.invalid && (
         <Caption11M style={{ color: PURPLE }}>{caption.invalid}</Caption11M>
