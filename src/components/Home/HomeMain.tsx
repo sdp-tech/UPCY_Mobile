@@ -77,8 +77,8 @@ interface SignupProps {
 
 interface HomeTabViewProps {
   onSearch: () => void;
-  onTabChange: (tab: 'Goods' | 'Market') => void;
-  selectedTab: 'Goods' | 'Market';
+  onTabChange: (tab: 'Goods' | 'Market' | 'temp') => void;
+  selectedTab: 'Goods' | 'Market' | 'temp';
 }
 
 interface HomeTabViewButtonParams {

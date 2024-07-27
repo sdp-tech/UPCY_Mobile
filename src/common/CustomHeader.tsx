@@ -72,7 +72,7 @@ const BannerPageNumber = styled.Text`
 interface CustomHeaderProps {
   onSearch: () => void;
   onAlarm?: () => void;
-  onTabChange: (tab: 'Goods'| 'Market') => void;
+  onTabChange: (tab: 'Goods'| 'Market' | 'temp') => void;
 }
 
 interface ToggleButtonParams {
@@ -91,7 +91,7 @@ const Toggletag = ({ pressable }: ToggleButtonParams) => {
 };
 
 const CustomHeader = ({ onSearch, onAlarm, onTabChange }: CustomHeaderProps) => {
-  const [selectedTab, setSelectedTab] = useState<'Goods' | 'Market'>('Goods');
+  const [selectedTab, setSelectedTab] = useState<'Goods' | 'Market' | 'temp'>('Goods');
  
   useEffect(() =>{
     setSelectedTab(selectedTab);
@@ -121,6 +121,13 @@ const CustomHeader = ({ onSearch, onAlarm, onTabChange }: CustomHeaderProps) => 
           onPress={() => {setSelectedTab('Market'); onTabChange('Market');}}>
           <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '700', marginRight: 5 }}>
             리폼러
+          </Text>
+        </ToggleButton>
+        <ToggleButton
+          pressed={selectedTab === 'temp'}
+          onPress={() => {setSelectedTab('temp'); onTabChange('temp');}}>
+          <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '700', marginRight: 5 }}>
+            임시 버튼
           </Text>
         </ToggleButton>
       </ToggleBox>

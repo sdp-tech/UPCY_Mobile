@@ -82,7 +82,7 @@ export default function DetailModal({
   );
 
   // variables
-  const snapPoints = useMemo(() => ['70%'], []);
+  const snapPoints = useMemo(() => ['87%'], []);
   const { width } = Dimensions.get('screen');
 
   const styleOptions = [

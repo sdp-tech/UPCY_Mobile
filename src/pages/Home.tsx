@@ -121,7 +121,7 @@ const HomeScreen = ({
 const HomeMainScreen = ({
   navigation,
 }: StackScreenProps<HomeStackParams, 'Home'>) => {
-  const [selectedTab, setSelectedTab] = useState<'Goods' | 'Market'>('Goods');
+  const [selectedTab, setSelectedTab] = useState<'Goods' | 'Market' | 'temp'>('Goods');
 
   const handlePopupButtonPress = () => {
     Alert.alert(
@@ -145,7 +145,7 @@ const HomeMainScreen = ({
     );
   };
 
-  const handleTabChange = (tab: 'Goods' | 'Market') => {
+  const handleTabChange = (tab: 'Goods' | 'Market' | 'temp') => {
     setSelectedTab(tab);
   };
   return (
@@ -174,6 +174,49 @@ const HomeMainScreen = ({
         </ScrollView>
           )}
           {selectedTab === 'Market' &&(
+          <ScrollView>
+            <Button onPress={handlePopupButtonPress}>
+              <ButtonText>팝업 표시</ButtonText>
+            </Button>
+            <Button onPress={() => navigation.navigate('Market')}>
+              <Text>마켓</Text>
+            </Button>
+            <Button onPress={() => navigation.navigate('QuotationForm')}>
+              <Text>견적서</Text>
+            </Button>
+            <Button onPress={() => navigation.navigate('QuotationPage')}>
+              <Text>견적서 확인</Text>
+            </Button>
+            <Button
+              onPress={() => navigation.navigate('ServiceDetailPage', {})}>
+              <Text>서비스 디테일</Text>
+            </Button>
+            <Button
+              onPress={() =>
+                navigation.navigate('ServiceRegistrationPage', {})
+              }>
+              <Text>서비스등록</Text>
+            </Button>
+            <Button onPress={() => navigation.navigate('GoodsDetailPage')}>
+              <Text>상품 디테일</Text>
+            </Button>
+            <Button
+              onPress={() => navigation.navigate('GoodsRegistrationPage')}>
+              <Text>상품등록</Text>
+            </Button>
+            <Button onPress={() => navigation.navigate('AddPortfolio')}>
+              <Text>포트폴리오 등록</Text>
+            </Button>
+
+            <Button onPress={() => navigation.navigate('WriteReviewPage')}>
+              <Text>후기 작성 페이지</Text>
+            </Button>
+            <Button onPress={() => navigation.navigate('TestComponents')}>
+              <Text>공통 컴포넌트 테스트</Text>
+            </Button>
+          </ScrollView>
+          )}
+          {selectedTab === 'temp' &&(
           <ScrollView>
             <Button onPress={handlePopupButtonPress}>
               <ButtonText>팝업 표시</ButtonText>
