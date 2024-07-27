@@ -148,7 +148,7 @@ const HomeTabView = ({
                 </TouchableOpacity>
               ))}
             </View>
-            
+
           )}
         </View>
         <DropDown/>
