@@ -23,6 +23,7 @@ import ServiceDetailPageScreen from '../components/Home/Market/ServiceDetailPage
 import GoodsDetailPageScreen from '../components/Home/Market/GoodsDetailPage';
 import GoodsRegistrationPage from '../components/Home/Market/GoodsRegistration';
 import TempStorageEdit from '../components/Home/Market/TempStorageEdit';
+import ReformerMarket from '../components/Home/Market/ReformerMarket';
 import WriteDetailPage from '../components/Home/Market/WriteDetailPage';
 import AddPortfolio from '../components/Home/Portfolio/AddPortfolio';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
@@ -59,6 +60,7 @@ export type HomeStackParams = {
   Rejection: undefined;
   SentRejection: undefined;
   WriteReviewPage: undefined;
+  ReformerMarket: undefined;
 
   TestComponents: undefined;
 };
@@ -114,6 +116,7 @@ const HomeScreen = ({
       <HomeStack.Screen name="SentRejection" component={SentRejection} />
       <HomeStack.Screen name="WriteReviewPage" component={WriteReviewPage} />
       <HomeStack.Screen name="TestComponents" component={ComponentsTest} />
+      <HomeStack.Screen name="ReformerMarket" component={ReformerMarket} />
     </HomeStack.Navigator>
   );
 };
@@ -154,16 +157,22 @@ const HomeMainScreen = ({
       <SafeAreaView style={{ flex: 1 }}>
         <CustomHeader onSearch={() => {}} onTabChange={handleTabChange} />
         <BottomSheetModalProvider>
-          <View>
+        <View>
+          {selectedTab === 'Goods' ? (
             <HomeTabView
-              onSearch={() => {}}
-              selectedTab={selectedTab}
-              onTabChange={handleTabChange}
+             onSearch={() => {}}
+             selectedTab={selectedTab}
+             onTabChange={handleTabChange}
             />
+          ) : (
+            <ReformerMarket
+            />
+          )}
           </View>
-          <ScrollView>
+          {selectedTab === 'Goods' && (
+      <ScrollView>
             <Button onPress={handlePopupButtonPress}>
-              <ButtonText>팝업 표시</ButtonText>
+              <Text>팝업 표시</Text>
             </Button>
             <Button onPress={() => navigation.navigate('Market')}>
               <Text>마켓</Text>
@@ -202,6 +211,8 @@ const HomeMainScreen = ({
               <Text>공통 컴포넌트 테스트</Text>
             </Button>
           </ScrollView>
+        )}
+
         </BottomSheetModalProvider>
       </SafeAreaView>
     </Fragment>
@@ -220,9 +231,6 @@ const Button = styled.TouchableOpacity`
   z-index: -1;
 `;
 
-const ButtonText = styled.Text`
-  color: #612fef;
-  font-weight: bold;
-`;
+
 
 export default HomeScreen;
