@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { SafeAreaView, ScrollView, View, FlatList, Text, TouchableOpacity, Image, ImageBackground } from 'react-native';
+import { SafeAreaView, ScrollView, View, FlatList, Text, TouchableOpacity, Image, ImageBackground, StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
 import { Tabs, MaterialTabBar } from 'react-native-collapsible-tab-view';
-import { getStatusBarHeight } from 'react-native-safearea-height';
 import { Title20B, Body14R, Caption11M } from '../../../styles/GlobalText.tsx';
 import { BLACK, BLACK2 } from '../../../styles/GlobalColor.tsx';
 
@@ -27,14 +26,18 @@ import ScrollToTopButton from '../../../common/ScrollToTopButtonFlat.tsx';
 import ScrollTopButton from '../../../common/ScrollTopButton.tsx';
 import ReviewComment from '../components/ReviewComment.tsx';
 
-const ProfileSection = ({ navigation }: { navigation: any }) => {
+const ProfileSection = ({ navigation, goToReviewTab }: { navigation: any, goToReviewTab: () => void }) => {
+  const { hideBottomBar, showBottomBar } = useBottomBar();
 
-  const filter = [
-    { id: 1, tag: '스포티' }, { id: 2, tag: '영캐주얼' }, { id: 3, tag: '깔끔' }
-  ]
-  const tagList = filter.map(item => item.tag);
+  useEffect(() => {
+    return () => hideBottomBar();
+  }, []);
+
   const markerName = '이하늘의 마켓';
   const selfIntroduce = '안녕하세요 리폼러 이하늘입니다! 저는 업씨대학교 패션디자인학과에 수석입학했고요 짱짱 천재에요'
+  const rating = 4.5;
+  const reviewCount = 100;
+
   return (
     <View style={{ alignItems: 'center' }}>
       <DetailScreenHeader
@@ -61,35 +64,40 @@ const ProfileSection = ({ navigation }: { navigation: any }) => {
           <Caption11M style={{ color: BLACK2, marginLeft: 0 }}></Caption11M>
         </TouchableOpacity>
       </View>
-      <FlatList
-        horizontal
-        scrollEnabled={false}
-        data={tagList}
-        keyExtractor={(index) => index.toString()}
-        renderItem={({ item }) => {
-          return (
-            <ReviewComment value={item} backgroundColor='#612FEF' />
-          )
-        }}
-      />
+      <TouchableOpacity style={styles.ratingContainer} onPress={goToReviewTab}>
+        <Text style={styles.ratingText}>★ {rating}</Text>
+        <Text style={styles.reviewCountText}>({reviewCount})</Text>
+        <Text style={styles.arrow}>></Text>
+      </TouchableOpacity>
     </View>
-  )
-}
+  );
+};
 
 const MarketTabView = ({ navigation, route }: StackScreenProps<HomeStackParams, 'Market'>) => {
-
+  const { hideBottomBar, showBottomBar } = useBottomBar();
+  const tabsRef = useRef(null);
   const [routes] = useState([
-    { key: 'info', title: '정보' },
+    { key: 'info', title: '프로필' },
     { key: 'service', title: '서비스' },
-    { key: 'review', title: '리뷰' }
+    { key: 'review', title: '룩북' }
   ]);
   const flatListRef = useRef<FlatList>(null);
   const scrollRef = useRef<ScrollView | null>(null);
 
+  useEffect(() => {
+    hideBottomBar();
+    return () => showBottomBar();
+  }, []);
+
+  const goToReviewTab = () => {
+    tabsRef.current?.setIndex(2); // '리뷰' 탭으로 이동 (인덱스 2는 '리뷰' 탭의 인덱스)
+  };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
+      <ProfileSection navigation={navigation} goToReviewTab={goToReviewTab} />
       <Tabs.Container
-        renderHeader={props => <ProfileSection navigation={navigation} />}
+        ref={tabsRef}
         headerContainerStyle={{
           shadowOpacity: 0,
           borderBottomWidth: 1,
@@ -113,40 +121,63 @@ const MarketTabView = ({ navigation, route }: StackScreenProps<HomeStackParams, 
           />
         )}
       >
-        {routes.map(route =>
-        (<Tabs.Tab key={route.key} name={route.title}>
-          {route.key === 'info' && <InfoPage />}
-          {route.key === 'service' &&
-            <View>
-              <ServicePage scrollViewRef={scrollRef} />
-              <ScrollTopButton scrollViewRef={scrollRef} />
-            </View>
-          }
-          {route.key === 'review' &&
-            <View>
-              <ReviewPage flatListRef={flatListRef} />
-              <ScrollToTopButton flatListRef={flatListRef} />
-            </View>}
-        </Tabs.Tab>)
-        )}
+        {routes.map(route => (
+          <Tabs.Tab key={route.key} name={route.title}>
+            {route.key === 'info' && <InfoPage />}
+            {route.key === 'service' &&
+              <View>
+                <ServicePage scrollViewRef={scrollRef} />
+                <ScrollTopButton scrollViewRef={scrollRef} />
+              </View>
+            }
+            {route.key === 'review' &&
+              <View>
+                <ReviewPage flatListRef={flatListRef} />
+                <ScrollToTopButton flatListRef={flatListRef} />
+              </View>}
+          </Tabs.Tab>
+        ))}
       </Tabs.Container>
       <Footer />
     </SafeAreaView>
-  )
-}
+  );
+};
 
 const BackButton = styled.TouchableOpacity`
   padding: 10px;
   position: absolute;
   left: 0px;
   z-index: 1;
-`
+`;
 
 const EditButton = styled.TouchableOpacity`
   padding: 10px;
   position: absolute;
   right: 7px;
   z-index: 1;
-`
+`;
+
+const styles = StyleSheet.create({
+  ratingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  ratingText: {
+    color: BLACK,
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  reviewCountText: {
+    color: BLACK,
+    marginLeft: 8,
+    fontSize: 14,
+  },
+  arrow: {
+    color: BLACK,
+    fontSize: 16,
+    marginLeft: 8,
+  },
+});
 
 export default MarketTabView;
