@@ -27,7 +27,7 @@ import ScrollToTopButton from '../../../common/ScrollToTopButtonFlat.tsx';
 import ScrollTopButton from '../../../common/ScrollTopButton.tsx';
 import ReviewComment from '../components/ReviewComment.tsx';
 
-const ProfileSection = ({ navigation }: { navigation: any }) => {
+export const ProfileSection = ({ navigation }: { navigation: any }) => {
 
   const filter = [
     { id: 1, tag: '스포티' }, { id: 2, tag: '영캐주얼' }, { id: 3, tag: '깔끔' }
