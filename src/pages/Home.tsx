@@ -161,6 +161,19 @@ const HomeMainScreen = ({
               onTabChange={handleTabChange}
             />
           </View>
+          
+          {selectedTab === 'Goods' &&(
+            <ScrollView>
+          <Button onPress={() => navigation.navigate('Market')}>
+            <Text>마켓</Text>
+          </Button>
+          <Button
+          onPress={() => navigation.navigate('ServiceDetailPage', {})}>
+          <Text>서비스 디테일</Text>
+        </Button>
+        </ScrollView>
+          )}
+          {selectedTab === 'Market' &&(
           <ScrollView>
             <Button onPress={handlePopupButtonPress}>
               <ButtonText>팝업 표시</ButtonText>
@@ -202,6 +215,7 @@ const HomeMainScreen = ({
               <Text>공통 컴포넌트 테스트</Text>
             </Button>
           </ScrollView>
+          )}
         </BottomSheetModalProvider>
       </SafeAreaView>
     </Fragment>
