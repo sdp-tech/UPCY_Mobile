@@ -82,7 +82,7 @@ export default function DetailModal({
   );
 
   // variables
-  const snapPoints = useMemo(() => ['35%'], []);
+  const snapPoints = useMemo(() => ['70%'], []);
   const { width } = Dimensions.get('screen');
 
   const styleOptions = [
@@ -230,6 +230,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalContainer: {
+    zIndex: 1001,
     flex: 1,
     justifyContent: 'flex-end', 
     margin: 0, 

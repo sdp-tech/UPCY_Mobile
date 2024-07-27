@@ -200,6 +200,7 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     lineHeight: 24,
     marginRight: 5,
+    color: '#000',
   },
   dropdownMenu: {
     alignItems: 'center',

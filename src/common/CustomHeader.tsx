@@ -113,7 +113,7 @@ const CustomHeader = ({ onSearch, onAlarm, onTabChange }: CustomHeaderProps) => 
           pressed={selectedTab === 'Goods'}
           onPress={() => {setSelectedTab('Goods'); onTabChange('Goods');}}>
           <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '700', marginRight: 5 }}>
-            업씨몰
+            서비스
           </Text>
         </ToggleButton>
         <ToggleButton
