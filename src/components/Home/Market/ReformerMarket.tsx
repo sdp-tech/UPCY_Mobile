@@ -30,12 +30,12 @@ const ReformerMarket = ({ navigation }) => {
       <View style={styles.reformerList,{flex:1}}>
 
         <ReformerCard name="리폼러1" rating="★ 4.6 (80)" tag="빈티지" />
-        <ReformerCard name="리폼러2" rating="★ 4.7 (90)" tag="모던" />
-        <ReformerCard name="리폼러3" rating="★ 4.5 (70)" tag="클래식" />
-        <ReformerCard name="리폼러4" rating="★ 4.8 (100)" tag="컨템포러리" />
+        <ReformerCard name="리폼러2" rating="★ 4.7 (90)" tag="캐주얼" />
+        <ReformerCard name="리폼러3" rating="★ 4.5 (70)" tag="홈웨어" />
+        <ReformerCard name="리폼러4" rating="★ 4.8 (100)" tag="스포티" />
       </View>
     </ScrollView>
-  );
+  );git
 };
 
 const ReformerCard = ({ name, rating, tag }) => {
