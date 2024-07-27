@@ -31,7 +31,6 @@ const ToggleBox = styled.View`
 const ToggleButton = styled.TouchableOpacity<{ pressed: boolean }>`
   display: flex;
   flex: 1;
-
   height: 28px;
   padding: 0px 12px;
   justify-content: center;
@@ -41,12 +40,33 @@ const ToggleButton = styled.TouchableOpacity<{ pressed: boolean }>`
   border-color: ${(props : {pressed: boolean})  => (props.pressed ? '#FFFFFF' : 'transparent')};
 `;
 
-const AdvertisementBox = styled.View`
-  width: ${screenWidth}px;
-  height: 128px;
-  align-items: center;
-  justify-content: center;
-  padding:10px;
+const BannerText = styled.View`
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  padding: 5px;
+`;
+
+const BannerTitle = styled.Text`
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+  line-height:24px;
+`;
+
+const BannerSubtitle = styled.Text`
+  color: white;
+  font-size: 14px;
+  font-weight: 400;
+  line-height:24px;
+`;
+
+const BannerPageNumber = styled.Text`
+  position: absolute;
+  bottom: 10px;
+  right: 20px;
+  color: white;
+  font-size: 14px;
 `;
 
 interface CustomHeaderProps {
@@ -105,7 +125,15 @@ const CustomHeader = ({ onSearch, onAlarm, onTabChange }: CustomHeaderProps) => 
         </ToggleButton>
       </ToggleBox>
       {selectedTab === 'Goods' && (
-        <Advertisment width = {screenWidth+10} height={128} preserveAspectRatio="none"/>
+        <View style={{  }}>
+        <Advertisment width={screenWidth + 10} height={128} preserveAspectRatio="none" />
+        <BannerText>
+          <BannerTitle>여행 필수템, 업사이클링 보스턴백</BannerTitle>
+          <BannerSubtitle>매거진에 있는 글 홍보되는 배너 ~</BannerSubtitle>
+
+        </BannerText>
+          <BannerPageNumber>1/10</BannerPageNumber>  
+      </View>
       )}
     </>
   );
