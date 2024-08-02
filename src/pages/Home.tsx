@@ -1,9 +1,9 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState,useRef } from 'react';
 
-import { SafeAreaView, Text, View, StyleSheet, Alert } from 'react-native';
+import { SafeAreaView, Text, View, StyleSheet, Alert, FlatList } from 'react-native';
 import styled from 'styled-components/native';
 import { Filter14M } from '../styles/GlobalText';
-
+import { Tabs, MaterialTabBar } from 'react-native-collapsible-tab-view';
 import {
   StackScreenProps,
   createStackNavigator,
@@ -37,7 +37,14 @@ import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSh
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import ComponentsTest from './ComponentsTest';
 import { PURPLE } from '../styles/GlobalColor';
-
+import { ProfileSection } from '../components/Home/Market/MarketTabView';
+import ServicePage from '../components/Home/Market/ServicePage';
+import ScrollToTopButton from '../common/ScrollToTopButtonFlat';
+import ReviewPage from '../components/Home/Market/ReviewPage';
+import ScrollTopButton from '../common/ScrollTopButton';
+import Footer from '../common/Footer';
+import { BLACK, White } from '../styles/GlobalColor';
+import InfoPage from '../components/Home/Market/InfoPage';
 export type HomeStackParams = {
   Home: undefined;
   Market: undefined;
@@ -121,7 +128,7 @@ const HomeScreen = ({
 const HomeMainScreen = ({
   navigation,
 }: StackScreenProps<HomeStackParams, 'Home'>) => {
-  const [selectedTab, setSelectedTab] = useState<'Goods' | 'Market'>('Goods');
+  const [selectedTab, setSelectedTab] = useState<'Goods' | 'Market' | 'temp'>('Goods');
 
   const handlePopupButtonPress = () => {
     Alert.alert(
@@ -145,9 +152,18 @@ const HomeMainScreen = ({
     );
   };
 
-  const handleTabChange = (tab: 'Goods' | 'Market') => {
+  const handleTabChange = (tab: 'Goods' | 'Market' | 'temp') => {
     setSelectedTab(tab);
   };
+
+  const [routes] = useState([
+    { key: 'info', title: '정보' },
+    { key: 'service', title: '서비스' },
+    { key: 'review', title: '리뷰' }
+  ]);
+  const flatListRef = useRef<FlatList>(null);
+  const scrollRef = useRef<ScrollView | null>(null);
+
   return (
     <Fragment>
       <SafeAreaView style={{ flex: 0, backgroundColor: PURPLE }} />
@@ -161,6 +177,97 @@ const HomeMainScreen = ({
               onTabChange={handleTabChange}
             />
           </View>
+          
+          {selectedTab === 'Goods' &&(
+            <SafeAreaView style={{ flex: 1 }}>
+            <Tabs.Container
+              renderHeader={props => <ProfileSection navigation={navigation} />}
+              headerContainerStyle={{
+                shadowOpacity: 0,
+                borderBottomWidth: 1,
+                borderColor: '#D9D9D9'
+              }}
+              renderTabBar={props => (
+                <MaterialTabBar
+                  {...props}
+                  indicatorStyle={{
+                    backgroundColor: '#BDBDBD',
+                    height: 2
+                  }}
+                  style={{
+                    backgroundColor: 'white',
+                  }}
+                  labelStyle={{
+                    color: BLACK,
+                    fontWeight: '700',
+                    fontSize: 16
+                  }}
+                />
+              )}
+            >
+              {routes.map(route =>
+              (<Tabs.Tab key={route.key} name={route.title}>
+                {route.key === 'info' && <InfoPage />}
+                {route.key === 'service' &&
+                  <View>
+                    <ServicePage scrollViewRef={scrollRef} />
+                    <ScrollTopButton scrollViewRef={scrollRef} />
+                  </View>
+                }
+                {route.key === 'review' &&
+                  <View>
+                    <ReviewPage flatListRef={flatListRef} />
+                    <ScrollToTopButton flatListRef={flatListRef} />
+                  </View>}
+              </Tabs.Tab>)
+              )}
+            </Tabs.Container>
+            <Footer />
+          </SafeAreaView>
+          )}
+          {selectedTab === 'Market' &&(
+          <ScrollView>
+            <Button onPress={handlePopupButtonPress}>
+              <ButtonText>팝업 표시</ButtonText>
+            </Button>
+            <Button onPress={() => navigation.navigate('Market')}>
+              <Text>마켓</Text>
+            </Button>
+            <Button onPress={() => navigation.navigate('QuotationForm')}>
+              <Text>견적서</Text>
+            </Button>
+            <Button onPress={() => navigation.navigate('QuotationPage')}>
+              <Text>견적서 확인</Text>
+            </Button>
+            <Button
+              onPress={() => navigation.navigate('ServiceDetailPage', {})}>
+              <Text>서비스 디테일</Text>
+            </Button>
+            <Button
+              onPress={() =>
+                navigation.navigate('ServiceRegistrationPage', {})
+              }>
+              <Text>서비스등록</Text>
+            </Button>
+            <Button onPress={() => navigation.navigate('GoodsDetailPage')}>
+              <Text>상품 디테일</Text>
+            </Button>
+            <Button
+              onPress={() => navigation.navigate('GoodsRegistrationPage')}>
+              <Text>상품등록</Text>
+            </Button>
+            <Button onPress={() => navigation.navigate('AddPortfolio')}>
+              <Text>포트폴리오 등록</Text>
+            </Button>
+            <Button onPress={() => navigation.navigate('WriteReviewPage')}>
+              <Text>후기 작성 페이지</Text>
+            </Button>
+            <Button onPress={() => navigation.navigate('TestComponents')}>
+              <Text>공통 컴포넌트 테스트</Text>
+            </Button>
+          </ScrollView>
+          )}
+          {selectedTab === 'temp' &&(
           <ScrollView>
             <Button onPress={handlePopupButtonPress}>
               <ButtonText>팝업 표시</ButtonText>
@@ -202,6 +309,7 @@ const HomeMainScreen = ({
               <Text>공통 컴포넌트 테스트</Text>
             </Button>
           </ScrollView>
+          )}
         </BottomSheetModalProvider>
       </SafeAreaView>
     </Fragment>

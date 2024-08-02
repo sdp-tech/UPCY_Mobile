@@ -82,16 +82,8 @@ export default function DetailModal({
   );
 
   // variables
-  const snapPoints = useMemo(() => ['35%'], []);
+  const snapPoints = useMemo(() => ['87%'], []);
   const { width } = Dimensions.get('screen');
-
-  const sortOptions = [
-    '추천순',
-    '인기순',
-    '가격순',
-    '최신순',
-    '판매순',
-  ];
 
   const styleOptions = [
     '빈티지',
@@ -238,6 +230,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalContainer: {
+    zIndex: 1001,
     flex: 1,
     justifyContent: 'flex-end', 
     margin: 0, 
