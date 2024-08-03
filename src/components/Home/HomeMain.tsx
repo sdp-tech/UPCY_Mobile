@@ -40,6 +40,7 @@ const HomeTabViewButton = styled.TouchableOpacity<{ pressed: boolean }>`
 `;
 
 const CategoryBox = styled.View`
+  z-index: 1000;
   display: flex;
   flex-direction: row;
   align-items: flex-start;
@@ -76,8 +77,8 @@ interface SignupProps {
 
 interface HomeTabViewProps {
   onSearch: () => void;
-  onTabChange: (tab: 'Goods' | 'Market') => void;
-  selectedTab: 'Goods' | 'Market';
+  onTabChange: (tab: 'Goods' | 'Market' | 'temp') => void;
+  selectedTab: 'Goods' | 'Market' | 'temp';
 }
 
 interface HomeTabViewButtonParams {
@@ -95,7 +96,6 @@ const HomeTabViewtag = ({ pressable }: HomeTabViewButtonParams) => {
     </HomeTabViewButton>
   );
 };
-
 const HomeTabView = ({
   onSearch,
   onTabChange,
@@ -139,19 +139,20 @@ const HomeTabView = ({
         <View style={styles.dropdownContainer}>
           <TouchableOpacity onPress={toggleDropdown} style={styles.dropdownButton}>
             <Text style={styles.dropdownButtonText}>{selectedOption}</Text>
+            <DropDown/>
           </TouchableOpacity>
           {dropdownOpen && (
             <View style={styles.dropdownMenu}>
               {['추천순', '인기순', '가격순', '최신순', '판매순'].map(option => (
                 <TouchableOpacity key={option} onPress={() => selectOption(option)} style={styles.dropdownOption}>
-                  <Text style={styles.dropdownOptionText}>{option}</Text>
+                  <Text style={selectedOption === option ? styles.dropdownSelectedOptionText : styles.dropdownOptionText}>
+                    {option}
+                  </Text>
                 </TouchableOpacity>
               ))}
             </View>
-            
           )}
         </View>
-        <DropDown/>
       </CategoryBox>
       <DetailModal
         open={modalOpen}
@@ -194,10 +195,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   dropdownButtonText: {
-    fontSize: 16,
+    fontSize: 14,
+    fontStyle: "normal",
+    fontWeight: "400",
+    lineHeight: 24,
     marginRight: 5,
+    color: '#000',
   },
   dropdownMenu: {
+    alignItems: 'center',
     position: 'absolute',
     top: 30,
     right: 0,
@@ -207,13 +213,24 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     zIndex: 1000,
     width: 100,
+    elevation: 5, 
   },
   dropdownOption: {
     padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
+  },
+  dropdownSelectedOptionText: {
+    fontFamily: "Pretendard Variable",
+    fontSize: 14,
+    fontStyle: "normal",
+    fontWeight: "400",
+    lineHeight: 24,
+    color: '#000',
   },
   dropdownOptionText: {
-    fontSize: 16,
+    fontFamily: "Pretendard Variable",
+    fontSize: 14,
+    fontStyle: "normal",
+    fontWeight: "600",
+    lineHeight: 16,
   },
 });

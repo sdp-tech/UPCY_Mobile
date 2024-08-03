@@ -31,7 +31,6 @@ const ToggleBox = styled.View`
 const ToggleButton = styled.TouchableOpacity<{ pressed: boolean }>`
   display: flex;
   flex: 1;
-
   height: 28px;
   padding: 0px 12px;
   justify-content: center;
@@ -41,18 +40,39 @@ const ToggleButton = styled.TouchableOpacity<{ pressed: boolean }>`
   border-color: ${(props : {pressed: boolean})  => (props.pressed ? '#FFFFFF' : 'transparent')};
 `;
 
-const AdvertisementBox = styled.View`
-  width: ${screenWidth}px;
-  height: 128px;
-  align-items: center;
-  justify-content: center;
-  padding:10px;
+const BannerText = styled.View`
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  padding: 5px;
+`;
+
+const BannerTitle = styled.Text`
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+  line-height:24px;
+`;
+
+const BannerSubtitle = styled.Text`
+  color: white;
+  font-size: 14px;
+  font-weight: 400;
+  line-height:24px;
+`;
+
+const BannerPageNumber = styled.Text`
+  position: absolute;
+  bottom: 10px;
+  right: 20px;
+  color: white;
+  font-size: 14px;
 `;
 
 interface CustomHeaderProps {
   onSearch: () => void;
   onAlarm?: () => void;
-  onTabChange: (tab: 'Goods'| 'Market') => void;
+  onTabChange: (tab: 'Goods'| 'Market' | 'temp') => void;
 }
 
 interface ToggleButtonParams {
@@ -71,7 +91,7 @@ const Toggletag = ({ pressable }: ToggleButtonParams) => {
 };
 
 const CustomHeader = ({ onSearch, onAlarm, onTabChange }: CustomHeaderProps) => {
-  const [selectedTab, setSelectedTab] = useState<'Goods' | 'Market'>('Goods');
+  const [selectedTab, setSelectedTab] = useState<'Goods' | 'Market' | 'temp'>('Goods');
  
   useEffect(() =>{
     setSelectedTab(selectedTab);
@@ -93,7 +113,7 @@ const CustomHeader = ({ onSearch, onAlarm, onTabChange }: CustomHeaderProps) => 
           pressed={selectedTab === 'Goods'}
           onPress={() => {setSelectedTab('Goods'); onTabChange('Goods');}}>
           <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '700', marginRight: 5 }}>
-            업씨몰
+            서비스
           </Text>
         </ToggleButton>
         <ToggleButton
@@ -103,9 +123,24 @@ const CustomHeader = ({ onSearch, onAlarm, onTabChange }: CustomHeaderProps) => 
             리폼러
           </Text>
         </ToggleButton>
+        <ToggleButton
+          pressed={selectedTab === 'temp'}
+          onPress={() => {setSelectedTab('temp'); onTabChange('temp');}}>
+          <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '700', marginRight: 5 }}>
+            임시 버튼
+          </Text>
+        </ToggleButton>
       </ToggleBox>
       {selectedTab === 'Goods' && (
-        <Advertisment width = {screenWidth+10} height={128} preserveAspectRatio="none"/>
+        <View style={{  }}>
+        <Advertisment width={screenWidth + 10} height={128} preserveAspectRatio="none" />
+        <BannerText>
+          <BannerTitle>여행 필수템, 업사이클링 보스턴백</BannerTitle>
+          <BannerSubtitle>매거진에 있는 글 홍보되는 배너 ~</BannerSubtitle>
+
+        </BannerText>
+          <BannerPageNumber>1/10</BannerPageNumber>  
+      </View>
       )}
     </>
   );
