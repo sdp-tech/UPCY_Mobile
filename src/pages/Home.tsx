@@ -45,6 +45,7 @@ import ScrollTopButton from '../common/ScrollTopButton';
 import Footer from '../common/Footer';
 import { BLACK, White } from '../styles/GlobalColor';
 import InfoPage from '../components/Home/Market/InfoPage'; import OrderPage from './OrderPage';
+import ReformerMarket from '../components/Home/Market/ReformerMarket';
 
 export type HomeStackParams = {
   Home: undefined;
@@ -68,6 +69,7 @@ export type HomeStackParams = {
   Rejection: undefined;
   SentRejection: undefined;
   WriteReviewPage: undefined;
+  ReformerMarket: undefined;
 
   TestComponents: undefined;
 };
@@ -124,6 +126,7 @@ const HomeScreen = ({
       <HomeStack.Screen name="SentRejection" component={SentRejection} />
       <HomeStack.Screen name="WriteReviewPage" component={WriteReviewPage} />
       <HomeStack.Screen name="TestComponents" component={ComponentsTest} />
+      <HomeStack.Screen name="ReformerMarket" component={ReformerMarket} />
     </HomeStack.Navigator>
   );
 };
@@ -229,43 +232,7 @@ const HomeMainScreen = ({
             </SafeAreaView>
           )}
           {selectedTab === 'Market' && (
-            <ScrollView>
-              <Button onPress={handlePopupButtonPress}>
-                <ButtonText>팝업 표시</ButtonText>
-              </Button>
-              <Button onPress={() => navigation.navigate('Market')}>
-                <Text>마켓</Text>
-              </Button>
-              <Button onPress={() => navigation.navigate('QuotationForm')}>
-                <Text>견적서</Text>
-              </Button>
-              <Button onPress={() => navigation.navigate('QuotationPage')}>
-                <Text>견적서 확인</Text>
-              </Button>
-              <Button
-                onPress={() => navigation.navigate('ServiceDetailPage', {})}>
-                <Text>서비스 디테일</Text>
-              </Button>
-              <Button
-                onPress={() =>
-                  navigation.navigate('ServiceRegistrationPage', {})
-                }>
-                <Text>서비스등록</Text>
-              </Button>
-              <Button
-                onPress={() => navigation.navigate('GoodsRegistrationPage')}>
-                <Text>상품등록</Text>
-              </Button>
-              <Button onPress={() => navigation.navigate('AddPortfolio')}>
-                <Text>포트폴리오 등록</Text>
-              </Button>
-              <Button onPress={() => navigation.navigate('WriteReviewPage')}>
-                <Text>후기 작성 페이지</Text>
-              </Button>
-              <Button onPress={() => navigation.navigate('TestComponents')}>
-                <Text>공통 컴포넌트 테스트</Text>
-              </Button>
-            </ScrollView>
+              <ReformerMarket />
           )}
           {selectedTab === 'temp' && (
             <ScrollView>
