@@ -16,7 +16,7 @@ import ServiceImage3 from '../../../assets/common/ServiceImage3.svg';
 const statusBarHeight = getStatusBarHeight(true);
 const { width } = Dimensions.get('window');
 
-const ReformerMarket = ({ navigation }) => {
+const ServiceMarket = ({ navigation }) => {
   const [form, setForm] = useState({
     mail: '',
     domain: '',
@@ -190,23 +190,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginHorizontal: 0, 
   },
-  reformerInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
   avatar: {
     width: 50,
     height: 50,
     borderRadius: 25,
     marginRight: 10,
-  },
-  reformerDetails: {
-    flex: 1,
-  },
-  reformerActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
   },
   badge: {
     backgroundColor: 'white',
@@ -239,4 +227,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ReformerMarket;
+export default ServiceMarket;
