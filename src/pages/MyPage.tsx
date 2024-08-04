@@ -27,6 +27,8 @@ import ScrollToTopButton from '../common/ScrollToTopButtonFlat';
 import FixMyPage from './FixMyPage';
 import { PhotoType } from '../hooks/useImagePicker';
 
+// test
+
 export type MyPageStackParams = {
   MyPage: { userInfo?: any | undefined };
   FixMyPage: { userInfo: any };
