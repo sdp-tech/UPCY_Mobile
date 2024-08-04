@@ -1,4 +1,4 @@
-import { Key, useState } from 'react';
+import {Key, useState } from 'react';
 import { View, TouchableOpacity, ScrollView, FlatList, Dimensions } from 'react-native';
 import { Tabs } from 'react-native-collapsible-tab-view';
 import styled from 'styled-components/native';

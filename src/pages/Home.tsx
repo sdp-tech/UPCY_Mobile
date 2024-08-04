@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState,useRef } from 'react';
+import React, { Fragment, useEffect, useState,useRef,forwardRef } from 'react';
 
 import { SafeAreaView, Text, View, StyleSheet, Alert, FlatList } from 'react-native';
 import styled from 'styled-components/native';
@@ -43,8 +43,14 @@ import ScrollToTopButton from '../common/ScrollToTopButtonFlat';
 import ReviewPage from '../components/Home/Market/ReviewPage';
 import ScrollTopButton from '../common/ScrollTopButton';
 import Footer from '../common/Footer';
-import { BLACK, White } from '../styles/GlobalColor';
+import { BLACK, White, LIGHTGRAY } from '../styles/GlobalColor';
+import { Subtitle18B } from '../styles/GlobalText';
 import InfoPage from '../components/Home/Market/InfoPage';
+import Arrow from '../assets/common/Arrow.svg';
+import ServiceItem from '../components/Home/components/ServiceItem';
+import Carousel from '../common/Carousel';
+
+
 export type HomeStackParams = {
   Home: undefined;
   Market: undefined;
@@ -68,6 +74,7 @@ export type HomeStackParams = {
   WriteReviewPage: undefined;
 
   TestComponents: undefined;
+  scrollViewRef: React.RefObject<ScrollView>;
 };
 
 const HomeStack = createStackNavigator<HomeStackParams>();
@@ -127,42 +134,28 @@ const HomeScreen = ({
 
 const HomeMainScreen = ({
   navigation,
+  
 }: StackScreenProps<HomeStackParams, 'Home'>) => {
   const [selectedTab, setSelectedTab] = useState<'Goods' | 'Market' | 'temp'>('Goods');
-
-  const handlePopupButtonPress = () => {
-    Alert.alert(
-      '알림', // 팝업제목
-      '견적서가 들어왔어요. \n 확인해보시겠어요?',
-      [
-        {
-          text: '네',
-          onPress: () => {
-            console.log('네 선택');
-            navigation.navigate('QuotationConfirm');
-          },
-        },
-        {
-          text: '나중에요',
-          onPress: () => console.log('나중에요 선택'),
-          style: 'cancel',
-        },
-      ],
-      { cancelable: true }, // 팝업 바깥을 터치하면 닫힘
-    );
-  };
-
+  const ServicePageRef = useRef<ScrollView>(null);
   const handleTabChange = (tab: 'Goods' | 'Market' | 'temp') => {
     setSelectedTab(tab);
   };
+  const [service, setService] = useState<boolean>(false);
+  const [product, setProduct] = useState<boolean>(false);
 
-  const [routes] = useState([
-    { key: 'info', title: '정보' },
-    { key: 'service', title: '서비스' },
-    { key: 'review', title: '리뷰' }
-  ]);
-  const flatListRef = useRef<FlatList>(null);
-  const scrollRef = useRef<ScrollView | null>(null);
+  // 한 줄에 2개씩 상품 아이템 배치
+  const items = [...new Array(6).keys()]
+  const splitArrayIntoPairs = (arr: any[], pairSize: number) => {
+    return arr.reduce((result, item, index) => {
+      if (index % pairSize === 0) {
+        result.push([]);
+      }
+      result[result.length - 1].push(item);
+      return result;
+    }, []);
+  };
+  const splitItems = splitArrayIntoPairs(items, 2);
 
   return (
     <Fragment>
@@ -179,51 +172,35 @@ const HomeMainScreen = ({
           </View>
           
           {selectedTab === 'Goods' &&(
-            <SafeAreaView style={{ flex: 1 }}>
-            <Tabs.Container
-              renderHeader={props => <ProfileSection navigation={navigation} />}
-              headerContainerStyle={{
-                shadowOpacity: 0,
-                borderBottomWidth: 1,
-                borderColor: '#D9D9D9'
-              }}
-              renderTabBar={props => (
-                <MaterialTabBar
-                  {...props}
-                  indicatorStyle={{
-                    backgroundColor: '#BDBDBD',
-                    height: 2
+            <Tabs.ScrollView
+            ref={ServicePageRef}
+            style={{ marginBottom: (service || product) ? 60 : -2000 }}
+            bounces={false} overScrollMode="never">
+            <View >
+              <LabelButton onPress={() => setService(!service)}>
+                <Subtitle18B>리폼러의 서비스</Subtitle18B>
+                {!service && <Arrow transform={[{ rotate: '180deg' }]} color={BLACK} />}
+              </LabelButton>
+              {service ?
+                <View>
+                  {items.map((item, index) => (
+                    <ServiceItem key={index} onPress={() => { }} />
+                  ))}
+                </View>
+                :
+                <Carousel
+                  data={[...new Array(6).keys()]}
+                  renderItem={({ item, index }: any) => {
+                    return (
+                      <ServiceItem onPress={() => { }} key={index} />
+                    )
                   }}
-                  style={{
-                    backgroundColor: 'white',
-                  }}
-                  labelStyle={{
-                    color: BLACK,
-                    fontWeight: '700',
-                    fontSize: 16
-                  }}
+                  slider
                 />
-              )}
-            >
-              {routes.map(route =>
-              (<Tabs.Tab key={route.key} name={route.title}>
-                {route.key === 'info' && <InfoPage />}
-                {route.key === 'service' &&
-                  <View>
-                    <ServicePage scrollViewRef={scrollRef} />
-                    <ScrollTopButton scrollViewRef={scrollRef} />
-                  </View>
-                }
-                {route.key === 'review' &&
-                  <View>
-                    <ReviewPage flatListRef={flatListRef} />
-                    <ScrollToTopButton flatListRef={flatListRef} />
-                  </View>}
-              </Tabs.Tab>)
-              )}
-            </Tabs.Container>
-            <Footer />
-          </SafeAreaView>
+              }
+              <View style={{ height: 1, backgroundColor: LIGHTGRAY, marginTop: 10 }} />
+            </View>
+          </Tabs.ScrollView>
           )}
           {selectedTab === 'Market' &&(
           <ScrollView>
@@ -332,5 +309,11 @@ const ButtonText = styled.Text`
   color: #612fef;
   font-weight: bold;
 `;
+
+const LabelButton = styled.TouchableOpacity`
+  display: flex;
+  flex-direction: row;
+  padding: 16px;
+`
 
 export default HomeScreen;
