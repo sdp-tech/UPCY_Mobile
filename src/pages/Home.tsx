@@ -172,35 +172,7 @@ const HomeMainScreen = ({
           </View>
           
           {selectedTab === 'Goods' &&(
-            <Tabs.ScrollView
-            ref={ServicePageRef}
-            style={{ marginBottom: (service || product) ? 60 : -2000 }}
-            bounces={false} overScrollMode="never">
-            <View >
-              <LabelButton onPress={() => setService(!service)}>
-                <Subtitle18B>리폼러의 서비스</Subtitle18B>
-                {!service && <Arrow transform={[{ rotate: '180deg' }]} color={BLACK} />}
-              </LabelButton>
-              {service ?
-                <View>
-                  {items.map((item, index) => (
-                    <ServiceItem key={index} onPress={() => { }} />
-                  ))}
-                </View>
-                :
-                <Carousel
-                  data={[...new Array(6).keys()]}
-                  renderItem={({ item, index }: any) => {
-                    return (
-                      <ServiceItem onPress={() => { }} key={index} />
-                    )
-                  }}
-                  slider
-                />
-              }
-              <View style={{ height: 1, backgroundColor: LIGHTGRAY, marginTop: 10 }} />
-            </View>
-          </Tabs.ScrollView>
+            
           )}
           {selectedTab === 'Market' &&(
             <ReformerMarket />
