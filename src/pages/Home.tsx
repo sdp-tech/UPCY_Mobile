@@ -46,7 +46,7 @@ import Footer from '../common/Footer';
 import { BLACK, White } from '../styles/GlobalColor';
 import InfoPage from '../components/Home/Market/InfoPage'; import OrderPage from './OrderPage';
 import ReformerMarket from '../components/Home/Market/ReformerMarket';
-
+import Service from '../components/Home/Market/Service';
 export type HomeStackParams = {
   Home: undefined;
   Market: undefined;
@@ -72,7 +72,6 @@ export type HomeStackParams = {
   ReformerMarket: undefined;
 
   TestComponents: undefined;
-  scrollViewRef: React.RefObject<ScrollView>;
 };
 
 const HomeStack = createStackNavigator<HomeStackParams>();
@@ -141,9 +140,6 @@ const HomeMainScreen = ({
   const handleTabChange = (tab: 'Goods' | 'Market' | 'temp') => {
     setSelectedTab(tab);
   };
-  const [service, setService] = useState<boolean>(false);
-  const [product, setProduct] = useState<boolean>(false);
-
   // 한 줄에 2개씩 상품 아이템 배치
   const items = [...new Array(6).keys()]
   const splitArrayIntoPairs = (arr: any[], pairSize: number) => {
@@ -172,7 +168,7 @@ const HomeMainScreen = ({
           </View>
           
           {selectedTab === 'Goods' &&(
-            
+            <Service/>
           )}
           {selectedTab === 'Market' &&(
             <ReformerMarket />
@@ -219,6 +215,7 @@ const HomeMainScreen = ({
               <Text>공통 컴포넌트 테스트</Text>
             </Button>
           </ScrollView>
+          )}
         </BottomSheetModalProvider>
       </SafeAreaView>
     </Fragment>
