@@ -260,3 +260,16 @@ export const Filter14B = ({ children, style }: any) => {
     </Text>
   )
 }
+
+export const Filter11R = ({children, style}: any) => {
+  return (
+    <Text style={{
+      color: '#929292',
+      fontSize: 11,
+      fontWeight: '400',
+      ...style
+    }}>
+      {children}
+    </Text>
+  )
+}
