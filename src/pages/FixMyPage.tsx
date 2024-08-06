@@ -24,18 +24,18 @@ interface ProfileProps {
 }
 
 type ProfileType = {
-    profilephoto: undefined | PhotoType;
+    profile_image: undefined | PhotoType;
     nickname: string;
     introduce: string;
 };
 
 function ProfilePic({ form, setForm }: ProfileProps) {
-    const [photo, setPhoto] = useState(form.profilephoto);
+    const [photo, setPhoto] = useState(form.profile_image);
     const [handleAddButtonPress, handleImagePress] = useImagePicker(setPhoto);
 
     useEffect(() => {
         setForm(prev => {
-            return { ...prev, profilephoto: photo };
+            return { ...prev, profile_image: photo };
         });
     }, [photo]);
 
@@ -50,10 +50,10 @@ function ProfilePic({ form, setForm }: ProfileProps) {
                 onPress={photo === undefined ? handleAddButtonPress : handleImagePress}>
                 <View
                     // buttonLabel=""
-                    // photo={form.profilephoto}
+                    // photo={form.profile_image}
                     // setPhoto={p => {
                     //   setForm(prev => {
-                    //     return { ...prev, profilephoto: p[0] };
+                    //     return { ...prev, profile_image: p[0] };
                     //   });
                     // }}
                     // max={1}
@@ -125,7 +125,7 @@ const FixMyPage = ({ navigation, route }: FixMyPageProps) => {
     const userInfo = route.params.userInfo;
 
     const [form, setForm] = useState<ProfileType>({
-        profilephoto: userInfo.profilephoto,
+        profile_image: userInfo.profile_image,
         nickname: userInfo.nickname,
         introduce: userInfo.introduce,
     });
@@ -133,7 +133,7 @@ const FixMyPage = ({ navigation, route }: FixMyPageProps) => {
     useEffect(() => {
         userInfo.nickname = form.nickname;
         userInfo.introduce = form.introduce;
-        userInfo.profilephoto = form.profilephoto;
+        userInfo.profile_image = form.profile_image;
     }, [form]);
 
     function handleBackPress(): () => void {

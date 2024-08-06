@@ -26,8 +26,7 @@ import ReviewPage from '../components/Home/Market/ReviewPage';
 import ScrollToTopButton from '../common/ScrollToTopButtonFlat';
 import FixMyPage from './FixMyPage';
 import { PhotoType } from '../hooks/useImagePicker';
-
-// test
+import Request from '../common/requests';
 
 export type MyPageStackParams = {
   MyPage: { userInfo?: any | undefined };
@@ -56,7 +55,7 @@ const MyPageScreen = ({
   );
 };
 
-const ProfileSection = ({ nickname, backgroundphoto, profilephoto, editProfile, introduce }: { nickname: string, backgroundphoto: any, profilephoto: PhotoType | any, editProfile: any, introduce: string }) => {
+const ProfileSection = ({ nickname, backgroundphoto, profile_image, editProfile, introduce }: { nickname: string, backgroundphoto: any, profile_image: PhotoType | any, editProfile: any, introduce: string }) => {
 
   return (
     <View style={{ alignItems: 'center' }}>
@@ -71,13 +70,13 @@ const ProfileSection = ({ nickname, backgroundphoto, profilephoto, editProfile, 
         imageStyle={{ height: 160 }}
         source={{ uri: backgroundphoto }}>
         <View style={{ width: '100%', height: 160, backgroundColor: '#00000066', opacity: 0.7 }} />
-        {(profilephoto === undefined) || (profilephoto.uri == undefined) ? ( // 전자는 편집페이지에서 사진 삭제했을 경우, 후자는 가장 처음에 로딩될 경우
+        {(profile_image === undefined) || (profile_image.uri == undefined) ? ( // 전자는 편집페이지에서 사진 삭제했을 경우, 후자는 가장 처음에 로딩될 경우
           <Image
             style={{ alignSelf: 'center', width: 90, height: 90, borderRadius: 180, position: 'absolute', top: 110 }}
             source={{ uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp' }}
           />) : (<Image
             style={{ alignSelf: 'center', width: 90, height: 90, borderRadius: 180, position: 'absolute', top: 110 }}
-            source={{ uri: profilephoto.uri }}
+            source={{ uri: profile_image.uri }}
           />)
         }
       </ImageBackground>
@@ -90,10 +89,11 @@ const ProfileSection = ({ nickname, backgroundphoto, profilephoto, editProfile, 
 }
 
 const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
+  const request = Request();
   const { isLogin, setLogin } = useContext(LoginContext);
   const [userInfo, setUserInfo] = useState({
     nickname: route.params?.nickname || '이하늘', backgroundphoto: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
-    profilephoto: route.params?.profilephoto || 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
+    profile_image: route.params?.profile_image || 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
     introduce: route.params?.introduce || "나는야 업씨러 이하늘 환경을 사랑하지요 눈누난나"
   });
   // 나중에 프로필수정 로직 구현되고 나면, profilepho랑 backgroundphoto 할당하면 됨 
@@ -104,22 +104,42 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
     }
   }, [route.params?.userInfo]);
 
-  const getUserInfo = async () => {
-    const userName = await getNickname();
-    // const orderList = await getOrderList();
-    // const backgroundPhoto = await getBackgroundPhoto();
-    // const profilePhoto = await getProfilePhoto();
-    // const selfIntroduce = await getSelfIntroduce();
-    if (userName !== false) setUserInfo({
-      nickname: userName, backgroundphoto: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
-      profilephoto: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
-      introduce: '나는야 업씨러 이하늘 환경을 사랑하지요 눈누난나'
-    });
-  };
+  const getProfile = async () => {
+    try {
+      const userName = await getNickname();
+      const path = 'users/profile';
+      const params = {
+        introduce: 'introduce',
+        profile_image: 'profile_image'
+      }
+      const response = await request.get(path, params, {});
+      // 요청이 성공했을 때의 처리
+      if (response.status === 200) {
+        console.log('User data fetched successfully:', response.data);
+        const { introduce, profile_image } = response.data;
+        setUserInfo({
+          nickname: userName,
+          backgroundphoto: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
+          profile_image: profile_image || 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
+          introduce: introduce || '나는야 업씨러 이하늘 환경을 사랑하지요 눈누난나'
+        });
+        return response.data;
+      } else {
+        console.log('Failed to fetch user data:', response);
+        return null;
+      }
+    } catch (error) {
+      // 에러 처리
+      console.error('Error fetching user data:', error);
+      return null;
+    }
+  }
 
   useFocusEffect(
     useCallback(() => {
-      if (isLogin) getUserInfo();
+      if (isLogin) {
+        getProfile(); // 로그인 상태일 때 프로필을 가져옴
+      }
     }, [isLogin]),
   );
 
@@ -148,7 +168,7 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
       {/* 이 밑의 탭들은 더미 데이터  */}
       <Tabs.Container
         renderHeader={props => <View>
-          <ProfileSection nickname={userInfo.nickname} backgroundphoto={userInfo.backgroundphoto} profilephoto={userInfo.profilephoto}
+          <ProfileSection nickname={userInfo.nickname} backgroundphoto={userInfo.backgroundphoto} profile_image={userInfo.profile_image}
             editProfile={() => navigation.navigate('FixMyPage', { userInfo })} introduce={userInfo.introduce} />
           {/* <Button onPress={goReformRegister} title="프로필 등록" />
           <Button onPress={handleLogout} title="로그아웃" /> */}
