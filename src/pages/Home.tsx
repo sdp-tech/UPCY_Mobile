@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState,useRef,forwardRef } from 'react';
+import React, { Fragment, useEffect, useState, useRef,forwardRef } from 'react';
 
 import { SafeAreaView, Text, View, StyleSheet, Alert, FlatList } from 'react-native';
 import styled from 'styled-components/native';
@@ -133,14 +133,34 @@ const HomeScreen = ({
 
 const HomeMainScreen = ({
   navigation,
-  
 }: StackScreenProps<HomeStackParams, 'Home'>) => {
   const [selectedTab, setSelectedTab] = useState<'Goods' | 'Market' | 'temp'>('Goods');
   const ServicePageRef = useRef<ScrollView>(null);
+  const handlePopupButtonPress = () => {
+    Alert.alert(
+      '알림', // 팝업제목
+      '견적서가 들어왔어요. \n 확인해보시겠어요?',
+      [
+        {
+          text: '네',
+          onPress: () => {
+            console.log('네 선택');
+            navigation.navigate('QuotationConfirm');
+          },
+        },
+        {
+          text: '나중에요',
+          onPress: () => console.log('나중에요 선택'),
+          style: 'cancel',
+        },
+      ],
+      { cancelable: true },
+    );
+  };
+
   const handleTabChange = (tab: 'Goods' | 'Market' | 'temp') => {
     setSelectedTab(tab);
   };
-  // 한 줄에 2개씩 상품 아이템 배치
   const items = [...new Array(6).keys()]
   const splitArrayIntoPairs = (arr: any[], pairSize: number) => {
     return arr.reduce((result, item, index) => {
@@ -166,7 +186,7 @@ const HomeMainScreen = ({
               onTabChange={handleTabChange}
             />
           </View>
-          
+
           {selectedTab === 'Goods' &&(
             <Service/>
           )}
@@ -175,46 +195,46 @@ const HomeMainScreen = ({
           )}
           {selectedTab === 'temp' &&(
           <ScrollView>
-            <Button onPress={handlePopupButtonPress}>
-              <ButtonText>팝업 표시</ButtonText>
-            </Button>
-            <Button onPress={() => navigation.navigate('Market')}>
-              <Text>마켓</Text>
-            </Button>
-            <Button onPress={() => navigation.navigate('QuotationForm')}>
-              <Text>견적서</Text>
-            </Button>
-            <Button onPress={() => navigation.navigate('QuotationPage')}>
-              <Text>견적서 확인</Text>
-            </Button>
-            <Button
-              onPress={() => navigation.navigate('ServiceDetailPage', {})}>
-              <Text>서비스 디테일</Text>
-            </Button>
-            <Button
-              onPress={() =>
-                navigation.navigate('ServiceRegistrationPage', {})
-              }>
-              <Text>서비스등록</Text>
-            </Button>
-            <Button onPress={() => navigation.navigate('GoodsDetailPage')}>
-              <Text>상품 디테일</Text>
-            </Button>
-            <Button
-              onPress={() => navigation.navigate('GoodsRegistrationPage')}>
-              <Text>상품등록</Text>
-            </Button>
-            <Button onPress={() => navigation.navigate('AddPortfolio')}>
-              <Text>포트폴리오 등록</Text>
-            </Button>
+              <Button onPress={handlePopupButtonPress}>
+                <ButtonText>팝업 표시</ButtonText>
+              </Button>
+              <Button onPress={() => navigation.navigate('Market')}>
+                <Text>마켓</Text>
+              </Button>
+              <Button onPress={() => navigation.navigate('QuotationForm')}>
+                <Text>견적서</Text>
+              </Button>
+              <Button onPress={() => navigation.navigate('QuotationPage')}>
+                <Text>견적서 확인</Text>
+              </Button>
+              <Button
+                onPress={() => navigation.navigate('ServiceDetailPage', {})}>
+                <Text>서비스 디테일</Text>
+              </Button>
+              <Button
+                onPress={() =>
+                  navigation.navigate('ServiceRegistrationPage', {})
+                }>
+                <Text>서비스등록</Text>
+              </Button>
+              <Button onPress={() => navigation.navigate('GoodsDetailPage')}>
+                <Text>상품 디테일</Text>
+              </Button>
+              <Button
+                onPress={() => navigation.navigate('GoodsRegistrationPage')}>
+                <Text>상품등록</Text>
+              </Button>
+              <Button onPress={() => navigation.navigate('AddPortfolio')}>
+                <Text>포트폴리오 등록</Text>
+              </Button>
 
-            <Button onPress={() => navigation.navigate('WriteReviewPage')}>
-              <Text>후기 작성 페이지</Text>
-            </Button>
-            <Button onPress={() => navigation.navigate('TestComponents')}>
-              <Text>공통 컴포넌트 테스트</Text>
-            </Button>
-          </ScrollView>
+              <Button onPress={() => navigation.navigate('WriteReviewPage')}>
+                <Text>후기 작성 페이지</Text>
+              </Button>
+              <Button onPress={() => navigation.navigate('TestComponents')}>
+                <Text>공통 컴포넌트 테스트</Text>
+              </Button>
+            </ScrollView>
           )}
         </BottomSheetModalProvider>
       </SafeAreaView>
