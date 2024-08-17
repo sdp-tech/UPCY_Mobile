@@ -133,14 +133,34 @@ const HomeScreen = ({
 
 const HomeMainScreen = ({
   navigation,
-  
 }: StackScreenProps<HomeStackParams, 'Home'>) => {
   const [selectedTab, setSelectedTab] = useState<'Goods' | 'Market' | 'temp'>('Goods');
   const ServicePageRef = useRef<ScrollView>(null);
+  const handlePopupButtonPress = () => {
+    Alert.alert(
+      '알림', // 팝업제목
+      '견적서가 들어왔어요. \n 확인해보시겠어요?',
+      [
+        {
+          text: '네',
+          onPress: () => {
+            console.log('네 선택');
+            navigation.navigate('QuotationConfirm');
+          },
+        },
+        {
+          text: '나중에요',
+          onPress: () => console.log('나중에요 선택'),
+          style: 'cancel',
+        },
+      ],
+      { cancelable: true },
+    );
+  };
+
   const handleTabChange = (tab: 'Goods' | 'Market' | 'temp') => {
     setSelectedTab(tab);
   };
-  // 한 줄에 2개씩 상품 아이템 배치
   const items = [...new Array(6).keys()]
   const splitArrayIntoPairs = (arr: any[], pairSize: number) => {
     return arr.reduce((result, item, index) => {
