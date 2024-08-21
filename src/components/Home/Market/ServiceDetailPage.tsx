@@ -76,17 +76,25 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ navigation, onScrollToR
       {/* 컴포넌트로 변경 예정 */}
       <SafeAreaView >
         <ImageBackground // 임시 이미지 
-          style={{ width: '100%', height: height * 0.3 }}
-          imageStyle={{ height: height * 0.3 }}
+          style={{ width: '100%', height: width * 0.5 }}
+          imageStyle={{ height: width * 0.5 }}
           source={{ uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp' }}>
-          <View style={{ width: '100%', height: height * 0.3, backgroundColor: '#00000066', opacity: 0.7 }} />
+          <View style={{ width: '100%', height: width * 0.5, backgroundColor: '#00000066', opacity: 0.7 }} />
         </ImageBackground>
+        <View style={styles.tagContainer}>
+          <View style={styles.tag}>
+            <Text style={styles.tagText}>미니멀</Text>
+          </View>
+          <View style={styles.tag}>
+            <Text style={styles.tagText}>빈티지</Text>
+          </View>
+        </View>
       </SafeAreaView>
       <View style={TextStyles.borderBottom1}>
         <View style={{ flex: 1, flexDirection: 'column' }}>
           <Text style={TextStyles.Title}>서비스 이름</Text>
-          <Text style={TextStyles.PriceInfo}>기본 <Text style={TextStyles.Price}>20,000 원</Text></Text>
-          <Text style={TextStyles.PriceInfo}>최대 <Text style={TextStyles.Price}>20,000 원</Text></Text>
+          <Text style={TextStyles.PriceInfo}>기본 <Text style={TextStyles.Price}>  20,000 원</Text></Text>
+          <Text style={TextStyles.PriceInfo}>최대 <Text style={TextStyles.Price}>  24,000 원</Text></Text>
         </View>
         <View style={{ flex: 1, alignItems: 'flex-end', justifyContent: 'flex-end' }}>
           <View style={{
@@ -100,19 +108,18 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ navigation, onScrollToR
           </View>
         </View>
       </View>
-      {/* 컴포넌트로 변경 예정 */}
       <View style={{ ...TextStyles.borderBottom2, justifyContent: 'space-between' }}>
         <View style={{ padding: 15, flexDirection: 'row' }}>
           <View style={{ backgroundColor: "gray", width: 50, height: 50, borderRadius: 25 }}></View>
           <View style={{ marginLeft: 20, justifyContent: 'center' }}>
             <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => navigation.navigate('Market')}>
-              <Text style={{ fontSize: 14, padding: 3, fontWeight: '700', color: '#222222' }}>마켓명 </Text>
+              <Text style={{ fontSize: 14, padding: 3, fontWeight: '700', color: '#222222' }}>이하늘의 마켓</Text>
               <Arrow // Arrow at the right side of 'marketname'
-                style={{ marginLeft: -7, transform: [{ scaleX: -1 }] }}
+                style={{ marginLeft: -4, transform: [{ scaleX: -1 }] }}
                 color={BLACK}>
               </Arrow>
             </TouchableOpacity>
-            <Text style={{ fontSize: 14, padding: 3, fontWeight: '700', color: '#222222' }}>리폼러닉네임</Text>
+            <Text style={{ fontSize: 14, padding: 3, fontWeight: '700', color: '#222222' }}>이하늘</Text>
           </View>
         </View>
       </View>
@@ -135,7 +142,7 @@ const ServiceDetailPageMainScreen = ({ navigation }: StackScreenProps<DetailPage
   };
   const [routes] = useState([
     { key: 'detail', title: '상세설명' },
-    { key: 'option', title: '필독사항' }
+    { key: 'option', title: '후기' }
   ]);
   const scrollRef = useRef<ScrollView>(null);
   const flatListRef = useRef<FlatList>(null);
@@ -162,13 +169,11 @@ const ServiceDetailPageMainScreen = ({ navigation }: StackScreenProps<DetailPage
           <DetailBox ref={detailBoxRef} flatListRef={flatListRef} />
           <ScrollToTopButton flatListRef={flatListRef} />
         </Tabs.Tab>
-        <Tabs.Tab name="필독사항">
+        <Tabs.Tab name="후기(5)">
+          {/*5는 임시 숫자임. 실제 데이터 넣어야 함.*/}
           <OptionBox flatListRef={optionPageRef} />
         </Tabs.Tab>
       </Tabs.Container>
-      {/* <TouchableOpacity style={TextStyles.scrollToHeaderButton} onPress={handleScrollToHeader}>
-        <Text style={TextStyles.scrollToHeaderText}>Top</Text>
-      </TouchableOpacity> */}
       <Footer />
     </SafeAreaView>
   )
@@ -243,6 +248,37 @@ const TextStyles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
   },
+});
+
+const styles = StyleSheet.create({
+  tagContainer: {
+    position: 'absolute',
+    top: 16,
+    right: 16,
+    flexDirection: 'row',
+    gap: 8,
+  },
+  tag: {
+    paddingLeft: 16,
+    paddingRight: 16,
+    paddingTop: 3,
+    paddingBottom: 3,
+    backgroundColor: '#612FEF',
+    borderRadius: 4,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#612FEF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    display: 'flex',
+  },
+  tagText: {
+    color: 'white',
+    fontSize: 14,
+    fontFamily: 'Pretendard Variable',
+    fontWeight: '400',
+    lineHeight: 24,
+  }
 });
 
 export default ServiceDetailPageScreen;

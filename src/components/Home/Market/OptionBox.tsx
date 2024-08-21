@@ -64,7 +64,7 @@ const OptionPage: React.FC<OptionBoxProps> = ({ flatListRef }) => {
             <NoticeBox key={index}>
               <Body16B>{item.label}</Body16B>
               {item.data.map((item: any, idx: number) => (
-                <Body14R style={{ padding: 8 }}>
+                <Body14R key={idx} style={{ padding: 8 }}>
                   {idx + 1}: {item}
                 </Body14R>
               )

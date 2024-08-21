@@ -44,7 +44,7 @@ const OrderPage = ({ navigation }: { navigation: any }) => {
     ]);
 
     return (
-        <Tabs.ScrollView style={{ overflow: "hidden" }}>
+        <Tabs.ScrollView style={{ overflow: "hidden" }} bounces={false} overScrollMode="never">
             <OrderInfoBox>
                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: width * 0.05 }}>
                     <Text style={{ color: 'black', fontSize: 14, fontWeight: "500" }}>{orderDate}</Text>

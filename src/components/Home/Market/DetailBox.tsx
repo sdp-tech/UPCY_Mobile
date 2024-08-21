@@ -29,8 +29,6 @@ const DetailBox = forwardRef<DetailBoxHandle, DetailBoxProps>(({ flatListRef }, 
     }
   }));
   const data = [
-    // { label: '카테고리', data: '아우터', end: 'no' },
-    { label: '스타일', data: '빈티지', end: 'no' },
     { label: '제작 기간', data: '3주', end: 'no' },
     {
       label: '서비스 상세', data: `1958년에는 원예시험장을 설립하여 연구를 본격화하기 시작하였고, 1991년 말, 원예시험장에서 과수연구소를 분리하고 대구사과연구소를 신설하여 사과연구를 전담하도록 하였다.사과는 수확시기에 따라 조생종, 중생종, 만생종으로 나뉜다. 8월 하순 이전이 최성수확기인 조생종에는 미광, 조홍, 서홍, 쓰가루(아오리) 등이 있고, 최성수확기가 9월 상순에서 10월 중순까지인 중생종에는 홍로, 홍월, 양광, 추광, 골든딜리셔스, 세계일, 조나골드, 시나노스위트 등이 있다. 10월 하순 이후가 최성수확기인 만생종에는 후지(부사), 홍옥, 감홍, 화홍 등이 있다.
@@ -73,11 +71,11 @@ const DetailBox = forwardRef<DetailBoxHandle, DetailBoxProps>(({ flatListRef }, 
 const styles = StyleSheet.create({
   service: {
     display: 'flex',
-    borderTopWidth: 5,
+    borderTopWidth: 1,
     borderTopColor: '#dcdcdc',
     justifyContent: 'space-between',
     padding: 16,
-    borderBottomWidth: 5,
+    borderBottomWidth: 1,
     borderBlockColor: "#dcdcdc"
   },
   information: {
