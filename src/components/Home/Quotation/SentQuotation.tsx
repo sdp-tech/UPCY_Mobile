@@ -15,9 +15,9 @@ const SentQuotation = () => {
   return (
     <SafeAreaView style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
        <View style={{marginTop: 200}}/>
-      <Title20B style={{marginBottom: 10, textAlign: 'center'}}>리폼러에게 견적서를{'\n'}전달했어요!</Title20B>
+      <Title20B style={{marginBottom: 10, textAlign: 'center'}}>리폼러에게 주문서를{'\n'}전달했어요!</Title20B>
       <Image source={require('../../../assets/hand.png')} style={{width: 230, height: 230}} />
-      <Subtitle16B style={{textAlign: 'center', marginTop: 10}}>리폼러가 견적서를 확인 후,{'\n'}카톡으로 연락할거에요~{'\n'}</Subtitle16B>
+      <Subtitle16B style={{textAlign: 'center', marginTop: 10}}>리폼러가 주문서를 확인 후,{'\n'}카톡으로 연락할거에요~{'\n'}</Subtitle16B>
       <TouchableOpacity style={{flexDirection: 'row', borderRadius: 5, backgroundColor: GREEN, marginTop: 100, width: '90%', alignItems: 'center', justifyContent: 'space-between', paddingRight: 20}}onPress={handlePress}>
            <View style={{padding: 16}}>
           <Body14M>이 마켓이 마음에 들었나요?</Body14M>

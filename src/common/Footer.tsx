@@ -13,7 +13,7 @@ const Footer = () => {
     <View >
       <FooterContainer style={{ paddingTop: 10 }} >
         <HeartButton like={like} onPress={() => { setLike(!like) }} blank />
-        <BottomButton value={'견적서 보내기'} pressed={pressed} onPress={() => { }} />
+        <BottomButton value={'주문서 보내기'} pressed={pressed} onPress={() => { }} />
       </FooterContainer>
     </View>
   )

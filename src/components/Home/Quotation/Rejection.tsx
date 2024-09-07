@@ -40,10 +40,10 @@ const Rejection = ({ onClose }: RejectionProps) => {
 
       <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 100 }}>
         <View style={{ marginTop: 30 }}>
-          <Title20B style={{ textAlign: 'center' }}>견적서 거절 사유</Title20B>
+          <Title20B style={{ textAlign: 'center' }}>주문서 거절 사유</Title20B>
           <View style={{ padding: 20, marginVertical: 15, alignItems: 'center' }}>
-            <Subtitle18B>견적서를 거절한 이유가 무엇인가요?</Subtitle18B>
-            <Body14R>다음 견적서를 작성할 때 많은 도움이 돼요.</Body14R>
+            <Subtitle18B>주문서를 거절한 이유가 무엇인가요?</Subtitle18B>
+            <Body14R>다음 주문서를 작성할 때 많은 도움이 돼요.</Body14R>
             <FlatList
               data={data}
               style={{ height: 400 }}

@@ -96,7 +96,7 @@ const QuotationPage = ({ navigation, route }: StackScreenProps<HomeStackParams, 
         style={{ width: '100%', height: '100%' }}
       >
         <View style={{ position: 'absolute', width: '100%', height: '100%', backgroundColor: BLACK, opacity: 0.9 }} />
-        <Title20B style={{ marginTop: statusBarHeight, color: 'white', textAlign: 'center' }}>견적서 확인</Title20B>
+        <Title20B style={{ marginTop: statusBarHeight, color: 'white', textAlign: 'center' }}>주문서 확인</Title20B>
         <View style={{ paddingVertical: 35, paddingHorizontal: 20 }}>
           <Title20B style={{ color: 'white', marginBottom: 3 }}>마켓명 (SDP의 상점)</Title20B>
           <Caption12M style={{ color: 'white', marginBottom: 18 }}>리폼러 닉네임 (전성식탁)</Caption12M>
@@ -104,7 +104,7 @@ const QuotationPage = ({ navigation, route }: StackScreenProps<HomeStackParams, 
         </View>
         <View style={{ backgroundColor: 'white', marginHorizontal: 10 }}>
           <View style={{ backgroundColor: GREEN, marginHorizontal: 20, paddingVertical: 5, alignItems: 'center' }}>
-            <Filter14M style={{ color: PURPLE }}>견적서 영수증</Filter14M>
+            <Filter14M style={{ color: PURPLE }}>주문서 영수증</Filter14M>
           </View>
           {quotation.map((item, index) => {
             return (
@@ -180,7 +180,7 @@ const QuotationPage = ({ navigation, route }: StackScreenProps<HomeStackParams, 
           />
          </View>
         <View style={{padding: 10, marginVertical: 30}}>
-          <BottomButton value={'견적서 보내기'} pressed={false}
+          <BottomButton value={'주문서 보내기'} pressed={false}
             // onPress={showModal}
             onPress={() => navigation.navigate('SentQuotation')}
             />

@@ -139,7 +139,7 @@ const HomeMainScreen = ({
   const handlePopupButtonPress = () => {
     Alert.alert(
       '알림', // 팝업제목
-      '견적서가 들어왔어요. \n 확인해보시겠어요?',
+      '주문서가 들어왔어요. \n 확인해보시겠어요?',
       [
         {
           text: '네',
@@ -202,10 +202,10 @@ const HomeMainScreen = ({
                 <Text>마켓</Text>
               </Button>
               <Button onPress={() => navigation.navigate('QuotationForm')}>
-                <Text>견적서</Text>
+                <Text>주문서</Text>
               </Button>
               <Button onPress={() => navigation.navigate('QuotationPage')}>
-                <Text>견적서 확인</Text>
+                <Text>주문서 확인</Text>
               </Button>
               <Button
                 onPress={() => navigation.navigate('ServiceDetailPage', {})}>
