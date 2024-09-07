@@ -1,5 +1,5 @@
 import { Text } from 'react-native';
-import { BLACK,White } from './GlobalColor';
+import { BLACK, White } from './GlobalColor';
 import { Children } from 'react';
 
 export const Title20B = ({ children, style }: any) => {
@@ -261,7 +261,7 @@ export const Filter14B = ({ children, style }: any) => {
   )
 }
 
-export const Filter11R = ({children, style}: any) => {
+export const Filter11R = ({ children, style }: any) => {
   return (
     <Text style={{
       color: '#929292',

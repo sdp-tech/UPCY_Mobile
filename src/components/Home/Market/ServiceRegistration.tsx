@@ -14,20 +14,16 @@ import Slider from "@react-native-community/slider";
 import PhotoOptions, { PhotoResultProps } from '../../../common/PhotoOptions';
 import Carousel from '../../../common/Carousel';
 import FilterElement from "./FilterElement";
-import { CustomBackButton } from "../components/CustomBackButton";
 import { useBottomBar } from "../../../../contexts/BottomBarContext";
 import DetailScreenHeader from "../components/DetailScreenHeader";
-import {
-  BottomSheetModal,
-  BottomSheetBackdrop,
-  BottomSheetFlatList,
-} from '@gorhom/bottom-sheet';
 import SelectBox from "../../../common/SelectBox";
 import ServiceCategoryModal from "../components/ServiceCategoryModal";
 import ImageCarousel from "../../../common/ImageCarousel";
 import { PhotoType } from "../../../hooks/useImagePicker";
 import { useNavigation } from "@react-navigation/native";
 import { RichEditor } from "react-native-pell-rich-editor";
+import Help from "../../../assets/common/Help.svg"
+import { Modal } from "react-native";
 
 const { width, height } = Dimensions.get('window');
 
@@ -80,13 +76,18 @@ const FillerSection = styled.View`
   border:1px solid #612FEF;
   border-radius: 8px;
 `
-
+const TagBox = styled.View`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+`
 
 interface CategoryProps {
   category: string;
 }
 
-interface Option {
+export interface Option {
   // 옵션 개별 요소들 prop
   option: string;
   price: number;
@@ -105,11 +106,6 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
     return () => showBottomBar();
   }, []);
 
-  // const [materials, setMaterials] = useState<string[]>([]);
-  // const [fits, setFits] = useState<string[]>([]);
-  // const [details, setDetails] = useState<string[]>([]);
-  // const [category, setCategory] = useState<string[]>([]);
-
   // 중복 선택 로직 
   const handleSeveralPress = (type: string, value: string): void => {
     if (type == "style" && styles.includes(value)) {
@@ -120,40 +116,60 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
         // 상태관리 
       );
     }
-    else if (type == "style") {
+    else if (type == "style" && styles.length < 3) {
       // value가 선택된 적이 없으면, 즉 처음 선택하면 
       setStyles(prevStyles => [...new Set([...prevStyles, value])])
+      // 바로 추가해주고 상태관리
+    }
+    else if (type == "style" && styles.length == 3) {
+      Alert.alert('3개까지만 선택 가능합니다!')
+    }
+    else if (type == "material" && materials.includes(value)) {
+      // 이미 클릭하려는 value가 선택된 적이 있으면, 
+      const extractedMaterials = materials.filter(v => v !== value);
+      // 그 value 제외하고 리스트 생성 
+      setMaterials([...new Set([...extractedMaterials])]
+        // 상태관리 
+      );
+    }
+    else if (type == "material") {
+      // value가 선택된 적이 없으면, 즉 처음 선택하면 
+      setMaterials(prevMaterials => [...new Set([...prevMaterials, value])])
       // 바로 추가해주고 상태관리 
     }
   }
 
   const handleNavigate = () => {
     navigation.navigate('WriteDetailPage', {
-      inputText,
+      inputText, detailphoto
     });
   };
 
   const handleNextPage = () => {
     if (!(form.category == '') && !(name == '') && !(styles.length == 0) && !(inputText == '')
-      && !(price == '') && !(maxPrice == '') && !(notice == '') && !(photos.length == 0)) {
+      && !(price == '') && !(maxPrice == '') && !(photos.length == 0) && !(materials.length == 0)) {
       navigation.navigate('TempStorage')
     } else {
       Alert.alert('필수 사항들을 모두 입력해주세요');
     }
   }
-
-  const [modalOpen, setModalOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false); // 가이드라인 모달 
+  // 해시태그는 이름만 해시태그지, 실제 기능은 좀 다름. 백에 올릴 필요는 없음 
+  const [hashtagText, setHashtagText] = useState<string>('')
+  const [hashtags, setHashtags] = useState<string[]>([]);
+  const [modalOpen, setModalOpen] = useState(false); // 카테고리 모달 
   // 이 밑으로는 서비스 자체의 prop
   const [form, setForm] = useState<CategoryProps>({
     category: '',// 백에 넘겨줄 prop: form.category?
   });
   const [styles, setStyles] = useState<string[]>([]);
+  const [materials, setMaterials] = useState<string[]>([]);
   const [makingTime, setMakingTime] = useState<number>(0);
   const [name, setName] = useState<string>('');
   const [price, setPrice] = useState<string>('');
   const [maxPrice, setMaxPrice] = useState<string>('');
-  const [notice, setNotice] = useState<string>('');
   const [photos, setPhotos] = useState<PhotoResultProps[]>([]);
+  const [detailphoto, setDetailPhoto] = useState<PhotoType[]>([]);
   const [inputText, setInputText] = useState(route.params?.inputText || ''); // 서비스 상세 
   // 이 밑으론 옵션 개별 요소들 prop 
   const [option, setOption] = useState<string>('');
@@ -161,6 +177,7 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
   const [optionExplain, setOptionExplain] = useState<string>("");
   const [optionPhotos, setOptionPhotos] = useState<PhotoType[]>([]);
   const [optionList, setOptionList] = useState<Option[]>([]);
+
   const [isFixing, setIsFixing] = useState(false);
   const [photoAdded, setPhotoAdded] = useState(false);
 
@@ -168,7 +185,10 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
     if (route.params?.inputText) {
       setInputText(route.params.inputText);
     }
-  }, [route.params?.inputText]);
+    if (route.params?.detailphoto) { // detailphoto가 있는 경우 처리
+      setDetailPhoto(route.params.detailphoto);
+    }
+  }, [route.params?.inputText, route.params?.detailphoto]);
 
   const editorRef = useRef<RichEditor>(null);
 
@@ -266,8 +286,8 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
 
   const photoAdd2 = (item: Option, idx: number) => {
     if (idx >= 0 && idx < optionList.length) {  // idx 범위를 체크
-      if (item.photoAdded) {
-        // 이미지 수정 안하고 싶을 때 
+      if (item.photoAdded) { // 수정하기 상태에서 다시 클릭시 (이미지 수정 안하고 싶을 때)
+        // photoAdded false로 변경 
         const fixingList = [...optionList];
         fixingList[idx].photoAdded = false;
         setOptionList(fixingList);
@@ -279,6 +299,30 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
       }
     }
   }
+  const handleExtractHashtags = () => {
+    // 공백을 기준으로 입력된 텍스트 슬라이싱
+    const words = hashtagText.split(/\s+/);
+    //const extractedHashtags = words.filter(word => word.startsWith('#'));
+    // 기존 해시태그에 새롭게 인풋된 해시태그 추가하여 상태 업데이트 
+    if ((words.length + hashtags.length) <= 5) {
+      setMaterials(prevMaterials => [...new Set([...prevMaterials, ...words])]);
+      setHashtags(prevHashtags => [...new Set([...prevHashtags, ...words])]);
+      // 입력 필드 초기화
+      setHashtagText('');
+      console.log(optionList)
+    }
+    else {
+      Alert.alert("해시태그는 5개 이하로 입력해주세요")
+    }
+  };
+  const removeHashtag = (value: string) => {
+    const extractedHashs = hashtags.filter(v => v !== value);
+    const extractedMates = materials.filter(v => v !== value);
+    // 그 value 제외하고 리스트 생성 
+    setMaterials([...new Set([...extractedMates])]);
+    setHashtags([...new Set([...extractedHashs])]);
+    // 상태관리 
+  };// 자기 자신을 리스트에서 삭제하는 로직 
 
   // 개별 옵션 내의 이미지 변경 함수 
   const handleOptionImageChange = (index: number, images: PhotoType[]) => {
@@ -308,12 +352,12 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
     <SafeAreaView>
       <View style={{ alignContent: "center", position: 'absolute', bottom: -30, left: 0, right: 0, backgroundColor: "#ffffff" }}>
         <ButtonSection style={{ flex: 1, marginHorizontal: 10 }}>
-          <FooterButton style={{ flex: 0.3, backgroundColor: "#612FEF" }}
+          <FooterButton style={{ flex: 0.2, backgroundColor: "#612FEF" }}
             onPress={() => handleNextPage()}>
-            <Subtitle16B style={{ color: "#DBFC72" }}>임시저장</Subtitle16B>
+            <Subtitle16B style={{ color: "#FFFFFF" }}>임시저장</Subtitle16B>
           </FooterButton>
-          <FooterButton style={{ flex: 0.6, backgroundColor: "#DBFC72" }}>
-            <Subtitle16B style={{ color: "#612FEF" }}>저장하기</Subtitle16B>
+          <FooterButton style={{ flex: 0.7, backgroundColor: "#DBFC72" }}>
+            <Subtitle16B style={{ color: "#612FEF" }}>등록</Subtitle16B>
           </FooterButton>
         </ButtonSection>
       </View>
@@ -325,29 +369,34 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
         title="서비스 등록"
         leftButton="CustomBack"
         onPressLeft={() => { }}
-        rightButton="Save"
-        onPressRight={() => {
-          navigation.navigate('TempStorage');
-        }}
+        rightButton="None"
+        onPressRight={() => { }}
         saved={0} />
       {/* 헤더부분 */}
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView bounces={false}>
+          {photos.length == 0 &&
+            <View style={{ backgroundColor: "#222222" }} >
+              <Button title='대표 이미지는 1장만 등록 가능합니다.'></Button>
+            </View>
+          }
           {/* 사진 업로드하는 컴포넌트 만들 것 */}
           {photos.length == 0 &&
-            <UploadSection style={{ borderBottomWidth: 5, borderBottomColor: "#dcdcdc", flex: 1, height: width * 0.5 }}>
-              <View style={{
-                backgroundColor: LIGHTGRAY,
-                borderRadius: 6,
-              }}>
-                <PhotoOptions
-                  style={{ alignContent: "center", margin: 5, marginBottom: 5 }}
-                  max={4}
-                  setPhoto={setPhotos}
-                  buttonLabel='이미지 첨부'
-                />
-              </View>
-            </UploadSection>
+            <View>
+              <UploadSection style={{ borderBottomWidth: 5, borderBottomColor: "#dcdcdc", flex: 1, height: width * 0.5 }}>
+                <View style={{
+                  backgroundColor: LIGHTGRAY,
+                  borderRadius: 6,
+                }}>
+                  <PhotoOptions
+                    style={{ alignContent: "center", margin: 5, marginBottom: 5 }}
+                    max={1}
+                    setPhoto={setPhotos}
+                    buttonLabel='대표 이미지 등록'
+                  />
+                </View>
+              </UploadSection>
+            </View>
           }
           {photos.length > 0 &&
             <View style={{ flex: 1, width: width, height: width * 0.5 }}>
@@ -357,7 +406,7 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
                   return (
                     <View key={index}>
                       {item.map((subItem: any, subIndex: number) => (
-                        <View key={subIndex} style={{ height: 350, paddingLeft: 20, paddingRight: 20, paddingTop: 20 }}>
+                        <View key={subIndex} style={{ height: width * 0.5 }}>
                           <ImageBackground
                             key={subItem.id}
                             source={{ uri: subItem.uri }}
@@ -369,18 +418,21 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
                     </View>
                   )
                 }}
-                slider
               />
             </View>
           }
           {photos.length > 0 &&
-            <TouchableOpacity style={{ padding: 5, marginBottom: -40, flex: 1 }}>
-              <PhotoOptions
-                max={4}
-                setPhoto={setPhotos}
-                buttonLabel='등록한 이미지 수정'
-              />
-            </TouchableOpacity>
+            <View style={{ position: "absolute", right: 0, top: (width * 0.4) - 4 }}>
+              <TouchableOpacity style={{ padding: 4, flex: 1 }}>
+                <PhotoOptions
+                  style={{ backgroundColor: "#222222" }}
+                  max={1}
+                  setPhoto={setPhotos}
+                  buttonLabel='   dddddddd '
+                />
+                <Text style={{ position: "absolute", left: 20, bottom: 33, color: "#ffffff", zIndex: 2 }}>등록한 이미지 수정</Text>
+              </TouchableOpacity>
+            </View>
           }
           <View style={{ padding: 10, borderBottomWidth: 3, borderBottomColor: "#dcdcdc", flex: 1 }}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -391,7 +443,7 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
               <InputBox style={{ height: 50 }} value={name} setValue={setName} placeholder='서비스 이름을 입력해주세요' />
             </View>
           </View>
-          <View style={{ padding: 20, flex: 1 }}>
+          <View style={{ padding: 20, flex: 1, borderBottomWidth: 1, borderColor: "#EAEAEA" }}>
             <View style={{ flexDirection: "row" }}>
               <Body16B>카테고리</Body16B>
               <Body16B style={{ color: '#612FEF' }}> *</Body16B>
@@ -402,8 +454,8 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
             />
           </View>
           <View style={{ flex: 1 }}>
-            <View style={{ padding: 10 }}>
-              <Body16B style={{ margin: 10, marginBottom: -10 }}>필터 설정</Body16B>
+            <View style={{ padding: 10, borderBottomWidth: 8, borderColor: "#EAEAEA" }}>
+              <Body16B style={{ margin: 10, marginBottom: -10, color: "#612FEF" }}>3개까지 중복선택 가능합니다.</Body16B>
               <FilterElement
                 list={styles}
                 onPress={handleSeveralPress}
@@ -440,13 +492,17 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
                   <Text style={{ fontSize: 14, fontWeight: "700", color: "#929292" }}>8주</Text>
                 </View>
               </View>
+              <Text style={{ fontSize: 11, fontFamily: "Pretendard Variable", color: "#612fef", paddingLeft: 12 }}>재료 수령일로부터 소요되는 제작 기간을 설정해주세요</Text>
             </View>
             {!(inputText == '') ? ( // 서비스 상세 있으면 노출 
               <View style={{ padding: 10, borderBottomWidth: 3, borderBottomColor: "#dcdcdc", flex: 1 }}>
                 <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <Body16B style={{ margin: 10 }}>서비스 상세</Body16B>
-                    <Subtitle18B style={{ color: PURPLE, marginLeft: "-1%" }}>*</Subtitle18B>
+                    <Subtitle18B style={{ color: PURPLE, marginLeft: "-1%" }}>*  </Subtitle18B>
+                    <TouchableOpacity onPress={() => { setIsOpen(true) }}>
+                      <Help />
+                    </TouchableOpacity>
                   </View>
                   <View>
                     <TouchableOpacity onPress={handleNavigate}>
@@ -456,16 +512,24 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
                 </View>
                 <FillerSection style={{ borderWidth: 2, borderColor: BLACK2, backgroundColor: "#FFF" }}>
                   <ScrollView bounces={false} overScrollMode="never" style={{ margin: 5 }}>
-                    <RichEditor
-                      ref={editorRef}
-                      initialContentHTML={inputText}
-                      onChange={setInputText}
-                      placeholder="내용"
-                      initialHeight={450}
-                      useContainer={true}
-                      onCursorPosition={handleCursorPosition}
-                      disabled={true}
-                    />
+                    <View style={{ flexGrow: 1 }}>
+                      <RichEditor
+                        ref={editorRef}
+                        initialContentHTML={inputText}
+                        onChange={setInputText}
+                        placeholder="내용"
+                        initialHeight={100}
+                        useContainer={true}
+                        onCursorPosition={handleCursorPosition}
+                        disabled={true}
+                      />
+                    </View>
+                    {!(detailphoto == undefined) ? (
+                      <View style={{ alignItems: "center" }}>
+                        <ImageCarousel images={detailphoto} setFormImages={() => { }} max={5}
+                          originalSize originalHeight={(width - 32) / 2} originalWidth={(width - 32) / 2} unTouchable />
+                      </View>)
+                      : (<></>)}
                   </ScrollView>
                 </FillerSection>
               </View>
@@ -473,7 +537,10 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
               <View style={{ padding: 10, borderBottomWidth: 3, borderBottomColor: "#dcdcdc", flex: 1 }}>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <Body16B style={{ margin: 10 }}>서비스 상세</Body16B>
-                  <Subtitle18B style={{ color: PURPLE, marginLeft: "-1%" }}>*</Subtitle18B>
+                  <Subtitle18B style={{ color: PURPLE, marginLeft: "-1%" }}>*  </Subtitle18B>
+                  <TouchableOpacity onPress={() => { setIsOpen(true) }}>
+                    <Help />
+                  </TouchableOpacity>
                 </View>
                 <FillerSection style={{ borderWidth: 2, borderColor: BLACK2, backgroundColor: "#FFF" }}>
                   <UploadButton onPress={handleNavigate} style={{ backgroundColor: "#dcdcdc" }}>
@@ -482,6 +549,28 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
                 </FillerSection>
               </View>
             )}
+            <View style={{ flex: 1 }}>
+              <View style={{ padding: 10, borderBottomWidth: 8, borderColor: "#EAEAEA" }}>
+                <FilterElement
+                  list={materials}
+                  onPress={handleSeveralPress}
+                  type="material"
+                  label="작업 가능한 소재"
+                />
+                <View style={{ marginBottom: 5, marginHorizontal: 10, marginTop: -10 }}>
+                  <TagBox>
+                    {hashtags.map((item, index) => (
+                      <Hashtag key={index} pressable value={item} pressed={false} onPress={() => removeHashtag(item)} />
+                    ))}
+                  </TagBox>
+                </View>
+                <InputBox style={{ height: 50 }} value={hashtagText}
+                  onChangeText={setHashtagText} placeholder='소재 구분은 스페이스로, 엔터로 추가'
+                  onSubmitEditing={handleExtractHashtags} // Enter를 눌렀을 때 해시태그 추출 
+                  returnKeyType="done" // Enter가 줄바꿈이 아니라 제출 이벤트 일으키도록.
+                />
+              </View>
+            </View>
           </View>
           {addOptionSection()}
           {/* 옵션 추가 섹션 */}
@@ -490,7 +579,7 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
             {OptionListSection()}
             {/* 등록된 옵션 목록 섹션 */}
           </View>
-          <View style={{ flex: 1, padding: 10, borderBottomWidth: 3, borderBottomColor: "#dcdcdc" }}>
+          <View style={{ flex: 1, padding: 10, borderBottomWidth: 3, borderBottomColor: "#dcdcdc", marginBottom: 44 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: "space-between", marginRight: 10 }}>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Body16B style={{ margin: 10 }}>가격</Body16B>
@@ -508,7 +597,7 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
                   borderRadius: 5,
                   padding: 10
                 }}
-                value={price} onChangeText={setPrice} placeholder=' 입력해주세요' />
+                value={price} onChangeText={setPrice} placeholder='예) 20000' />
             </View>
             <View style={{ alignItems: "center", flexDirection: "row", margin: 10 }}>
               <Body16B style={{ marginRight: 20 }}>최대 가격</Body16B>
@@ -520,16 +609,7 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
                   borderRadius: 5,
                   padding: 10
                 }}
-                value={maxPrice} onChangeText={setMaxPrice} placeholder=' 입력해주세요' />
-            </View>
-          </View>
-          <View style={{ flex: 1, padding: 10 }}>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Body16B style={{ margin: 10 }}>주문 시 유의사항</Body16B>
-              <Subtitle18B style={{ color: PURPLE, marginLeft: "-1%" }}>*</Subtitle18B>
-            </View>
-            <View style={{ margin: 10, marginBottom: "15%" }}>
-              <InputBox value={notice} setValue={setNotice} placeholder='입력해주세요' long />
+                value={maxPrice} onChangeText={setMaxPrice} placeholder='예) 24000' />
             </View>
           </View>
         </ScrollView>
@@ -544,6 +624,24 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
           })
         }
       />
+      <Modal
+        visible={isOpen} onRequestClose={() => { setIsOpen(!isOpen) }}
+        animationType="slide">
+        <View style={style.centeredView}>
+          <View style={style.modalView}>
+            <Text>
+              가이드라인 {"\n"}{"\n"}
+              ● 필요한 원단의 최소 사이즈{"\n"}
+              ● 리폼 부위 업씨러의 사이즈 명시 안내{"\n"}
+              ● 주의사항{"\n"}
+              ● 특이사항{"\n"}
+            </Text>
+            <TouchableOpacity onPress={() => { setIsOpen(!isOpen) }}>
+              <Text>닫기</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
       {ServiceRegiBottomBar}
       {/* 바텀바 */}
     </SafeAreaView>
@@ -579,7 +677,7 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
                       }}
                       style={{ borderWidth: 2, borderColor: "#828282", borderRadius: 5, flex: 0.88 }} placeholder="추가 금액을 입력해주세요" />
                   </View>
-                  {!item.photoAdded ? (
+                  {!item.photoAdded ? ( // 사진 추가 안 된 상태일 때: 상세 입력창이 길게 나옴 
                     <View style={{ width: "90%", marginBottom: 10 }}>
                       <View style={{ flexDirection: 'row' }}>
                         <Body16B>상세 설명</Body16B>
@@ -591,7 +689,7 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
                         setOptionList(updatedOptionList);
                       }} placeholder="50자 이내로 입력해주세요" long />
                     </View>
-                  ) : (
+                  ) : ( // 사진 추가되어있는 상태일 때: 이미지 작게 보여줌 
                     <View style={{ width: "90%", marginBottom: 10 }}>
                       <View style={{ flexDirection: 'row' }}>
                         <Body16B>상세 설명</Body16B>
@@ -693,7 +791,7 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
                 style={{ borderWidth: 2, borderColor: "#828282", borderRadius: 5, flex: .88 }} placeholder="추가 금액을 입력해주세요" />
             </View>
             {!photoAdded ? (
-              // 이미지 추가버튼 안 눌렀을 때 
+              // 이미지 추가버튼 안 눌러져있을 때 
               <View style={{ width: "90%", marginBottom: 10 }}>
                 <View style={{ flexDirection: 'row' }}>
                   <Body16B>상세 설명</Body16B>
@@ -731,5 +829,60 @@ const ServiceRegistrationPage = ({ navigation, route }: StackScreenProps<HomeSta
     );
   }
 }
+
+const style = StyleSheet.create({
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  viewFlexBox: {
+    paddingVertical: 4,
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row"
+  },
+  image01Icon: {
+    width: 17,
+    height: 17,
+    overflow: "hidden"
+  },
+  text: {
+    fontSize: 14,
+    fontWeight: "700",
+    fontFamily: "Pretendard",
+    color: "#ffffff",
+    textAlign: "left",
+    marginLeft: 8
+  },
+  image01Parent: {
+    paddingHorizontal: 0
+  },
+  view: {
+    borderRadius: 4,
+    backgroundColor: "#222222",
+    flex: 1,
+    width: "100%",
+    paddingHorizontal: 16,
+    overflow: "hidden"
+  }
+});
+
 
 export default ServiceRegistrationPage
