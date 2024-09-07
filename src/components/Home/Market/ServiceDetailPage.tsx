@@ -6,7 +6,7 @@ import Search from '../../../assets/common/Search.svg';
 import Review from "../../../assets/common/Review.svg";
 import UnFilledLike from '../../../assets/common/UnFilledLike.svg';
 import React, { useEffect, useRef, useState } from 'react';
-import DetailBox, { DetailBoxHandle } from './DetailBox';
+import DetailBox from './DetailBox';
 import OptionBox from './OptionBox';
 import CardView from '../../../common/CardView';
 import Footer from '../../../common/Footer';
@@ -16,6 +16,7 @@ import { useBottomBar } from '../../../../contexts/BottomBarContext';
 import { CustomBackButton } from '../components/CustomBackButton';
 import DetailScreenHeader from '../components/DetailScreenHeader';
 import ScrollToTopButton from '../../../common/ScrollToTopButtonFlat';
+import HeartButton from '../../../common/HeartButton';
 
 const { width, height } = Dimensions.get("window");
 
@@ -38,11 +39,11 @@ const ServiceDetailPageScreen = ({ navigation, route }: StackScreenProps<HomeSta
 
 type ProfileSectionProps = {
   navigation: any;
-  onScrollToReviews: () => void;
 };
 
-const ProfileSection: React.FC<ProfileSectionProps> = ({ navigation, onScrollToReviews }: { navigation: any, onScrollToReviews: any }) => {
+const ProfileSection: React.FC<ProfileSectionProps> = ({ navigation }: { navigation: any }) => {
   const [data, setData] = useState([]);
+  const [like, setLike] = useState<boolean>(false);
   const { hideBottomBar, showBottomBar } = useBottomBar();
 
   useEffect(() => {
@@ -79,9 +80,10 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ navigation, onScrollToR
           style={{ width: '100%', height: width * 0.5 }}
           imageStyle={{ height: width * 0.5 }}
           source={{ uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp' }}>
-          <View style={{ width: '100%', height: width * 0.5, backgroundColor: '#00000066', opacity: 0.7 }} />
+          <View style={{ width: '100%', height: width * 0.5, backgroundColor: '#00000066', opacity: 0.1 }} />
         </ImageBackground>
         <View style={styles.tagContainer}>
+          {/* 보라색 태그 */}
           <View style={styles.tag}>
             <Text style={styles.tagText}>미니멀</Text>
           </View>
@@ -96,16 +98,8 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ navigation, onScrollToR
           <Text style={TextStyles.PriceInfo}>기본 <Text style={TextStyles.Price}>  20,000 원</Text></Text>
           <Text style={TextStyles.PriceInfo}>최대 <Text style={TextStyles.Price}>  24,000 원</Text></Text>
         </View>
-        <View style={{ flex: 1, alignItems: 'flex-end', justifyContent: 'flex-end' }}>
-          <View style={{
-            marginBottom: 15, marginRight: 15, flexDirection: 'column',
-            justifyContent: 'center', alignItems: 'center'
-          }}>
-            <TouchableOpacity onPress={onScrollToReviews}>
-              <Review color={BLACK} />
-            </TouchableOpacity>
-            <Text style={{ marginTop: 8 }}>후기(3)</Text>
-          </View>
+        <View style={{ margin: 15 }}>
+          <HeartButton like={like} onPress={() => setLike(!like)} />
         </View>
       </View>
       <View style={{ ...TextStyles.borderBottom2, justifyContent: 'space-between' }}>
@@ -121,6 +115,17 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ navigation, onScrollToR
             </TouchableOpacity>
             <Text style={{ fontSize: 14, padding: 3, fontWeight: '700', color: '#222222' }}>이하늘</Text>
           </View>
+          <View style={{ flex: 1, alignItems: 'flex-end', justifyContent: 'flex-end' }}>
+            <View style={{
+              marginRight: 15, flexDirection: 'column',
+              justifyContent: 'center', alignItems: 'center'
+            }}>
+              <TouchableOpacity onPress={() => { }}>
+                <Review color={BLACK} />
+              </TouchableOpacity>
+              <Text style={{ marginTop: 8 }}>후기(3)</Text>
+            </View>
+          </View>
         </View>
       </View>
     </SafeAreaView>
@@ -130,12 +135,8 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ navigation, onScrollToR
 const ServiceDetailPageMainScreen = ({ navigation }: StackScreenProps<DetailPageStackParams, 'DetailPage'>) => {
   const layout = useWindowDimensions();
   const [index, setIndex] = useState<number>(0);
-  const detailBoxRef = useRef<DetailBoxHandle>(null);
   const optionPageRef = useRef<FlatList<any>>(null);
 
-  const handleScrollToReviews = () => {
-    detailBoxRef.current?.scrollToReviews();
-  };
   const handleScrollToHeader = () => {
     const currentFlatListRef = index === 0 ? flatListRef : optionPageRef;
     flatListRef.current?.scrollToOffset({ offset: -height, animated: true });
@@ -148,7 +149,7 @@ const ServiceDetailPageMainScreen = ({ navigation }: StackScreenProps<DetailPage
   const flatListRef = useRef<FlatList>(null);
 
   const renderHeader = () => (
-    <ProfileSection navigation={navigation} onScrollToReviews={handleScrollToReviews} />
+    <ProfileSection navigation={navigation} />
   );
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -166,7 +167,7 @@ const ServiceDetailPageMainScreen = ({ navigation }: StackScreenProps<DetailPage
         )}
       >
         <Tabs.Tab name="상세설명">
-          <DetailBox ref={detailBoxRef} flatListRef={flatListRef} />
+          <DetailBox />
           <ScrollToTopButton flatListRef={flatListRef} />
         </Tabs.Tab>
         <Tabs.Tab name="후기(5)">
