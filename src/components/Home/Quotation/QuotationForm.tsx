@@ -282,7 +282,7 @@ const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 
         </View>
       </ImageBackground>
       <View style={{ justifyContent: 'center' }}>
-        <Subtitle16B style={{ textAlign: 'center', paddingVertical: 20 }}>견적서 작성</Subtitle16B>
+        <Subtitle16B style={{ textAlign: 'center', paddingVertical: 20 }}>주문서 작성</Subtitle16B>
         {photos.length > 0 &&
           <Carousel
             data={splitPhotos}

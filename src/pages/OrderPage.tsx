@@ -73,7 +73,7 @@ const OrderPage = ({ navigation }: { navigation: any }) => {
                         <Text style={{ color: "#612FEF", fontSize: 14, fontWeight: "700" }}>오픈 채팅</Text>
                     </ChatButton>
                     <QuotationButton onPress={() => navigation.navigate('QuotationPage')}>
-                        <Text style={{ color: "white", fontSize: 14, fontWeight: "700" }}>견적서</Text>
+                        <Text style={{ color: "white", fontSize: 14, fontWeight: "700" }}>주문서</Text>
                     </QuotationButton>
                 </View>
             </OrderInfoBox>

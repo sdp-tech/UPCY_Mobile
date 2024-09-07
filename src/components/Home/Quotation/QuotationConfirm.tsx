@@ -86,7 +86,7 @@ const QuotationPage = ({ navigation, route }: StackScreenProps<HomeStackParams, 
       </BackButton>
 <View style={{position: 'absolute', width: '100%', height: '100%', backgroundColor: 'white', opacity: 0.9}} />
         <View style={{marginTop: 30}}>
-        <Title20B style={{marginTop: statusBarHeight, color: BLACK, textAlign: 'center'}}>견적서 확인</Title20B>
+        <Title20B style={{marginTop: statusBarHeight, color: BLACK, textAlign: 'center'}}>주문서 확인</Title20B>
         <View style={{paddingVertical: 35, paddingHorizontal: 20}}>
 
         <View style={{backgroundColor: 'white', marginHorizontal: 10}}>
@@ -168,11 +168,11 @@ const QuotationPage = ({ navigation, route }: StackScreenProps<HomeStackParams, 
               <TouchableOpacity
                 style={{ backgroundColor: '#F4F4F4', padding: 10, flex: 1,marginLeft: 30, marginRight: 10, alignItems: 'center' ,    borderRadius: 20,  }}
                 onPress={() => {
-               console.log('견적서 거절 버튼 클릭');
+               console.log('주문서 거절 버튼 클릭');
                navigation.navigate('Rejection');
              }}
            >
-                <Text style={{ color: BLACK }}>견적서 거절</Text>
+                <Text style={{ color: BLACK }}>주문서 거절</Text>
               </TouchableOpacity>
 
 
