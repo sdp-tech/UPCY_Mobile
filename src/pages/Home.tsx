@@ -47,6 +47,7 @@ import { BLACK, White } from '../styles/GlobalColor';
 import InfoPage from '../components/Home/Market/InfoPage'; import OrderPage from './OrderPage';
 import ReformerMarket from '../components/Home/Market/ReformerMarket';
 import Service from '../components/Home/Market/Service';
+import { PhotoType } from '../hooks/useImagePicker';
 export type HomeStackParams = {
   Home: undefined;
   Market: undefined;
@@ -58,11 +59,11 @@ export type HomeStackParams = {
   QuotationForm: undefined;
   QuotationPage: undefined;
   SentQuotation: undefined;
-  ServiceRegistrationPage: { inputText?: string };
+  ServiceRegistrationPage: { inputText?: string, detailphoto?: PhotoType[] };
   GoodsRegistrationPage: undefined;
   TempStorage: undefined;
   TempStorageEdit: undefined;
-  WriteDetailPage: { inputText: string };
+  WriteDetailPage: { inputText: string, detailphoto?: PhotoType[] };
   AddPortfolio: undefined;
   InputInfo: undefined;
   QuotationConfirm: undefined;

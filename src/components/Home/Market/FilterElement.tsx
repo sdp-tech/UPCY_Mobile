@@ -47,14 +47,15 @@ const FilterElement = ({
             '걸리시',
         ],
         material: [
-            '폴리에스테르',
             '면',
+            '폴리에스테르',
+            '나일론',
+            '울',
+            '린넨',
+            '데님',
             '가죽',
             '스웨이드',
-            '울',
             '캐시미어',
-            '데님',
-            '플라스틱',
         ],
         fit: ['노멀', '타이트', '오버사이즈', '와이드'],
         detail: [
@@ -80,40 +81,8 @@ const FilterElement = ({
             "잡화",
         ],
     };
-    const ifUnpressable = (value: string) => {
-        if (
-            filters.category.length == 1 || filters.fit.length == 1 || filters.material.length == 1
-        )
-            return false;
-        else return true;
-    };
-    const handleSeveralPress = (value: string) => {
-        if (filters.style.includes(value) || filters.detail.includes(value)) {
-            setFilters(prev => {
-                return { ...prev, style: prev.style.filter(v => v !== value) };
-            });
-        } else {
-            setFilters(prev => {
-                return { ...prev, style: [...prev.style, value] };
-            });
-        }
-    };
-    const handleOnePress = (value: string) => {
-        if (ifUnpressable(value)) {
-            Alert.alert('한 개만 선택해주세요');
-            return;
-        } else if (filters.material.includes(value) || filters.fit.includes(value) || filters.category.includes(value)) {
-            setFilters(prev => {
-                return { ...prev, material: prev.material.filter(v => v !== value) };
-            });
-        } else {
-            setFilters(prev => {
-                return { ...prev, material: [...prev.material, value] };
-            });
-        }
-    }
     return (
-        <View style={{ borderBottomWidth: 1, borderBottomColor: "#DFDFDF" }}>
+        <View>
             <View style={{ margin: 10, marginTop: 18 }}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', alignContent: 'center' }}>
                     <Subtitle16M style={{ color: "#121212212" }}>{label}

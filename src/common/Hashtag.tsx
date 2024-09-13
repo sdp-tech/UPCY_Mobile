@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import { Body14B } from '../styles/GlobalText';
-import DeleteButton from '../assets/common/Delete.svg';
+import DeleteButton from '../assets/common/Delete_2.svg';
 import { BLACK, BLACK2, GRAY, PURPLE } from '../styles/GlobalColor';
 
 interface HashtagProps {
@@ -15,7 +15,7 @@ interface HashtagProps {
 const Hashtag = ({ value, pressable, pressed, onPress }: HashtagProps) => {
   return (
     <HashtagContainer pressed={pressed} onPress={onPress} disabled={!pressable}>
-      <Body14B style={{ color: pressed ? 'white' : BLACK }}>{value}</Body14B>
+      <Body14B style={{ color: pressed ? BLACK : 'white' }}>{value}</Body14B>
       <DeleteButton />
     </HashtagContainer>
   );
@@ -30,7 +30,7 @@ const HashtagContainer = styled.TouchableOpacity<{ pressed: boolean }>`
   align-items: center;
   padding: 4px 12px;
   background: ${(props: { pressed: boolean }) =>
-    props.pressed ? 'white' : '#DBFC72'};
+    props.pressed ? 'white' : '#612FEF'};
 `;
 
 export default Hashtag;
