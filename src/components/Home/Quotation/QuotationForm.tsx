@@ -321,20 +321,13 @@ const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 
         </View>
       </View>
       <View style={{ height: 8, backgroundColor: 'white' }} />
-<<<<<<< Updated upstream
       <FilterSection label='재질 선택' items={materials}  />
      <Subtitle16M style={{ paddingHorizontal: 15, marginBottom: 5 }}>기타 재질</Subtitle16M>
      <InputBox value={text} setValue={setText} placeholder='의뢰하시는 재질을 입력해주세요' long  style={{ height: 50 }}/>
 
       <View style={{ height: 32, backgroundColor: 'white' }} />
      <View style={{ borderBottomWidth: 5, borderColor: '#D9D9D9'}}/>
-=======
-      <FilterSection label='재질 선택' items={materials} />
-      <InputBox value={text} setValue={setText} placeholder='의뢰하시는 재질을 입력해주세요' long />
 
-      <FilterSection label='희망 사이즈 선택' items={sizes} showDuplicate={false} />
-      <View style={{ height: 8, backgroundColor: 'white' }} />
->>>>>>> Stashed changes
 
       {/* 옵션 섹션 추가 */}
       <View style={{ paddingVertical: 20, borderBottomWidth: 5, borderColor: '#D9D9D9', backgroundColor: '#FFFFFF', marginBottom: 20 }}>
