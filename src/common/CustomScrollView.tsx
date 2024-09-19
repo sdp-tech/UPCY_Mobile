@@ -19,6 +19,8 @@ const CustomScrollView = ({
   return (
     <KeyboardAwareScrollView
       extraScrollHeight={10}
+      bounces={false}
+      overScrollMode="never"
       alwaysBounceVertical={false}
       contentContainerStyle={{
         ...additionalStyles,

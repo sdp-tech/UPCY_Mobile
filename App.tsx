@@ -20,7 +20,7 @@ import MyPageIcon from './src/assets/navbar/MyPage.svg';
 import SignIn from './src/components/Auth/SignIn';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomBarProvider, useBottomBar } from './contexts/BottomBarContext';
-import { LoginProvider } from './src/common/Context';
+import { LoginProvider, UserProvider } from './src/common/Context';
 import Reformer from './src/components/Auth/Reformer/Reformer';
 import SplashScreen from './src/common/SplashScreen';
 
@@ -51,6 +51,7 @@ function App(): React.JSX.Element {
   return (
     <BottomBarProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
+        {/* <UserProvider> */}
         <LoginProvider>
           <NavigationContainer theme={GlobalTheme}>
             {!isSplashFinished ? (
@@ -67,6 +68,7 @@ function App(): React.JSX.Element {
             )}
           </NavigationContainer>
         </LoginProvider>
+        {/* </UserProvider> */}
       </GestureHandlerRootView>
     </BottomBarProvider>
   );
@@ -116,8 +118,8 @@ const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
         return (
           <TouchableOpacity
             key={index}
-            //onPress={route.name == '마이페이지' ? loginGuard(onPress) : onPress}
-            onPress={onPress}
+            onPress={route.name == '마이페이지' ? loginGuard(onPress) : onPress}
+            //onPress={onPress}
             style={{
               width: '20%',
               display: 'flex',
