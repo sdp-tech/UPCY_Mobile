@@ -1,11 +1,12 @@
 import { Dimensions, SafeAreaView, View } from 'react-native';
 import { Title20B } from '../../../styles/GlobalText';
 import BottomButton from '../../../common/BottomButton';
-import { FormProps } from '../SignIn';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { SignupProps } from '../Signup';
 
-export default function ReformFormSubmit({ navigation, route }: FormProps) {
+
+export default function ReformFormSubmit({ navigation, route }: SignupProps) {
   const { height } = Dimensions.get('screen');
-  const mainNavigation = navigation.getParent();
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={{ flex: 1, alignItems: 'center' }}>
@@ -16,7 +17,7 @@ export default function ReformFormSubmit({ navigation, route }: FormProps) {
       <BottomButton
         value="홈으로 가기"
         onPress={() => {
-          mainNavigation?.navigate('Home');
+          navigation.getParent()?.navigate('Home');
         }}
         pressed={false}
         style={{

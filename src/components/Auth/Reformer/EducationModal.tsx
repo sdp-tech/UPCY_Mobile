@@ -96,7 +96,7 @@ export default function EducationModal({
       snapPoints={snapPoints}
       backdropComponent={renderBackdrop}
       onChange={handleSheetChanges}>
-      {section === 'init' ? (
+      {section === 'init' ? ( // 기본 바텀시트 
         <CustomScrollView minHeight={700}>
           <View
             style={{
@@ -176,7 +176,7 @@ export default function EducationModal({
             </View>
           </View>
         </CustomScrollView>
-      ) : (
+      ) : ( // 학력 상태 눌렀을 때 나오는 바텀시트 
         <>
           <View style={styles.selectItem}>
             <Title20B>학력의 상태를 선택해 주세요</Title20B>

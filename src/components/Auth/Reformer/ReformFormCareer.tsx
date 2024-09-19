@@ -4,22 +4,28 @@ import {
   Dimensions,
   StyleSheet,
   Alert,
+  Text,
+  TouchableOpacity,
 } from 'react-native';
 import styled from 'styled-components/native';
 import { Body14M, Caption11M, Subtitle16B } from '../../../styles/GlobalText';
-import { PageProps } from './Reformer';
+import { ReformProps } from './Reformer';
 import BottomButton from '../../../common/BottomButton';
 import RightArrow from '../../../assets/common/RightArrow.svg';
 import PlusIcon from '../../../assets/common/Plus.svg';
+import PencilIcon from '../../../assets/common/Pencil.svg';
+import CloseIcon from '../../../assets/header/Close.svg';
 import { useEffect, useState } from 'react';
 import { BLACK, BLACK2, GRAY } from '../../../styles/GlobalColor';
-import EducationModal from './EducationModal';
 import SelectBox from '../../../common/SelectBox';
 import CareerModal from './CareerModal';
 import CustomScrollView from '../../../common/CustomScrollView';
 import Request from '../../../common/requests';
 import { CareerType, Careers } from '../../../types/UserTypes';
 import { err } from 'react-native-svg';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { SignInParams } from '../SignIn';
 
 const SelectView = styled.View`
   display: flex;
@@ -59,11 +65,46 @@ const AddTouchable = styled.TouchableOpacity`
   margin-top: 8px;
 `;
 
-export default function ReformCareer({ setNext, form, setForm }: PageProps) {
+interface FixSectionProps {
+  index: number;
+  type: string | undefined;
+  _1st: string | undefined;
+  _2nd: string | undefined;
+  edit: (index: number) => void;
+  onDelete: (index: number) => void;
+  _3rd?: string | undefined;
+}
+
+const FixSection: React.FC<FixSectionProps> = ({ index, type, _1st, _2nd, edit, onDelete, _3rd }) => {
+  return (
+    <View style={{ flex: 1, flexDirection: "row", height: 44, justifyContent: "space-between", alignItems: "center" }}>
+      <View style={{ flex: 4, flexDirection: "row" }}>
+        <View style={{ borderRadius: 4, backgroundColor: "#eaeaea", justifyContent: "center", alignItems: "center", paddingVertical: 3, paddingHorizontal: 6 }}>
+          <Text>{type}</Text>
+        </View>
+        <View style={{ gap: 4, flexDirection: "row", justifyContent: "center", alignItems: "center", paddingVertical: 3, paddingHorizontal: 6 }}>
+          <Text>{_1st}</Text>
+          <Text>{_2nd}</Text>
+          {_3rd && <Text>{_3rd}</Text>}
+        </View>
+      </View>
+      <View style={{ flex: 1, flexDirection: "row", justifyContent: "center", alignItems: "center", paddingVertical: 3, paddingHorizontal: 6, gap: 15 }}>
+        <TouchableOpacity onPress={() => edit(index)}>
+          <PencilIcon fill="#000000" strokeWidth={1} width={32} height={32} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => onDelete(index)} >
+          <CloseIcon color="#000000" />
+        </TouchableOpacity>
+      </View>
+    </View>
+  )
+}
+
+export default function ReformCareer({ form, setForm }: ReformProps) {
   const { width } = Dimensions.get('screen');
-  const [educationModal, setEducationModal] = useState(false);
   const [careerModal, setCareerModal] = useState(false);
   const [careerIndex, setCareerIndex] = useState(-1);
+  const navigation = useNavigation<StackNavigationProp<SignInParams>>();
   const request = Request();
 
   const handleAddCareer = () => {
@@ -99,8 +140,9 @@ export default function ReformCareer({ setNext, form, setForm }: PageProps) {
     if (careerIndex >= 0) setCareerModal(true);
   }, [careerIndex]);
 
-  const handleCareerRegister = async (career: object, category: string) => {
-    const response = await request.post('users/' + category + '_register/', {});
+  const handleCareerRegister = async (career: object, category: string) => { // (param, path)
+    const response = await request.post('users/' + category + '_register/', { career }, {});
+    // http://52.78.43.6:8000/users/education_register/ 이런 식
     if (response?.status !== 200) {
       console.log(response);
       throw Error('career register failed');
@@ -111,38 +153,37 @@ export default function ReformCareer({ setNext, form, setForm }: PageProps) {
     let path = '';
     let param = {};
     form.career.map(value => {
-      if (value.type === '프리랜서') {
-        path = 'freelancer';
+      if (value.type === '학력') {
+        path = 'education';
         param = {
-          project_name: value.name,
-          client: value.client,
-          main_tasks: value.content,
-          // params 확인
+          school_name: value.name,
+          major: value.major,
+          status: value.status,
         };
-      } else if (value.type === '실무 / 인턴') {
+      } else if (value.type === '실무 경험') {
         path = 'internship';
         param = {
           company_name: value.name,
-          department: value.team,
-          position: value.position,
-          start_date: value.start,
-          end_date: value.end,
+          department: value.team, // 근무 부서 및 직책 
         };
       } else if (value.type === '공모전') {
         path = 'competition';
         param = {
           name: value.name,
-          organizer: value.host,
-          award_date: value.date,
+          prize: value.content,
         };
       } else if (value.type === '자격증') {
         path = 'certification';
         param = {
           name: value.name,
           issuing_authority: value.host,
-          issue_date: value.date,
         };
-      } else if (value.type === '기타 (외주)') {
+      } else if (value.type === '기타 (개인 포트폴리오, 외주 등)') { // 수정 필요 
+        path = 'outsourcing';
+        param = {
+          project_name: value.name,
+          explain: value.content,
+        };
       }
       try {
         handleCareerRegister(param, path);
@@ -150,18 +191,16 @@ export default function ReformCareer({ setNext, form, setForm }: PageProps) {
         console.log(error);
       }
     });
-    const profileForm = {
+    const profileForm = { // 수정 필요?
       nickname: form.nickname,
       market_name: form.market,
       market_intro: form.introduce,
       links: form.link,
       area: form.region,
-      work_style: form.style,
-      special_material: form.material,
     };
     const response = await request.post('users/profile_register/', profileForm);
     if (response?.status === 200) {
-      setNext();
+      navigation.navigate('ReformSubmit');
     } else {
       console.log(response);
       Alert.alert('프로필 등록에 실패했습니다.');
@@ -170,67 +209,62 @@ export default function ReformCareer({ setNext, form, setForm }: PageProps) {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <CustomScrollView minHeight={500}>
-        <View style={{ flexGrow: 1 }}>
-          <View style={{ marginHorizontal: width * 0.04 }}>
-            <View style={styles.formView}>
-              <Subtitle16B>학력 전공을 작성해 주세요</Subtitle16B>
-              <SelectBox
-                value={form.education.school}
-                onPress={() => {
-                  setEducationModal(true);
-                }}
-                add={true}
-              />
-            </View>
-            <View style={styles.formView}>
-              <Subtitle16B>보유한 경력을 작성해 주세요</Subtitle16B>
-              {form.career.map((item, index) => (
-                <SelectView key={index}>
-                  <SelectTouchable
-                    onPress={() => {
-                      handlePressCareer(index);
-                    }}>
-                    {item.name === '' && item.type === undefined ? (
-                      <Body14M style={{ color: BLACK2 }}>선택해 주세요</Body14M>
-                    ) : (
-                      <Body14M>
-                        {item.type} / {item.name}
-                      </Body14M>
-                    )}
-
-                    <RightArrow color={BLACK2} />
-                  </SelectTouchable>
-                </SelectView>
-              ))}
-              {form.career.length < 3 && (
-                <AddTouchable onPress={handleAddCareer}>
-                  <PlusIcon color={GRAY} />
-                </AddTouchable>
-              )}
-            </View>
-          </View>
-          <View style={styles.bottomView}>
-            <Caption11M style={{ color: 'white' }}>
-              최대 추가 개수 {form.career.length}/3개
-            </Caption11M>
-          </View>
-          <View style={{ marginHorizontal: width * 0.04 }}>
-            <BottomButton
-              value="다음"
-              pressed={false}
-              onPress={handleSubmit}
-              style={{ width: '75%', alignSelf: 'center', marginBottom: 10 }}
-            />
-          </View>
+      <View style={styles.formView}>
+        <Subtitle16B>보유한 학력 / 경력을 작성해 주세요</Subtitle16B>
+        {form.career.length < 3 && ( // 개수 3개 미만일 때만 추가버튼 노출 
+          <AddTouchable onPress={handleAddCareer}>
+            <PlusIcon color={GRAY} />
+          </AddTouchable>
+        )}
+        <View style={styles.bottomView}>
+          <Caption11M style={{ color: 'white' }}>
+            최대 추가 개수 {form.career.length}/3개
+          </Caption11M>
         </View>
-      </CustomScrollView>
-      <EducationModal
-        open={educationModal}
-        setOpen={setEducationModal}
-        form={form}
-        setForm={setForm}
-      />
+        {form.career.map((item, index) => (
+          <View key={index}>
+            {/* <SelectTouchable
+              onPress={() => {
+                handlePressCareer(index);
+              }}>
+              {item.name === '' && item.type === undefined &&  // 학력이나 경력 추가되지 않은 상태 
+                <Body14M style={{ color: BLACK2 }}>선택해 주세요</Body14M>
+              }
+              {item.type === '학력' &&
+                <Body14M>
+                  {item.type} / {item.name}
+                </Body14M>}
+
+              <RightArrow color={BLACK2} />
+            </SelectTouchable> */}
+            {item.type === '학력' &&
+              <FixSection index={index} type={item.type} _1st={item.name} _2nd={item.major} edit={() => handleEditCareer(index)} onDelete={() => handleDeleteCareer(index)} _3rd={item.status}></FixSection>
+            }
+            {item.type === '자격증' &&
+              <FixSection index={index} type={item.type} _1st={item.name} _2nd={item.host} edit={() => handleEditCareer(index)} onDelete={() => handleDeleteCareer(index)}></FixSection>
+            }
+            {item.type === '공모전' &&
+              <FixSection index={index} type={item.type} _1st={item.name} _2nd={item.content} edit={() => handleEditCareer(index)} onDelete={() => handleDeleteCareer(index)} ></FixSection>
+            }
+            {item.type === '실무 경험' &&
+              <FixSection index={index} type={item.type} _1st={item.name} _2nd={item.team} edit={() => handleEditCareer(index)} onDelete={() => handleDeleteCareer(index)} _3rd={item.period}></FixSection>
+            }
+            {item.type?.includes('기타') &&
+              <FixSection index={index} type={item.type} _1st={item.name} _2nd={item.content} edit={() => handleEditCareer(index)} onDelete={() => handleDeleteCareer(index)} ></FixSection>
+            }
+          </View>
+        ))}
+
+      </View>
+
+      <View style={{ marginHorizontal: width * 0.04 }}>
+        <BottomButton
+          value="다음"
+          pressed={false}
+          onPress={handleSubmit}
+          style={{ width: '75%', alignSelf: 'center', marginBottom: 10 }}
+        />
+      </View>
       {careerIndex >= 0 && (
         <CareerModal
           open={careerModal}
@@ -247,7 +281,7 @@ export default function ReformCareer({ setNext, form, setForm }: PageProps) {
 
 const styles = StyleSheet.create({
   formView: {
-    marginTop: 30,
+    marginTop: 10,
   },
   bottomView: {
     marginTop: 'auto',
