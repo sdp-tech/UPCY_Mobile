@@ -40,7 +40,6 @@ const QuotationPage = ({ navigation, route }: StackScreenProps<HomeStackParams, 
 
   const quotation = [
     { key: '재질', data: '니트' },
-    { key: '희망 사이즈', data: '여성 55' },
     { key: '추가 요청사항', data: '' },
     { key: '옵션 상세', data: '' },
     { key: '거래 방식', data: '비대면' },
@@ -169,14 +168,16 @@ const QuotationPage = ({ navigation, route }: StackScreenProps<HomeStackParams, 
         <View style={{backgroundColor: "#F4F4F4", marginHorizontal: 10, alignItems: 'center', paddingVertical: 15}}>
           <Subtitle16M style={{color: PURPLE}}>안내문</Subtitle16M>
           <Caption11M style={{color: BLACK, marginVertical: 5}}>
-                     평균 거래일은 입금 후 10~15일 입니다.{'\n'}
-                     24시간 이내 입금확인 되지 않을 시  거래가 취소 될 수 있습니다{'\n'}
+                     증빙자료를 첨부하시면 담당자 검토 후, 확인 마크를 달아드립니다.{'\n'}
+                     첨부 가능 자료 :  재학증명서, 졸업증명서, 성적 증명서{'\n'}
+                      (용량입력) 이하 (파일형식 입력) 파일만 등록 가능합니다{'\n'}
+                      제출한 자료는 의뢰인에게 노출되지 않습니다{'\n'}
           </Caption11M>
             <CheckBox
             style={{ paddingHorizontal: 30, alignSelf: 'center', marginVertical: 5 }}
             pressed={checkBoxPressed}
             onPress={() => setCheckBoxPressed(!checkBoxPressed)} // 상태 변경
-            text='확인했습니다.'
+            text='리폼 제품이 서비스 내의 포트폴리오에 사용되는 것에 동의합니다.'
           />
          </View>
         <View style={{padding: 10, marginVertical: 30}}>

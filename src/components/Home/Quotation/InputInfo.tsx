@@ -9,11 +9,12 @@ import InputBox from '../../../common/InputBox';
 import BottomButton from '../../../common/BottomButton';
 import Postcode from '@actbase/react-daum-postcode';
 import { StackScreenProps } from '@react-navigation/stack';
+import { StackNavigationProp } from '@react-navigation/stack';
 
 interface InputInfoProps {
   onClose: () => void;
   onNavigate: () => void;
-  navigation: StackNavigationProp<RootStackParamList, 'InputInfo'>; // 여기서 'InputInfo'는 이 컴포넌트가 속한 스택 네비게이터 내의 경로 이름입니다.
+  navigation: StackNavigationProp<RootStackParamList, 'InputInfo'>; // 여기서 'InputInfo'는 이 컴포넌트가 속한 스택 네비게이터 내의 경로 이름
 }
 
 export interface InfoProps {
