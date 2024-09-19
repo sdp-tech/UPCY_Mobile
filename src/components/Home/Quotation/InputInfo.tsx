@@ -14,7 +14,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 interface InputInfoProps {
   onClose: () => void;
   onNavigate: () => void;
-  navigation: StackNavigationProp<RootStackParamList, 'InputInfo'>; // 여기서 'InputInfo'는 이 컴포넌트가 속한 스택 네비게이터 내의 경로 이름
+  navigation: StackNavigationProp<RootStackParamList, 'InputInfo'>;
 }
 
 export interface InfoProps {
@@ -27,22 +27,23 @@ export interface InfoProps {
 const statusBarHeight = getStatusBarHeight(true);
 
 const InputInfo = ({ onClose, navigation, onNavigate }: InputInfoProps) => {
-  const [postModal, setPostModal] = useState(false); // 모달 가시성 상태를 관리합니다.
+  const [postModal, setPostModal] = useState(false); // 모달 가시성 상태를 관리
   const [selectedAddress, setSelectedAddress] = useState(''); // 선택한 주소를 저장할 상태 변수
   const [postalCode, setPostalCode] = useState(''); // 우편번호를 저장할 상태 변수
+  const [detailedAddress, setDetailedAddress] = useState('');
+  const [name, setName] = useState('');
+  const [tel, setTel] = useState('');
 
-  // 주소 선택을 처리하는 함수
   const handleAddressSelect = (data: any) => {
     const { zonecode, address } = data;
-
     setPostalCode(zonecode); // 우편번호 상태 업데이트
     setSelectedAddress(address); // 선택한 주소를 상태 변수에 저장
-    setPostModal(false); // 주소 선택 후 모달을 닫습니다.
-    console.log(`Selected Address: ${address}, Postal Code: ${zonecode}`); // 디버깅 로그
+    setPostModal(false); // 주소 선택 후 모달을 닫음
   };
 
   const handleNextPress = () => {
-    navigation.navigate('QuotationPage');
+    // name, tel, selectedAddress를 QuotationPage로 전달
+    navigation.navigate('QuotationPage', { name, tel, address: selectedAddress });
   };
 
   return (
@@ -56,32 +57,46 @@ const InputInfo = ({ onClose, navigation, onNavigate }: InputInfoProps) => {
         </View>
         <View style={{ padding: 20, marginVertical: 30 }}>
           <Subtitle16B>이름</Subtitle16B>
-          <InputBox style={{ height: 40, paddingVertical: 10, marginTop: 10, borderColor: PURPLE }} placeholder='입력해주세요' />
+          <InputBox
+            style={{ height: 40, paddingVertical: 10, marginTop: 10, borderColor: PURPLE }}
+            placeholder="입력해주세요"
+            value={name} // 이름 상태 값
+            onChangeText={(text) => setName(text)} // 이름 입력 핸들러
+          />
           <Subtitle16B style={{ marginTop: 25 }}>연락처</Subtitle16B>
-          <InputBox style={{ height: 40, paddingVertical: 10, marginTop: 10, borderColor: PURPLE }} placeholder='입력해주세요' />
+          <InputBox
+            style={{ height: 40, paddingVertical: 10, marginTop: 10, borderColor: PURPLE }}
+            placeholder="입력해주세요"
+            value={tel} // 연락처 상태 값
+            onChangeText={(text) => setTel(text)} // 연락처 입력 핸들러
+          />
           <Subtitle16B style={{ marginTop: 25 }}>우편번호</Subtitle16B>
           <InputBox
             style={{ height: 40, paddingVertical: 10, marginTop: 10, borderColor: PURPLE }}
-            value={postalCode} // 우편번호 입력란에 우편번호를 설정
-            placeholder='입력해주세요'
+            value={postalCode}
+            placeholder="입력해주세요"
           />
           <Subtitle16B style={{ marginTop: 25 }}>주소</Subtitle16B>
           <InputBox
             style={{ height: 40, paddingVertical: 10, marginTop: 10, borderColor: PURPLE }}
-            value={selectedAddress} // 선택한 주소를 입력란에 자동으로 설정
-            placeholder='입력해주세요'
+            value={selectedAddress}
+            placeholder="입력해주세요"
           />
           <TouchableOpacity style={{ position: 'absolute', top: 260, right: 30 }} onPress={() => setPostModal(true)}>
             <Body14M style={{ color: PURPLE }}>주소 찾기</Body14M>
           </TouchableOpacity>
-          <InputBox style={{ height: 40, paddingVertical: 10, marginTop: 10, borderColor: PURPLE }} placeholder='상세 주소를 입력해주세요' />
+          <InputBox
+            style={{ height: 40, paddingVertical: 10, marginTop: 10, borderColor: PURPLE }}
+            placeholder='상세 주소를 입력해주세요'
+            value={detailedAddress} // 상태값 연결
+            onChangeText={(text) => setDetailedAddress(text)}
+          />
         </View>
         <View style={{ paddingHorizontal: 45, paddingVertical: 20 }}>
-          <BottomButton
-            value={'다음'}
-            pressed={false}
-            onPress={handleNextPress}
-          />
+          <BottomButton value={'다음'}
+          pressed={false}
+          onPress={handleNextPress}
+           />
           <View style={{ marginVertical: 5 }} />
         </View>
 

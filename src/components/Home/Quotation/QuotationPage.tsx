@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { ScrollView, View, Text, TouchableOpacity, ImageBackground, Dimensions, Modal, Image, Alert , StyleSheet} from 'react-native';
 import styled from 'styled-components/native';
 import { getStatusBarHeight } from 'react-native-safearea-height';
@@ -19,6 +19,11 @@ const statusBarHeight = getStatusBarHeight(true);
 const { width, height } = Dimensions.get('window');
 
 const QuotationPage = ({ navigation, route }: StackScreenProps<HomeStackParams, 'QuotationPage'>) => {
+
+  const { name, tel, address, detailedAddress } = route.params; // inputinfo에서 전달된 값을 destructuring
+
+  const fullAddress = `${address} ${detailedAddress}`.trim();  //전체주소(fullAddress) 생성
+
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [finishModal, setFinishModal] = useState<boolean>(false);
   const [checkBoxPressed, setCheckBoxPressed] = useState<boolean>(false); // CheckBox 상태 관리
@@ -43,11 +48,10 @@ const QuotationPage = ({ navigation, route }: StackScreenProps<HomeStackParams, 
     { key: '추가 요청사항', data: '' },
     { key: '옵션 상세', data: '' },
     { key: '거래 방식', data: '비대면' },
-    { key: '이름', data: '이소윤' },
-    { key: '연락처', data: '010-1234-1234' },
-    { key: '주소', data: '서울특별시 서대문구 연희동 124' },
+    { key: '이름', data: name }, // 입력받은 이름 적용
+    { key: '연락처', data: tel }, // 입력받은 연락처 적용
+    { key: '주소', data: fullAddress }, // 입력받은 주소 적용
   ];
-
   const options = [
     {
       option: 'option 1',
@@ -101,6 +105,7 @@ const QuotationPage = ({ navigation, route }: StackScreenProps<HomeStackParams, 
           <Caption12M style={{ color: 'white', marginBottom: 18 }}>리폼러 닉네임 (전성식탁)</Caption12M>
           <Body16M style={{ color: 'white' }}>마켓 소개글</Body16M>
         </View>
+
         <View style={{ backgroundColor: 'white', marginHorizontal: 10 }}>
           <View style={{ backgroundColor: GREEN, marginHorizontal: 20, paddingVertical: 5, alignItems: 'center' }}>
             <Filter14M style={{ color: PURPLE }}>주문서 영수증</Filter14M>
