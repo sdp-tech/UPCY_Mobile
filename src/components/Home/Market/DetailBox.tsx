@@ -50,6 +50,29 @@ const DetailBox = () => {
       data: '',
       optionList: [],
     },
+    {
+      label: 'option',
+      data: '',
+      list: [],
+      optionList: [
+        {
+          option: '뚝딱이 단추',
+          optionExplain: '가방 입구에 똑딱이 단추를 추가할 수 있어요.',
+          isFixing: false,
+          addPrice: '+1000원',
+          photoAdded: false,
+          optionPhotos: [],
+        },
+        {
+          option: '주머니 지퍼',
+          optionExplain: '주머니에 귀여운 지퍼를 달아보세요.',
+          isFixing: false,
+          addPrice: '+1000원',
+          photoAdded: false,
+          optionPhotos: [],
+        },
+      ],
+    },
   ];
 
   return (
@@ -64,6 +87,12 @@ const DetailBox = () => {
             return imageBox({ index: index, uri: item.data });
           if (item.label === 'material' && serviceDetail[3].list.length > 0)
             return materialBox({ index: index });
+          if (item.label === 'option')
+            // FIXME: backend에서 어떻게 보내는지 check 후 수정
+            return optionDetailBox({
+              index: index,
+              optionsList: item.optionList,
+            });
           return null;
         })}
         <View style={{ marginBottom: 400 }} />
@@ -96,7 +125,7 @@ const DetailBox = () => {
   }) {
     return (
       <View key={index}>
-        <View style={styles.service}>
+        <View style={styles.serviceBox}>
           <Text style={TextStyles.infolabel}>서비스 상세</Text>
           <Text style={TextStyles.service}>{explanation}</Text>
         </View>
@@ -106,7 +135,7 @@ const DetailBox = () => {
 
   function imageBox({ index, uri }: { index: number; uri: string }) {
     return (
-      <View style={styles.image} key={index}>
+      <View style={styles.imageBox} key={index}>
         <ImageBackground
           style={{ height: width - 32, width: '100%' }}
           imageStyle={{ height: width - 32 }}
@@ -117,9 +146,26 @@ const DetailBox = () => {
   }
 
   function materialBox({ index }: { index: number }) {
+    function materialList({ data }: { data: string[] }) {
+      return data.map((item, index) => (
+        <View key={index}>
+          <Text
+            style={{
+              fontSize: 14,
+              lineHeight: 24,
+              color: '#222222',
+              fontFamily: 'Pretendard Variable',
+              fontWeight: '400',
+            }}>
+            {item} |{' '}
+          </Text>
+        </View>
+      ));
+    }
+
     return (
       <>
-        <View style={styles.material} key={index}>
+        <View style={styles.materialBox} key={index}>
           <View style={{ flexDirection: 'column', flex: 0.3 }}>
             <Text
               style={{
@@ -144,26 +190,50 @@ const DetailBox = () => {
     );
   }
 
-  function materialList({ data }: { data: string[] }) {
-    return data.map((item, index) => (
+  function optionDetailBox({
+    index,
+    optionsList,
+  }: {
+    index: number;
+    optionsList: Option[];
+  }) {
+    function eachOptionDetailBox({
+      index,
+      eachOption,
+    }: {
+      index: number;
+      eachOption: Option;
+    }) {
+      return (
+        <View style={styles.eachOptionDetailBox} key={index}>
+          <Text style={TextStyles.optionTitle}>option {index + 1}</Text>
+          <View style={styles.eachOptionDetailLine}>
+            <Text style={TextStyles.infolabel}>{eachOption.option}</Text>
+            <Text style={TextStyles.infolabel}>{eachOption.addPrice}</Text>
+          </View>
+          <View style={styles.eachOptionDetailExplainBox}>
+            <Text style={TextStyles.optionExplain}>
+              {eachOption.optionExplain}
+            </Text>
+          </View>
+        </View>
+      );
+    }
+    return (
       <View key={index}>
-        <Text
-          style={{
-            fontSize: 14,
-            lineHeight: 24,
-            color: '#222222',
-            fontFamily: 'Pretendard Variable',
-            fontWeight: '400',
-          }}>
-          {item} |{' '}
-        </Text>
+        <View style={styles.optionDetailBox}>
+          <Text style={TextStyles.infolabel}>옵션 상세</Text>
+          {optionsList.map((eachOption, index) =>
+            eachOptionDetailBox({ index: index, eachOption: eachOption }),
+          )}
+        </View>
       </View>
-    ));
+    );
   }
 };
 
 const styles = StyleSheet.create({
-  service: {
+  serviceBox: {
     display: 'flex',
     borderTopColor: '#dcdcdc',
     justifyContent: 'space-between',
@@ -184,19 +254,41 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  image: {
+  imageBox: {
     padding: 16,
     display: 'flex',
     borderBottomWidth: 1,
     borderBlockColor: '#dcdcdc',
   },
-  material: {
+  materialBox: {
     flex: 1,
     flexDirection: 'row',
     gap: 24,
     padding: 16,
     borderBottomWidth: 1,
     borderBlockColor: '#dcdcdc',
+  },
+  optionDetailBox: {
+    flex: 1,
+    flexDirection: 'column',
+    gap: 24,
+    padding: 16,
+  },
+  eachOptionDetailBox: {
+    flex: 1,
+    flexDirection: 'column',
+  },
+  eachOptionDetailLine: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingTop: 4,
+  },
+  eachOptionDetailExplainBox: {
+    flex: 1,
+    marginTop: 16,
+    backgroundColor: '#F1F1F1',
+    borderRadius: 8,
   },
 });
 
@@ -220,6 +312,18 @@ const TextStyles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '400',
     color: '#929292',
+  },
+  optionTitle: {
+    color: '#612FEF',
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  optionExplain: {
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    fontSize: 14,
+    fontWeight: '400',
+    lineHeight: 24,
   },
 });
 
