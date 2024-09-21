@@ -16,6 +16,7 @@ interface InputViewProps extends InputBoxProps {
     default?: false | string;
     invalid?: false | string;
   };
+  long?: boolean;
 }
 
 const InputView = ({
@@ -25,6 +26,7 @@ const InputView = ({
   value,
   setValue,
   caption,
+  long,
   ...props
 }: InputViewProps) => {
   const [infoModal, setInfoModal] = useState(false);
@@ -70,6 +72,7 @@ const InputView = ({
         setValue={setValue}
         style={{ marginTop: 8 }}
         {...props}
+        long={long}
       />
       {value === '' && caption?.none && (
         <Caption11M style={{ color: GRAY }}>{caption.none}</Caption11M>
