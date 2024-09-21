@@ -132,7 +132,7 @@ export default function Login({ navigation, route }: LoginProps) {
         />
         <View style={{ marginTop: height * 0.02 }}>
           <LoginInput
-            placeholder="아이디"
+            placeholder="이메일"
             onChangeText={value => {
               setForm(prev => {
                 return { ...prev, email: value };

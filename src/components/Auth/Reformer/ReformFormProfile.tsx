@@ -7,7 +7,7 @@ import {
   ImageBackground,
   Image,
 } from 'react-native';
-import { PageProps, ReformProps } from './Reformer';
+import { ReformProps } from './Reformer';
 import BottomButton from '../../../common/BottomButton';
 import PencilIcon from '../../../assets/common/Pencil.svg';
 import InputView from '../../../common/InputView';
@@ -15,6 +15,15 @@ import PhotoOptions from '../../../common/PhotoOptions';
 import CustomScrollView from '../../../common/CustomScrollView';
 import { useEffect, useState } from 'react';
 import { useImagePicker } from '../../../hooks/useImagePicker';
+import ReformFormSubmit from './ReformFormSubmit';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { SignInParams } from '../SignIn';
+import ReformCareer from './ReformFormCareer';
+import RegionModal from '../RegionModal';
+import { RegionType } from '../../../types/UserTypes';
+import { Body16B } from '../../../styles/GlobalText';
+import SelectBox from '../../../common/SelectBox';
 
 function ProfilePic({ form, setForm }: ReformProps) {
   const [photo, setPhoto] = useState(form.picture);
@@ -82,18 +91,14 @@ function ProfilePic({ form, setForm }: ReformProps) {
   );
 }
 
-export default function ReformFormProfile({
-  setNext,
-  form,
-  setForm,
-}: PageProps) {
+export default function ReformFormProfile({ form, setForm }: ReformProps) {
   const { width } = Dimensions.get('screen');
+  const [modalOpen, setModalOpen] = useState(false);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <CustomScrollView
         additionalStyles={{
-          minHeight: 650,
           marginHorizontal: width * 0.04,
         }}>
         <View style={{ flexGrow: 1 }}>
@@ -107,7 +112,7 @@ export default function ReformFormProfile({
               });
             }}
           />
-          <InputView
+          {/* <InputView
             title="마켓명"
             value={form.market}
             setValue={v => {
@@ -116,9 +121,9 @@ export default function ReformFormProfile({
               });
             }}
             info="마켓 이름입니다"
-          />
+          /> */}
           <InputView
-            title="마켓 소개글"
+            title="소개글"
             value={form.introduce}
             setValue={v => {
               setForm(prev => {
@@ -129,7 +134,7 @@ export default function ReformFormProfile({
             long={true}
           />
           <InputView
-            title="상담 링크"
+            title="오픈채팅 링크"
             placeholder="http://"
             value={form.link}
             setValue={v => {
@@ -138,18 +143,26 @@ export default function ReformFormProfile({
               });
             }}
           />
-
-          <BottomButton
-            value="다음"
-            pressed={false}
-            onPress={setNext}
-            style={{
-              width: '75%',
-              alignSelf: 'center',
-              marginTop: 'auto',
-              marginBottom: 10,
-            }}
+          <View style={{ marginVertical: 8 }}>
+            <Body16B>주요 활동 지역</Body16B>
+            <SelectBox
+              value={form.region}
+              onPress={() => setModalOpen(true)}
+            />
+          </View>
+          <RegionModal
+            open={modalOpen}
+            setOpen={setModalOpen}
+            value={form.region}
+            setValue={text =>
+              setForm(prev => {
+                return { ...prev, region: text as RegionType }; // 그냥 text는 string으로 인식하더라구요...
+              })
+            }
           />
+          <ReformCareer
+            form={form}
+            setForm={setForm} />
         </View>
       </CustomScrollView>
     </SafeAreaView>

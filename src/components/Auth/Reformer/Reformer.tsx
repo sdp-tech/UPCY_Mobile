@@ -1,5 +1,5 @@
-import { Dispatch, SetStateAction, createContext, useState } from 'react';
-import { View } from 'react-native';
+import { Dispatch, SetStateAction, createContext, useEffect, useState } from 'react';
+import { Text, View } from 'react-native';
 import { FormProps } from '../SignIn';
 import ReformFormHeader from './ReformFormHeader';
 import ReformFormProfile from './ReformFormProfile';
@@ -14,17 +14,17 @@ import ReformFormStyle from './ReformFormStyle';
 import ReformCareer from './ReformFormCareer';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { PhotoType } from '../../../hooks/useImagePicker';
+import DetailScreenHeader from '../../Home/components/DetailScreenHeader';
+import { SignupProps } from '../Signup';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-type page = 'profile' | 'style' | 'career';
+// type page = 'profile' | 'style' | 'career';
 
 export interface ReformProps {
   form: ReformProfileType;
   setForm: Dispatch<SetStateAction<ReformProfileType>>;
 }
 
-export interface PageProps extends ReformProps {
-  setNext: () => void;
-}
 export interface ModalProps extends ReformProps {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
@@ -38,15 +38,13 @@ interface BasicFormProp {
   marketing: boolean;
 }
 
-type ReformProfileType = {
+export type ReformProfileType = {
   picture: undefined | PhotoType;
   nickname: string;
   market: string;
   introduce: string;
   link: string;
   region: RegionType;
-  style: string[];
-  material: string[];
   education: EducType;
   career: CareerType;
 };
@@ -58,16 +56,14 @@ export type RpContextType = {
   setSteps: Dispatch<SetStateAction<number>>;
 };
 
-export default function Reformer({ navigation }: FormProps) {
+export default function Reformer({ navigation, route }: SignupProps) {
   const defaultProfile: ReformProfileType = {
     picture: undefined,
     nickname: '',
     market: '',
     introduce: '',
     link: '',
-    region: undefined,
-    style: [],
-    material: [],
+    region: '',
     education: {
       school: '',
       major: '',
@@ -76,7 +72,6 @@ export default function Reformer({ navigation }: FormProps) {
     },
     career: [],
   };
-  const [page, setPage] = useState<page>('profile');
   const [profileForm, setProfileForm] = useState(defaultProfile);
 
   const handleSubmit = () => {
@@ -84,49 +79,22 @@ export default function Reformer({ navigation }: FormProps) {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, flexDirection: "column" }}>
       <BottomSheetModalProvider>
-        <ReformFormHeader
-          step={{ profile: 1, style: 2, career: 3 }[page]}
-          onPressLeft={
-            {
-              profile: () => {
-                navigation.goBack();
-              },
-              style: () => {
-                setPage('profile');
-              },
-              career: () => {
-                setPage('style');
-              },
-            }[page]
-          }
-        />
-        {
-          {
-            profile: (
-              <ReformFormProfile
-                setNext={() => setPage('style')}
-                form={profileForm}
-                setForm={setProfileForm}
-              />
-            ),
-            style: (
-              <ReformFormStyle
-                setNext={() => setPage('career')}
-                form={profileForm}
-                setForm={setProfileForm}
-              />
-            ),
-            career: (
-              <ReformCareer
-                setNext={() => handleSubmit()}
-                form={profileForm}
-                setForm={setProfileForm}></ReformCareer>
-            ),
-          }[page]
-        }
+        <DetailScreenHeader
+          title=''
+          leftButton='LeftArrow'
+          rightButton='None'
+          onPressLeft={() => { navigation.getParent()?.navigate('Home') }}
+          onPressRight={() => { }} />
+        <View style={{ flex: 1 }}>
+          <ReformFormProfile
+            form={profileForm}
+            setForm={setProfileForm}
+          />
+
+        </View>
       </BottomSheetModalProvider>
-    </View>
+    </SafeAreaView>
   );
 }
