@@ -31,7 +31,7 @@ const DetailScreenHeader = ({
     Search: <SearchIcon color={BLACK} style={{ marginRight: 5 }} />,
     Edit: <Body14M style={{ color: '#929292', marginRight: 10 }}>편집</Body14M>,
     Exit: <CloseIcon color={BLACK} style={{ marginHorizontal: 5 }} />,
-    LeftArrow: <LeftArrowIcon color={BLACK} />,
+    LeftArrow: <View style={{ marginLeft: 14 }}><LeftArrowIcon color={BLACK} /></View>,
     CustomBack: <CustomBackButton />,
     None: <></>,
   };

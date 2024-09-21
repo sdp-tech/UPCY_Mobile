@@ -11,9 +11,14 @@ import { BLACK, GREEN, PURPLE } from '../../styles/GlobalColor';
 import RightArrow from '../../assets/common/RightArrow.svg';
 import LeftArrow from '../../assets/common/Arrow.svg';
 
-interface SignupProps {
+export interface SignupProps {
   navigation: any;
   route: any;
+}
+
+export interface SignupModalProps {
+  visible: boolean;
+  onClose: () => void;
 }
 
 interface StartBtnProps {
@@ -78,8 +83,8 @@ export default function Signup({ navigation, route }: SignupProps) {
         </TouchableOpacity>
         <View style={{ marginTop: height * 0.06, marginLeft: width * 0.02 }}>
           <View>
-            <Title20B>업시에서 어떤 서비스를</Title20B>
-            <Title20B>이용하고 싶으세요?</Title20B>
+            <Title20B>나만의 맵시</Title20B>
+            <Title20B>낭비 없이, UPCY!</Title20B>
           </View>
           <View style={{ marginTop: height * 0.02 }}>
             <Body14M style={{ color: '#8D8D8D' }}>
@@ -94,7 +99,9 @@ export default function Signup({ navigation, route }: SignupProps) {
           <StartBtn
             containerStyle={{ marginBottom: 10 }}
             onPress={() => {
-              navigation.navigate('Basic');
+              navigation.navigate('Basic', {
+                is_reformer: false
+              });
             }}
             subtext="폐의류를 맡기고 싶다면"
             text="의뢰인으로 가입"
@@ -103,7 +110,9 @@ export default function Signup({ navigation, route }: SignupProps) {
           />
           <StartBtn
             onPress={() => {
-              navigation.navigate('Reformer');
+              navigation.navigate('Basic', {
+                is_reformer: true
+              });
             }}
             subtext="전문성으로 수익을 창출하고 싶다면"
             text="리폼러로 가입"

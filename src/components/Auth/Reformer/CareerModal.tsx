@@ -92,7 +92,7 @@ export default function CareerModal({
   const handleContentChange = (v: any, t: string) => {
     const prevCareer = form.career;
     prevCareer[index] = { ...prevCareer[index], [t]: v };
-    console.log(prevCareer[index]);
+    //console.log(prevCareer[index]);
     setForm(prev => {
       return { ...prev, career: prevCareer };
     });
@@ -106,26 +106,51 @@ export default function CareerModal({
     });
   };
 
-  const WorkPeriod = useCallback(() => {
+  // const WorkPeriod = useCallback(() => {
+  //   return (
+  //     <View style={{ marginVertical: 10 }}>
+  //       <Body16B>근무기간</Body16B>
+  //       <PeriodPicker
+  //         start={form.career[index].start}
+  //         end={form.career[index].end}
+  //         setStart={d => {
+  //           handleContentChange(d, 'start');
+  //         }}
+  //         setEnd={d => {
+  //           handleContentChange(d, 'end');
+  //         }}
+  //       />
+  //     </View>
+  //   );
+  // }, [form.career[index].start, form.career[index].end]);
+
+  const EduDetailSection = () => {
     return (
-      <View style={{ marginVertical: 10 }}>
-        <Body16B>근무기간</Body16B>
-        <PeriodPicker
-          start={form.career[index].start}
-          end={form.career[index].end}
-          setStart={d => {
-            handleContentChange(d, 'start');
+      <View key="education" style={{ marginVertical: 10 }}>
+        <InputView
+          title="학교명"
+          value={form.career[index].name}
+          setValue={v => {
+            handleContentChange(v, 'name');
           }}
-          setEnd={d => {
-            handleContentChange(d, 'end');
+        />
+        <InputView
+          title="전공"
+          value={form.career[index].major}
+          setValue={v => {
+            handleContentChange(v, 'major');
           }}
+        />
+        <InputView
+          title="상태"
+          value={form.career[index].status}
+          setValue={v => {
+            handleContentChange(v, 'status');
+          }}
+          placeholder='예시) 재학, 휴학, 졸업, 수료'
         />
       </View>
     );
-  }, [form.career[index].start, form.career[index].end]);
-
-  const FreeDetailSection = () => {
-    return <View key="freelancer" style={{ marginVertical: 10 }}></View>;
   };
 
   const InterDetailSection = () => {
@@ -139,20 +164,21 @@ export default function CareerModal({
           }}
         />
         <InputView
-          title="근무부서"
+          title="근무부서 및 직책"
           value={form.career[index].team}
           setValue={v => {
             handleContentChange(v, 'team');
           }}
+          placeholder='예시) 소품디자인팀 인턴'
         />
         <InputView
-          title="직위"
-          value={form.career[index].position}
+          title="근무기간"
+          value={form.career[index].period}
           setValue={v => {
-            handleContentChange(v, 'position');
+            handleContentChange(v, 'period');
           }}
+          placeholder='예시) 6개월, 3년'
         />
-        <WorkPeriod />
       </View>
     );
   };
@@ -174,16 +200,6 @@ export default function CareerModal({
             handleContentChange(v, 'host');
           }}
         />
-        <View style={{ marginVertical: 10 }}>
-          <Body16B>발급일</Body16B>
-          <DatePickerBox
-            title="발급일"
-            date={form.career[index].date}
-            setDate={v => {
-              handleContentChange(v, 'date');
-            }}
-          />
-        </View>
       </View>
     );
   };
@@ -199,22 +215,13 @@ export default function CareerModal({
           }}
         />
         <InputView
-          title="주최"
-          value={form.career[index].host}
+          title="수상 내역"
+          value={form.career[index].content}
           setValue={v => {
-            handleContentChange(v, 'host');
+            handleContentChange(v, 'content');
           }}
+          placeholder='예시) 최우수상'
         />
-        <View style={{ marginVertical: 10 }}>
-          <Body16B>수상일</Body16B>
-          <DatePickerBox
-            title="수상일"
-            date={form.career[index].date}
-            setDate={v => {
-              handleContentChange(v, 'date');
-            }}
-          />
-        </View>
       </View>
     );
   };
@@ -230,20 +237,13 @@ export default function CareerModal({
           }}
         />
         <InputView
-          title="클라이언트"
-          value={form.career[index].client}
-          setValue={v => {
-            handleContentChange(v, 'client');
-          }}
-        />
-        <InputView
-          title="주요업무"
+          title="상세 설명"
           value={form.career[index].content}
           setValue={v => {
             handleContentChange(v, 'content');
           }}
+          long={true}
         />
-        <WorkPeriod />
       </View>
     );
   };
@@ -257,15 +257,15 @@ export default function CareerModal({
   );
   const [dropdown, setDropdown] = useState(false);
   const statusList = [
-    '프리랜서',
-    '실무 / 인턴',
+    '학력',
+    '실무 경험',
     '공모전',
     '자격증',
-    '기타 (외주)',
+    '기타 (개인 포트폴리오, 외주 등)',
   ];
 
   const sectionList = [
-    <FreeDetailSection key="freelancer" />,
+    <EduDetailSection key="education" />,
     <InterDetailSection key="internship" />,
     <ContDetailSection key="contest" />,
     <CertDetailSection key="certificate" />,
