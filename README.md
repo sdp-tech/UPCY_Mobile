@@ -56,7 +56,7 @@ brew install cocoapods
 
 ### How to run this project
 
-- `/.env`, `UPCY_MOBILE/ios/Info.plist` files are required
+- `/.env`, `/ios/Info.plist` files are required
 
 - At root directory `/` run
 
