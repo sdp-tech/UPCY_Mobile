@@ -2,7 +2,7 @@
 
 ## Before running the project
 
-### MAC Settings - [ Source ] (https://blog.naver.com/dongwook443/223384937148)
+### MAC Settings - [ Source ](https://blog.naver.com/dongwook443/223384937148)
 
 1. Install homebrew
 
