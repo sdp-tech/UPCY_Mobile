@@ -179,11 +179,18 @@ const FilterSection = ({ label, items, showDuplicate = true }: FilterSectionProp
 
 const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 'QuotationForm'>) => {
   const materials = ['폴리에스테르', '면', '스웨이드', '울', '캐시미어', '가죽', '데님', '추가 요청사항에 기재'];
-  const sizes = ['XS(85)', 'S(90)', 'M(95)', 'L(100)', 'XL(105)', 'XXL(110)'];
   const meet = ['대면', '비대면'];
 
   const options = [
-    {
+ {
+      option: 'option 0',
+      title: '유료 옵션',
+      description: '옵션입니다.',
+      price: '1,000 원',
+       image: 'https://example.com/image1.jpg'
+
+    },
+{
       option: 'option 1',
       title: '단추',
       description: '가방 입구에 똑딱이 단추를 추가할 수 있어요.',
@@ -212,7 +219,6 @@ const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [selectedFilter, setSelectedFilter] = useState<string>('');
-  const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [selectedOptions, setSelectedOptions] = useState<number[]>([]);
   const [faceToFaceRegion, setFaceToFaceRegion] = useState<string>('');
   const [deliveryType, setDeliveryType] = useState<string>('');
@@ -315,12 +321,16 @@ const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 
         </View>
       </View>
       <View style={{ height: 8, backgroundColor: 'white' }} />
-      <FilterSection label='재질 선택' items={materials} />
-      <FilterSection label='희망 사이즈 선택' items={sizes} showDuplicate={false} />
-      <View style={{ height: 8, backgroundColor: 'white' }} />
+      <FilterSection label='재질 선택' items={materials}  />
+     <Subtitle16M style={{ paddingHorizontal: 15, marginBottom: 5 }}>기타 재질</Subtitle16M>
+     <InputBox value={text} setValue={setText} placeholder='의뢰하시는 재질을 입력해주세요' long  style={{ height: 50 }}/>
+
+      <View style={{ height: 32, backgroundColor: 'white' }} />
+     <View style={{ borderBottomWidth: 5, borderColor: '#D9D9D9'}}/>
+
 
       {/* 옵션 섹션 추가 */}
-      <View style={{ paddingVertical: 20, borderBottomWidth: 0.5, borderColor: '#D9D9D9', backgroundColor: '#FFFFFF', marginBottom: 20 }}>
+      <View style={{ paddingVertical: 20, borderBottomWidth: 5, borderColor: '#D9D9D9', backgroundColor: '#FFFFFF', marginBottom: 20 }}>
         <FilterBox style={{ justifyContent: 'space-between' }}>
           <Subtitle18M style={{ paddingHorizontal: 15, marginBottom: 5 }}>옵션 상세</Subtitle18M>
           <Caption11M style={{ color: PURPLE }}>• 중복 가능</Caption11M>
@@ -359,7 +369,7 @@ const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 
         ))}
       </View>
 
-      <View style={{ paddingVertical: 20, borderBottomWidth: 0.5, borderColor: '#D9D9D9', backgroundColor: '#FFFFFF', marginBottom: 20 }}>
+      <View style={{ paddingVertical: 20, borderBottomWidth: 5, borderColor: '#D9D9D9', backgroundColor: '#FFFFFF', marginBottom: 20 }}>
         <Subtitle18M style={{ paddingHorizontal: 15, marginBottom: 5 }}>추가 요청사항</Subtitle18M>
         {refPhotos.length > 0 &&
           <Carousel
@@ -390,20 +400,12 @@ const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 
             setPhoto={setRefPhotos}
             buttonLabel='참고 이미지 첨부'
           />
-          <InputBox value={text} setValue={setText} placeholder='입력해주세요' long />
+          <InputBox value={text} setValue={setText} placeholder='예) 16인치 파우치로 만들고 싶어요, 평소 상의 55 사이즈를 입어요' long />
         </View>
       </View>
 
 
-      <View style={{ paddingVertical: 20, borderBottomWidth: 0.5, borderColor: '#D9D9D9', backgroundColor: '#FFFFFF', marginBottom: 20 }}>
-        <Subtitle18M style={{ marginBottom: 10 }}>포트폴리오 사용 가능 여부</Subtitle18M>
-        <CheckBox
-          style={{ paddingHorizontal: 30, alignSelf: 'center' }}
-          pressed={isChecked}
-          onPress={() => setIsChecked(!isChecked)}
-          text='리폼 제품이 서비스 내의 포트폴리오에 사용되는 것에 동의합니다.'
-        />
-      </View>
+
 
       <View style={{ paddingHorizontal: 15, paddingVertical: 20, backgroundColor: '#FFFFFF' }}>
         <Subtitle18M style={{ marginBottom: 10 }}>거래 방식 선택</Subtitle18M>
@@ -472,7 +474,7 @@ const SearchButton = styled.TouchableOpacity`
 
 const FilterContainer = styled.View`
   padding: 20px 15px;
-  border-bottom-width: 0.5px;
+  border-bottom-width: 0px;
   border-color: #D9D9D9;
   background-color: #FFFFFF;
   margin-bottom: 20px;
