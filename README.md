@@ -58,6 +58,12 @@ brew install cocoapods
 
 - `/.env`, `UPCY_MOBILE/ios/Info.plist` files are required
 
+- At root directory `/` run
+
+```bash
+yarn install
+```
+
 - Go to `/ios` and run
 
 ```bash
@@ -67,7 +73,6 @@ pod install
 - Come back to root directory `/` and run
 
 ```bash
-yarn install
 yarn start
 ```
 
