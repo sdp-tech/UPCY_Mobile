@@ -1,18 +1,24 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, Dimensions } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  Dimensions,
+} from 'react-native';
 import styled from 'styled-components/native';
 import { Body16M, Subtitle16M } from '../../../styles/GlobalText';
 import { BLACK, LIGHTGRAY } from '../../../styles/GlobalColor';
-import Arrow from '../../../assets/common/Arrow.svg';
 import { getStatusBarHeight } from 'react-native-safearea-height';
 import HeartButton from '../../../common/HeartButton';
-import CategoryDownButton from '../../../assets/common/CategoryDownButton.svg';
 import DetailModal from '../Market/GoodsDetailOptionsModal';
 
 const statusBarHeight = getStatusBarHeight(true);
 const { width } = Dimensions.get('window');
 
-const ReformerMarket = ({ navigation }) => {
+const ReformerMarket = (/*{ navigation }*/) => {
   const [form, setForm] = useState({
     mail: '',
     domain: '',
@@ -20,10 +26,10 @@ const ReformerMarket = ({ navigation }) => {
     region: '',
   });
 
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedStyles, setSelectedStyles] = useState([]);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState('추천순');
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
+  const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
+  const [selectedOption, setSelectedOption] = useState<string>('추천순');
 
   const isStyleSelected = selectedStyles.length > 0;
 
@@ -31,14 +37,14 @@ const ReformerMarket = ({ navigation }) => {
     setDropdownOpen(!dropdownOpen);
   };
 
-  const selectOption = (option) => {
+  const selectOption = ({ option }: { option: string }) => {
     setSelectedOption(option);
     setDropdownOpen(false);
   };
 
   return (
     <ScrollView>
-      <Subtitle16M style={{ marginTop: 15 }}>   내가 좋아한 리폼러</Subtitle16M>
+      <Subtitle16M style={{ marginTop: 15 }}> 내가 좋아한 리폼러</Subtitle16M>
 
       <FilterSection>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -52,15 +58,11 @@ const ReformerMarket = ({ navigation }) => {
 
       <View style={{ marginTop: 10 }} />
 
-
-
-
-
       <DetailModal
         open={modalOpen}
         setOpen={setModalOpen}
         value={form.region}
-        setValue={(text) => setForm((prev) => ({ ...prev, region: text }))}
+        setValue={text => setForm(prev => ({ ...prev, region: text }))}
         selectedStyles={selectedStyles}
         setSelectedStyles={setSelectedStyles}
       />
@@ -77,13 +79,24 @@ const ReformerMarket = ({ navigation }) => {
   );
 };
 
-const ReformerCard = ({ name, rating, tag }) => {
-  const [like, setLike] = useState(false);
+const ReformerCard = ({
+  name,
+  rating,
+  tag,
+}: {
+  name: string;
+  rating: string;
+  tag: string;
+}) => {
+  const [like, setLike] = useState<boolean>(false);
 
   return (
     <View style={styles.cardContainer}>
       <View style={styles.reformerInfo}>
-        <Image style={styles.avatar} source={{ uri: 'https://via.placeholder.com/50' }} />
+        <Image
+          style={styles.avatar}
+          source={{ uri: 'https://via.placeholder.com/50' }}
+        />
         <View>
           <Subtitle16M>{name}</Subtitle16M>
           <Body16M>{rating}</Body16M>
@@ -98,7 +111,11 @@ const ReformerCard = ({ name, rating, tag }) => {
       </View>
       <View style={styles.portfolio}>
         {[...Array(4)].map((_, idx) => (
-          <Image key={idx} style={styles.portfolioImage} source={{ uri: 'https://via.placeholder.com/70' }} />
+          <Image
+            key={idx}
+            style={styles.portfolioImage}
+            source={{ uri: 'https://via.placeholder.com/70' }}
+          />
         ))}
       </View>
     </View>
@@ -129,11 +146,15 @@ const CategoryButton = styled.TouchableOpacity`
   border-radius: 12px;
   border-width: 1px;
   border-color: #612fef;
-  background-color: ${(props) => (props.pressed ? '#612FEF' : '#FFFFFF')};
+  background-color: ${(
+    { props }: { props: any }, // TODO: 나중에 props의 type specify 필요
+  ) => (props.pressed ? '#612FEF' : '#FFFFFF')};
 `;
 
 const CategoryButtonText = styled.Text`
-  color: ${(props) => (props.pressed ? '#FFFFFF' : '#222222')};
+  color: ${(
+    { props }: { props: any }, // TODO: 나중에 props의 type specify 필요
+  ) => (props.pressed ? '#FFFFFF' : '#222222')};
 `;
 
 const CategoryBox = styled.View`
