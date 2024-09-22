@@ -16,7 +16,7 @@ import { Files } from '../types/UserTypes';
 
 export interface FileBoxProps {
   data: Files;
-  setData: (r: Files) => void;
+  setData?: (r: Files) => void;
   max: number;
 }
 
@@ -37,7 +37,7 @@ const SelectView = styled.View`
 const FileBox = ({ data, setData, max }: FileBoxProps) => {
   const handleFileDelete = (index: number) => {
     const newData = data.filter((v, i) => i !== index);
-    setData(newData);
+    setData?.(newData);
   };
 
   return (
@@ -46,7 +46,7 @@ const FileBox = ({ data, setData, max }: FileBoxProps) => {
         <FilePicker
           callback={r => {
             console.log(r);
-            setData([{ name: r.name ? r.name : 'noname', uri: r.uri }]);
+            setData?.([{ name: r.name ? r.name : 'noname', uri: r.uri }]);
           }}
           disabled={data.length >= max}
           style={styles.BoxView}>
