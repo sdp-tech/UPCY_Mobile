@@ -95,7 +95,7 @@ const DetailBox = () => {
             });
           return null;
         })}
-        <View style={{ marginBottom: 400 }} />
+        <View style={{ marginBottom: 120 }} />
       </Tabs.ScrollView>
     </View>
   );
@@ -152,7 +152,7 @@ const DetailBox = () => {
           <Text
             style={{
               fontSize: 14,
-              lineHeight: 24,
+              lineHeight: 26,
               color: '#222222',
               fontFamily: 'Pretendard Variable',
               fontWeight: '400',
@@ -208,8 +208,10 @@ const DetailBox = () => {
         <View style={styles.eachOptionDetailBox} key={index}>
           <Text style={TextStyles.optionTitle}>option {index + 1}</Text>
           <View style={styles.eachOptionDetailLine}>
-            <Text style={TextStyles.infolabel}>{eachOption.option}</Text>
-            <Text style={TextStyles.infolabel}>{eachOption.addPrice}</Text>
+            <Text style={TextStyles.eachOptionTitle}>{eachOption.option}</Text>
+            <Text style={TextStyles.eachOptionAddPrice}>
+              {eachOption.addPrice}
+            </Text>
           </View>
           <View style={styles.eachOptionDetailExplainBox}>
             <Text style={TextStyles.optionExplain}>
@@ -255,7 +257,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   imageBox: {
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 32,
     display: 'flex',
     borderBottomWidth: 1,
     borderBlockColor: '#dcdcdc',
@@ -277,16 +280,17 @@ const styles = StyleSheet.create({
   eachOptionDetailBox: {
     flex: 1,
     flexDirection: 'column',
+    paddingTop: 16,
   },
   eachOptionDetailLine: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingTop: 4,
+    marginBottom: 16,
   },
   eachOptionDetailExplainBox: {
     flex: 1,
-    marginTop: 16,
     backgroundColor: '#F1F1F1',
     borderRadius: 8,
   },
@@ -317,6 +321,21 @@ const TextStyles = StyleSheet.create({
     color: '#612FEF',
     fontSize: 11,
     fontWeight: '700',
+    marginBottom: 4,
+  },
+  eachOptionTitle: {
+    color: '#222222',
+    fontSize: 16,
+    fontFamily: 'Pretendard Variable',
+    fontWeight: '700',
+    lineHeight: 24,
+  },
+  eachOptionAddPrice: {
+    color: '#222222',
+    fontSize: 16,
+    fontFamily: 'Pretendard Variable',
+    fontWeight: '400',
+    lineHeight: 24,
   },
   optionExplain: {
     paddingHorizontal: 16,
