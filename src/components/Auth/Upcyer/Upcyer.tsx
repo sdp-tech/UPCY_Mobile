@@ -16,6 +16,7 @@ import { useEffect, useState } from 'react';
 import { PhotoType, useImagePicker } from '../../../hooks/useImagePicker';
 import { useNavigation } from '@react-navigation/native';
 import Check from '../../../assets/common/CheckIcon.svg'
+import DetailScreenHeader from '../../Home/components/DetailScreenHeader';
 
 type UpcyProfileType = {
     picture: undefined | PhotoType;
@@ -91,18 +92,25 @@ export const UpcyFormProfile = () => {
             setModalVisible(false);
             navigation.getParent()?.reset({
                 index: 0, // 첫 번째 화면부터 시작
-                routes: [{ name: 'Home' }], // 새로운 스택에 홈 화면만 남김
+                routes: [{ name: 'Login' }],
             });
         }, 3000); // 3000ms = 3초
     };
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
+            <DetailScreenHeader
+                title=''
+                rightButton='None'
+                leftButton='LeftArrow'
+                onPressLeft={() => { navigation.goBack() }}
+                onPressRight={() => { }} />
             <CustomScrollView
                 additionalStyles={{
                     minHeight: 650,
                     marginHorizontal: width * 0.04,
                 }}>
+
                 <View style={{ flexGrow: 1 }}>
                     <ProfilePic />
                     <InputView
@@ -131,7 +139,9 @@ export const UpcyFormProfile = () => {
                         }}
                     />
                 </View>
+
             </CustomScrollView>
+
             <Modal visible={isModalVisible} transparent={true} animationType="slide" onRequestClose={() => {
                 setModalVisible(false);  // 백 버튼 등으로 모달을 닫을 때 처리
             }}>
