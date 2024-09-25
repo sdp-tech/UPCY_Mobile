@@ -67,13 +67,12 @@ export const processLoginResponse = (
 ) => {
   // const navigation = useNavigation<StackNavigationProp<MyPageProps>>();
   if (response.status == 200) {
-    const nickname = response.data.data.nickname;
-    const accessToken = response.data.data.access;
-    const refreshToken = response.data.data.refresh;
+    const accessToken = response.data.access;
+    const refreshToken = response.data.refresh;
     setNickname('임시 닉네임');
     setAccessToken(accessToken);
     setRefreshToken(refreshToken);
-    console.log(nickname, accessToken, refreshToken);
+    console.log(accessToken, refreshToken);
     setLogin(true);
     navigate();
   } else if (response.status == 400) {
@@ -94,7 +93,7 @@ export default function Login({ navigation, route }: LoginProps) {
   const request = Request();
 
   const handleLogin = async () => {
-    const response = await request.post(`users/login/`, form, {});
+    const response = await request.post(`/api/user/login`, form);
     processLoginResponse(
       response,
       () => {
@@ -105,6 +104,8 @@ export default function Login({ navigation, route }: LoginProps) {
       setLogin,
     );
   };
+
+  const tt = { "config": { "adapter": ["xhr", "http"], "data": "{\"email\":\"testuser@upcy.co.kr\",\"password\":\"8D0m@jawmJQs1\"}", "headers": [Object], "maxBodyLength": -1, "maxContentLength": -1, "method": "post", "timeout": 0, "transitional": { "clarifyTimeoutError": false, "forcedJSONParsing": true, "silentJSONParsing": true }, "url": "https://upcy.co.kr/api/user/login", "xsrfCookieName": "XSRF-TOKEN", "xsrfHeaderName": "X-XSRF-TOKEN" }, "data": { "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI3MTYxNTE2LCJpYXQiOjE3MjcwNzUxMTYsImp0aSI6IjE4NDg3MGUyZDhhZjQ0NjE5ZjY2ODdhOTM0MjFlNTU4IiwidXNlcl9pZCI6MX0.WqYzFz28CVMyGMbBtbDtkVF5AoPA8qdLLNqn086eT5U", "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcyODI4NDcxNiwiaWF0IjoxNzI3MDc1MTE2LCJqdGkiOiI4ZjUzYmZlZDBlMTY0YjdkYmQ3MzQ5NzQ3YTQyMzhiNCIsInVzZXJfaWQiOjF9.2yqOu0WiWlEBtkcsB1gN6pFIuGr9plD4cLiScm_hpyc" }, "headers": { "allow": "POST, OPTIONS", "content-length": "483", "content-type": "application/json", "cross-origin-opener-policy": "same-origin", "date": "Mon, 23 Sep 2024 07:05:16 GMT", "referrer-policy": "same-origin", "server": "gunicorn", "vary": "origin", "x-content-type-options": "nosniff", "x-frame-options": "DENY" }, "request": { "DONE": 4, "HEADERS_RECEIVED": 2, "LOADING": 3, "OPENED": 1, "UNSENT": 0, "_aborted": false, "_cachedResponse": undefined, "_hasError": false, "_headers": { "accept": "application/json, text/plain, */*", "authorization": "No Auth", "content-type": "application/json" }, "_incrementalEvents": false, "_lowerCaseResponseHeaders": { "allow": "POST, OPTIONS", "content-length": "483", "content-type": "application/json", "cross-origin-opener-policy": "same-origin", "date": "Mon, 23 Sep 2024 07:05:16 GMT", "referrer-policy": "same-origin", "server": "gunicorn", "vary": "origin", "x-content-type-options": "nosniff", "x-frame-options": "DENY" }, "_method": "POST", "_perfKey": "network_XMLHttpRequest_https://upcy.co.kr/api/user/login", "_performanceLogger": { "_closed": false, "_extras": [Object], "_isGlobalLogger": true, "_pointExtras": [Object], "_points": [Object], "_timespans": [Object] }, "_requestId": null, "_response": "{\"access\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI3MTYxNTE2LCJpYXQiOjE3MjcwNzUxMTYsImp0aSI6IjE4NDg3MGUyZDhhZjQ0NjE5ZjY2ODdhOTM0MjFlNTU4IiwidXNlcl9pZCI6MX0.WqYzFz28CVMyGMbBtbDtkVF5AoPA8qdLLNqn086eT5U\",\"refresh\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcyODI4NDcxNiwiaWF0IjoxNzI3MDc1MTE2LCJqdGkiOiI4ZjUzYmZlZDBlMTY0YjdkYmQ3MzQ5NzQ3YTQyMzhiNCIsInVzZXJfaWQiOjF9.2yqOu0WiWlEBtkcsB1gN6pFIuGr9plD4cLiScm_hpyc\"}", "_responseType": "", "_sent": true, "_subscriptions": [], "_timedOut": false, "_trackingName": "unknown", "_url": "https://upcy.co.kr/api/user/login", "readyState": 4, "responseHeaders": { "Content-Length": "483", "Content-Type": "application/json", "Date": "Mon, 23 Sep 2024 07:05:16 GMT", "Server": "gunicorn", "Vary": "origin", "allow": "POST, OPTIONS", "cross-origin-opener-policy": "same-origin", "referrer-policy": "same-origin", "x-content-type-options": "nosniff", "x-frame-options": "DENY" }, "responseURL": "https://upcy.co.kr/api/user/login", "status": 200, "timeout": 0, "upload": {}, "withCredentials": true }, "status": 200, "statusText": undefined }
 
   return (
     <Fragment>

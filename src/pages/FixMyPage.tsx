@@ -7,10 +7,11 @@ import PencilIcon from "../assets/common/Pencil.svg"
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomScrollView from "../common/CustomScrollView";
 import InputView from "../common/InputView";
-import { removeAccessToken, removeNickname, removeRefreshToken } from "../common/storage";
+import { getAccessToken, getRefreshToken, removeAccessToken, removeNickname, removeRefreshToken } from "../common/storage";
 import { LoginContext } from "../common/Context";
 import { MyPageStackParams } from "./MyPage";
 import DetailScreenHeader from "../components/Home/components/DetailScreenHeader";
+import Request from "../common/requests";
 export interface MypageProps extends ProfileProps {
     route: any;
     navigation: any;
@@ -97,15 +98,34 @@ function ProfilePic({ form, setForm }: ProfileProps) {
 
 const FixMyPage = ({ navigation, route }: FixMyPageProps) => {
     const { isLogin, setLogin } = useContext(LoginContext);
-    const Logout = () => {
-        removeAccessToken();
-        removeNickname();
-        removeRefreshToken();
+    const request = Request();
+    const Logout = async () => {
+        const accessToken = await getAccessToken();
+        const refreshToken = await getRefreshToken();
         setLogin(false);
-        navigation.getParent()?.reset({
-            index: 0, // 스택 초기화 
-            routes: [{ name: '홈' }], // 홈으로 이동 
-        });
+        const params = {
+            refresh: refreshToken
+        }
+        const headers = {
+            Authorization: `Bearer ${accessToken}`
+        }
+        try{
+            const response = await request.post('/api/user/logout', params, headers)
+            if (response &&response.status === 205) {
+                console.log('로그아웃 합니다.')
+                navigation.getParent()?.reset({
+                    index: 0, // 스택 초기화 
+                    routes: [{ name: 'Home' }], 
+                });
+            } else {
+                console.error('Unexpected response status: ', response?.status);
+            }
+            
+        }
+        catch (err){
+            console.error(err)
+        }
+        
     };
 
     function handleLogout(): () => void {

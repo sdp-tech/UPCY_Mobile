@@ -140,8 +140,8 @@ export default function ReformCareer({ form, setForm }: ReformProps) {
     if (careerIndex >= 0) setCareerModal(true);
   }, [careerIndex]);
 
-  const handleCareerRegister = async (career: object, category: string) => { // (param, path)
-    const response = await request.post('users/' + category + '_register/', { career }, {});
+  const handleCareerRegister = async (career: object) => { // (param, path)
+    const response = await request.post('/api/user/reformer', { career }, {});
     // http://52.78.43.6:8000/users/education_register/ 이런 식
     if (response?.status !== 200) {
       console.log(response);
@@ -150,43 +150,48 @@ export default function ReformCareer({ form, setForm }: ReformProps) {
   };
 
   const handleSubmit = async () => {
-    let path = '';
     let param = {};
     form.career.map(value => {
       if (value.type === '학력') {
-        path = 'education';
         param = {
-          school_name: value.name,
-          major: value.major,
-          status: value.status,
+          education: [{
+            school: value.name,
+            major: value.major,
+            academic_status: value.status,
+          }]
         };
       } else if (value.type === '실무 경험') {
-        path = 'internship';
         param = {
-          company_name: value.name,
-          department: value.team, // 근무 부서 및 직책 
+          career: [{
+            company_name: value.name,
+            department: value.team, // 근무 부서 및 직책 
+            period: value.period // 근무 기간 
+          }]
         };
       } else if (value.type === '공모전') {
-        path = 'competition';
         param = {
-          name: value.name,
-          prize: value.content,
+          awards: [{
+            name: value.name,
+            prize: value.content, // 수상 내역 
+          }]
         };
       } else if (value.type === '자격증') {
-        path = 'certification';
         param = {
-          name: value.name,
-          issuing_authority: value.host,
+          certicication: [{
+            name: value.name,
+            issuing_authority: value.host,
+          }]
         };
-      } else if (value.type === '기타 (개인 포트폴리오, 외주 등)') { // 수정 필요 
-        path = 'outsourcing';
+      } else if (value.type === '기타 (개인 포트폴리오, 외주 등)') {
         param = {
-          project_name: value.name,
-          explain: value.content,
+          freelancer: [{
+            project_name: value.name,
+            explain: value.content, // 상세 설명
+          }]
         };
       }
       try {
-        handleCareerRegister(param, path);
+        handleCareerRegister(param);
       } catch (error) {
         console.log(error);
       }

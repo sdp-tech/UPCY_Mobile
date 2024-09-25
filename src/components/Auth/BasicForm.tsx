@@ -129,7 +129,7 @@ export default function BasicForm({ navigation, route }: FormProps) {
       password: form.password,
       re_password: checkPw,
     };
-    const response = await request.post(`users/signup/`, params, {});
+    const response = await request.post(`/api/user/signup`, params, {});
     if (response?.status === 201) {
       console.log(params);
       setSplash(true);

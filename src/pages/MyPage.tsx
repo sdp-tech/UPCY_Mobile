@@ -25,12 +25,14 @@ import ScrollTopButton from '../common/ScrollTopButton';
 import ReviewPage from '../components/Home/Market/ReviewPage';
 import ScrollToTopButton from '../common/ScrollToTopButtonFlat';
 import FixMyPage from './FixMyPage';
+import Login from '../components/Auth/Login';
 import { PhotoType } from '../hooks/useImagePicker';
 import Request from '../common/requests';
 
 export type MyPageStackParams = {
   MyPage: { userInfo?: any | undefined };
   FixMyPage: { userInfo: any };
+  Login: undefined;
 };
 
 export interface MypageStackProps {
@@ -51,6 +53,7 @@ const MyPageScreen = ({
       })}>
       <MyPageStack.Screen name="MyPage" component={MyPageMainScreen} />
       <MyPageStack.Screen name="FixMyPage" component={FixMyPage} />
+      <MyPageStack.Screen name="Login" component={Login} />
     </MyPageStack.Navigator>
   );
 };
@@ -106,22 +109,16 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
 
   const getProfile = async () => {
     try {
-      const userName = await getNickname();
-      const path = 'users/profile';
-      const params = {
-        introduce: 'introduce',
-        profile_image: 'profile_image'
-      }
-      const response = await request.get(path, params, {});
+      const path = '/api/user';
+      const response = await request.get(path, {}, {});
       // 요청이 성공했을 때의 처리
       if (response.status === 200) {
         console.log('User data fetched successfully:', response.data);
-        const { introduce, profile_image } = response.data;
         setUserInfo({
-          nickname: userName,
+          nickname: response.data.nickname,
           backgroundphoto: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
-          profile_image: profile_image || 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
-          introduce: introduce || '나는야 업씨러 이하늘 환경을 사랑하지요 눈누난나'
+          profile_image: response.data.profile_image_url || 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
+          introduce: response.data.introduce || '나는야 업씨러 이하늘 환경을 사랑하지요 눈누난나'
         });
         return response.data;
       } else {
@@ -135,13 +132,13 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
     }
   }
 
-  useFocusEffect(
-    useCallback(() => {
-      if (isLogin) {
-        getProfile(); // 로그인 상태일 때 프로필을 가져옴
-      }
-    }, [isLogin]),
-  );
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     if (isLogin) {
+  //       getProfile(); // 로그인 상태일 때 프로필을 가져옴
+  //     }
+  //   }, [isLogin]),
+  // );
 
   const handleLogout = () => {
     removeAccessToken();
