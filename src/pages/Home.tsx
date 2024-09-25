@@ -228,7 +228,9 @@ const HomeMainScreen = ({
               <Button onPress={() => navigation.navigate('AddPortfolio')}>
                 <Text>포트폴리오 등록</Text>
               </Button>
-
+              <Button onPress={() => navigation.navigate('OrderPage')}>
+                <Text>주문관리</Text>
+              </Button>
               <Button onPress={() => navigation.navigate('WriteReviewPage')}>
                 <Text>후기 작성 페이지</Text>
               </Button>

@@ -26,7 +26,7 @@ export interface InfoProps {
 
 const statusBarHeight = getStatusBarHeight(true);
 
-const InputInfo = ({ onClose, navigation, onNavigate }: InputInfoProps) => {
+const InputInfo = ({ onClose, navigation, onNavigate ,route }: InputInfoProps) => {
   const [postModal, setPostModal] = useState(false); // 모달 가시성 상태를 관리
   const [selectedAddress, setSelectedAddress] = useState(''); // 선택한 주소를 저장할 상태 변수
   const [postalCode, setPostalCode] = useState(''); // 우편번호를 저장할 상태 변수
@@ -41,10 +41,19 @@ const InputInfo = ({ onClose, navigation, onNavigate }: InputInfoProps) => {
     setPostModal(false); // 주소 선택 후 모달을 닫음
   };
 
-  const handleNextPress = () => {
+
     // name, tel, selectedAddress를 QuotationPage로 전달
-    navigation.navigate('QuotationPage', { name, tel, address: selectedAddress });
+
+  const handleNextPress = () => {
+    navigation.navigate('QuotationPage', {
+      material: route.params.material,
+      transactionMethod: route.params.transactionMethod,
+      options: route.params.options,
+      additionalRequest: route.params.additionalRequest,
+      name, tel, address: selectedAddress
+    });
   };
+
 
   return (
     <ScrollView>

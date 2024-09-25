@@ -218,11 +218,16 @@ const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 
   const [refPhotos, setRefPhotos] = useState<PhotoResultProps[]>([]);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [isChecked, setIsChecked] = useState<boolean>(false);
-  const [selectedFilter, setSelectedFilter] = useState<string>('');
   const [selectedOptions, setSelectedOptions] = useState<number[]>([]);
-  const [faceToFaceRegion, setFaceToFaceRegion] = useState<string>('');
+  const [selectedMaterial, setSelectedMaterial] = useState<string>('');
+  const [selectedFilter, setSelectedFilter] = useState<string>(''); // 거래 방식
+  const [faceToFaceRegion, setFaceToFaceRegion] = useState<string>(''); // 대면 지역
   const [deliveryType, setDeliveryType] = useState<string>('');
   const [selectedOptionIndex, setSelectedOptionIndex] = useState<number | null>(null);
+
+
+
+
 
   const splitArrayIntoPairs = (arr: any[], pairSize: number) => {
     return arr.reduce((result, item, index) => {
@@ -258,15 +263,22 @@ const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 
       });
     };
 
-  const handleNextPress = () => {
-    if (selectedFilter === '대면') {
-      navigation.navigate('QuotationPage'); // '대면' 선택시 QuotationPage로 네비게이트
-    } else if (selectedFilter === '비대면') {
-      navigation.navigate('InputInfo'); // '비대면' 선택시 InputInfo 페이지로 네비게이트
-    } else {
-      Alert.alert('거래 방식을 선택해주세요');
-    }
-  };
+const handleNextPress = () => {
+  if (!selectedFilter) {
+    Alert.alert('거래 방식을 선택해주세요');
+    return;
+  }
+
+  const selectedOptionsDetails = selectedOptions.map(index => options[index]); // 선택된 옵션 세부 정보 추출
+
+  navigation.navigate('InputInfo', {
+     material: selectedMaterial,
+     transactionMethod: selectedFilter,
+     options: selectedOptionsDetails, // 선택한 옵션
+     additionalRequest: text,
+   });
+ };
+
 
   return (
     <ScrollView>
