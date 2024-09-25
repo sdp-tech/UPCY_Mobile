@@ -15,9 +15,8 @@ export default function Request() {
 
     // upcy temp api url:  http://52.78.43.6:8000/
     // upcy domain: http://upcy.co.kr:8000/
-    // https 요청 문제로 도메인 연결 보류
 
-    const url = 'http://52.78.43.6:8000/' + path;
+    const url = 'https://upcy.co.kr' + path;
 
     let headerValue;
 
@@ -40,7 +39,7 @@ export default function Request() {
       if (err.response === undefined) {
         // 백엔드와 통신 자체가 실패(ERR_CONNECTION_REFUSED)
         console.log(err);
-        Alert.alert('ERR_CONNECTION_REFUSED' + UPCY_API_URL);
+        Alert.alert('ERR_CONNECTION_REFUSED' + ': ' + url);
         console.warn(url);
         throw err;
       } else if (err.response.status === 401) {
@@ -51,15 +50,16 @@ export default function Request() {
         // refresh 토큰을 통해 access 토큰 재발급
         try {
           const response = await axios.post(
-            UPCY_API_URL + 'users/token/refresh/',
+            url + '/api/user/token/refresh',
             {
               refresh: refreshToken,
             },
-            {
-              headers: {
-                Authorization: 'No Auth',
-              },
-            },
+            {}
+            // {
+            //   headers: {
+            //     Authorization: 'No Auth',
+            //   },
+            // },
           );
           setAccessToken(response.data.access);
           console.warn('new access token', response.data.access);

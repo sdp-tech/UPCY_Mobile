@@ -70,8 +70,9 @@ export const LoginProvider = ({ children }: { children: ReactNode }) => {
     setIsLogin(value);
   };
   const checkLogin = async () => {
-    const token = await getAccessToken();
-    if (token) setIsLogin(true);
+    // const token = await getAccessToken();
+    // if (token) setIsLogin(true);
+    setIsLogin(false) // 수정 필요 
   };
   useEffect(() => {
     checkLogin();

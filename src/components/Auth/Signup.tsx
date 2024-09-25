@@ -10,6 +10,8 @@ import { BLACK, GREEN, PURPLE } from '../../styles/GlobalColor';
 
 import RightArrow from '../../assets/common/RightArrow.svg';
 import LeftArrow from '../../assets/common/Arrow.svg';
+import Request from '../../common/requests';
+import { getAccessToken, getRefreshToken, removeAccessToken } from '../../common/storage';
 
 export interface SignupProps {
   navigation: any;
@@ -67,6 +69,7 @@ function StartBtn({
 
 export default function Signup({ navigation, route }: SignupProps) {
   const { width, height } = Dimensions.get('window');
+  const request = Request();
   return (
     <SafeAreaView>
       <View
