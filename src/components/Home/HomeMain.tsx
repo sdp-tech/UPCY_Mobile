@@ -1,25 +1,9 @@
-import { useCallback, useMemo, useRef, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Filter14M } from '../../styles/GlobalText';
-import {
-  Text,
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Dimensions,
-  ScrollView,
-  SafeAreaView,
-} from 'react-native';
-import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
-import CustomHeader from '../../common/CustomHeader';
-import { Tabs, MaterialTabBar } from 'react-native-collapsible-tab-view';
-import { StackScreenProps } from '@react-navigation/stack';
-import { HomeStackParams } from '../../pages/Home';
-import TabViewSpot from '../../assets/common/TabViewSpot.svg';
+import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import CategoryDownButton from '../../assets/common/CategoryDownButton.svg';
 import styled from 'styled-components/native';
-import { PURPLE } from '../../styles/GlobalColor';
 import DetailModal from './Market/GoodsDetailOptionsModal';
-import CategoryDropDown from './Market/SortingOptionModal';
 import DropDown from '../../assets/common/DropDown.svg';
 
 const HomeTabViewBox = styled.View`
@@ -61,11 +45,15 @@ const CategoryButton = styled.TouchableOpacity<{ pressed: boolean }>`
   border-radius: 12px;
   border-width: 1px;
   border-color: #612fef;
-  background-color: ${(props) => (props.pressed ? '#612FEF' : '#FFFFFF')};
+  background-color: ${(
+    { props }: { props: any }, // TODO: 나중에 props의 type specify 필요
+  ) => (props.pressed ? '#612FEF' : '#FFFFFF')};
 `;
 
 const CategoryButtonText = styled.Text<{ pressed: boolean }>`
-  color: ${(props) => (props.pressed ? '#FFFFFF' : '#222222')};
+  color: ${(
+    { props }: { props: any }, // TODO: 나중에 props의 type specify 필요
+  ) => (props.pressed ? '#FFFFFF' : '#222222')};
 `;
 
 interface SignupProps {
@@ -73,7 +61,7 @@ interface SignupProps {
   domain: string;
   password: string;
   region: string;
-}// 의미 없음
+} // 의미 없음
 
 interface HomeTabViewProps {
   onSearch: () => void;
@@ -127,29 +115,42 @@ const HomeTabView = ({
     <>
       <CategoryBox>
         <View>
-          <CategoryButton pressed={isStyleSelected} onPress={() => setModalOpen(true)}>
+          <CategoryButton
+            pressed={isStyleSelected}
+            onPress={() => setModalOpen(true)}>
             <CategoryButtonText pressed={isStyleSelected}>
               스타일
             </CategoryButtonText>
             <CategoryDownButton />
           </CategoryButton>
         </View>
-        <View style={{ flex: 1 }}>
-        </View>
+        <View style={{ flex: 1 }}></View>
         <View style={styles.dropdownContainer}>
-          <TouchableOpacity onPress={toggleDropdown} style={styles.dropdownButton}>
+          <TouchableOpacity
+            onPress={toggleDropdown}
+            style={styles.dropdownButton}>
             <Text style={styles.dropdownButtonText}>{selectedOption}</Text>
-            <DropDown/>
+            <DropDown />
           </TouchableOpacity>
           {dropdownOpen && (
             <View style={styles.dropdownMenu}>
-              {['추천순', '인기순', '가격순', '최신순', '판매순'].map(option => (
-                <TouchableOpacity key={option} onPress={() => selectOption(option)} style={styles.dropdownOption}>
-                  <Text style={selectedOption === option ? styles.dropdownSelectedOptionText : styles.dropdownOptionText}>
-                    {option}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+              {['추천순', '인기순', '가격순', '최신순', '판매순'].map(
+                option => (
+                  <TouchableOpacity
+                    key={option}
+                    onPress={() => selectOption(option)}
+                    style={styles.dropdownOption}>
+                    <Text
+                      style={
+                        selectedOption === option
+                          ? styles.dropdownSelectedOptionText
+                          : styles.dropdownOptionText
+                      }>
+                      {option}
+                    </Text>
+                  </TouchableOpacity>
+                ),
+              )}
             </View>
           )}
         </View>
@@ -196,8 +197,8 @@ const styles = StyleSheet.create({
   },
   dropdownButtonText: {
     fontSize: 14,
-    fontStyle: "normal",
-    fontWeight: "400",
+    fontStyle: 'normal',
+    fontWeight: '400',
     lineHeight: 24,
     marginRight: 5,
     color: '#000',
@@ -213,24 +214,24 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     zIndex: 1000,
     width: 100,
-    elevation: 5, 
+    elevation: 5,
   },
   dropdownOption: {
     padding: 10,
   },
   dropdownSelectedOptionText: {
-    fontFamily: "Pretendard Variable",
+    fontFamily: 'Pretendard Variable',
     fontSize: 14,
-    fontStyle: "normal",
-    fontWeight: "400",
+    fontStyle: 'normal',
+    fontWeight: '400',
     lineHeight: 24,
     color: '#000',
   },
   dropdownOptionText: {
-    fontFamily: "Pretendard Variable",
+    fontFamily: 'Pretendard Variable',
     fontSize: 14,
-    fontStyle: "normal",
-    fontWeight: "600",
+    fontStyle: 'normal',
+    fontWeight: '600',
     lineHeight: 16,
   },
 });
