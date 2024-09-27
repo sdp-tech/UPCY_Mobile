@@ -1,6 +1,19 @@
-import React, { Fragment, useEffect, useState, useRef, forwardRef } from 'react';
+import React, {
+  Fragment,
+  useEffect,
+  useState,
+  useRef,
+  forwardRef,
+} from 'react';
 
-import { SafeAreaView, Text, View, StyleSheet, Alert, FlatList } from 'react-native';
+import {
+  SafeAreaView,
+  Text,
+  View,
+  StyleSheet,
+  Alert,
+  FlatList,
+} from 'react-native';
 import styled from 'styled-components/native';
 import { Filter14M } from '../styles/GlobalText';
 import { Tabs, MaterialTabBar } from 'react-native-collapsible-tab-view';
@@ -44,10 +57,13 @@ import ReviewPage from '../components/Home/Market/ReviewPage';
 import ScrollTopButton from '../common/ScrollTopButton';
 import Footer from '../common/Footer';
 import { BLACK, White } from '../styles/GlobalColor';
-import InfoPage from '../components/Home/Market/InfoPage'; import OrderPage from './OrderPage';
+import InfoPage from '../components/Home/Market/InfoPage';
+import OrderPage from './OrderPage';
 import ReformerMarket from '../components/Home/Market/ReformerMarket';
 import Service from '../components/Home/Market/Service';
 import { PhotoType } from '../hooks/useImagePicker';
+import ReformerProfilePage from '../components/Auth/Reformer/ReformerProfilePage';
+
 export type HomeStackParams = {
   Home: undefined;
   Market: undefined;
@@ -59,11 +75,11 @@ export type HomeStackParams = {
   QuotationForm: undefined;
   QuotationPage: undefined;
   SentQuotation: undefined;
-  ServiceRegistrationPage: { inputText?: string, detailphoto?: PhotoType[] };
+  ServiceRegistrationPage: { inputText?: string; detailphoto?: PhotoType[] };
   GoodsRegistrationPage: undefined;
   TempStorage: undefined;
   TempStorageEdit: undefined;
-  WriteDetailPage: { inputText: string, detailphoto?: PhotoType[] };
+  WriteDetailPage: { inputText: string; detailphoto?: PhotoType[] };
   AddPortfolio: undefined;
   InputInfo: undefined;
   QuotationConfirm: undefined;
@@ -71,7 +87,7 @@ export type HomeStackParams = {
   SentRejection: undefined;
   WriteReviewPage: undefined;
   ReformerMarket: undefined;
-
+  ReformerProfilePage: undefined;
   TestComponents: undefined;
 };
 
@@ -126,6 +142,10 @@ const HomeScreen = ({
       <HomeStack.Screen name="Rejection" component={Rejection} />
       <HomeStack.Screen name="SentRejection" component={SentRejection} />
       <HomeStack.Screen name="WriteReviewPage" component={WriteReviewPage} />
+      <HomeStack.Screen
+        name="ReformerProfilePage"
+        component={ReformerProfilePage}
+      />
       <HomeStack.Screen name="TestComponents" component={ComponentsTest} />
       <HomeStack.Screen name="ReformerMarket" component={ReformerMarket} />
     </HomeStack.Navigator>
@@ -135,7 +155,9 @@ const HomeScreen = ({
 const HomeMainScreen = ({
   navigation,
 }: StackScreenProps<HomeStackParams, 'Home'>) => {
-  const [selectedTab, setSelectedTab] = useState<'Goods' | 'Market' | 'temp'>('Goods');
+  const [selectedTab, setSelectedTab] = useState<'Goods' | 'Market' | 'temp'>(
+    'Goods',
+  );
   const ServicePageRef = useRef<ScrollView>(null);
   const handlePopupButtonPress = () => {
     Alert.alert(
@@ -162,7 +184,7 @@ const HomeMainScreen = ({
   const handleTabChange = (tab: 'Goods' | 'Market' | 'temp') => {
     setSelectedTab(tab);
   };
-  const items = [...new Array(6).keys()]
+  const items = [...new Array(6).keys()];
   const splitArrayIntoPairs = (arr: any[], pairSize: number) => {
     return arr.reduce((result, item, index) => {
       if (index % pairSize === 0) {
@@ -178,19 +200,17 @@ const HomeMainScreen = ({
     <Fragment>
       <SafeAreaView style={{ flex: 0, backgroundColor: PURPLE }} />
       <SafeAreaView style={{ flex: 1 }}>
-        <CustomHeader onSearch={() => { }} onTabChange={handleTabChange} />
+        <CustomHeader onSearch={() => {}} onTabChange={handleTabChange} />
         <BottomSheetModalProvider>
           <View>
             <HomeTabView
-              onSearch={() => { }}
+              onSearch={() => {}}
               selectedTab={selectedTab}
               onTabChange={handleTabChange}
             />
           </View>
 
-          {selectedTab === 'Goods' && (
-            <Service navigation={navigation} />
-          )}
+          {selectedTab === 'Goods' && <Service navigation={navigation} />}
           {selectedTab === 'Market' && (
             <ReformerMarket navigation={navigation} />
           )}
@@ -234,6 +254,10 @@ const HomeMainScreen = ({
               <Button onPress={() => navigation.navigate('WriteReviewPage')}>
                 <Text>후기 작성 페이지</Text>
               </Button>
+              <Button
+                onPress={() => navigation.navigate('ReformerProfilePage')}>
+                <Text>리폼러 프로필 페이지</Text>
+              </Button>
               <Button onPress={() => navigation.navigate('TestComponents')}>
                 <Text>공통 컴포넌트 테스트</Text>
               </Button>
@@ -266,6 +290,6 @@ const LabelButton = styled.TouchableOpacity`
   display: flex;
   flex-direction: row;
   padding: 16px;
-`
+`;
 
 export default HomeScreen;
