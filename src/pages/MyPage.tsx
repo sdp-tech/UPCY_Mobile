@@ -19,7 +19,7 @@ import TextToggle from '../common/TextToggle';
 import { BLACK, BLACK2 } from '../styles/GlobalColor';
 import ReviewComment from '../components/Home/components/ReviewComment';
 import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
-import OrderPage from './OrderPage';
+import OrderPage from '../components/Home/Order/OrderPage';
 import ServicePage from '../components/Home/Market/ServicePage';
 import ScrollTopButton from '../common/ScrollTopButton';
 import ReviewPage from '../components/Home/Market/ReviewPage';
