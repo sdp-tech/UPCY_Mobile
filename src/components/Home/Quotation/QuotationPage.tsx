@@ -20,7 +20,9 @@ const { width, height } = Dimensions.get('window');
 
 const QuotationPage = ({ navigation, route }: StackScreenProps<HomeStackParams, 'QuotationPage'>) => {
 
-  const { name, tel, address, detailedAddress } = route.params; // inputinfo에서 전달된 값을 destructuring
+
+  const { materials, transactionMethod, options = [], additionalRequest, name, tel, zonecode, address, detailedAddress } = route.params || {};  //quotationform, inputinfo 에서 전달 받은 데이터
+
 
   const fullAddress = `${address} ${detailedAddress}`.trim();  //전체주소(fullAddress) 생성
 
@@ -44,37 +46,16 @@ const QuotationPage = ({ navigation, route }: StackScreenProps<HomeStackParams, 
   };
 
   const quotation = [
-    { key: '재질', data: '니트' },
-    { key: '추가 요청사항', data: '' },
-    { key: '옵션 상세', data: '' },
-    { key: '거래 방식', data: '비대면' },
-    { key: '이름', data: name }, // 입력받은 이름 적용
-    { key: '연락처', data: tel }, // 입력받은 연락처 적용
-    { key: '주소', data: fullAddress }, // 입력받은 주소 적용
+    { key: '재질', data: materials }, // QuotationForm에서 선택한 재질
+    { key: '추가 요청사항', data: additionalRequest || '없음' }, // 추가 요청사항, 없으면 '없음'
+    { key: '옵션 상세', data: options.map(option => option.title).join(', ') || '없음' }, // 선택한 옵션들, 없으면 '없음'
+    { key: '거래 방식', data: transactionMethod }, //선택한 거래 방식 (대면/비대면)
+    { key: '이름', data: name },
+    { key: '연락처', data: tel },
+    { key: '우편번호', data: zonecode },
+    { key: '주소', data: fullAddress },
   ];
-  const options = [
-    {
-      option: 'option 1',
-      title: '단추',
-      description: '가방 입구에 똑딱이 단추를 추가할 수 있어요.',
-      price: '1,000 원',
-      image: 'https://example.com/image1.jpg'
-    },
-    {
-      option: 'option 2',
-      title: '지퍼',
-      description: '주머니에 귀여운 지퍼를 달아보세요.',
-      price: '1,000 원',
-      image: 'https://example.com/image2.jpg'
-    },
-    {
-      option: 'option 3',
-      title: '주머니',
-      description: '주머니를 달아보세요.',
-      price: '1,000 원',
-      image: 'https://example.com/image2.jpg'
-    },
-  ];
+
 
   // 한 줄에 2개씩 아이템 배치
   const refPhotos = [...new Array(6).keys()];
