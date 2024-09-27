@@ -134,47 +134,46 @@ const styles = StyleSheet.create({
   }
 });
 
-const FilterSection = ({ label, items, showDuplicate = true }: FilterSectionProps) => {
-     const [selectedItems, setSelectedItems] = useState<string[]>([]);
+const FilterSection = ({ label, items, showDuplicate = true, onMaterialSelect }: FilterSectionProps) => {
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
-     const handleSelectItem = (item: string) => {
-       // 항목의 선택 상태를 토글합니다.
-       if (showDuplicate) {
-         // 중복 선택 허용 시
-         if (selectedItems.includes(item)) {
-           setSelectedItems(selectedItems.filter(selectedItem => selectedItem !== item));
-         } else {
-           setSelectedItems([...selectedItems, item]);
-         }
-       } else {
-         // 단일 선택 시
-         if (selectedItems.includes(item)) {
-           setSelectedItems([]);
-         } else {
-           setSelectedItems([item]);
-         }
-       }
-     };
+  const handleSelectItem = (item: string) => {
+    if (selectedItems.includes(item)) {
+      // 이미 선택된 항목이면 제거
+      const updatedItems = selectedItems.filter(selectedItem => selectedItem !== item);
+      setSelectedItems(updatedItems);
+      onMaterialSelect(updatedItems); // 부모로 업데이트된 배열을 전달
+    } else {
+      // 새로운 항목을 배열에 추가
+      const updatedItems = [...selectedItems, item];
+      setSelectedItems(updatedItems);
+      onMaterialSelect(updatedItems); // 부모로 업데이트된 배열을 전달
+    }
+  };
 
-     return (
-       <FilterContainer>
-         <FilterBox style={{ marginBottom: 5, justifyContent: 'space-between' }}>
-           <Subtitle18M>{label}</Subtitle18M>
-           {showDuplicate && <Caption11M style={{ color: PURPLE }}>• 중복 가능</Caption11M>}
-         </FilterBox>
-         <FilterBox>
-           {items.map((item, index) => (
-             <Filter
-               key={index}
-               value={item}
-               isSelected={selectedItems.includes(item)}
-               onPress={() => handleSelectItem(item)}
-             />
-           ))}
-         </FilterBox>
-       </FilterContainer>
-     );
-   };
+  return (
+    <FilterContainer>
+      <FilterBox style={{ marginBottom: 5, justifyContent: 'space-between' }}>
+        <Subtitle18M>{label}</Subtitle18M>
+        {showDuplicate && <Caption11M style={{ color: PURPLE }}>• 중복 가능</Caption11M>}
+      </FilterBox>
+      <FilterBox>
+        {items.map((item, index) => (
+          <Filter
+            key={index}
+            value={item}
+            isSelected={selectedItems.includes(item)}
+            onPress={() => handleSelectItem(item)}
+          />
+        ))}
+      </FilterBox>
+    </FilterContainer>
+  );
+};
+
+
+
+
 
 
 const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 'QuotationForm'>) => {
@@ -219,7 +218,7 @@ const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [selectedOptions, setSelectedOptions] = useState<number[]>([]);
-  const [selectedMaterial, setSelectedMaterial] = useState<string>('');
+  const [selectedMaterial, setSelectedMaterial] = useState<string[]>([]);
   const [selectedFilter, setSelectedFilter] = useState<string>(''); // 거래 방식
   const [faceToFaceRegion, setFaceToFaceRegion] = useState<string>(''); // 대면 지역
   const [deliveryType, setDeliveryType] = useState<string>('');
@@ -269,10 +268,9 @@ const handleNextPress = () => {
     return;
   }
 
-  const selectedOptionsDetails = selectedOptions.map(index => options[index]); // 선택된 옵션 세부 정보 추출
 
   navigation.navigate('InputInfo', {
-     material: selectedMaterial,
+     materials: selectedMaterial,
      transactionMethod: selectedFilter,
      options: selectedOptionsDetails, // 선택한 옵션
      additionalRequest: text,
@@ -333,7 +331,11 @@ const handleNextPress = () => {
         </View>
       </View>
       <View style={{ height: 8, backgroundColor: 'white' }} />
-      <FilterSection label='재질 선택' items={materials}  />
+      <FilterSection
+              label='재질 선택'
+              items={materials}
+              showDuplicate ={true}
+              onMaterialSelect ={setSelectedMaterial}/>
      <Subtitle16M style={{ paddingHorizontal: 15, marginBottom: 5 }}>기타 재질</Subtitle16M>
      <InputBox value={text} setValue={setText} placeholder='의뢰하시는 재질을 입력해주세요' long  style={{ height: 50 }}/>
 

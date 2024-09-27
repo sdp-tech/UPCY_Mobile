@@ -21,7 +21,7 @@ const { width, height } = Dimensions.get('window');
 const QuotationPage = ({ navigation, route }: StackScreenProps<HomeStackParams, 'QuotationPage'>) => {
 
 
-  const { material, transactionMethod, options = [], additionalRequest, name, tel, address, detailedAddress } = route.params || {};  //quotationform, inputinfo 에서 전달 받은 데이터
+  const { materials, transactionMethod, options = [], additionalRequest, name, tel, zonecode, address, detailedAddress } = route.params || {};  //quotationform, inputinfo 에서 전달 받은 데이터
 
 
   const fullAddress = `${address} ${detailedAddress}`.trim();  //전체주소(fullAddress) 생성
@@ -46,12 +46,13 @@ const QuotationPage = ({ navigation, route }: StackScreenProps<HomeStackParams, 
   };
 
   const quotation = [
-    { key: '재질', data: material }, // QuotationForm에서 선택한 재질
+    { key: '재질', data: materials }, // QuotationForm에서 선택한 재질
     { key: '추가 요청사항', data: additionalRequest || '없음' }, // 추가 요청사항, 없으면 '없음'
     { key: '옵션 상세', data: options.map(option => option.title).join(', ') || '없음' }, // 선택한 옵션들, 없으면 '없음'
     { key: '거래 방식', data: transactionMethod }, //선택한 거래 방식 (대면/비대면)
     { key: '이름', data: name },
     { key: '연락처', data: tel },
+    { key: '우편번호', data: zonecode },
     { key: '주소', data: fullAddress },
   ];
 
