@@ -147,7 +147,7 @@ export default function CareerModal({
           setValue={v => {
             handleContentChange(v, 'status');
           }}
-          placeholder='예시) 재학, 휴학, 졸업, 수료'
+          placeholder="예시) 재학, 휴학, 졸업, 수료"
         />
       </View>
     );
@@ -169,7 +169,7 @@ export default function CareerModal({
           setValue={v => {
             handleContentChange(v, 'team');
           }}
-          placeholder='예시) 소품디자인팀 인턴'
+          placeholder="예시) 소품디자인팀 인턴"
         />
         <InputView
           title="근무기간"
@@ -177,7 +177,7 @@ export default function CareerModal({
           setValue={v => {
             handleContentChange(v, 'period');
           }}
-          placeholder='예시) 6개월, 3년'
+          placeholder="예시) 6개월, 3년"
         />
       </View>
     );
@@ -220,7 +220,7 @@ export default function CareerModal({
           setValue={v => {
             handleContentChange(v, 'content');
           }}
-          placeholder='예시) 최우수상'
+          placeholder="예시) 최우수상"
         />
       </View>
     );

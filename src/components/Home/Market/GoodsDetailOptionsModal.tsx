@@ -7,15 +7,10 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { View, StyleSheet, Dimensions } from 'react-native';
 import styled from 'styled-components/native';
-import {
-  BottomSheetModal,
-  BottomSheetBackdrop,
-} from '@gorhom/bottom-sheet';
-import { Body16M, Subtitle16B, Filter11B, Filter14B } from '../../../styles/GlobalText';
-import Select from '../../../assets/common/Select.svg';
-import Unselect from '../../../assets/common/Unselect.svg';
+import { BottomSheetModal, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
+import { Subtitle16B, Filter11B } from '../../../styles/GlobalText';
 import Dot from '../../../assets/common/Dot.svg';
 import { PURPLE } from '../../../styles/GlobalColor';
 
@@ -39,12 +34,16 @@ const StyleButton = styled.TouchableOpacity<{ pressed: boolean }>`
   align-items: center;
   gap: 10px;
   border-radius: 12px;
-  border: 1px solid #612FEF;
-  background-color: ${(props) => (props.pressed ? '#612FEF' : '#FFFFFF')};
+  border: 1px solid #612fef;
+  background-color: ${(
+    { props }: { props: any }, // TODO: 나중에 props의 type specify 필요
+  ) => (props.pressed ? '#612FEF' : '#FFFFFF')};
 `;
 
 const StyleButtonText = styled.Text<{ pressed: boolean }>`
-  color: ${(props) => (props.pressed ? '#FFFFFF' : '#222222')};
+  color: ${(
+    { props }: { props: any }, // TODO: 나중에 props의 type specify 필요
+  ) => (props.pressed ? '#FFFFFF' : '#222222')};
 `;
 
 interface ModalProps {
@@ -62,7 +61,7 @@ export default function DetailModal({
   value,
   setValue,
   selectedStyles,
-  setSelectedStyles
+  setSelectedStyles,
 }: ModalProps) {
   // ref
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
@@ -122,8 +121,8 @@ export default function DetailModal({
   };
 
   const toggleStyleSelection = (style: string) => {
-    setSelectedStyles((prev) =>
-      prev.includes(style) ? prev.filter((s) => s !== style) : [...prev, style]
+    setSelectedStyles(prev =>
+      prev.includes(style) ? prev.filter(s => s !== style) : [...prev, style],
     );
   };
 
@@ -138,8 +137,7 @@ export default function DetailModal({
       snapPoints={snapPoints}
       backdropComponent={renderBackdrop}
       onChange={handleSheetChanges}
-      containerStyle={styles.modalContainer}
-    >
+      containerStyle={styles.modalContainer}>
       <View style={styles.selectItem}>
         <Subtitle16B>스타일</Subtitle16B>
         <View style={styles.rightSection}>
@@ -148,12 +146,11 @@ export default function DetailModal({
         </View>
       </View>
       <StyleBox>
-        {styleOptions.map((style) => (
+        {styleOptions.map(style => (
           <StyleButton
             key={style}
             pressed={selectedStyles.includes(style)}
-            onPress={() => toggleStyleSelection(style)}
-          >
+            onPress={() => toggleStyleSelection(style)}>
             <StyleButtonText pressed={selectedStyles.includes(style)}>
               {style}
             </StyleButtonText>
@@ -232,7 +229,7 @@ const styles = StyleSheet.create({
   modalContainer: {
     zIndex: 1001,
     flex: 1,
-    justifyContent: 'flex-end', 
-    margin: 0, 
+    justifyContent: 'flex-end',
+    margin: 0,
   },
 });
