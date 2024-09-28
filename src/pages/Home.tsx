@@ -59,6 +59,7 @@ import Footer from '../common/Footer';
 import { BLACK, White } from '../styles/GlobalColor';
 import InfoPage from '../components/Home/Market/InfoPage';
 import OrderPage from '../components/Home/Order/OrderPage';
+import OrderManagement from '../components/Home/Order/OrderManagement';
 import ReformerMarket from '../components/Home/Market/ReformerMarket';
 import Service from '../components/Home/Market/Service';
 import { PhotoType } from '../hooks/useImagePicker';
@@ -71,6 +72,7 @@ export type HomeStackParams = {
     id?: number;
   };
   OrderPage: undefined;
+  OrderManagement: undefined;
   GoodsDetailPage: undefined;
   QuotationForm: undefined;
   QuotationPage: undefined;
@@ -125,6 +127,7 @@ const HomeScreen = ({
       <HomeStack.Screen name="QuotationPage" component={QuotationPage} />
       <HomeStack.Screen name="SentQuotation" component={SentQuotation} />
       <HomeStack.Screen name="OrderPage" component={OrderPage} />
+      <HomeStack.Screen name="OrderManagement" component={OrderManagement} />
       <HomeStack.Screen
         name="GoodsDetailPage"
         component={GoodsDetailPageScreen}
@@ -248,7 +251,7 @@ const HomeMainScreen = ({
               <Button onPress={() => navigation.navigate('AddPortfolio')}>
                 <Text>포트폴리오 등록</Text>
               </Button>
-              <Button onPress={() => navigation.navigate('OrderPage')}>
+              <Button onPress={() => navigation.navigate('OrderManagement')}>
                 <Text>주문관리</Text>
               </Button>
               <Button onPress={() => navigation.navigate('WriteReviewPage')}>

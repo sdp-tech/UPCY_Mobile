@@ -29,7 +29,7 @@ const OrderInfo = ({ id, name, customer, orderDate, is_online }) => (
   </InfoContainer>
 );
 
-const OrderPage = () => {
+const OrderManagement = () => {
   const { width } = Dimensions.get('window');
   const scrollRef = useRef<ScrollView | null>(null);
 
@@ -225,4 +225,4 @@ const BackButton = styled.TouchableOpacity`
 `;
 
 
-export default OrderPage;
+export default OrderManagement;
