@@ -34,27 +34,27 @@ const CategoryBox = styled.View`
   background: #fff;
 `;
 
-const CategoryButton = styled.TouchableOpacity<{ pressed: boolean }>`
-  display: flex;
-  flex-direction: row;
-  height: 28px;
-  padding: 0px 12px;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  border-radius: 12px;
-  border-width: 1px;
-  border-color: #612fef;
-  background-color: ${(
-    { props }: { props: any }, // TODO: 나중에 props의 type specify 필요
-  ) => (props.pressed ? '#612FEF' : '#FFFFFF')};
-`;
+// const CategoryButton = styled.TouchableOpacity<{ pressed: boolean }>`
+//   display: flex;
+//   flex-direction: row;
+//   height: 28px;
+//   padding: 0px 12px;
+//   justify-content: center;
+//   align-items: center;
+//   gap: 8px;
+//   border-radius: 12px;
+//   border-width: 1px;
+//   border-color: #612fef;
+//   background-color: ${(
+//     { props }: { props: any }, // TODO: 나중에 props의 type specify 필요
+//   ) => (props.pressed ? '#612FEF' : '#FFFFFF')};
+// `;
 
-const CategoryButtonText = styled.Text<{ pressed: boolean }>`
-  color: ${(
-    { props }: { props: any }, // TODO: 나중에 props의 type specify 필요
-  ) => (props.pressed ? '#FFFFFF' : '#222222')};
-`;
+// const CategoryButtonText = styled.Text<{ pressed: boolean }>`
+//   color: ${(
+//     { props }: { props: any }, // TODO: 나중에 props의 type specify 필요
+//   ) => (props.pressed ? '#FFFFFF' : '#222222')};
+// `;
 
 interface SignupProps {
   mail: string;
@@ -115,14 +115,14 @@ const HomeTabView = ({
     <>
       <CategoryBox>
         <View>
-          <CategoryButton
+          {/* <CategoryButton
             pressed={isStyleSelected}
             onPress={() => setModalOpen(true)}>
             <CategoryButtonText pressed={isStyleSelected}>
               스타일
             </CategoryButtonText>
             <CategoryDownButton />
-          </CategoryButton>
+          </CategoryButton> */}
         </View>
         <View style={{ flex: 1 }}></View>
         <View style={styles.dropdownContainer}>
