@@ -16,8 +16,8 @@ async function getSecureValue(key) {
 
 function setSecureValue(key, value) {
   // key와 value가 존재하는지 확인 후 기본값 설정
-  const username = key || "default_username";
-  const password = value || "default_password";
+  const username = key ;
+  const password = value ;
 
   Keychain.setInternetCredentials(key, username, password)
     .then(() => {
