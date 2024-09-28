@@ -26,25 +26,41 @@ export interface InfoProps {
 
 const statusBarHeight = getStatusBarHeight(true);
 
-const InputInfo = ({ onClose, navigation, onNavigate }: InputInfoProps) => {
-  const [postModal, setPostModal] = useState(false); // 모달 가시성 상태를 관리
-  const [selectedAddress, setSelectedAddress] = useState(''); // 선택한 주소를 저장할 상태 변수
-  const [postalCode, setPostalCode] = useState(''); // 우편번호를 저장할 상태 변수
+const InputInfo = ({ onClose, navigation, onNavigate ,route }: InputInfoProps) => {
+  const [postModal, setPostModal] = useState(false); // 모달 가시성 관리
+  const [selectedAddress, setSelectedAddress] = useState(''); // 선택한 주소를 저장
+  const [postalCode, setPostalCode] = useState(''); // 우편번호를 저장
   const [detailedAddress, setDetailedAddress] = useState('');
   const [name, setName] = useState('');
   const [tel, setTel] = useState('');
 
   const handleAddressSelect = (data: any) => {
     const { zonecode, address } = data;
-    setPostalCode(zonecode); // 우편번호 상태 업데이트
-    setSelectedAddress(address); // 선택한 주소를 상태 변수에 저장
+    setPostalCode(zonecode); // 우편번호
+    setSelectedAddress(address); // 주소
     setPostModal(false); // 주소 선택 후 모달을 닫음
   };
 
+
+    // name, tel, zonecode, selectedAddress를 QuotationPage로 전달
+
   const handleNextPress = () => {
-    // name, tel, selectedAddress를 QuotationPage로 전달
-    navigation.navigate('QuotationPage', { name, tel, address: selectedAddress });
+
+
+
+
+    navigation.navigate('QuotationPage', {
+      materials: route.params.materials,
+      transactionMethod: route.params.transactionMethod,
+      options: route.params.options,
+      additionalRequest: route.params.additionalRequest,
+      name,
+      tel,
+      zonecode : postalCode,
+      address: selectedAddress
+    });
   };
+
 
   return (
     <ScrollView>
