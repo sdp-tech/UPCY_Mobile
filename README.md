@@ -81,7 +81,9 @@ yarn start
 By this, you can start the dev project via Ios simulator
 
 ### How to run this project via Android simulator in Mac
-- Java 17 is required to run this project via Android simulator.
+- First install Android Studio
+
+- Java 17 is required to run this project via Android simulator
 - To install Java 17, run
 
 ```bash
