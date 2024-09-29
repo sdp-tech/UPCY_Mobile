@@ -2,7 +2,7 @@
 
 ## Before running the project
 
-### MAC Settings - [Sources](https://blog.naver.com/dongwook443/223384937148)
+### MAC Settings - [Source](https://blog.naver.com/dongwook443/223384937148)
 
 1. Install homebrew
 
@@ -58,6 +58,8 @@ brew install cocoapods
 
 - `/.env`, `/ios/Info.plist` files are required
 
+### How to run this project via Ios simulator in Mac
+
 - At root directory `/` run
 
 ```bash
@@ -76,4 +78,41 @@ pod install
 yarn start
 ```
 
-By this, you can start the dev project
+By this, you can start the dev project via Ios simulator
+
+### How to run this project via Android simulator in Mac
+- Java 17 is required to run this project via Android simulator.
+- To install Java 17, run
+
+```bash
+brew install openjdk@17
+```
+
+- Change the `~/.zshrc` file by running
+```bash
+vim ~/.zshrc
+```
+
+- Add the following lines at `~/.zshrc`
+```markdown
+# Android SDK Settings
+export ANDROID_HOME=/your/path/to/Android/sdk
+export PATH=$PATH:$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin
+
+# Java Settings
+export JAVA_HOME="$(brew --prefix openjdk@17)"
+export PATH="JAVA_HOME/bin:$PATH"
+```
+
+- Run the following code at bash to apply
+```bash
+source ~/.zshrc
+```
+
+- Go to the root directory `/` and run
+```bash
+yarn install
+yarn start
+```
+
+By this, you can start the dev project via Android simulator
