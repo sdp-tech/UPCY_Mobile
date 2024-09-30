@@ -9,23 +9,24 @@ import {
 } from 'react-native';
 import styled from 'styled-components/native';
 import { Body14M, Caption11M, Subtitle16B } from '../../../styles/GlobalText';
-import { ReformProps } from './Reformer';
+import { ReformProfileType, ReformProps } from './Reformer';
 import BottomButton from '../../../common/BottomButton';
 import RightArrow from '../../../assets/common/RightArrow.svg';
 import PlusIcon from '../../../assets/common/Plus.svg';
 import PencilIcon from '../../../assets/common/Pencil.svg';
 import CloseIcon from '../../../assets/header/Close.svg';
 import { useEffect, useState } from 'react';
-import { BLACK, BLACK2, GRAY } from '../../../styles/GlobalColor';
+import { BLACK, BLACK2, GRAY, PURPLE } from '../../../styles/GlobalColor';
 import SelectBox from '../../../common/SelectBox';
 import CareerModal from './CareerModal';
 import CustomScrollView from '../../../common/CustomScrollView';
 import Request from '../../../common/requests';
-import { CareerType, Careers } from '../../../types/UserTypes';
 import { err } from 'react-native-svg';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { SignInParams } from '../SignIn';
+import { getAccessToken } from '../../../common/storage';
+import { processLoginResponse2 } from '../Login';
 
 const SelectView = styled.View`
   display: flex;
@@ -69,13 +70,13 @@ interface FixSectionProps {
   index: number;
   type: string | undefined;
   _1st: string | undefined;
-  _2nd: string | undefined;
   edit: (index: number) => void;
   onDelete: (index: number) => void;
+  _2nd?: string | undefined;
   _3rd?: string | undefined;
 }
 
-const FixSection: React.FC<FixSectionProps> = ({ index, type, _1st, _2nd, edit, onDelete, _3rd }) => {
+const FixSection: React.FC<FixSectionProps> = ({ index, type, _1st, edit, onDelete, _2nd, _3rd }) => {
   return (
     <View style={{ flex: 1, flexDirection: "row", height: 44, justifyContent: "space-between", alignItems: "center" }}>
       <View style={{ flex: 4, flexDirection: "row" }}>
@@ -108,11 +109,11 @@ export default function ReformCareer({ form, setForm }: ReformProps) {
   const request = Request();
 
   const handleAddCareer = () => {
-    const newIndex = form.career.length;
+    const newIndex = form.field.length;
     setForm(prev => {
       return {
         ...prev,
-        career: [...prev.career, { name: '', file: [], type: undefined }],
+        field: [...prev.field, { name: '', file: [], type: undefined }],
       };
     });
     setCareerIndex(newIndex);
@@ -123,9 +124,9 @@ export default function ReformCareer({ form, setForm }: ReformProps) {
   };
 
   const handleDeleteCareer = (delIndex: number) => {
-    const newCareer = form.career.filter((_, i) => i !== delIndex);
+    const newCareer = form.field.filter((_, i) => i !== delIndex);
     setForm(prev => {
-      return { ...prev, career: newCareer };
+      return { ...prev, field: newCareer };
     });
   };
 
@@ -140,93 +141,119 @@ export default function ReformCareer({ form, setForm }: ReformProps) {
     if (careerIndex >= 0) setCareerModal(true);
   }, [careerIndex]);
 
-  const handleCareerRegister = async (career: object) => { // (param, path)
-    const response = await request.post('/api/user/reformer', { career }, {});
-    // http://52.78.43.6:8000/users/education_register/ 이런 식
-    if (response?.status !== 200) {
-      console.log(response);
-      throw Error('career register failed');
-    }
-  };
-
   const handleSubmit = async () => {
-    let param = {};
-    form.career.map(value => {
-      if (value.type === '학력') {
-        param = {
-          education: [{
-            school: value.name,
-            major: value.major,
-            academic_status: value.status,
-          }]
-        };
-      } else if (value.type === '실무 경험') {
-        param = {
-          career: [{
-            company_name: value.name,
-            department: value.team, // 근무 부서 및 직책 
-            period: value.period // 근무 기간 
-          }]
-        };
-      } else if (value.type === '공모전') {
-        param = {
-          awards: [{
-            name: value.name,
-            prize: value.content, // 수상 내역 
-          }]
-        };
-      } else if (value.type === '자격증') {
-        param = {
-          certicication: [{
-            name: value.name,
-            issuing_authority: value.host,
-          }]
-        };
-      } else if (value.type === '기타 (개인 포트폴리오, 외주 등)') {
-        param = {
-          freelancer: [{
-            project_name: value.name,
-            explain: value.content, // 상세 설명
-          }]
-        };
-      }
+    const updatedForm = { ...form }; // form을 복사하여 사용
+    if (updatedForm.nickname === '' || updatedForm.link === '' || updatedForm.region === '') {
+      Alert.alert('필수 사항을 모두 입력해주세요')
+    } else if (!updatedForm.link.startsWith('https')) {
+      Alert.alert('오픈채팅방 링크를 제대로 입력해주세요')
+    } else if (form.field.length < 1) {
+      Alert.alert('경력을 최소 1개 작성해주세요')
+    } else { // 필수 사항 모두 입력되었을 경우 
+
+      form.field.forEach(value => {
+        if (value.type === '학력') {
+          updatedForm.education = updatedForm.education || []; // null일 경우 빈 배열로 초기화
+          updatedForm.education = [
+            ...updatedForm.education, // 기존 education 배열 복사
+            {
+              school: value.name, // 학교 이름
+              major: value.major, // 전공
+              academic_status: value.status, // 상태
+            }
+          ];
+        } else if (value.type === '실무 경험') {
+          updatedForm.career = updatedForm.career || [];
+          updatedForm.career = [
+            ...updatedForm.career,
+            {
+              company_name: value.name, // 회사명
+              department: value.team, // 근무 부서 및 직책
+              period: value.period // 근무 기간
+            }
+          ];
+        } else if (value.type === '공모전') {
+          updatedForm.awards = updatedForm.awards || [];
+          updatedForm.awards = [
+            ...updatedForm.awards,
+            {
+              name: value.name, // 공모전 명
+              prize: value.content, // 수상 내역
+            }
+          ];
+        } else if (value.type === '자격증') {
+          updatedForm.certification = updatedForm.certification || [];
+          updatedForm.certification = [
+            ...updatedForm.certification,
+            {
+              name: value.name, // 자격증 명
+              issuing_authority: value.host, // 발급 기관
+            }
+          ];
+        } else if (value.type === '기타 (개인 포트폴리오, 외주 등)') {
+          updatedForm.freelancer = updatedForm.freelancer || [];
+          updatedForm.freelancer = [
+            ...updatedForm.freelancer,
+            {
+              project_name: value.name, // 프로젝트명
+              explain: value.content, // 상세 설명
+            }
+          ];
+        }
+
+      });
+      const accessToken = await getAccessToken();
+      const headers = {
+        Authorization: `Bearer ${accessToken}`
+      };
+      const params = { // 수정 필요?
+        nickname: updatedForm.nickname,
+        introduce: updatedForm.introduce,
+        reformer_link: updatedForm.link,
+        reformer_area: updatedForm.region,
+        education: updatedForm.education,
+        career: updatedForm.career,
+        awards: updatedForm.awards,
+        certification: updatedForm.certification,
+        freelancer: updatedForm.freelancer,
+      };
       try {
-        handleCareerRegister(param);
-      } catch (error) {
-        console.log(error);
+        const response = await request.post(`/api/user/reformer`, params, headers);
+        if (response?.status === 201) {
+          navigation.navigate('ReformSubmit');
+        } else if (response?.status === 500) {
+          console.log(response);
+
+          Alert.alert('다시 시도해주세요.')
+        } else {
+          console.log(response);
+          Alert.alert('프로필 등록에 실패했습니다.');
+        }
+      } catch (err) {
+        console.log(err);
+
       }
-    });
-    const profileForm = { // 수정 필요?
-      nickname: form.nickname,
-      market_name: form.market,
-      market_intro: form.introduce,
-      links: form.link,
-      area: form.region,
-    };
-    const response = await request.post('users/profile_register/', profileForm);
-    if (response?.status === 200) {
-      navigation.navigate('ReformSubmit');
-    } else {
-      console.log(response);
-      Alert.alert('프로필 등록에 실패했습니다.');
     }
   };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.formView}>
-        <Subtitle16B>보유한 학력 / 경력을 작성해 주세요</Subtitle16B>
-        {form.career.length < 3 && ( // 개수 3개 미만일 때만 추가버튼 노출 
+        <View style={{ flexDirection: "row" }}>
+          <Subtitle16B>경력</Subtitle16B>
+          <Subtitle16B style={{ color: PURPLE }}>{' *'}</Subtitle16B>
+        </View>
+        {form.field.length < 3 && ( // 개수 3개 미만일 때만 추가버튼 노출 
           <AddTouchable onPress={handleAddCareer}>
             <PlusIcon color={GRAY} />
           </AddTouchable>
         )}
         <View style={styles.bottomView}>
           <Caption11M style={{ color: 'white' }}>
-            최대 추가 개수 {form.career.length}/3개
+            최대 추가 개수 {form.field.length}/3개
           </Caption11M>
         </View>
-        {form.career.map((item, index) => (
+        {form.field.map((item, index) => (
           <View key={index}>
             {/* <SelectTouchable
               onPress={() => {
@@ -246,7 +273,7 @@ export default function ReformCareer({ form, setForm }: ReformProps) {
               <FixSection index={index} type={item.type} _1st={item.name} _2nd={item.major} edit={() => handleEditCareer(index)} onDelete={() => handleDeleteCareer(index)} _3rd={item.status}></FixSection>
             }
             {item.type === '자격증' &&
-              <FixSection index={index} type={item.type} _1st={item.name} _2nd={item.host} edit={() => handleEditCareer(index)} onDelete={() => handleDeleteCareer(index)}></FixSection>
+              <FixSection index={index} type={item.type} _1st={item.host} _2nd={item.name} edit={() => handleEditCareer(index)} onDelete={() => handleDeleteCareer(index)}></FixSection>
             }
             {item.type === '공모전' &&
               <FixSection index={index} type={item.type} _1st={item.name} _2nd={item.content} edit={() => handleEditCareer(index)} onDelete={() => handleDeleteCareer(index)} ></FixSection>
@@ -255,7 +282,7 @@ export default function ReformCareer({ form, setForm }: ReformProps) {
               <FixSection index={index} type={item.type} _1st={item.name} _2nd={item.team} edit={() => handleEditCareer(index)} onDelete={() => handleDeleteCareer(index)} _3rd={item.period}></FixSection>
             }
             {item.type?.includes('기타') &&
-              <FixSection index={index} type={item.type} _1st={item.name} _2nd={item.content} edit={() => handleEditCareer(index)} onDelete={() => handleDeleteCareer(index)} ></FixSection>
+              <FixSection index={index} type={'기타'} _1st={item.name} edit={() => handleEditCareer(index)} onDelete={() => handleDeleteCareer(index)} ></FixSection>
             }
           </View>
         ))}

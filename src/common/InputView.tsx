@@ -9,7 +9,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 
 interface InputViewProps extends InputBoxProps {
   containerStyle?: ViewStyle;
-  title?: string;
+  title?: string | Element;
   info?: string;
   caption?: {
     none?: false | string;

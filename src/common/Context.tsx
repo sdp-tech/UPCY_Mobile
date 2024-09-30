@@ -71,8 +71,13 @@ export const LoginProvider = ({ children }: { children: ReactNode }) => {
   };
   const checkLogin = async () => {
     // const token = await getAccessToken();
-    // if (token) setIsLogin(true);
-    setIsLogin(false) // 수정 필요 
+    // if (token) {
+    //   setIsLogin(true);
+    // } else {
+    //   setIsLogin(false)
+    // } 
+    setIsLogin(false) // 위의 코드가 실제 코드입니다. 지금 이건 디버깅용입니다. 
+    // (위의 코드는 앱을 리빌드 해도 액세스토큰이 남아있어서 회원가입 플로우 수정이 불가함)
   };
   useEffect(() => {
     checkLogin();
