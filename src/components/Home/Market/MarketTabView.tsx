@@ -116,9 +116,8 @@ const MarketTabView = ({
   route,
 }: StackScreenProps<HomeStackParams, 'Market'>) => {
   const [routes] = useState([
-    { key: 'info', title: '정보' },
+    { key: 'profile', title: '프로필' },
     { key: 'service', title: '서비스' },
-    { key: 'review', title: '리뷰' },
   ]);
   const flatListRef = useRef<FlatList>(null);
   const scrollRef = useRef<ScrollView | null>(null);
@@ -151,17 +150,11 @@ const MarketTabView = ({
         )}>
         {routes.map(route => (
           <Tabs.Tab key={route.key} name={route.title}>
-            {route.key === 'info' && <InfoPage />}
+            {route.key === 'profile' && <InfoPage />}
             {route.key === 'service' && (
               <View>
                 <ServicePage scrollViewRef={scrollRef} />
                 <ScrollTopButton scrollViewRef={scrollRef} />
-              </View>
-            )}
-            {route.key === 'review' && (
-              <View>
-                <ReviewPage flatListRef={flatListRef} />
-                <ScrollToTopButton flatListRef={flatListRef} />
               </View>
             )}
           </Tabs.Tab>

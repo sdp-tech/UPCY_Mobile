@@ -3,6 +3,7 @@ import { Tabs } from 'react-native-collapsible-tab-view';
 import styled from 'styled-components/native';
 import { Body14R, Body16B } from '../../../styles/GlobalText';
 
+//TODO: ReformerProfilePage로 이름 수정
 const InfoPage = () => {
   const data = [
     {
