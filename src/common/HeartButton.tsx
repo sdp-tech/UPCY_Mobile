@@ -11,10 +11,22 @@ interface HeartProps {
 
 const HeartButton = ({ like, onPress, blank }: HeartProps) => {
   return (
-    <TouchableOpacity onPress={onPress} style={{ display: 'flex', alignItems: 'center', padding: 5 }}>
-      <Heart color={blank || like ? PURPLE : PURPLE2} fill={like ? PURPLE : blank ? 'none' : PURPLE3} />
+    <TouchableOpacity
+      onPress={onPress}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        padding: 5,
+        justifyContent: 'center',
+        width: 24,
+        height: 24,
+      }}>
+      <Heart
+        color={blank || like ? PURPLE : PURPLE2}
+        fill={like ? PURPLE : blank ? 'none' : PURPLE3}
+      />
     </TouchableOpacity>
-  )
-}
+  );
+};
 
 export default HeartButton;

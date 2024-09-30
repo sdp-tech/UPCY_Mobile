@@ -59,6 +59,9 @@ import Footer from '../common/Footer';
 import { BLACK, White } from '../styles/GlobalColor';
 import InfoPage from '../components/Home/Market/InfoPage';
 import OrderPage from './OrderPage';
+// import OrderPage from '../components/Home/Order/OrderPage';
+// FIXME: OrderPage가 존재하지 않는 관계로 임시 주석 처리
+import OrderManagement from '../components/Home/Order/OrderManagement';
 import ReformerMarket from '../components/Home/Market/ReformerMarket';
 import Service from '../components/Home/Market/Service';
 import { PhotoType } from '../hooks/useImagePicker';

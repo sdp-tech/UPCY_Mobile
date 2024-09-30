@@ -17,8 +17,7 @@ import {
   Subtitle18B,
   Body14R,
 } from '../../../styles/GlobalText';
-import { BLACK, LIGHTGRAY, PURPLE } from '../../../styles/GlobalColor';
-import Arrow from '../../../assets/common/Arrow.svg';
+import { BLACK, LIGHTGRAY } from '../../../styles/GlobalColor';
 import { getStatusBarHeight } from 'react-native-safearea-height';
 import HeartButton from '../../../common/HeartButton';
 import CategoryDownButton from '../../../assets/common/CategoryDownButton.svg';
@@ -105,7 +104,7 @@ const ServiceMarket = (/*{ navigation }*/) => {
   );
 };
 
-const ServiceCard = ({
+export const ServiceCard = ({
   name,
   price,
   tag,

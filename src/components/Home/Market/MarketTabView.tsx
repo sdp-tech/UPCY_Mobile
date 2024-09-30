@@ -19,14 +19,12 @@ import { StackScreenProps } from '@react-navigation/stack';
 import { HomeStackParams } from '../../../pages/Home';
 
 import InfoPage from './InfoPage.tsx';
-import ReviewPage from './ReviewPage.tsx';
 
 import Footer from '../../../common/Footer.tsx';
 
 import Arrow from '../../../assets/common/Arrow.svg';
 import ServicePage from './ServicePage.tsx';
 import DetailScreenHeader from '../components/DetailScreenHeader.tsx';
-import ScrollToTopButton from '../../../common/ScrollToTopButtonFlat.tsx';
 import ScrollTopButton from '../../../common/ScrollTopButton.tsx';
 
 export const ProfileSection = ({ navigation }: { navigation: any }) => {
