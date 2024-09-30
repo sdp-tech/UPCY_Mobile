@@ -1,28 +1,13 @@
-import React, {
-  Fragment,
-  useEffect,
-  useState,
-  useRef,
-  forwardRef,
-} from 'react';
+import React, { Fragment, useState, useRef } from 'react';
 
-import {
-  SafeAreaView,
-  Text,
-  View,
-  StyleSheet,
-  Alert,
-  FlatList,
-} from 'react-native';
+import { SafeAreaView, Text, View, Alert } from 'react-native';
 import styled from 'styled-components/native';
-import { Filter14M } from '../styles/GlobalText';
-import { Tabs, MaterialTabBar } from 'react-native-collapsible-tab-view';
 import {
   StackScreenProps,
   createStackNavigator,
 } from '@react-navigation/stack';
 import { TabProps } from '../../App';
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+import { ScrollView } from 'react-native-gesture-handler';
 
 import CustomHeader from '../common/CustomHeader';
 import HomeTabView from '../components/Home/HomeMain';
@@ -45,20 +30,10 @@ import QuotationConfirm from '../components/Home/Quotation/QuotationConfirm';
 import Rejection from '../components/Home/Quotation/Rejection';
 import SentRejection from '../components/Home/Quotation/SentRejection';
 import WriteReviewPage from '../components/Home/Market/WriteReviewPage';
-import { BottomBarProvider } from '../../contexts/BottomBarContext';
-import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import ComponentsTest from './ComponentsTest';
 import { PURPLE } from '../styles/GlobalColor';
-import { ProfileSection } from '../components/Home/Market/MarketTabView';
-import ServicePage from '../components/Home/Market/ServicePage';
-import ScrollToTopButton from '../common/ScrollToTopButtonFlat';
-import ReviewPage from '../components/Home/Market/ReviewPage';
-import ScrollTopButton from '../common/ScrollTopButton';
-import Footer from '../common/Footer';
-import { BLACK, White } from '../styles/GlobalColor';
-import InfoPage from '../components/Home/Market/InfoPage';
-import OrderPage from '../components/Home/Order/OrderPage';
+// import OrderPage from '../components/Home/Order/OrderPage';
 import OrderManagement from '../components/Home/Order/OrderManagement';
 import ReformerMarket from '../components/Home/Market/ReformerMarket';
 import Service from '../components/Home/Market/Service';
@@ -71,7 +46,7 @@ export type HomeStackParams = {
   ServiceDetailPage: {
     id?: number;
   };
-  OrderPage: undefined;
+  // OrderPage: undefined;
   OrderManagement: undefined;
   GoodsDetailPage: undefined;
   QuotationForm: undefined;
@@ -126,7 +101,7 @@ const HomeScreen = ({
       <HomeStack.Screen name="QuotationForm" component={QuotationForm} />
       <HomeStack.Screen name="QuotationPage" component={QuotationPage} />
       <HomeStack.Screen name="SentQuotation" component={SentQuotation} />
-      <HomeStack.Screen name="OrderPage" component={OrderPage} />
+      {/* <HomeStack.Screen name="OrderPage" component={OrderPage} /> */}
       <HomeStack.Screen name="OrderManagement" component={OrderManagement} />
       <HomeStack.Screen
         name="GoodsDetailPage"
