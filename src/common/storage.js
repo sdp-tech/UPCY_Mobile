@@ -1,4 +1,5 @@
 import * as Keychain from 'react-native-keychain';
+import axios from 'axios';
 
 async function getSecureValue(key) {
   const result = await Keychain.getInternetCredentials(key);
@@ -8,9 +9,23 @@ async function getSecureValue(key) {
   return false;
 }
 
+// function setSecureValue(key, value) {
+//   // second key can be a random string
+//   Keychain.setInternetCredentials(key, key, value);
+// }
+
 function setSecureValue(key, value) {
-  // second key can be a random string
-  Keychain.setInternetCredentials(key, key, value);
+  // key와 value가 존재하는지 확인 후 기본값 설정
+  const username = key ;
+  const password = value ;
+
+  Keychain.setInternetCredentials(key, username, password)
+    .then(() => {
+      console.log("Credentials saved successfully");
+    })
+    .catch(error => {
+      console.error("Failed to save credentials:", error);
+    });
 }
 
 function removeSecureValue(key) {
@@ -34,7 +49,13 @@ export function removeNickname() {
 }
 
 export async function getAccessToken() {
-  return await getSecureValue(accessTokenKeyName);
+  const token = await getSecureValue(accessTokenKeyName);
+  console.log("Access Token: ", token); // 수정된 부분
+  return token;
+  // const url = 'https://upcy.co.kr/api/user/token/verify'
+  // const response = await axios.get(url, {}, {})
+  // console.log("Access Token: ", response.data)
+  // return response.data
 }
 
 export function setAccessToken(token) {
@@ -46,7 +67,9 @@ export function removeAccessToken() {
 }
 
 export async function getRefreshToken() {
-  return await getSecureValue(refreshTokenKeyName);
+  const token = await getSecureValue(refreshTokenKeyName); // refreshToken을 token으로 받아옴
+  console.log("Refresh Token: ", token); // 수정된 부분
+  return token;
 }
 
 export function setRefreshToken(token) {

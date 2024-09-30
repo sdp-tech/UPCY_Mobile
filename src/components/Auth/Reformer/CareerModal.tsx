@@ -7,7 +7,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { View, StyleSheet, Dimensions, ScrollView } from 'react-native';
+import { View, StyleSheet, Dimensions, ScrollView, Alert } from 'react-native';
 import {
   BottomSheetModal,
   BottomSheetBackdrop,
@@ -65,7 +65,23 @@ export default function CareerModal({
   }, []);
 
   const handlePresentModalClose = useCallback(() => {
-    bottomSheetModalRef.current?.close();
+    const currentField = form.field[index];
+    // 필수 항목이 모두 채워졌는지 확인
+    const isFormComplete =
+      currentField.name && // 이름이 입력되었는지 확인
+      (currentField.type === '학력' ? currentField.major && currentField.status : true) && // 학력일 경우 전공과 상태 확인
+      (currentField.type === '실무 경험' ? currentField.team && currentField.period : true) && // 실무 경험일 경우 부서와 기간 확인
+      (currentField.type === '공모전' ? currentField.content : true) && // 공모전일 경우 내용 확인
+      (currentField.type === '자격증' ? currentField.host : true) && // 자격증일 경우 발급 기관 확인
+      (currentField.type?.includes('기타') ? currentField.content : true); // 기타일 경우 설명 확인
+
+    if (isFormComplete) {
+      // 모든 필드가 채워졌으면 모달을 닫음
+      bottomSheetModalRef.current?.close();
+    } else {
+      // 필드가 비어 있을 경우 경고 메시지를 표시
+      Alert.alert('모든 항목을 입력해 주세요.');
+    }
   }, []);
 
   const handleSheetChanges = useCallback((index: number) => {
@@ -82,7 +98,7 @@ export default function CareerModal({
           style={styles.selectItem}
           onPress={() => handleTypeChange(item)}>
           <Body16B>{item}</Body16B>
-          {item === form.career[index].type ? <Select /> : <Unselect />}
+          {item === form.field[index].type ? <Select /> : <Unselect />}
         </TouchableOpacity>
       </View>
     ),
@@ -90,19 +106,19 @@ export default function CareerModal({
   );
 
   const handleContentChange = (v: any, t: string) => {
-    const prevCareer = form.career;
+    const prevCareer = form.field;
     prevCareer[index] = { ...prevCareer[index], [t]: v };
     //console.log(prevCareer[index]);
     setForm(prev => {
-      return { ...prev, career: prevCareer };
+      return { ...prev, field: prevCareer };
     });
   };
 
   const handleTypeChange = (type: string) => {
-    const prevCareer = form.career;
+    const prevCareer = form.field;
     prevCareer[index] = { type: type, name: '', file: [] };
     setForm(prev => {
-      return { ...prev, career: prevCareer };
+      return { ...prev, field: prevCareer };
     });
   };
 
@@ -111,8 +127,8 @@ export default function CareerModal({
   //     <View style={{ marginVertical: 10 }}>
   //       <Body16B>근무기간</Body16B>
   //       <PeriodPicker
-  //         start={form.career[index].start}
-  //         end={form.career[index].end}
+  //         start={form.field[index].start}
+  //         end={form.field[index].end}
   //         setStart={d => {
   //           handleContentChange(d, 'start');
   //         }}
@@ -122,32 +138,32 @@ export default function CareerModal({
   //       />
   //     </View>
   //   );
-  // }, [form.career[index].start, form.career[index].end]);
+  // }, [form.field[index].start, form.field[index].end]);
 
   const EduDetailSection = () => {
     return (
       <View key="education" style={{ marginVertical: 10 }}>
         <InputView
           title="학교명"
-          value={form.career[index].name}
+          value={form.field[index].name}
           setValue={v => {
             handleContentChange(v, 'name');
           }}
         />
         <InputView
           title="전공"
-          value={form.career[index].major}
+          value={form.field[index].major}
           setValue={v => {
             handleContentChange(v, 'major');
           }}
         />
         <InputView
           title="상태"
-          value={form.career[index].status}
+          value={form.field[index].status}
           setValue={v => {
             handleContentChange(v, 'status');
           }}
-          placeholder='예시) 재학, 휴학, 졸업, 수료'
+          placeholder="예시) 재학, 휴학, 졸업, 수료"
         />
       </View>
     );
@@ -158,26 +174,26 @@ export default function CareerModal({
       <View key="intership" style={{ marginVertical: 10 }}>
         <InputView
           title="회사명"
-          value={form.career[index].name}
+          value={form.field[index].name}
           setValue={v => {
             handleContentChange(v, 'name');
           }}
         />
         <InputView
           title="근무부서 및 직책"
-          value={form.career[index].team}
+          value={form.field[index].team}
           setValue={v => {
             handleContentChange(v, 'team');
           }}
-          placeholder='예시) 소품디자인팀 인턴'
+          placeholder="예시) 소품디자인팀 인턴"
         />
         <InputView
           title="근무기간"
-          value={form.career[index].period}
+          value={form.field[index].period}
           setValue={v => {
             handleContentChange(v, 'period');
           }}
-          placeholder='예시) 6개월, 3년'
+          placeholder="예시) 6개월, 3년"
         />
       </View>
     );
@@ -188,14 +204,14 @@ export default function CareerModal({
       <View key="certificate" style={{ marginVertical: 10 }}>
         <InputView
           title="자격증명"
-          value={form.career[index].name}
+          value={form.field[index].name}
           setValue={v => {
             handleContentChange(v, 'name');
           }}
         />
         <InputView
           title="발급기관"
-          value={form.career[index].host}
+          value={form.field[index].host}
           setValue={v => {
             handleContentChange(v, 'host');
           }}
@@ -209,18 +225,18 @@ export default function CareerModal({
       <View key="contest" style={{ marginVertical: 10 }}>
         <InputView
           title="공모전명"
-          value={form.career[index].name}
+          value={form.field[index].name}
           setValue={v => {
             handleContentChange(v, 'name');
           }}
         />
         <InputView
           title="수상 내역"
-          value={form.career[index].content}
+          value={form.field[index].content}
           setValue={v => {
             handleContentChange(v, 'content');
           }}
-          placeholder='예시) 최우수상'
+          placeholder="예시) 최우수상"
         />
       </View>
     );
@@ -231,14 +247,14 @@ export default function CareerModal({
       <View key="outsourcing" style={{ marginVertical: 10 }}>
         <InputView
           title="프로젝트명"
-          value={form.career[index].name}
+          value={form.field[index].name}
           setValue={v => {
             handleContentChange(v, 'name');
           }}
         />
         <InputView
           title="상세 설명"
-          value={form.career[index].content}
+          value={form.field[index].content}
           setValue={v => {
             handleContentChange(v, 'content');
           }}
@@ -253,7 +269,7 @@ export default function CareerModal({
   }, [open]);
 
   const [section, setSection] = useState<'init' | 'form'>(
-    form.career[index].type === undefined ? 'init' : 'form',
+    form.field[index].type === undefined ? 'init' : 'form',
   );
   const [dropdown, setDropdown] = useState(false);
   const statusList = [
@@ -274,9 +290,9 @@ export default function CareerModal({
 
   const detailSection = useCallback(() => {
     return statusList.map((v, idx) => {
-      if (v === form.career[index].type) return sectionList[idx];
+      if (v === form.field[index].type) return sectionList[idx];
     });
-  }, [form.career[index].type]);
+  }, [form.field[index].type]);
 
   // renders
   return (
@@ -296,7 +312,7 @@ export default function CareerModal({
             <BottomButton
               value="다음"
               pressed={false}
-              disable={form.career[index].type === undefined}
+              disable={form.field[index].type === undefined}
               onPress={() => setSection('form')}
               style={{
                 width: '75%',
@@ -324,12 +340,12 @@ export default function CareerModal({
               <Dropdown
                 title="선택하기"
                 width="100%"
-                value={form.career[index].type}
+                value={form.field[index].type}
                 items={statusList}
                 setValue={handleTypeChange}
               />
               {/* <SelectBox
-                value={form.career[index].type}
+                value={form.field[index].type}
                 onPress={() => {
                   setDropdown(prev => {
                     return !prev;
@@ -340,7 +356,7 @@ export default function CareerModal({
               {dropdown && (
                 <Dropdown
                   items={statusList}
-                  value={form.career[index].type}
+                  value={form.field[index].type}
                   open={dropdown}
                   setOpen={setDropdown}
                   setValue={handleTypeChange}
@@ -353,7 +369,7 @@ export default function CareerModal({
               )} */}
             </View>
             {detailSection()}
-            <View style={{ marginVertical: 10 }}>
+            {/* <View style={{ marginVertical: 10 }}>
               <View
                 style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                 <Body16B>증빙자료첨부</Body16B>
@@ -362,14 +378,14 @@ export default function CareerModal({
                 </Caption11M>
               </View>
               <FileBox
-                data={form.career[index].file}
+                data={form.field[index].file}
                 setData={r => {
                   handleContentChange(r, 'file');
                 }}
                 max={1}
               />
-            </View>
-
+            </View> */} 
+            {/* 파일 업로드 로직은 백엔드 구현되고 나면 다시 적용 */}
             <View style={{ marginTop: 'auto' }}>
               <BottomButton
                 value="적용"

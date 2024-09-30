@@ -1,32 +1,26 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   View,
-  Text,
   ScrollView,
   TouchableOpacity,
-  Image,
   StyleSheet,
   Dimensions,
 } from 'react-native';
 import styled from 'styled-components/native';
 import {
-  Body16M,
-  Subtitle16M,
   Title20B,
   Filter11R,
   Subtitle18B,
   Body14R,
 } from '../../../styles/GlobalText';
-import { BLACK, LIGHTGRAY } from '../../../styles/GlobalColor';
+import { BLACK, LIGHTGRAY, PURPLE } from '../../../styles/GlobalColor';
 import { getStatusBarHeight } from 'react-native-safearea-height';
 import HeartButton from '../../../common/HeartButton';
-import CategoryDownButton from '../../../assets/common/CategoryDownButton.svg';
 import DetailModal from '../Market/GoodsDetailOptionsModal';
 import ServiceImage1 from '../../../assets/common/ServiceImage1.svg';
 import ServiceImage2 from '../../../assets/common/ServiceImage2.svg';
 import ServiceImage3 from '../../../assets/common/ServiceImage3.svg';
 import { useNavigation } from '@react-navigation/native'; // FIXME: 나중에 함수 props로 받아오도록 수정
-import { StackNavigationProp } from '@react-navigation/stack';
 
 const statusBarHeight = getStatusBarHeight(true);
 const { width } = Dimensions.get('window');
@@ -39,9 +33,9 @@ const ServiceMarket = (/*{ navigation }*/) => {
     region: '',
   });
 
-  const [modalOpen, setModalOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
   const [selectedOption, setSelectedOption] = useState<string>('추천순');
 
   const isStyleSelected = selectedStyles.length > 0;

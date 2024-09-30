@@ -24,6 +24,7 @@ import RegionModal from '../RegionModal';
 import { RegionType } from '../../../types/UserTypes';
 import { Body16B } from '../../../styles/GlobalText';
 import SelectBox from '../../../common/SelectBox';
+import { PURPLE, PURPLE2 } from '../../../styles/GlobalColor';
 
 function ProfilePic({ form, setForm }: ReformProps) {
   const [photo, setPhoto] = useState(form.picture);
@@ -104,7 +105,10 @@ export default function ReformFormProfile({ form, setForm }: ReformProps) {
         <View style={{ flexGrow: 1 }}>
           <ProfilePic form={form} setForm={setForm} />
           <InputView
-            title="닉네임"
+            title={
+              <View style={{ flexDirection: "row" }}>
+                <Body16B>닉네임</Body16B><Body16B style={{ color: PURPLE }}>{' *'}</Body16B>
+              </View>}
             value={form.nickname}
             setValue={v => {
               setForm(prev => {
@@ -134,7 +138,10 @@ export default function ReformFormProfile({ form, setForm }: ReformProps) {
             long={true}
           />
           <InputView
-            title="오픈채팅 링크"
+            title={
+              <View style={{ flexDirection: "row" }}>
+                <Body16B>오픈채팅 링크</Body16B><Body16B style={{ color: PURPLE }}>{' *'}</Body16B>
+              </View>}
             placeholder="http://"
             value={form.link}
             setValue={v => {
@@ -144,7 +151,9 @@ export default function ReformFormProfile({ form, setForm }: ReformProps) {
             }}
           />
           <View style={{ marginVertical: 8 }}>
-            <Body16B>주요 활동 지역</Body16B>
+            <View style={{ flexDirection: "row" }}>
+              <Body16B>주요 활동 지역</Body16B><Body16B style={{ color: PURPLE }}>{' *'}</Body16B>
+            </View>
             <SelectBox
               value={form.region}
               onPress={() => setModalOpen(true)}

@@ -60,20 +60,41 @@ function LoginInput({
   );
 }
 
+export const processLoginResponse2 = ( // 리폼러 회원가입 시에 사용하는 토큰 발급용 코드 
+  response: any,
+) => {
+  // const navigation = useNavigation<StackNavigationProp<MyPageProps>>();
+  if (response?.status == 200) {
+    const accessToken = response.data.access;
+    const refreshToken = response.data.refresh;
+    setAccessToken(accessToken);
+    setRefreshToken(refreshToken);
+    console.log({ accessToken }, ',', { refreshToken });
+  } else if (response.status == 400) {
+    Alert.alert(
+      response.data.extra.fields !== undefined
+        ? response.data.extra.fields.detail
+        : response.data.message,
+    );
+  } else {
+    Alert.alert('예상치 못한 오류가 발생하였습니다.');
+  }
+};
+
 export const processLoginResponse = (
   response: any,
   navigate: () => void,
   setLogin: (value: boolean) => void,
 ) => {
   // const navigation = useNavigation<StackNavigationProp<MyPageProps>>();
-  if (response.status == 200) {
-    const nickname = response.data.data.nickname;
-    const accessToken = response.data.data.access;
-    const refreshToken = response.data.data.refresh;
-    setNickname('임시 닉네임');
+  if (response?.status == 200) {
+    const accessToken = response.data.access;
+    const refreshToken = response.data.refresh;
+    setNickname('임시 닉네임'); // 수정 필요: 유저 데이터 get해와서, 거기 있는 닉네임으로 변경. 
+    // 없으면 (리폼러가 프로필 등록을 안했으면) -> ''으로 설정 -> 마이페이지 접근 불가하게. 마이페이지는 닉네임이 블랭크 아니어야만 접근 가능하게. isLogin이 true일때만 getUserData하게 하면 될듯. 
     setAccessToken(accessToken);
     setRefreshToken(refreshToken);
-    console.log(nickname, accessToken, refreshToken);
+    console.log({ accessToken }, ',', { refreshToken });
     setLogin(true);
     navigate();
   } else if (response.status == 400) {
@@ -94,7 +115,7 @@ export default function Login({ navigation, route }: LoginProps) {
   const request = Request();
 
   const handleLogin = async () => {
-    const response = await request.post(`users/login/`, form, {});
+    const response = await request.post(`/api/user/login`, form);
     processLoginResponse(
       response,
       () => {
@@ -173,7 +194,7 @@ export default function Login({ navigation, route }: LoginProps) {
             <Caption11M style={{ color: '#ffffff' }}>비밀번호 찾기</Caption11M>
           </View>
         </View>
-        <View
+        <View // 아래에 소셜로그인 구현 필요 
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
