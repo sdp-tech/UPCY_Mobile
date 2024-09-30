@@ -1,28 +1,13 @@
-import React, {
-  Fragment,
-  useEffect,
-  useState,
-  useRef,
-  forwardRef,
-} from 'react';
+import React, { Fragment, useState, useRef } from 'react';
 
-import {
-  SafeAreaView,
-  Text,
-  View,
-  StyleSheet,
-  Alert,
-  FlatList,
-} from 'react-native';
+import { SafeAreaView, Text, View, Alert } from 'react-native';
 import styled from 'styled-components/native';
-import { Filter14M } from '../styles/GlobalText';
-import { Tabs, MaterialTabBar } from 'react-native-collapsible-tab-view';
 import {
   StackScreenProps,
   createStackNavigator,
 } from '@react-navigation/stack';
 import { TabProps } from '../../App';
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+import { ScrollView } from 'react-native-gesture-handler';
 
 import CustomHeader from '../common/CustomHeader';
 import HomeTabView from '../components/Home/HomeMain';
@@ -45,8 +30,6 @@ import QuotationConfirm from '../components/Home/Quotation/QuotationConfirm';
 import Rejection from '../components/Home/Quotation/Rejection';
 import SentRejection from '../components/Home/Quotation/SentRejection';
 import WriteReviewPage from '../components/Home/Market/WriteReviewPage';
-import { BottomBarProvider } from '../../contexts/BottomBarContext';
-import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import ComponentsTest from './ComponentsTest';
 import { PURPLE } from '../styles/GlobalColor';
