@@ -98,7 +98,7 @@ const ServiceMarket = (/*{ navigation }*/) => {
   );
 };
 
-const ServiceCard = ({
+export const ServiceCard = ({
   name,
   price,
   tag,
