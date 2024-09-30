@@ -25,6 +25,7 @@ const InfoPage = () => {
   return (
     <Tabs.FlatList
       data={data}
+      style={{ marginTop: 12 }}
       renderItem={({ item }: any) => {
         return (
           <InfoSection>

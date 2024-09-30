@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import styled from 'styled-components/native';
+import { View } from 'react-native';
 
 import ServiceImage2 from '../../../assets/common/ServiceImage2.svg';
 
@@ -26,39 +25,5 @@ const ServiceItem = ({ onPress }: ServiceItemProps) => {
     </>
   );
 };
-
-const TitleContainer = styled.View`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  padding-vertical: 5px;
-`;
-
-const TextStyles = StyleSheet.create({
-  title: {
-    color: '#222',
-    fontFamily: 'Pretendard Variable',
-    fontSize: 18,
-    fontWeight: '700',
-    lineHeight: 24,
-  },
-  detail: {
-    color: '#222',
-    fontFamily: 'Pretendard Variable',
-    fontSize: 14,
-    fontWeight: '400',
-    lineHeight: 24,
-  },
-  price: {
-    color: '#fff',
-    textAlign: 'right',
-    fontFamily: 'Pretendard Variable',
-    fontSize: 18,
-    fontWeight: '700',
-    lineHeight: 24,
-    marginRight: 11,
-    marginBottom: 13,
-  },
-});
 
 export default ServiceItem;
