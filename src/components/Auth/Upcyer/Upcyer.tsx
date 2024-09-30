@@ -7,6 +7,8 @@ import {
     StyleSheet,
     Modal,
     Text,
+    Alert,
+    Pressable,
 } from 'react-native';
 import BottomButton from '../../../common/BottomButton';
 import PencilIcon from '../../../assets/common/Pencil.svg';
@@ -17,6 +19,10 @@ import { PhotoType, useImagePicker } from '../../../hooks/useImagePicker';
 import { useNavigation } from '@react-navigation/native';
 import Check from '../../../assets/common/CheckIcon.svg'
 import DetailScreenHeader from '../../Home/components/DetailScreenHeader';
+import { SignupProp } from '../Signup';
+import { getAccessToken } from '../../../common/storage';
+import Request from '../../../common/requests';
+import { SignupProps } from '../BasicForm';
 
 type UpcyProfileType = {
     picture: undefined | PhotoType;
@@ -76,15 +82,18 @@ function ProfilePic() {
     );
 }
 
-export const UpcyFormProfile = () => {
+export const UpcyFormProfile = ({ navigation, route }: SignupProp) => {
     const { width } = Dimensions.get('screen');
     const [isModalVisible, setModalVisible] = useState(false);
     const [nickname, setNickname] = useState('');
     const [introduce, setIntroduce] = useState('');
-    const navigation = useNavigation();
+    const request = Request();
+    const { form } = route.params;
+    const [form_, setForm] = useState<SignupProps>(form);
 
     const handleButtonPress = () => {
         // 모달을 표시
+
         setModalVisible(true);
 
         // 3초 후 모달 닫고 페이지 이동
@@ -95,6 +104,44 @@ export const UpcyFormProfile = () => {
                 routes: [{ name: 'Login' }],
             });
         }, 3000); // 3000ms = 3초
+    };
+
+    const handleSubmit = async () => {
+        const params = {
+            email: form_.mail + '@' + form_.domain,
+            password: form_.password,
+            nickname: form_.nickname,
+            agreement_terms: form_.agreement.d,
+            introduce: form_.introduce,
+        };
+        if (form_.nickname != '') {
+            try {
+                const response = await request.post('/api/user/signup', params);
+                if (response?.status === 201) {
+                    console.log(params);
+                    setModalVisible(true);
+
+                    // 3초 후 모달 닫고 페이지 이동
+                    setTimeout(() => {
+                        setModalVisible(false);
+                        navigation.getParent()?.reset({
+                            index: 0, // 바로 로그인 화면으로 
+                            routes: [{ name: 'Login' }],
+                        });
+                    }, 3000); // 3000ms = 3초
+                } else if (response?.status === 500) {
+                    console.log(response);
+                    Alert.alert('이미 가입된 이메일입니다.');
+                } else {
+                    console.error('Error Status:', response?.status);
+                    Alert.alert('가입에 실패했습니다.');
+                }
+            } catch (err) {
+                console.log(err);
+            }
+        } else {
+            Alert.alert('닉네임을 입력해주세요.')
+        }
     };
 
     return (
@@ -115,22 +162,32 @@ export const UpcyFormProfile = () => {
                     <ProfilePic />
                     <InputView
                         title="닉네임"
-                        value={nickname}
-                        setValue={setNickname}
+                        value={form_.nickname}
+                        setValue={(value) =>
+                            setForm(prev => {
+                                return { ...prev, nickname: value };
+                            })
+                        }
                         caption={{ default: '본인을 나타내는 닉네임을 작성해주세요' }}
                     />
                     <InputView
                         title="소개글"
-                        value={introduce}
-                        setValue={setIntroduce}
+                        value={form_.introduce}
+                        setValue={(value) =>
+                            setForm(prev => {
+                                return { ...prev, introduce: value };
+                            })
+                        }
                         caption={{ default: '본인을 소개하는 글을 작성해주세요' }}
                         long={true}
                     />
-
+                    <Pressable onPress={() => console.log(form_)}>
+                        <Text>ddddddd</Text>
+                    </Pressable>
                     <BottomButton
                         value="완료"
                         pressed={false}
-                        onPress={handleButtonPress}
+                        onPress={handleSubmit}
                         style={{
                             width: '75%',
                             alignSelf: 'center',

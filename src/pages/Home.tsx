@@ -58,7 +58,6 @@ import ScrollTopButton from '../common/ScrollTopButton';
 import Footer from '../common/Footer';
 import { BLACK, White } from '../styles/GlobalColor';
 import InfoPage from '../components/Home/Market/InfoPage';
-import OrderPage from '../components/Home/Order/OrderPage';
 import OrderManagement from '../components/Home/Order/OrderManagement';
 import ReformerMarket from '../components/Home/Market/ReformerMarket';
 import Service from '../components/Home/Market/Service';
@@ -71,7 +70,6 @@ export type HomeStackParams = {
   ServiceDetailPage: {
     id?: number;
   };
-  OrderPage: undefined;
   OrderManagement: undefined;
   GoodsDetailPage: undefined;
   QuotationForm: undefined;
@@ -126,7 +124,6 @@ const HomeScreen = ({
       <HomeStack.Screen name="QuotationForm" component={QuotationForm} />
       <HomeStack.Screen name="QuotationPage" component={QuotationPage} />
       <HomeStack.Screen name="SentQuotation" component={SentQuotation} />
-      <HomeStack.Screen name="OrderPage" component={OrderPage} />
       <HomeStack.Screen name="OrderManagement" component={OrderManagement} />
       <HomeStack.Screen
         name="GoodsDetailPage"
@@ -203,19 +200,19 @@ const HomeMainScreen = ({
     <Fragment>
       <SafeAreaView style={{ flex: 0, backgroundColor: PURPLE }} />
       <SafeAreaView style={{ flex: 1 }}>
-        <CustomHeader onSearch={() => {}} onTabChange={handleTabChange} />
+        <CustomHeader onSearch={() => { }} onTabChange={handleTabChange} />
         <BottomSheetModalProvider>
           <View>
             <HomeTabView
-              onSearch={() => {}}
+              onSearch={() => { }}
               selectedTab={selectedTab}
               onTabChange={handleTabChange}
             />
           </View>
 
-          {selectedTab === 'Goods' && <Service navigation={navigation} />}
+          {selectedTab === 'Goods' && <Service />}
           {selectedTab === 'Market' && (
-            <ReformerMarket navigation={navigation} />
+            <ReformerMarket />
           )}
           {selectedTab === 'temp' && (
             <ScrollView>

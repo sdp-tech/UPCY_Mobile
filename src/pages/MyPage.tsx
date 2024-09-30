@@ -19,7 +19,7 @@ import TextToggle from '../common/TextToggle';
 import { BLACK, BLACK2 } from '../styles/GlobalColor';
 import ReviewComment from '../components/Home/components/ReviewComment';
 import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
-import OrderPage from '../components/Home/Order/OrderPage';
+import OrderManagement from '../components/Home/Order/OrderManagement';
 import ServicePage from '../components/Home/Market/ServicePage';
 import ScrollTopButton from '../common/ScrollTopButton';
 import ReviewPage from '../components/Home/Market/ReviewPage';
@@ -197,7 +197,7 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
       >
         {routes.map(route =>
         (<Tabs.Tab key={route.key} name={route.title}>
-          {route.key === 'order' && <OrderPage navigation={navigation} />}
+          {route.key === 'order' && <OrderManagement />}
           {route.key === 'lookbook' &&
             <View>
               <ServicePage scrollViewRef={scrollRef} />
