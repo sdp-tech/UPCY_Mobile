@@ -12,9 +12,50 @@ import DetailModal from '../Market/GoodsDetailOptionsModal';
 import ServiceImage1 from '../../../assets/common/ServiceImage1.svg';
 import ServiceImage2 from '../../../assets/common/ServiceImage2.svg';
 import ServiceImage3 from '../../../assets/common/ServiceImage3.svg';
-import { useNavigation } from '@react-navigation/native'; // FIXME: 나중에 함수 props로 받아오도록 수정
+import { Styles } from '../../../types/UserTypes.ts';
 
-const ServiceMarket = (/*{ navigation }*/) => {
+type ServiceCardProps = {
+  name: string;
+  price: number; // price variable should be a number to apply filters
+  tag: Styles;
+  image: ImageComponent | any | undefined; // FIXME: fix image type
+  title: string;
+  description?: string;
+};
+
+// TODO: replace the below dummy data
+// API 연결 시 이 부분만 바꾸면 됩니다!
+const serviceCardDummyData: ServiceCardProps[] = [
+  {
+    name: '하느리퐁퐁',
+    price: 20000,
+    tag: '빈티지',
+    image: ServiceImage1,
+    title: '청바지 에코백 만들어 드립니다',
+    description:
+      '안입는 청바지를 활용한 나만의 에코백! 아주 좋은 에코백 환경에도 좋고 나에게도 좋고 어찌구저찌구한 에코백입니다 최고임 짱짱',
+  },
+  {
+    name: '똥구르리리',
+    price: 20000,
+    tag: '미니멀',
+    image: ServiceImage2,
+    title: '커스텀 짐색',
+    description:
+      '안입는 청바지를 활용한 나만의 에코백! 아주 좋은 에코백 환경에도 좋고 나에게도 좋고 어찌구저찌구한 에코백입니다 최고임 짱짱',
+  },
+  {
+    name: '훌라훌라맨',
+    price: 20000,
+    tag: '빈티지',
+    image: ServiceImage3,
+    title: '청바지 에코백 만들어 드립니다',
+    description:
+      '안입는 청바지를 활용한 나만의 에코백! 아주 좋은 에코백 환경에도 좋고 나에게도 좋고 어찌구저찌구한 에코백입니다 최고임 짱짱',
+  },
+];
+
+const ServiceMarket = () => {
   const [form, setForm] = useState({
     mail: '',
     domain: '',
@@ -37,7 +78,6 @@ const ServiceMarket = (/*{ navigation }*/) => {
       <Filter11R style={{ marginBottom: 15, marginHorizontal: 15 }}>
         {serviceDescription}
       </Filter11R>
-
       <View style={{ marginTop: 10 }} />
       <DetailModal
         open={modalOpen}
@@ -47,32 +87,19 @@ const ServiceMarket = (/*{ navigation }*/) => {
         selectedStyles={selectedStyles}
         setSelectedStyles={setSelectedStyles}
       />
-
       <View style={{ backgroundColor: LIGHTGRAY }}>
-        <ServiceCard
-          name="하느리퐁퐁"
-          price="20,000원 ~ "
-          tag="빈티지"
-          image={ServiceImage1}
-          title="청바지 에코백 만들어 드립니다"
-          text="안입는 청바지를 활용한 나만의 에코백! 아주 좋은 에코백 환경에도 좋고 나에게도 좋고 어찌구저찌구한 에코백입니다 최고임 짱짱"
-        />
-        <ServiceCard
-          name="똥구르리리"
-          price="20,000원 ~ "
-          tag="미니멀"
-          image={ServiceImage2}
-          title="커스텀 짐색"
-          text="안입는 청바지를 활용한 나만의 에코백! 아주 좋은 에코백 환경에도 좋고 나에게도 좋고 어찌구저찌구한 에코백입니다 최고임 짱짱"
-        />
-        <ServiceCard
-          name="훌라훌라맨"
-          price="20,000원 ~ "
-          tag="빈티지"
-          image={ServiceImage3}
-          title="청바지 에코백 만들어 드립니다"
-          text="안입는 청바지를 활용한 나만의 에코백! 아주 좋은 에코백 환경에도 좋고 나에게도 좋고 어찌구저찌구한 에코백입니다 최고임 짱짱"
-        />
+        {serviceCardDummyData.map(card => {
+          return (
+            <ServiceCard
+              name={card.name}
+              price={card.price}
+              tag={card.tag}
+              image={card.image}
+              title={card.title}
+              description={card.description}
+            />
+          );
+        })}
       </View>
     </ScrollView>
   );
@@ -84,13 +111,13 @@ export const ServiceCard = ({
   tag,
   image: ImageComponent,
   title,
-  text,
-}) => {
+  description,
+}: ServiceCardProps) => {
   const [like, setLike] = useState(false);
-  const navigation = useNavigation(); // FIXME: 나중에 함수 props로 받아오도록 수정
 
   return (
     <TouchableOpacity
+      key={title}
       style={styles.cardContainer}
       onPress={() => {
         // 각 리폼러 프로필 페이지로 이동하는 event 걸기
@@ -107,7 +134,7 @@ export const ServiceCard = ({
         <Subtitle18B>{title}</Subtitle18B>
         <HeartButton like={like} onPress={() => setLike(!like)} />
       </View>
-      <Body14R>{text}</Body14R>
+      <Body14R>{description}</Body14R>
     </TouchableOpacity>
   );
 };

@@ -1,4 +1,13 @@
-type Styles = '빈티지' | '미니멀' | '캐주얼';
+export type Styles =
+  | '빈티지'
+  | '미니멀'
+  | '캐주얼'
+  | '페미닌'
+  | '글램'
+  | '스트릿'
+  | '키치'
+  | '스포티'
+  | '걸리시';
 type Materials = '가죽' | '스웨이드' | '벨벳' | '데님' | '퍼' | '실크' | '울';
 interface File {
   name: string;
@@ -36,36 +45,36 @@ export type RegionType =
   | '중랑구'
   | '';
 type Educ = {
-  school: string; // 학교명 
-  major: string | undefined; // 전공 
-  academic_status: string | undefined; // 상태 
+  school: string; // 학교명
+  major: string | undefined; // 전공
+  academic_status: string | undefined; // 상태
   // file: Files;
   // 파일 형식은 나중에 추가
 };
 export type EducType = Educ[];
 
 type Career = {
-  company_name: string; // 회사명 
-  department: string | undefined; // 근무부서 및 직책 
-  period: string | undefined; // 근무기간 
+  company_name: string; // 회사명
+  department: string | undefined; // 근무부서 및 직책
+  period: string | undefined; // 근무기간
 };
 export type CareerType = Career[];
 
 type Awards = {
-  name: string; // 공모전명 
-  prize: string | undefined; // 수상내역 
+  name: string; // 공모전명
+  prize: string | undefined; // 수상내역
 };
 export type AwardsType = Awards[];
 
 type Certifi = {
-  name: string; // 자격증명 
-  issuing_authority: string | undefined; // 발급기관 
+  name: string; // 자격증명
+  issuing_authority: string | undefined; // 발급기관
 };
 export type CertifiType = Certifi[];
 
 type Free = {
-  project_name: string; // 프로젝트명 
-  explain: string | undefined; // 상세설명 
+  project_name: string; // 프로젝트명
+  explain: string | undefined; // 상세설명
 };
 export type FreeType = Free[];
 
