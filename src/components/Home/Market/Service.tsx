@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { View, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import {
   Title20B,
@@ -29,7 +29,7 @@ type ServiceCardProps = {
 const serviceCardDummyData: ServiceCardProps[] = [
   {
     name: '하느리퐁퐁',
-    price: 20000,
+    price: 100000,
     tag: '빈티지',
     image: ServiceImage1,
     title: '청바지 에코백 만들어 드립니다',
@@ -47,7 +47,7 @@ const serviceCardDummyData: ServiceCardProps[] = [
   },
   {
     name: '훌라훌라맨',
-    price: 20000,
+    price: 50000,
     tag: '빈티지',
     image: ServiceImage3,
     title: '청바지 에코백 만들어 드립니다',
@@ -70,11 +70,22 @@ const ServiceMarket = ({ selectedFilterOption }: ServiceMarketProps) => {
 
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
+  const [serviceCardData, setServiceCardData] =
+    useState<ServiceCardProps[]>(serviceCardDummyData);
 
   const serviceTitle: string = '지금 주목해야 할 업사이클링 서비스';
   const serviceDescription: string = '안 입는 옷을 장마 기간에 필요한 물품으로';
 
-  // TODO: add filtering logic here
+  useEffect(() => {
+    if (selectedFilterOption == '가격순') {
+      // filter by price
+      const sortedByPriceData = [...serviceCardDummyData].sort(
+        (a, b) => a.price - b.price,
+      );
+      setServiceCardData(sortedByPriceData);
+    }
+    // TODO: add more filtering logic here
+  }, [selectedFilterOption]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -95,7 +106,7 @@ const ServiceMarket = ({ selectedFilterOption }: ServiceMarketProps) => {
         setSelectedStyles={setSelectedStyles}
       />
       <View style={{ backgroundColor: LIGHTGRAY }}>
-        {serviceCardDummyData.map(card => {
+        {serviceCardData.map(card => {
           return (
             <ServiceCard
               name={card.name}
