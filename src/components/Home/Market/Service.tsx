@@ -13,6 +13,7 @@ import ServiceImage1 from '../../../assets/common/ServiceImage1.svg';
 import ServiceImage2 from '../../../assets/common/ServiceImage2.svg';
 import ServiceImage3 from '../../../assets/common/ServiceImage3.svg';
 import { Styles } from '../../../types/UserTypes.ts';
+import { SelectedOptionProps } from '../HomeMain.tsx';
 
 type ServiceCardProps = {
   name: string;
@@ -55,7 +56,11 @@ const serviceCardDummyData: ServiceCardProps[] = [
   },
 ];
 
-const ServiceMarket = () => {
+type ServiceMarketProps = {
+  selectedFilterOption?: SelectedOptionProps;
+};
+
+const ServiceMarket = ({ selectedFilterOption }: ServiceMarketProps) => {
   const [form, setForm] = useState({
     mail: '',
     domain: '',
@@ -68,6 +73,8 @@ const ServiceMarket = () => {
 
   const serviceTitle: string = '지금 주목해야 할 업사이클링 서비스';
   const serviceDescription: string = '안 입는 옷을 장마 기간에 필요한 물품으로';
+
+  // TODO: add filtering logic here
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
