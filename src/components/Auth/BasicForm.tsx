@@ -28,11 +28,23 @@ import CustomScrollView from '../../common/CustomScrollView';
 import DropdownWrite from '../../common/DropdownWrite';
 import SignupCompleteModal from '../../common/SignUpCompleteModal';
 import { CommonActions } from '@react-navigation/native';
+import { getAccessToken, setAccessToken, setRefreshToken } from '../../common/storage';
+import { processLoginResponse2 } from './Login';
 
-interface SignupProps {
+interface Agreement {
+  a: boolean;
+  b: boolean;
+  c: boolean;
+  d: boolean;
+}
+
+export interface SignupProps {
   mail: string;
   domain: string | undefined;
   password: string;
+  nickname?: string;
+  agreement: Agreement;
+  introduce?: string;
 }
 
 interface CheckBtnProps {
@@ -93,33 +105,55 @@ export default function BasicForm({ navigation, route }: FormProps) {
     mail: '',
     domain: undefined,
     password: '',
-  });
-  const [agreement, setAgreement] = useState({
-    a: false,
-    b: false,
-    c: false,
-    d: false,
+    nickname: '',
+    agreement: {
+      a: false,
+      b: false,
+      c: false,
+      d: false,
+    },
+    introduce: ''
   });
   const [checkPw, setCheckPw] = useState('');
-  const [invalidPw, setInvalidPw] = useState<undefined | boolean>(undefined);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [splash, setSplash] = useState(false);
-  const [isModalVisible, setModalVisible] = useState(false);
+  const [isModalVisible, setModalVisible] = useState(false); // 리폼러 가입 모달 
 
   const request = Request();
   const passwordRegExp = new RegExp(
     '^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$',
   );
 
-  const passwordValidation = (callback: () => void) => {
-    if (passwordRegExp.exec(form.password)) {
-      callback();
-    } else {
-      Alert.alert('비밀번호가 올바르지 않습니다.');
-      setForm(prev => {
-        return { ...prev, password: '' };
-      });
-      setCheckPw('');
+  const handleLogin = async () => {
+    const params = {
+      email: form.mail + '@' + form.domain,
+      password: form.password
+    }
+    const response = await request.post(`/api/user/login`, params);
+    processLoginResponse2(
+      response
+    );
+  };
+
+  const passwordValidation = async () => {
+    if (form.agreement.a === false || form.agreement.b === false || form.agreement.c === false ||
+      form.domain === undefined || form.mail === '') {
+      Alert.alert('필수 사항들을 모두 입력해주세요.')
+    } else if (!form.domain.includes('.')) {
+      Alert.alert('올바른 이메일 형식이 아닙니다.')
+    } else { // 누락된거 없을 때 
+      if (passwordRegExp.exec(form.password)) {
+        if (is_reformer === true) { // 리폼러의 경우 
+          await handleSubmit(); // 일단 회원가입 하고, 
+          handleLogin(); // 토큰 발급 로직 
+        } else { // 업씨러의 경우 
+          navigation.navigate('Upcyer', { form })
+        }
+      } else {
+        Alert.alert('비밀번호가 올바르지 않습니다.');
+        setForm(prev => {
+          return { ...prev, password: '' };
+        });
+        setCheckPw('');
+      }
     }
   };
 
@@ -127,21 +161,25 @@ export default function BasicForm({ navigation, route }: FormProps) {
     const params = {
       email: form.mail + '@' + form.domain,
       password: form.password,
-      re_password: checkPw,
+      agreement_terms: form.agreement.d,
     };
-    const response = await request.post(`/api/user/signup`, params, {});
-    if (response?.status === 201) {
-      console.log(params);
-      setSplash(true);
-      setTimeout(() => {
-        navigation.getParent()?.navigate('Home');
-      }, 3000);
-    } else if (response?.status === 500) {
-      console.log(response);
-      Alert.alert('이미 가입된 이메일입니다.');
-    } else {
-      console.log(response);
-      Alert.alert('가입에 실패했습니다.');
+    try {
+      const response = await request.post(`/api/user/signup`, params);
+      if (response?.status === 201) {
+        console.log(params);
+        const accessToken = response.data.access;
+        const refreshToken = response.data.refresh;
+        console.log({ accessToken }, ',', { refreshToken });
+        handleNext();
+      } else if (response?.status === 500) {
+        console.log(response);
+        Alert.alert('이미 가입된 이메일입니다.');
+      } else {
+        console.error('Error Status:', response?.status);
+        Alert.alert('가입에 실패했습니다.');
+      }
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -152,6 +190,8 @@ export default function BasicForm({ navigation, route }: FormProps) {
   const handleCloseModal = async () => {
     setModalVisible(false); // 모달 닫기
   };
+
+
 
   return (
     <BottomSheetModalProvider>
@@ -247,11 +287,15 @@ export default function BasicForm({ navigation, route }: FormProps) {
                 <Caption11M>만 19세 이상입니다. </Caption11M>
                 <Caption11M style={{ color: PURPLE }}>(필수)</Caption11M>
                 <CheckButton
-                  checked={agreement.a}
+                  checked={form.agreement?.a ?? false}
                   onPress={() =>
-                    setAgreement(prev => {
-                      return { ...prev, a: !prev.a };
-                    })
+                    setForm(prev => ({
+                      ...prev, // 기존의 form 데이터를 유지
+                      agreement: {
+                        ...prev.agreement, // 기존의 agreement 데이터를 유지
+                        a: !prev.agreement?.a,
+                      }
+                    }))
                   }
                 />
               </TermsView>
@@ -259,11 +303,15 @@ export default function BasicForm({ navigation, route }: FormProps) {
                 <Caption11M>서비스 이용약관에 동의합니다.</Caption11M>
                 <Caption11M style={{ color: PURPLE }}>(필수)</Caption11M>
                 <CheckButton
-                  checked={agreement.b}
+                  checked={form.agreement?.b ?? false}
                   onPress={() =>
-                    setAgreement(prev => {
-                      return { ...prev, b: !prev.b };
-                    })
+                    setForm(prev => ({
+                      ...prev, // 기존의 form 데이터를 유지
+                      agreement: {
+                        ...prev.agreement, // 기존의 agreement 데이터를 유지
+                        b: !prev.agreement?.b,
+                      }
+                    }))
                   }
                 />
               </TermsView>
@@ -271,11 +319,15 @@ export default function BasicForm({ navigation, route }: FormProps) {
                 <Caption11M>개인정보 수집 이용에 동의합니다. </Caption11M>
                 <Caption11M style={{ color: PURPLE }}>(필수)</Caption11M>
                 <CheckButton
-                  checked={agreement.c}
+                  checked={form.agreement?.c ?? false}
                   onPress={() =>
-                    setAgreement(prev => {
-                      return { ...prev, c: !prev.c };
-                    })
+                    setForm(prev => ({
+                      ...prev, // 기존의 form 데이터를 유지
+                      agreement: {
+                        ...prev.agreement, // 기존의 agreement 데이터를 유지
+                        c: !prev.agreement?.c,
+                      }
+                    }))
                   }
                 />
               </TermsView>
@@ -285,11 +337,15 @@ export default function BasicForm({ navigation, route }: FormProps) {
                   (선택){' '}
                 </Caption11M>
                 <CheckButton
-                  checked={agreement.d}
+                  checked={form.agreement?.d ?? false}
                   onPress={() =>
-                    setAgreement(prev => {
-                      return { ...prev, d: !prev.d };
-                    })
+                    setForm(prev => ({
+                      ...prev, // 기존의 form 데이터를 유지
+                      agreement: {
+                        ...prev.agreement, // 기존의 agreement 데이터를 유지
+                        d: !prev.agreement?.d,
+                      }
+                    }))
                   }
                 />
               </TermsView>
@@ -307,14 +363,10 @@ export default function BasicForm({ navigation, route }: FormProps) {
                 }
                 value="다음"
                 pressed={false}
-                //onPress={() => passwordValidation(handleSubmit)}
                 onPress={() => {
-                  if (is_reformer === true) {
-                    handleNext();
-                  } else {
-                    navigation.navigate('Upcyer');
-                  }
+                  passwordValidation();
                 }}
+                // onPress={() => handleNext()} // 이건 임시. 
                 style={{
                   width: '75%',
                   alignSelf: 'center',

@@ -109,23 +109,27 @@ const FixMyPage = ({ navigation, route }: FixMyPageProps) => {
         const headers = {
             Authorization: `Bearer ${accessToken}`
         }
-        try{
+        try {
             const response = await request.post('/api/user/logout', params, headers)
-            if (response &&response.status === 205) {
+            if (response && response.status === 205) {
                 console.log('로그아웃 합니다.')
+                // removeAccessToken();
+                // removeRefreshToken();
+                console.log('AccessToken: ', { accessToken }, '| RefreshToken: ', { refreshToken });
+
                 navigation.getParent()?.reset({
                     index: 0, // 스택 초기화 
-                    routes: [{ name: 'Home' }], 
+                    routes: [{ name: 'Home' }],
                 });
             } else {
                 console.error('Unexpected response status: ', response?.status);
             }
-            
+
         }
-        catch (err){
+        catch (err) {
             console.error(err)
         }
-        
+
     };
 
     function handleLogout(): () => void {
