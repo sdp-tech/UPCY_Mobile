@@ -95,52 +95,54 @@ const HomeTabView = ({
   return (
     <>
       <CategoryBox>
-        <View
-          style={{
-            flex: 1,
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-          }}>
-          <StyleFilterButton onPressStyleFilterButton={setStyleFilterOpen} />
-          {/* FIXME */}
-          {/* {styleFilterOpen && (
+        {selectedTab === 'Goods' && (
+          <View
+            style={{
+              flex: 1,
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            }}>
+            <StyleFilterButton onPressStyleFilterButton={setStyleFilterOpen} />
+            {/* FIXME */}
+            {/* {styleFilterOpen && (
             <FilterElement
               list={stylesList}
               onPress={onPressStyleFilterList}
               type="style"
             />
           )} */}
-          <View style={styles.dropdownContainer}>
-            <TouchableOpacity
-              onPress={toggleDropdown}
-              style={styles.dropdownButton}>
-              <Text style={styles.dropdownButtonText}>{selectedOption}</Text>
-              <DropDown />
-            </TouchableOpacity>
-            {dropdownOpen && (
-              <View style={styles.dropdownMenu}>
-                {selectOptionDropdown.map(option => (
-                  <TouchableOpacity
-                    key={option}
-                    onPress={() => {
-                      selectOption(option);
-                      setSelectedFilterOption?.(option);
-                    }}
-                    style={styles.dropdownOption}>
-                    <Text
-                      style={
-                        selectedOption === option
-                          ? styles.dropdownSelectedOptionText
-                          : styles.dropdownOptionText
-                      }>
-                      {option}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            )}
+            <View style={styles.dropdownContainer}>
+              <TouchableOpacity
+                onPress={toggleDropdown}
+                style={styles.dropdownButton}>
+                <Text style={styles.dropdownButtonText}>{selectedOption}</Text>
+                <DropDown />
+              </TouchableOpacity>
+              {dropdownOpen && (
+                <View style={styles.dropdownMenu}>
+                  {selectOptionDropdown.map(option => (
+                    <TouchableOpacity
+                      key={option}
+                      onPress={() => {
+                        selectOption(option);
+                        setSelectedFilterOption?.(option);
+                      }}
+                      style={styles.dropdownOption}>
+                      <Text
+                        style={
+                          selectedOption === option
+                            ? styles.dropdownSelectedOptionText
+                            : styles.dropdownOptionText
+                        }>
+                        {option}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              )}
+            </View>
           </View>
-        </View>
+        )}
       </CategoryBox>
       <DetailModal
         open={modalOpen}
