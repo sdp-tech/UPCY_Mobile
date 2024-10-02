@@ -154,7 +154,6 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
 
   const [routes] = useState([
     { key: 'order', title: '주문' },
-    { key: 'lookbook', title: '룩북' },
     { key: 'like', title: '좋아요' }
   ]);
   const flatListRef = useRef<FlatList>(null);
@@ -190,20 +189,16 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
               fontWeight: '700',
               fontSize: 16
             }}
-            onTabPress={() => Alert.alert('준비중입니다!ㅠㅠ')}
-          // 룩북, 좋아요 모아보기 기능 구현되면 위의 onTapPress는 삭제할 것 
+
           />
         )}
       >
+
+
         {routes.map(route =>
         (<Tabs.Tab key={route.key} name={route.title}>
-          {route.key === 'order' && <OrderPage navigation={navigation} />}
-          {route.key === 'lookbook' &&
-            <View>
-              <ServicePage scrollViewRef={scrollRef} />
-              <ScrollTopButton scrollViewRef={scrollRef} />
-            </View>
-          }
+            {route.key === 'order' && <OrderPage />}
+
           {route.key === 'like' &&
             <View>
               <ReviewPage flatListRef={flatListRef} />
