@@ -63,10 +63,19 @@ interface SignupProps {
   region: string;
 } // 의미 없음
 
+export type SelectedOptionProps =
+  | '추천순'
+  | '인기순'
+  | '가격순'
+  | '최신순'
+  | '판매순';
 interface HomeTabViewProps {
   onSearch: () => void;
   onTabChange: (tab: 'Goods' | 'Market' | 'temp') => void;
   selectedTab: 'Goods' | 'Market' | 'temp';
+  setSelectedFilterOption?: (
+    selectedFilterOption: SelectedOptionProps | undefined,
+  ) => void;
 }
 
 interface HomeTabViewButtonParams {
@@ -88,6 +97,7 @@ const HomeTabView = ({
   onSearch,
   onTabChange,
   selectedTab,
+  setSelectedFilterOption, // selected filter option
 }: HomeTabViewProps) => {
   const [form, setForm] = useState<SignupProps>({
     mail: '',
@@ -134,23 +144,32 @@ const HomeTabView = ({
           </TouchableOpacity>
           {dropdownOpen && (
             <View style={styles.dropdownMenu}>
-              {['추천순', '인기순', '가격순', '최신순', '판매순'].map(
-                option => (
-                  <TouchableOpacity
-                    key={option}
-                    onPress={() => selectOption(option)}
-                    style={styles.dropdownOption}>
-                    <Text
-                      style={
-                        selectedOption === option
-                          ? styles.dropdownSelectedOptionText
-                          : styles.dropdownOptionText
-                      }>
-                      {option}
-                    </Text>
-                  </TouchableOpacity>
-                ),
-              )}
+              {(
+                [
+                  '추천순',
+                  '인기순',
+                  '가격순',
+                  '최신순',
+                  '판매순',
+                ] as SelectedOptionProps[]
+              ).map(option => (
+                <TouchableOpacity
+                  key={option}
+                  onPress={() => {
+                    selectOption(option);
+                    setSelectedFilterOption?.(option);
+                  }}
+                  style={styles.dropdownOption}>
+                  <Text
+                    style={
+                      selectedOption === option
+                        ? styles.dropdownSelectedOptionText
+                        : styles.dropdownOptionText
+                    }>
+                    {option}
+                  </Text>
+                </TouchableOpacity>
+              ))}
             </View>
           )}
         </View>
