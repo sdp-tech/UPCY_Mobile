@@ -208,6 +208,7 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
 
   const [routes] = useState([
     { key: 'order', title: '주문' },
+    { key: 'lookbook', title: '룩북' },
     { key: 'like', title: '좋아요' },
   ]);
   const flatListRef = useRef<FlatList>(null);
