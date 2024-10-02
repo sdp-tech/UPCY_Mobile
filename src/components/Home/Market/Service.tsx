@@ -1,5 +1,12 @@
 import { useState, useEffect } from 'react';
-import { View, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  StyleSheet,
+  ImageBackground,
+} from 'react-native';
 import {
   Title20B,
   Filter11R,
@@ -9,17 +16,14 @@ import {
 import { LIGHTGRAY } from '../../../styles/GlobalColor';
 import HeartButton from '../../../common/HeartButton';
 import DetailModal from '../Market/GoodsDetailOptionsModal';
-import ServiceImage1 from '../../../assets/common/ServiceImage1.svg';
-import ServiceImage2 from '../../../assets/common/ServiceImage2.svg';
-import ServiceImage3 from '../../../assets/common/ServiceImage3.svg';
 import { Styles } from '../../../types/UserTypes.ts';
 import { SelectedOptionProps } from '../HomeMain.tsx';
 
 type ServiceCardProps = {
   name: string;
   price: number; // price variable should be a number to apply filters
-  tag: Styles;
-  image: ImageComponent | any | undefined; // FIXME: fix image type
+  tags: Styles[];
+  imageUri: string;
   title: string;
   description?: string;
 };
@@ -30,8 +34,9 @@ const serviceCardDummyData: ServiceCardProps[] = [
   {
     name: '하느리퐁퐁',
     price: 100000,
-    tag: '빈티지',
-    image: ServiceImage1,
+    tags: ['빈티지', '미니멀', '캐주얼'] as Styles[],
+    imageUri:
+      'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
     title: '청바지 에코백 만들어 드립니다',
     description:
       '안입는 청바지를 활용한 나만의 에코백! 아주 좋은 에코백 환경에도 좋고 나에게도 좋고 어찌구저찌구한 에코백입니다 최고임 짱짱',
@@ -39,8 +44,9 @@ const serviceCardDummyData: ServiceCardProps[] = [
   {
     name: '똥구르리리',
     price: 20000,
-    tag: '미니멀',
-    image: ServiceImage2,
+    tags: ['미니멀'] as Styles[],
+    imageUri:
+      'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
     title: '커스텀 짐색',
     description:
       '안입는 청바지를 활용한 나만의 에코백! 아주 좋은 에코백 환경에도 좋고 나에게도 좋고 어찌구저찌구한 에코백입니다 최고임 짱짱',
@@ -48,8 +54,9 @@ const serviceCardDummyData: ServiceCardProps[] = [
   {
     name: '훌라훌라맨',
     price: 50000,
-    tag: '빈티지',
-    image: ServiceImage3,
+    tags: ['빈티지'] as Styles[],
+    imageUri:
+      'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
     title: '청바지 에코백 만들어 드립니다',
     description:
       '안입는 청바지를 활용한 나만의 에코백! 아주 좋은 에코백 환경에도 좋고 나에게도 좋고 어찌구저찌구한 에코백입니다 최고임 짱짱',
@@ -111,8 +118,8 @@ const ServiceMarket = ({ selectedFilterOption }: ServiceMarketProps) => {
             <ServiceCard
               name={card.name}
               price={card.price}
-              tag={card.tag}
-              image={card.image}
+              tags={card.tags}
+              imageUri={card.imageUri}
               title={card.title}
               description={card.description}
             />
@@ -126,8 +133,8 @@ const ServiceMarket = ({ selectedFilterOption }: ServiceMarketProps) => {
 export const ServiceCard = ({
   name,
   price,
-  tag,
-  image: ImageComponent,
+  tags,
+  imageUri,
   title,
   description,
 }: ServiceCardProps) => {
@@ -140,15 +147,26 @@ export const ServiceCard = ({
       onPress={() => {
         // 각 리폼러 프로필 페이지로 이동하는 event 걸기
       }}>
-      <ImageComponent />
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginTop: 12,
-          marginBottom: 8,
+      <ImageBackground
+        style={{ width: '100%', height: 180, position: 'relative' }}
+        imageStyle={{ height: 180 }}
+        source={{
+          uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
+          // FIXME: fix here with imageUri variable
         }}>
+        <Text style={TextStyles.serviceCardName}>{name}</Text>
+        <Text style={TextStyles.serviceCardPrice}>{price} 원 ~</Text>
+        <View style={styles.tag}>
+          {tags.map((tag, index) => {
+            return (
+              <Text style={TextStyles.serviceCardTag} key={index}>
+                {tag}
+              </Text>
+            );
+          })}
+        </View>
+      </ImageBackground>
+      <View style={styles.titleContainer}>
         <Subtitle18B>{title}</Subtitle18B>
         <HeartButton like={like} onPress={() => setLike(!like)} />
       </View>
@@ -164,10 +182,63 @@ const styles = StyleSheet.create({
   cardContainer: {
     backgroundColor: 'white',
     padding: 20,
-    borderTopWidth: 1,
-    borderColor: LIGHTGRAY,
     flex: 1,
     marginHorizontal: 0,
+  },
+  tag: {
+    display: 'flex',
+    flexDirection: 'row',
+    position: 'absolute',
+    top: 12,
+    right: 13,
+    alignItems: 'flex-start',
+    gap: 12,
+    flexWrap: 'wrap',
+  },
+  titleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 12,
+    marginBottom: 8,
+    borderRadius: 4,
+  },
+});
+
+const TextStyles = StyleSheet.create({
+  serviceCardName: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: '#222',
+    opacity: 0.8,
+    height: 40,
+    position: 'absolute',
+    left: 0,
+    bottom: 0,
+    color: '#FFF',
+    fontSize: 14,
+    fontWeight: '600',
+    lineHeight: 24,
+  },
+  serviceCardPrice: {
+    position: 'absolute',
+    right: 11,
+    bottom: 13,
+    color: '#fff',
+    fontFamily: 'Pretendard Variable',
+    fontSize: 18,
+    fontWeight: '700',
+    lineHeight: 24,
+  },
+  serviceCardTag: {
+    backgroundColor: '#612FEF',
+    paddingHorizontal: 16,
+    paddingVertical: 4,
+    color: '#fff',
+    fontFamily: 'Pretendard Variable',
+    fontSize: 14,
+    fontWeight: '400',
+    lineHeight: 24,
   },
 });
 
