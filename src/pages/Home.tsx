@@ -10,7 +10,7 @@ import { TabProps } from '../../App';
 import { ScrollView } from 'react-native-gesture-handler';
 
 import CustomHeader from '../common/CustomHeader';
-import HomeTabView from '../components/Home/HomeMain';
+import HomeTabView, { SelectedOptionProps } from '../components/Home/HomeMain';
 import MarketTabView from '../components/Home/Market/MarketTabView';
 import QuotationForm from '../components/Home/Quotation/QuotationForm';
 import QuotationPage from '../components/Home/Quotation/QuotationPage';
@@ -181,24 +181,28 @@ const HomeMainScreen = ({
   };
   const splitItems = splitArrayIntoPairs(items, 2);
 
+  const [selectedFilterOption, setSelectedFilterOption] = useState<
+    SelectedOptionProps | undefined
+  >('추천순');
+
   return (
     <Fragment>
       <SafeAreaView style={{ flex: 0, backgroundColor: PURPLE }} />
       <SafeAreaView style={{ flex: 1 }}>
-        <CustomHeader onSearch={() => { }} onTabChange={handleTabChange} />
+        <CustomHeader onSearch={() => {}} onTabChange={handleTabChange} />
         <BottomSheetModalProvider>
           <View>
             <HomeTabView
-              onSearch={() => { }}
+              onSearch={() => {}}
               selectedTab={selectedTab}
               onTabChange={handleTabChange}
+              setSelectedFilterOption={setSelectedFilterOption}
             />
           </View>
-
-          {selectedTab === 'Goods' && <Service />}
-          {selectedTab === 'Market' && (
-            <ReformerMarket />
+          {selectedTab === 'Goods' && (
+            <Service selectedFilterOption={selectedFilterOption} />
           )}
+          {selectedTab === 'Market' && <ReformerMarket />}
           {selectedTab === 'temp' && (
             <ScrollView>
               <Button onPress={handlePopupButtonPress}>
