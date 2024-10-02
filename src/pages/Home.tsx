@@ -58,8 +58,6 @@ import ScrollTopButton from '../common/ScrollTopButton';
 import Footer from '../common/Footer';
 import { BLACK, White } from '../styles/GlobalColor';
 import InfoPage from '../components/Home/Market/InfoPage';
-import MyPage from '../pages/MyPage';
-
 import OrderPage from '../components/Home/Order/OrderPage';
 import OrderManagement from '../components/Home/Order/OrderManagement';
 import ReformerMarket from '../components/Home/Market/ReformerMarket';
@@ -74,7 +72,6 @@ export type HomeStackParams = {
     id?: number;
   };
   OrderPage: undefined;
-  MyPage: undefined;
   OrderManagement: undefined;
   GoodsDetailPage: undefined;
   QuotationForm: undefined;
@@ -130,7 +127,6 @@ const HomeScreen = ({
       <HomeStack.Screen name="QuotationPage" component={QuotationPage} />
       <HomeStack.Screen name="SentQuotation" component={SentQuotation} />
       <HomeStack.Screen name="OrderPage" component={OrderPage} />
-      <HomeStack.Screen name="MyPage" component={MyPage} />
       <HomeStack.Screen name="OrderManagement" component={OrderManagement} />
       <HomeStack.Screen
         name="GoodsDetailPage"
@@ -257,9 +253,6 @@ const HomeMainScreen = ({
               </Button>
               <Button onPress={() => navigation.navigate('OrderManagement')}>
                 <Text>주문관리</Text>
-              </Button>
-              <Button onPress={() => navigation.navigate('MyPage')}>
-                <Text>마이페이지</Text>
               </Button>
               <Button onPress={() => navigation.navigate('WriteReviewPage')}>
                 <Text>후기 작성 페이지</Text>
