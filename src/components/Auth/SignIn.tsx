@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import Login from './Login';
 import Signup from './Signup';
 import Reformer from './Reformer/Reformer';
-import BasicForm from './BasicForm';
+import BasicForm, { SignupProps } from './BasicForm';
 import ReformFormSubmit from './Reformer/ReformFormSubmit';
 import { UpcyFormProfile } from '../Auth/Upcyer/Upcyer'
 
@@ -25,7 +25,7 @@ export type SignInParams = {
   Reformer: undefined;
   Basic: undefined;
   ReformSubmit: undefined;
-  Upcyer: undefined;
+  Upcyer: {form: SignupProps};
 };
 
 export default function SignIn() {

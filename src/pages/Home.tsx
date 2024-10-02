@@ -1,31 +1,16 @@
-import React, {
-  Fragment,
-  useEffect,
-  useState,
-  useRef,
-  forwardRef,
-} from 'react';
+import React, { Fragment, useState, useRef } from 'react';
 
-import {
-  SafeAreaView,
-  Text,
-  View,
-  StyleSheet,
-  Alert,
-  FlatList,
-} from 'react-native';
+import { SafeAreaView, Text, View, Alert } from 'react-native';
 import styled from 'styled-components/native';
-import { Filter14M } from '../styles/GlobalText';
-import { Tabs, MaterialTabBar } from 'react-native-collapsible-tab-view';
 import {
   StackScreenProps,
   createStackNavigator,
 } from '@react-navigation/stack';
 import { TabProps } from '../../App';
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+import { ScrollView } from 'react-native-gesture-handler';
 
 import CustomHeader from '../common/CustomHeader';
-import HomeTabView from '../components/Home/HomeMain';
+import HomeTabView, { SelectedOptionProps } from '../components/Home/HomeMain';
 import MarketTabView from '../components/Home/Market/MarketTabView';
 import QuotationForm from '../components/Home/Quotation/QuotationForm';
 import QuotationPage from '../components/Home/Quotation/QuotationPage';
@@ -45,8 +30,6 @@ import QuotationConfirm from '../components/Home/Quotation/QuotationConfirm';
 import Rejection from '../components/Home/Quotation/Rejection';
 import SentRejection from '../components/Home/Quotation/SentRejection';
 import WriteReviewPage from '../components/Home/Market/WriteReviewPage';
-import { BottomBarProvider } from '../../contexts/BottomBarContext';
-import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import ComponentsTest from './ComponentsTest';
 import { PURPLE } from '../styles/GlobalColor';
@@ -58,7 +41,8 @@ import ScrollTopButton from '../common/ScrollTopButton';
 import Footer from '../common/Footer';
 import { BLACK, White } from '../styles/GlobalColor';
 import InfoPage from '../components/Home/Market/InfoPage';
-import OrderPage from '../components/Home/Order/OrderPage';
+// import OrderPage from '../components/Home/Order/OrderPage';
+// FIXME: OrderPage가 존재하지 않는 관계로 임시 주석 처리
 import OrderManagement from '../components/Home/Order/OrderManagement';
 import ReformerMarket from '../components/Home/Market/ReformerMarket';
 import Service from '../components/Home/Market/Service';
@@ -71,7 +55,6 @@ export type HomeStackParams = {
   ServiceDetailPage: {
     id?: number;
   };
-  OrderPage: undefined;
   OrderManagement: undefined;
   GoodsDetailPage: undefined;
   QuotationForm: undefined;
@@ -126,7 +109,6 @@ const HomeScreen = ({
       <HomeStack.Screen name="QuotationForm" component={QuotationForm} />
       <HomeStack.Screen name="QuotationPage" component={QuotationPage} />
       <HomeStack.Screen name="SentQuotation" component={SentQuotation} />
-      <HomeStack.Screen name="OrderPage" component={OrderPage} />
       <HomeStack.Screen name="OrderManagement" component={OrderManagement} />
       <HomeStack.Screen
         name="GoodsDetailPage"
@@ -199,6 +181,10 @@ const HomeMainScreen = ({
   };
   const splitItems = splitArrayIntoPairs(items, 2);
 
+  const [selectedFilterOption, setSelectedFilterOption] = useState<
+    SelectedOptionProps | undefined
+  >('추천순');
+
   return (
     <Fragment>
       <SafeAreaView style={{ flex: 0, backgroundColor: PURPLE }} />
@@ -210,13 +196,13 @@ const HomeMainScreen = ({
               onSearch={() => {}}
               selectedTab={selectedTab}
               onTabChange={handleTabChange}
+              setSelectedFilterOption={setSelectedFilterOption}
             />
           </View>
-
-          {selectedTab === 'Goods' && <Service navigation={navigation} />}
-          {selectedTab === 'Market' && (
-            <ReformerMarket navigation={navigation} />
+          {selectedTab === 'Goods' && (
+            <Service selectedFilterOption={selectedFilterOption} />
           )}
+          {selectedTab === 'Market' && <ReformerMarket />}
           {selectedTab === 'temp' && (
             <ScrollView>
               <Button onPress={handlePopupButtonPress}>

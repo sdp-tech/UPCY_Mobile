@@ -4,21 +4,25 @@ import { FormProps } from '../SignIn';
 import ReformFormHeader from './ReformFormHeader';
 import ReformFormProfile from './ReformFormProfile';
 import {
-  CareerType,
+  FieldType,
   EducType,
   MaterialType,
   RegionType,
   StyleType,
+  CareerType,
+  AwardsType,
+  CertifiType,
+  FreeType
 } from '../../../types/UserTypes';
 import ReformFormStyle from './ReformFormStyle';
 import ReformCareer from './ReformFormCareer';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { PhotoType } from '../../../hooks/useImagePicker';
 import DetailScreenHeader from '../../Home/components/DetailScreenHeader';
-import { SignupProps } from '../Signup';
+import { SignupProp } from '../Signup';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-// type page = 'profile' | 'style' | 'career';
+// type page = 'profile' | 'style' | 'field';
 
 export interface ReformProps {
   form: ReformProfileType;
@@ -39,14 +43,17 @@ interface BasicFormProp {
 }
 
 export type ReformProfileType = {
-  picture: undefined | PhotoType;
+  picture?: undefined | PhotoType;
   nickname: string;
-  market: string;
-  introduce: string;
+  introduce?: string | undefined;
   link: string;
   region: RegionType;
   education: EducType;
   career: CareerType;
+  awards: AwardsType;
+  certification: CertifiType;
+  freelancer: FreeType;
+  field: FieldType;
 };
 
 export type RpContextType = {
@@ -56,21 +63,19 @@ export type RpContextType = {
   setSteps: Dispatch<SetStateAction<number>>;
 };
 
-export default function Reformer({ navigation, route }: SignupProps) {
+export default function Reformer({ navigation, route }: SignupProp) {
   const defaultProfile: ReformProfileType = {
     picture: undefined,
     nickname: '',
-    market: '',
     introduce: '',
     link: '',
     region: '',
-    education: {
-      school: '',
-      major: '',
-      status: undefined,
-      file: [],
-    },
+    education: [],
     career: [],
+    awards: [],
+    certification: [],
+    freelancer: [],
+    field: [],
   };
   const [profileForm, setProfileForm] = useState(defaultProfile);
 
