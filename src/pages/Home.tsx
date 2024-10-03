@@ -200,7 +200,10 @@ const HomeMainScreen = ({
             />
           </View>
           {selectedTab === 'Goods' && (
-            <Service selectedFilterOption={selectedFilterOption} />
+            <Service
+              selectedFilterOption={selectedFilterOption}
+              navigation={navigation}
+            />
           )}
           {selectedTab === 'Market' && <ReformerMarket />}
           {selectedTab === 'temp' && (

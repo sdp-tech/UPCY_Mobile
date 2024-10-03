@@ -26,6 +26,7 @@ type ServiceCardProps = {
   imageUri: string;
   title: string;
   description?: string;
+  navigation?: any; //TODO: change type later
 };
 
 // TODO: replace the below dummy data
@@ -65,9 +66,13 @@ const serviceCardDummyData: ServiceCardProps[] = [
 
 type ServiceMarketProps = {
   selectedFilterOption?: SelectedOptionProps;
+  navigation: any;
 };
 
-const ServiceMarket = ({ selectedFilterOption }: ServiceMarketProps) => {
+const ServiceMarket = ({
+  selectedFilterOption,
+  navigation,
+}: ServiceMarketProps) => {
   const [form, setForm] = useState({
     mail: '',
     domain: '',
@@ -122,6 +127,7 @@ const ServiceMarket = ({ selectedFilterOption }: ServiceMarketProps) => {
               imageUri={card.imageUri}
               title={card.title}
               description={card.description}
+              navigation={navigation}
             />
           );
         })}
@@ -137,6 +143,7 @@ export const ServiceCard = ({
   imageUri,
   title,
   description,
+  navigation,
 }: ServiceCardProps) => {
   const [like, setLike] = useState(false);
 
@@ -145,7 +152,7 @@ export const ServiceCard = ({
       key={title}
       style={styles.cardContainer}
       onPress={() => {
-        // 각 리폼러 프로필 페이지로 이동하는 event 걸기
+        navigation.navigate('ServiceDetailPage', { navigation: navigation });
       }}>
       <ImageBackground
         style={{ width: '100%', height: 180, position: 'relative' }}

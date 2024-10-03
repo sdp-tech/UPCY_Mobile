@@ -77,13 +77,15 @@ const HomeTabView = ({
   const [styleFilterOpen, setStyleFilterOpen] = useState<boolean>(false);
   const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
-  const [selectedOption, setSelectedOption] = useState<string>('추천순');
+  const [selectedOption, setSelectedOption] = useState<SelectedOptionProps>(
+    selectOptionDropdown[0],
+  );
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
 
-  const selectOption = (option: string) => {
+  const selectOption = (option: SelectedOptionProps) => {
     setSelectedOption(option);
     setDropdownOpen(false);
   };
