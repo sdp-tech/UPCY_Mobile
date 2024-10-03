@@ -19,15 +19,18 @@ import DetailModal from '../Market/GoodsDetailOptionsModal';
 import { Styles } from '../../../types/UserTypes.ts';
 import { SelectedOptionProps } from '../HomeMain.tsx';
 
-type ServiceCardProps = {
+interface ServiceCardProps {
   name: string;
-  price: number; // price variable should be a number to apply filters
-  tags: Styles[];
+  price: number;
+  tags: string[];
   imageUri: string;
   title: string;
-  description?: string;
-  navigation?: any; //TODO: change type later
-};
+  description: string;
+}
+
+interface ServiceCardComponentProps extends ServiceCardProps {
+  navigation?: any;
+}
 
 // TODO: replace the below dummy data
 // API 연결 시 이 부분만 바꾸면 됩니다!
@@ -144,7 +147,7 @@ export const ServiceCard = ({
   title,
   description,
   navigation,
-}: ServiceCardProps) => {
+}: ServiceCardComponentProps) => {
   const [like, setLike] = useState(false);
 
   return (
