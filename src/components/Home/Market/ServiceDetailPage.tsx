@@ -16,21 +16,18 @@ import {
 } from '@react-navigation/stack';
 import { HomeStackParams } from '../../../pages/Home';
 import Arrow from '../../../assets/common/Arrow.svg';
-import Search from '../../../assets/common/Search.svg';
 import Review from '../../../assets/common/Review.svg';
-import UnFilledLike from '../../../assets/common/UnFilledLike.svg';
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import DetailBox from './DetailBox';
 import OptionBox from './OptionBox';
-import CardView from '../../../common/CardView';
 import Footer from '../../../common/Footer';
 import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
 import { BLACK } from '../../../styles/GlobalColor';
 import { useBottomBar } from '../../../../contexts/BottomBarContext';
-import { CustomBackButton } from '../components/CustomBackButton';
 import DetailScreenHeader from '../components/DetailScreenHeader';
 import ScrollToTopButton from '../../../common/ScrollToTopButtonFlat';
 import HeartButton from '../../../common/HeartButton';
+import { Styles } from '../../../types/UserTypes';
 
 const { width, height } = Dimensions.get('window');
 
@@ -82,39 +79,45 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
         rightButton="Search"
         onPressRight={() => {}}
       />
-      <Banner />
-      <Header like={like} setLike={setLike} />
-      <Profile navigation={navigation} />
+      <Banner
+        backgroundImageUri="https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp"
+        tags={['미니멀', '스트릿', '걸리시']}
+      />
+      <Header
+        like={like}
+        setLike={setLike}
+        serviceName="서비스 이름"
+        basicPrice={20000}
+        maxPrice={24000}
+      />
+      <Profile reformerName={'이하늘'} reviewNum={3} navigation={navigation} />
     </SafeAreaView>
   );
 };
 
-const Banner = () => {
+type BannerProps = {
+  backgroundImageUri: string;
+  tags: Styles[];
+};
+
+const Banner = ({ backgroundImageUri, tags }: BannerProps) => {
   return (
     <>
       <ImageBackground // 임시 이미지
         style={{ width: '100%', height: width * 0.5 }}
         imageStyle={{ height: width * 0.5 }}
         source={{
-          uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
-        }}>
-        <View
-          style={{
-            width: '100%',
-            height: width * 0.5,
-            backgroundColor: '#00000066',
-            opacity: 0.1,
-          }}
-        />
-      </ImageBackground>
+          uri: backgroundImageUri,
+        }}
+      />
       <View style={styles.tagContainer}>
-        {/* 보라색 태그 */}
-        <View style={styles.tag}>
-          <Text style={styles.tagText}>미니멀</Text>
-        </View>
-        <View style={styles.tag}>
-          <Text style={styles.tagText}>빈티지</Text>
-        </View>
+        {tags.map((tag, index) => {
+          return (
+            <View style={styles.tag} key={index}>
+              <Text style={styles.tagText}>{tag}</Text>
+            </View>
+          );
+        })}
       </View>
     </>
   );
@@ -123,17 +126,27 @@ const Banner = () => {
 type HeaderProps = {
   like: boolean;
   setLike: (like: boolean) => void;
+  serviceName: string;
+  basicPrice: number;
+  maxPrice: number;
 };
-const Header = ({ like, setLike }: HeaderProps) => {
+
+const Header = ({
+  like,
+  setLike,
+  serviceName,
+  basicPrice,
+  maxPrice,
+}: HeaderProps) => {
   return (
     <View style={TextStyles.borderBottom1}>
       <View style={{ flex: 1, flexDirection: 'column' }}>
-        <Text style={TextStyles.Title}>서비스 이름</Text>
+        <Text style={TextStyles.Title}>{serviceName}</Text>
         <Text style={TextStyles.PriceInfo}>
-          기본 <Text style={TextStyles.Price}> 20,000 원</Text>
+          기본 <Text style={TextStyles.Price}> {basicPrice} 원</Text>
         </Text>
         <Text style={TextStyles.PriceInfo}>
-          최대 <Text style={TextStyles.Price}> 24,000 원</Text>
+          최대 <Text style={TextStyles.Price}> {maxPrice} 원</Text>
         </Text>
       </View>
       <View style={{ margin: 15 }}>
@@ -143,7 +156,19 @@ const Header = ({ like, setLike }: HeaderProps) => {
   );
 };
 
-const Profile = ({ navigation }: { navigation: any }) => {
+type ProfileProps = {
+  profilePictureUri?: string;
+  reformerName: string;
+  reviewNum: number;
+  navigation: any;
+};
+
+const Profile = ({
+  profilePictureUri,
+  reformerName,
+  reviewNum,
+  navigation,
+}: ProfileProps) => {
   return (
     <View
       style={{
@@ -151,6 +176,7 @@ const Profile = ({ navigation }: { navigation: any }) => {
         justifyContent: 'space-between',
       }}>
       <View style={{ padding: 15, flexDirection: 'row' }}>
+        {/* TODO: add profile picture here */}
         <View
           style={{
             backgroundColor: 'gray',
@@ -162,28 +188,10 @@ const Profile = ({ navigation }: { navigation: any }) => {
           <TouchableOpacity
             style={{ flexDirection: 'row', alignItems: 'center' }}
             onPress={() => navigation.navigate('Market')}>
-            <Text
-              style={{
-                fontSize: 14,
-                padding: 3,
-                fontWeight: '700',
-                color: '#222222',
-              }}>
-              이하늘의 마켓
-            </Text>
-            <Arrow // Arrow at the right side of 'marketname'
-              style={{ marginLeft: -4, transform: [{ scaleX: -1 }] }}
-              color={BLACK}></Arrow>
+            <Text style={TextStyles.marketName}>{reformerName}의 마켓</Text>
+            <Arrow style={styles.marketArrow} />
           </TouchableOpacity>
-          <Text
-            style={{
-              fontSize: 14,
-              padding: 3,
-              fontWeight: '700',
-              color: '#222222',
-            }}>
-            이하늘
-          </Text>
+          <Text style={TextStyles.reformerName}>{reformerName}</Text>
         </View>
         <View
           style={{
@@ -201,7 +209,7 @@ const Profile = ({ navigation }: { navigation: any }) => {
             <TouchableOpacity onPress={() => {}}>
               <Review color={BLACK} />
             </TouchableOpacity>
-            <Text style={{ marginTop: 8 }}>후기(3)</Text>
+            <Text style={{ marginTop: 8 }}>후기({reviewNum})</Text>
           </View>
         </View>
       </View>
@@ -211,6 +219,7 @@ const Profile = ({ navigation }: { navigation: any }) => {
 
 const ServiceDetailPageMainScreen = ({
   navigation,
+  // fix here
 }: StackScreenProps<DetailPageStackParams, 'DetailPage'>) => {
   const layout = useWindowDimensions();
   const [index, setIndex] = useState<number>(0);
@@ -246,7 +255,7 @@ const ServiceDetailPageMainScreen = ({
           <DetailBox />
           <ScrollToTopButton flatListRef={flatListRef} />
         </Tabs.Tab>
-        <Tabs.Tab name="후기(5)">
+        <Tabs.Tab name={`후기(5)`}>
           {/*5는 임시 숫자임. 실제 데이터 넣어야 함.*/}
           <OptionBox flatListRef={optionPageRef} />
         </Tabs.Tab>
@@ -258,7 +267,6 @@ const ServiceDetailPageMainScreen = ({
 
 const TextStyles = StyleSheet.create({
   Title: {
-    // fontFamily:"Inter",
     padding: 16,
     color: '#222222',
     fontWeight: '700',
@@ -325,6 +333,18 @@ const TextStyles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
   },
+  marketName: {
+    fontSize: 14,
+    padding: 3,
+    fontWeight: '700',
+    color: '#222222',
+  },
+  reformerName: {
+    fontSize: 14,
+    padding: 3,
+    fontWeight: '700',
+    color: '#222222',
+  },
 });
 
 const styles = StyleSheet.create({
@@ -356,6 +376,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     lineHeight: 24,
   },
+  marketArrow: { marginLeft: -4, transform: [{ scaleX: -1 }], color: '#000' },
 });
 
 export default ServiceDetailPageScreen;
