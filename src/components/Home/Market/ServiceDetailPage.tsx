@@ -31,8 +31,28 @@ import { Styles } from '../../../types/UserTypes';
 
 const { width, height } = Dimensions.get('window');
 
+type ServiceDetailPageProps = {
+  reformerName: string;
+  serviceName: string;
+  basicPrice: number;
+  maxPrice: number;
+  reviewNum: number;
+  tags: Styles[];
+  backgroundImageUri: string;
+  profileImageUri?: string;
+};
+
 export type DetailPageStackParams = {
-  DetailPage: undefined;
+  DetailPage: {
+    reformerName: string;
+    serviceName: string;
+    basicPrice: number;
+    maxPrice: number;
+    reviewNum: number;
+    tags: Styles[];
+    backgroundImageUri: string;
+    profileImageUri?: string;
+  };
 };
 
 const DetailPageStack = createStackNavigator<DetailPageStackParams>();
@@ -41,6 +61,16 @@ const ServiceDetailPageScreen = ({
   navigation,
   route,
 }: StackScreenProps<HomeStackParams, 'ServiceDetailPage'>) => {
+  const {
+    reformerName,
+    serviceName,
+    basicPrice,
+    maxPrice,
+    reviewNum,
+    tags,
+    backgroundImageUri,
+    profileImageUri,
+  }: ServiceDetailPageProps = route.params;
   return (
     <DetailPageStack.Navigator
       screenOptions={() => ({
@@ -49,6 +79,16 @@ const ServiceDetailPageScreen = ({
       <DetailPageStack.Screen
         name="DetailPage"
         component={ServiceDetailPageMainScreen}
+        initialParams={{
+          reformerName,
+          serviceName,
+          basicPrice,
+          maxPrice,
+          reviewNum,
+          tags,
+          backgroundImageUri,
+          profileImageUri,
+        }}
       />
     </DetailPageStack.Navigator>
   );
@@ -56,13 +96,27 @@ const ServiceDetailPageScreen = ({
 
 type ProfileSectionProps = {
   navigation: any;
+  reformerName: string;
+  serviceName: string;
+  basicPrice: number;
+  maxPrice: number;
+  reviewNum: number;
+  tags: Styles[];
+  backgroundImageUri: string;
+  profileImageUri?: string;
 };
 
-const ProfileSection: React.FC<ProfileSectionProps> = ({
+const ProfileSection = ({
   navigation,
-}: {
-  navigation: any;
-}) => {
+  reformerName,
+  serviceName,
+  basicPrice,
+  maxPrice,
+  reviewNum,
+  tags,
+  backgroundImageUri,
+  profileImageUri,
+}: ProfileSectionProps) => {
   const [like, setLike] = useState<boolean>(false);
   const { hideBottomBar, showBottomBar } = useBottomBar();
 
@@ -79,18 +133,19 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
         rightButton="Search"
         onPressRight={() => {}}
       />
-      <Banner
-        backgroundImageUri="https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp"
-        tags={['미니멀', '스트릿', '걸리시']}
-      />
+      <Banner backgroundImageUri={backgroundImageUri} tags={tags} />
       <Header
         like={like}
         setLike={setLike}
-        serviceName="서비스 이름"
-        basicPrice={20000}
-        maxPrice={24000}
+        serviceName={serviceName}
+        basicPrice={basicPrice}
+        maxPrice={maxPrice}
       />
-      <Profile reformerName={'이하늘'} reviewNum={3} navigation={navigation} />
+      <Profile
+        reformerName={reformerName}
+        reviewNum={reviewNum}
+        navigation={navigation}
+      />
     </SafeAreaView>
   );
 };
@@ -111,13 +166,14 @@ const Banner = ({ backgroundImageUri, tags }: BannerProps) => {
         }}
       />
       <View style={styles.tagContainer}>
-        {tags.map((tag, index) => {
-          return (
-            <View style={styles.tag} key={index}>
-              <Text style={styles.tagText}>{tag}</Text>
-            </View>
-          );
-        })}
+        {tags?.length > 0 &&
+          tags.map((tag, index) => {
+            return (
+              <View style={styles.tag} key={index}>
+                <Text style={styles.tagText}>{tag}</Text>
+              </View>
+            );
+          })}
       </View>
     </>
   );
@@ -219,8 +275,20 @@ const Profile = ({
 
 const ServiceDetailPageMainScreen = ({
   navigation,
+  route,
   // fix here
 }: StackScreenProps<DetailPageStackParams, 'DetailPage'>) => {
+  const {
+    reformerName,
+    serviceName,
+    basicPrice,
+    maxPrice,
+    reviewNum,
+    tags,
+    backgroundImageUri,
+    profileImageUri,
+  } = route.params;
+
   const layout = useWindowDimensions();
   const [index, setIndex] = useState<number>(0);
   const optionPageRef = useRef<FlatList<any>>(null);
@@ -236,7 +304,20 @@ const ServiceDetailPageMainScreen = ({
   const scrollRef = useRef<ScrollView>(null);
   const flatListRef = useRef<FlatList>(null);
 
-  const renderHeader = () => <ProfileSection navigation={navigation} />;
+  const renderHeader = () => (
+    <ProfileSection
+      navigation={navigation}
+      reformerName={reformerName}
+      serviceName={serviceName}
+      basicPrice={basicPrice}
+      maxPrice={maxPrice}
+      reviewNum={reviewNum}
+      tags={tags}
+      backgroundImageUri={backgroundImageUri}
+      profileImageUri={profileImageUri}
+    />
+  );
+
   return (
     <SafeAreaView style={{ flex: 1, position: 'relative' }}>
       <Tabs.Container
@@ -255,7 +336,7 @@ const ServiceDetailPageMainScreen = ({
           <DetailBox />
           <ScrollToTopButton flatListRef={flatListRef} />
         </Tabs.Tab>
-        <Tabs.Tab name={`후기(5)`}>
+        <Tabs.Tab name={`후기(${reviewNum})`}>
           {/*5는 임시 숫자임. 실제 데이터 넣어야 함.*/}
           <OptionBox flatListRef={optionPageRef} />
         </Tabs.Tab>
