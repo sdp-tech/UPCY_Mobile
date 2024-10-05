@@ -56,9 +56,11 @@ export type HomeStackParams = {
   ServiceDetailPage: {
     // id?: number;
     serviceName: string;
+    reformerName: string;
     basicPrice: number;
     maxPrice: number;
     tags: Styles[];
+    reviewNum: number;
     backgroundImageUri: string;
     profileImageUri?: string;
   };
