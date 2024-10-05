@@ -34,6 +34,7 @@ interface ServiceCardComponentProps extends ServiceCardProps {
 
 // TODO: replace the below dummy data
 // API 연결 시 이 부분만 바꾸면 됩니다!
+const MAX_PRICE: number = 24000;
 const serviceCardDummyData: ServiceCardProps[] = [
   {
     name: '하느리퐁퐁',
@@ -150,12 +151,24 @@ export const ServiceCard = ({
 }: ServiceCardComponentProps) => {
   const [like, setLike] = useState(false);
 
+  //TODO: get review num using API
+  const REVIEW_NUM = 5;
+
   return (
     <TouchableOpacity
       key={title}
       style={styles.cardContainer}
       onPress={() => {
-        navigation.navigate('ServiceDetailPage', { navigation: navigation });
+        navigation.navigate('ServiceDetailPage', {
+          reformerName: name,
+          serviceName: title,
+          basicPrice: price,
+          maxPrice: MAX_PRICE,
+          reviewNum: REVIEW_NUM,
+          tags: tags,
+          backgroundImageUri: imageUri,
+          profileImageUri: imageUri,
+        });
       }}>
       <ImageBackground
         style={{ width: '100%', height: 180, position: 'relative' }}

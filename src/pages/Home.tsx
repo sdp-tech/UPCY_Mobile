@@ -48,12 +48,19 @@ import ReformerMarket from '../components/Home/Market/ReformerMarket';
 import Service from '../components/Home/Market/Service';
 import { PhotoType } from '../hooks/useImagePicker';
 import ReformerProfilePage from '../components/Auth/Reformer/ReformerProfilePage';
+import { Styles } from '../types/UserTypes';
 
 export type HomeStackParams = {
   Home: undefined;
   Market: undefined;
   ServiceDetailPage: {
-    id?: number;
+    // id?: number;
+    serviceName: string;
+    basicPrice: number;
+    maxPrice: number;
+    tags: Styles[];
+    backgroundImageUri: string;
+    profileImageUri?: string;
   };
   OrderManagement: undefined;
   GoodsDetailPage: undefined;
