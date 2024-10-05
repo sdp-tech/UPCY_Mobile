@@ -30,7 +30,7 @@ export default function Request() {
       headerValue = `Bearer ${accessToken}`;
     }
 
-    console.log(headerValue);
+    // console.log(headerValue);
 
     try {
       const response = await body(url, headerValue);
