@@ -1,27 +1,11 @@
 import { useState } from 'react';
-import { Filter14M } from '../../styles/GlobalText';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
-import CategoryDownButton from '../../assets/common/CategoryDownButton.svg';
+import { StyleFilterButton } from './components/StyleFilterButton';
 import styled from 'styled-components/native';
 import DetailModal from './Market/GoodsDetailOptionsModal';
 import DropDown from '../../assets/common/DropDown.svg';
-
-const HomeTabViewBox = styled.View`
-  display: flex;
-  flex-direction: row;
-  width: 712px;
-  height: 36px;
-  background: #612fef;
-`;
-const HomeTabViewButton = styled.TouchableOpacity<{ pressed: boolean }>`
-  display: flex;
-  flex-direction: row;
-  width: 72px;
-  justify-content: center;
-  align-items: center;
-  gap: 4px;
-  flex-shrink: 0;
-`;
+import FilterElement from './Market/FilterElement';
+import { Styles } from '../../types/UserTypes';
 
 const CategoryBox = styled.View`
   z-index: 1000;
@@ -33,28 +17,6 @@ const CategoryBox = styled.View`
   padding: 12px 16px;
   background: #fff;
 `;
-
-// const CategoryButton = styled.TouchableOpacity<{ pressed: boolean }>`
-//   display: flex;
-//   flex-direction: row;
-//   height: 28px;
-//   padding: 0px 12px;
-//   justify-content: center;
-//   align-items: center;
-//   gap: 8px;
-//   border-radius: 12px;
-//   border-width: 1px;
-//   border-color: #612fef;
-//   background-color: ${(
-//     { props }: { props: any }, // TODO: 나중에 props의 type specify 필요
-//   ) => (props.pressed ? '#612FEF' : '#FFFFFF')};
-// `;
-
-// const CategoryButtonText = styled.Text<{ pressed: boolean }>`
-//   color: ${(
-//     { props }: { props: any }, // TODO: 나중에 props의 type specify 필요
-//   ) => (props.pressed ? '#FFFFFF' : '#222222')};
-// `;
 
 interface SignupProps {
   mail: string;
@@ -69,6 +31,27 @@ export type SelectedOptionProps =
   | '가격순'
   | '최신순'
   | '판매순';
+
+const selectOptionDropdown: SelectedOptionProps[] = [
+  '추천순',
+  '인기순',
+  '가격순',
+  '최신순',
+  '판매순',
+] as SelectedOptionProps[];
+
+const stylesList: Styles[] = [
+  '빈티지',
+  '미니멀',
+  '캐주얼',
+  '페미닌',
+  '글램',
+  '스트릿',
+  '키치',
+  '스포티',
+  '걸리시',
+] as Styles[];
+
 interface HomeTabViewProps {
   onSearch: () => void;
   onTabChange: (tab: 'Goods' | 'Market' | 'temp') => void;
@@ -78,21 +61,6 @@ interface HomeTabViewProps {
   ) => void;
 }
 
-interface HomeTabViewButtonParams {
-  pressable?: boolean;
-}
-
-const HomeTabViewtag = ({ pressable }: HomeTabViewButtonParams) => {
-  const [pressed, setPressed] = useState<boolean>(false);
-  return (
-    <HomeTabViewButton
-      pressed={pressed}
-      onPress={() => setPressed(!pressed)}
-      disabled={!pressable}>
-      <Filter14M style={{ color: pressed ? '#222222' : '#929292' }}></Filter14M>
-    </HomeTabViewButton>
-  );
-};
 const HomeTabView = ({
   onSearch,
   onTabChange,
@@ -105,74 +73,78 @@ const HomeTabView = ({
     password: '',
     region: '',
   });
-  const [modalOpen, setModalOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [styleFilterOpen, setStyleFilterOpen] = useState<boolean>(false);
   const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
-  const [selectedOption, setSelectedOption] = useState<string>('추천순');
-
-  const isStyleSelected = selectedStyles.length > 0;
+  const [selectedOption, setSelectedOption] = useState<SelectedOptionProps>(
+    selectOptionDropdown[0],
+  );
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
 
-  const selectOption = (option: string) => {
+  const selectOption = (option: SelectedOptionProps) => {
     setSelectedOption(option);
     setDropdownOpen(false);
+  };
+
+  const onPressStyleFilterList = (/*selectedStyles: Styles[]*/) => {
+    // TODO: set selectedStyles here
   };
 
   return (
     <>
       <CategoryBox>
-        <View>
-          {/* <CategoryButton
-            pressed={isStyleSelected}
-            onPress={() => setModalOpen(true)}>
-            <CategoryButtonText pressed={isStyleSelected}>
-              스타일
-            </CategoryButtonText>
-            <CategoryDownButton />
-          </CategoryButton> */}
-        </View>
-        <View style={{ flex: 1 }}></View>
-        <View style={styles.dropdownContainer}>
-          <TouchableOpacity
-            onPress={toggleDropdown}
-            style={styles.dropdownButton}>
-            <Text style={styles.dropdownButtonText}>{selectedOption}</Text>
-            <DropDown />
-          </TouchableOpacity>
-          {dropdownOpen && (
-            <View style={styles.dropdownMenu}>
-              {(
-                [
-                  '추천순',
-                  '인기순',
-                  '가격순',
-                  '최신순',
-                  '판매순',
-                ] as SelectedOptionProps[]
-              ).map(option => (
-                <TouchableOpacity
-                  key={option}
-                  onPress={() => {
-                    selectOption(option);
-                    setSelectedFilterOption?.(option);
-                  }}
-                  style={styles.dropdownOption}>
-                  <Text
-                    style={
-                      selectedOption === option
-                        ? styles.dropdownSelectedOptionText
-                        : styles.dropdownOptionText
-                    }>
-                    {option}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+        {selectedTab === 'Goods' && (
+          <View
+            style={{
+              flex: 1,
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            }}>
+            <StyleFilterButton onPressStyleFilterButton={setStyleFilterOpen} />
+            {/* FIXME */}
+            {/* {styleFilterOpen && (
+            <FilterElement
+              list={stylesList}
+              onPress={onPressStyleFilterList}
+              type="style"
+            />
+          )} */}
+            <View style={styles.dropdownContainer}>
+              <TouchableOpacity
+                onPress={toggleDropdown}
+                style={styles.dropdownButton}>
+                <Text style={styles.dropdownButtonText}>{selectedOption}</Text>
+                <DropDown />
+              </TouchableOpacity>
+              {dropdownOpen && (
+                <View style={styles.dropdownMenu}>
+                  {selectOptionDropdown.map(option => (
+                    <TouchableOpacity
+                      key={option}
+                      onPress={() => {
+                        selectOption(option);
+                        setSelectedFilterOption?.(option);
+                      }}
+                      style={styles.dropdownOption}>
+                      <Text
+                        style={
+                          selectedOption === option
+                            ? styles.dropdownSelectedOptionText
+                            : styles.dropdownOptionText
+                        }>
+                        {option}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              )}
             </View>
-          )}
-        </View>
+          </View>
+        )}
       </CategoryBox>
       <DetailModal
         open={modalOpen}
