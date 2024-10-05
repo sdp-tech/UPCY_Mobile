@@ -1,9 +1,23 @@
-import { Dimensions, SafeAreaView, ScrollView, Text, TouchableOpacity, View, StyleSheet, useWindowDimensions, ImageBackground, FlatList } from 'react-native';
-import { StackScreenProps, createStackNavigator } from '@react-navigation/stack';
+import {
+  Dimensions,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+  StyleSheet,
+  useWindowDimensions,
+  ImageBackground,
+  FlatList,
+} from 'react-native';
+import {
+  StackScreenProps,
+  createStackNavigator,
+} from '@react-navigation/stack';
 import { HomeStackParams } from '../../../pages/Home';
 import Arrow from '../../../assets/common/Arrow.svg';
 import Search from '../../../assets/common/Search.svg';
-import Review from "../../../assets/common/Review.svg";
+import Review from '../../../assets/common/Review.svg';
 import UnFilledLike from '../../../assets/common/UnFilledLike.svg';
 import React, { useEffect, useRef, useState } from 'react';
 import DetailBox from './DetailBox';
@@ -18,21 +32,27 @@ import DetailScreenHeader from '../components/DetailScreenHeader';
 import ScrollToTopButton from '../../../common/ScrollToTopButtonFlat';
 import HeartButton from '../../../common/HeartButton';
 
-const { width, height } = Dimensions.get("window");
+const { width, height } = Dimensions.get('window');
 
 export type DetailPageStackParams = {
   DetailPage: undefined;
-}
+};
 
 const DetailPageStack = createStackNavigator<DetailPageStackParams>();
 
-const ServiceDetailPageScreen = ({ navigation, route }: StackScreenProps<HomeStackParams, 'ServiceDetailPage'>) => {
+const ServiceDetailPageScreen = ({
+  navigation,
+  route,
+}: StackScreenProps<HomeStackParams, 'ServiceDetailPage'>) => {
   return (
     <DetailPageStack.Navigator
       screenOptions={() => ({
         headerShown: false,
       })}>
-      <DetailPageStack.Screen name='DetailPage' component={ServiceDetailPageMainScreen} />
+      <DetailPageStack.Screen
+        name="DetailPage"
+        component={ServiceDetailPageMainScreen}
+      />
     </DetailPageStack.Navigator>
   );
 };
@@ -41,8 +61,11 @@ type ProfileSectionProps = {
   navigation: any;
 };
 
-const ProfileSection: React.FC<ProfileSectionProps> = ({ navigation }: { navigation: any }) => {
-  const [data, setData] = useState([]);
+const ProfileSection: React.FC<ProfileSectionProps> = ({
+  navigation,
+}: {
+  navigation: any;
+}) => {
   const [like, setLike] = useState<boolean>(false);
   const { hideBottomBar, showBottomBar } = useBottomBar();
 
@@ -53,86 +76,142 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ navigation }: { navigat
   return (
     <SafeAreaView>
       <DetailScreenHeader
-        title=''
-        leftButton='CustomBack'
-        onPressLeft={() => { }}
-        rightButton='Search'
-        onPressRight={() => { }}
+        title=""
+        leftButton="CustomBack"
+        onPressLeft={() => {}}
+        rightButton="Search"
+        onPressRight={() => {}}
       />
-      {/* <CardView // 데이터 들어오면 렌더링
-        gap={0}
-        offset={0}
-        data={data}
-        pageWidth={width}
-        dot={true}
-        renderItem={({ item }: any) => (
-          <View style={{ width: width, height: height * 0.4 }}><UnFilledLike color={'black'} /></View>
-          // <CurationItemCard
-          //   rep={true}
-          //   data={item}
-          //   style={{ width: width, height: height * 0.4 }}
-          // />
-        )}
-      /> */}
-      {/* 컴포넌트로 변경 예정 */}
-      <SafeAreaView >
-        <ImageBackground // 임시 이미지 
-          style={{ width: '100%', height: width * 0.5 }}
-          imageStyle={{ height: width * 0.5 }}
-          source={{ uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp' }}>
-          <View style={{ width: '100%', height: width * 0.5, backgroundColor: '#00000066', opacity: 0.1 }} />
-        </ImageBackground>
-        <View style={styles.tagContainer}>
-          {/* 보라색 태그 */}
-          <View style={styles.tag}>
-            <Text style={styles.tagText}>미니멀</Text>
-          </View>
-          <View style={styles.tag}>
-            <Text style={styles.tagText}>빈티지</Text>
-          </View>
-        </View>
-      </SafeAreaView>
-      <View style={TextStyles.borderBottom1}>
-        <View style={{ flex: 1, flexDirection: 'column' }}>
-          <Text style={TextStyles.Title}>서비스 이름</Text>
-          <Text style={TextStyles.PriceInfo}>기본 <Text style={TextStyles.Price}>  20,000 원</Text></Text>
-          <Text style={TextStyles.PriceInfo}>최대 <Text style={TextStyles.Price}>  24,000 원</Text></Text>
-        </View>
-        <View style={{ margin: 15 }}>
-          <HeartButton like={like} onPress={() => setLike(!like)} />
-        </View>
-      </View>
-      <View style={{ ...TextStyles.borderBottom2, justifyContent: 'space-between' }}>
-        <View style={{ padding: 15, flexDirection: 'row' }}>
-          <View style={{ backgroundColor: "gray", width: 50, height: 50, borderRadius: 25 }}></View>
-          <View style={{ marginLeft: 20, justifyContent: 'center' }}>
-            <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => navigation.navigate('Market')}>
-              <Text style={{ fontSize: 14, padding: 3, fontWeight: '700', color: '#222222' }}>이하늘의 마켓</Text>
-              <Arrow // Arrow at the right side of 'marketname'
-                style={{ marginLeft: -4, transform: [{ scaleX: -1 }] }}
-                color={BLACK}>
-              </Arrow>
-            </TouchableOpacity>
-            <Text style={{ fontSize: 14, padding: 3, fontWeight: '700', color: '#222222' }}>이하늘</Text>
-          </View>
-          <View style={{ flex: 1, alignItems: 'flex-end', justifyContent: 'flex-end' }}>
-            <View style={{
-              marginRight: 15, flexDirection: 'column',
-              justifyContent: 'center', alignItems: 'center'
-            }}>
-              <TouchableOpacity onPress={() => { }}>
-                <Review color={BLACK} />
-              </TouchableOpacity>
-              <Text style={{ marginTop: 8 }}>후기(3)</Text>
-            </View>
-          </View>
-        </View>
-      </View>
+      <Banner />
+      <Header like={like} setLike={setLike} />
+      <Profile navigation={navigation} />
     </SafeAreaView>
-  )
-}
+  );
+};
 
-const ServiceDetailPageMainScreen = ({ navigation }: StackScreenProps<DetailPageStackParams, 'DetailPage'>) => {
+const Banner = () => {
+  return (
+    <>
+      <ImageBackground // 임시 이미지
+        style={{ width: '100%', height: width * 0.5 }}
+        imageStyle={{ height: width * 0.5 }}
+        source={{
+          uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
+        }}>
+        <View
+          style={{
+            width: '100%',
+            height: width * 0.5,
+            backgroundColor: '#00000066',
+            opacity: 0.1,
+          }}
+        />
+      </ImageBackground>
+      <View style={styles.tagContainer}>
+        {/* 보라색 태그 */}
+        <View style={styles.tag}>
+          <Text style={styles.tagText}>미니멀</Text>
+        </View>
+        <View style={styles.tag}>
+          <Text style={styles.tagText}>빈티지</Text>
+        </View>
+      </View>
+    </>
+  );
+};
+
+type HeaderProps = {
+  like: boolean;
+  setLike: (like: boolean) => void;
+};
+const Header = ({ like, setLike }: HeaderProps) => {
+  return (
+    <View style={TextStyles.borderBottom1}>
+      <View style={{ flex: 1, flexDirection: 'column' }}>
+        <Text style={TextStyles.Title}>서비스 이름</Text>
+        <Text style={TextStyles.PriceInfo}>
+          기본 <Text style={TextStyles.Price}> 20,000 원</Text>
+        </Text>
+        <Text style={TextStyles.PriceInfo}>
+          최대 <Text style={TextStyles.Price}> 24,000 원</Text>
+        </Text>
+      </View>
+      <View style={{ margin: 15 }}>
+        <HeartButton like={like} onPress={() => setLike(!like)} />
+      </View>
+    </View>
+  );
+};
+
+const Profile = ({ navigation }: { navigation: any }) => {
+  return (
+    <View
+      style={{
+        ...TextStyles.borderBottom2,
+        justifyContent: 'space-between',
+      }}>
+      <View style={{ padding: 15, flexDirection: 'row' }}>
+        <View
+          style={{
+            backgroundColor: 'gray',
+            width: 50,
+            height: 50,
+            borderRadius: 25,
+          }}></View>
+        <View style={{ marginLeft: 20, justifyContent: 'center' }}>
+          <TouchableOpacity
+            style={{ flexDirection: 'row', alignItems: 'center' }}
+            onPress={() => navigation.navigate('Market')}>
+            <Text
+              style={{
+                fontSize: 14,
+                padding: 3,
+                fontWeight: '700',
+                color: '#222222',
+              }}>
+              이하늘의 마켓
+            </Text>
+            <Arrow // Arrow at the right side of 'marketname'
+              style={{ marginLeft: -4, transform: [{ scaleX: -1 }] }}
+              color={BLACK}></Arrow>
+          </TouchableOpacity>
+          <Text
+            style={{
+              fontSize: 14,
+              padding: 3,
+              fontWeight: '700',
+              color: '#222222',
+            }}>
+            이하늘
+          </Text>
+        </View>
+        <View
+          style={{
+            flex: 1,
+            alignItems: 'flex-end',
+            justifyContent: 'flex-end',
+          }}>
+          <View
+            style={{
+              marginRight: 15,
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <TouchableOpacity onPress={() => {}}>
+              <Review color={BLACK} />
+            </TouchableOpacity>
+            <Text style={{ marginTop: 8 }}>후기(3)</Text>
+          </View>
+        </View>
+      </View>
+    </View>
+  );
+};
+
+const ServiceDetailPageMainScreen = ({
+  navigation,
+}: StackScreenProps<DetailPageStackParams, 'DetailPage'>) => {
   const layout = useWindowDimensions();
   const [index, setIndex] = useState<number>(0);
   const optionPageRef = useRef<FlatList<any>>(null);
@@ -143,29 +222,26 @@ const ServiceDetailPageMainScreen = ({ navigation }: StackScreenProps<DetailPage
   };
   const [routes] = useState([
     { key: 'detail', title: '상세설명' },
-    { key: 'option', title: '후기' }
+    { key: 'option', title: '후기' },
   ]);
   const scrollRef = useRef<ScrollView>(null);
   const flatListRef = useRef<FlatList>(null);
 
-  const renderHeader = () => (
-    <ProfileSection navigation={navigation} />
-  );
+  const renderHeader = () => <ProfileSection navigation={navigation} />;
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, position: 'relative' }}>
       <Tabs.Container
         renderHeader={renderHeader}
         allowHeaderOverscroll={false}
         onIndexChange={setIndex}
-        renderTabBar={(props) => (
+        renderTabBar={props => (
           <MaterialTabBar
             {...props}
             indicatorStyle={{ backgroundColor: '#BDBDBD', height: 2 }}
             style={{ backgroundColor: 'white' }}
             labelStyle={{ color: '#222222', fontWeight: '700', fontSize: 14 }}
           />
-        )}
-      >
+        )}>
         <Tabs.Tab name="상세설명">
           <DetailBox />
           <ScrollToTopButton flatListRef={flatListRef} />
@@ -177,31 +253,31 @@ const ServiceDetailPageMainScreen = ({ navigation }: StackScreenProps<DetailPage
       </Tabs.Container>
       <Footer />
     </SafeAreaView>
-  )
-}
+  );
+};
 
 const TextStyles = StyleSheet.create({
   Title: {
     // fontFamily:"Inter",
     padding: 16,
     color: '#222222',
-    fontWeight: "700",
+    fontWeight: '700',
     fontSize: 18,
     lineHeight: 24,
-    width: "100%",
+    width: '100%',
   },
   Sub: {
-    width: "70%",
-    fontWeight: "700",
+    width: '70%',
+    fontWeight: '700',
     paddingLeft: 10,
     paddingTop: 10,
     paddingRight: 10,
     fontSize: 14,
     lineHeight: 24,
-    color: "#612EFE",
+    color: '#612EFE',
   },
   PriceInfo: {
-    fontWeight: "600",
+    fontWeight: '600',
     fontSize: 14,
     paddingLeft: 16,
     paddingRight: 16,
@@ -209,7 +285,7 @@ const TextStyles = StyleSheet.create({
     color: 'rgba(34, 34, 34, 0.50)',
   },
   Price: {
-    fontWeight: "700",
+    fontWeight: '700',
     fontSize: 16,
     paddingLeft: 16,
     paddingTop: 5,
@@ -218,23 +294,23 @@ const TextStyles = StyleSheet.create({
     color: '#222222',
   },
   recommend: {
-    color: "#FFFFFF",
-    backgroundColor: "#67D393",
+    color: '#FFFFFF',
+    backgroundColor: '#67D393',
     fontSize: 14,
     paddingHorizontal: 6,
     paddingVertical: 3,
     borderRadius: 8,
-    overflow: "hidden",
+    overflow: 'hidden',
     marginTop: 5,
   },
   borderBottom1: {
     flexDirection: 'row',
     borderBottomWidth: 1,
-    borderBlockColor: "#dcdcdc"
+    borderBlockColor: '#dcdcdc',
   },
   borderBottom2: {
     borderBottomWidth: 6,
-    borderBlockColor: "#dcdcdc"
+    borderBlockColor: '#dcdcdc',
   },
   scrollToHeaderButton: {
     position: 'absolute',
@@ -254,7 +330,7 @@ const TextStyles = StyleSheet.create({
 const styles = StyleSheet.create({
   tagContainer: {
     position: 'absolute',
-    top: 16,
+    top: 50,
     right: 16,
     flexDirection: 'row',
     gap: 8,
@@ -279,8 +355,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Pretendard Variable',
     fontWeight: '400',
     lineHeight: 24,
-  }
+  },
 });
 
 export default ServiceDetailPageScreen;
-
