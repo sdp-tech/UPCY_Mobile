@@ -192,7 +192,7 @@ const OrderInfoBox = styled.View`
   padding: 19px;
   padding-top: 30px;
   margin: 10px;
-  justify-content: space-between; /* 공간을 균등 분배 */
+  justify-content: space-between;
 `;
 
 const ImageContainer = styled.Image`

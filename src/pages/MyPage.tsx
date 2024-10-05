@@ -1,12 +1,4 @@
-import {
-  Alert,
-  FlatList,
-  Image,
-  ImageBackground,
-  SafeAreaView,
-  ScrollView,
-  View,
-} from 'react-native';
+import { Alert, Button, FlatList, Image, ImageBackground, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import {
   StackScreenProps,
   createStackNavigator,
@@ -24,8 +16,7 @@ import { Title20B } from '../styles/GlobalText';
 import TextToggle from '../common/TextToggle';
 import { BLACK } from '../styles/GlobalColor';
 import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
-// import OrderPage from '../components/Home/Order/OrderPage';
-// FIXME: OrderPage가 존재하지 않는 관계로 임시 주석 처리
+import OrderPage from '../components/Home/Order/OrderPage';
 import ServicePage from '../components/Home/Market/ServicePage';
 import ScrollTopButton from '../common/ScrollTopButton';
 import ReviewPage from '../components/Home/Market/ReviewPage';
@@ -208,7 +199,6 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
 
   const [routes] = useState([
     { key: 'order', title: '주문' },
-    { key: 'lookbook', title: '룩북' },
     { key: 'like', title: '좋아요' },
   ]);
   const flatListRef = useRef<FlatList>(null);
@@ -254,25 +244,23 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
             onTabPress={() => Alert.alert('준비중입니다!ㅠㅠ')}
             // 룩북, 좋아요 모아보기 기능 구현되면 위의 onTapPress는 삭제할 것
           />
-        )}>
-        {routes.map(route => (
-          <Tabs.Tab key={route.key} name={route.title}>
-            {/* {route.key === 'order' && <OrderPage navigation={navigation} />} */}
-            {route.key === 'lookbook' && (
-              <View>
-                <ServicePage scrollViewRef={scrollRef} />
-                <ScrollTopButton scrollViewRef={scrollRef} />
-              </View>
-            )}
-            {route.key === 'like' && (
-              <View>
-                <ReviewPage flatListRef={flatListRef} />
-                <ScrollToTopButton flatListRef={flatListRef} />
-              </View>
-            )}
-          </Tabs.Tab>
-        ))}
+        )}
+      >
+
+
+        {routes.map(route =>
+        (<Tabs.Tab key={route.key} name={route.title}>
+            {route.key === 'order' && <OrderPage />}
+
+          {route.key === 'like' &&
+            <View>
+              <ReviewPage flatListRef={flatListRef} />
+              <ScrollToTopButton flatListRef={flatListRef} />
+            </View>}
+        </Tabs.Tab>)
+        )}
       </Tabs.Container>
+
     </SafeAreaView>
   );
 };
