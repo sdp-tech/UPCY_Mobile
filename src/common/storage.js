@@ -50,12 +50,8 @@ export function removeNickname() {
 
 export async function getAccessToken() {
   const token = await getSecureValue(accessTokenKeyName);
-  console.log("Access Token: ", token); // 수정된 부분
+  // console.log("Access Token: ", token); 
   return token;
-  // const url = 'https://upcy.co.kr/api/user/token/verify'
-  // const response = await axios.get(url, {}, {})
-  // console.log("Access Token: ", response.data)
-  // return response.data
 }
 
 export function setAccessToken(token) {
@@ -68,7 +64,7 @@ export function removeAccessToken() {
 
 export async function getRefreshToken() {
   const token = await getSecureValue(refreshTokenKeyName); // refreshToken을 token으로 받아옴
-  console.log("Refresh Token: ", token); // 수정된 부분
+  // console.log("Refresh Token: ", token);
   return token;
 }
 
@@ -79,3 +75,48 @@ export function setRefreshToken(token) {
 export function removeRefreshToken() {
   removeSecureValue(refreshTokenKeyName);
 }
+
+const marketUUIDKeyName = 'marketUUID';
+
+// market_uuid 저장 함수
+export function setMarketUUID(marketUUID) {
+  const username = marketUUIDKeyName; // key 이름
+  const password = marketUUID; // 저장할 market_uuid 값
+  
+  Keychain.setInternetCredentials(marketUUIDKeyName, username, password)
+    .then(() => {
+      console.log("Market UUID saved successfully");
+    })
+    .catch(error => {
+      console.error("Failed to save Market UUID:", error);
+    });
+}
+
+// market_uuid 불러오기 함수
+export async function getMarketUUID() {
+  const result = await Keychain.getInternetCredentials(marketUUIDKeyName);
+  if (result) {
+    console.log("Market UUID retrieved:", result.password);
+    return result.password; // password 필드에 market_uuid 값이 저장됨
+  }
+  console.log("Market UUID not found");
+  return null;
+}
+
+// market_uuid 삭제 함수
+export function removeMarketUUID() {
+  Keychain.resetInternetCredentials(marketUUIDKeyName)
+    .then(() => {
+      console.log("Market UUID removed successfully");
+    })
+    .catch(error => {
+      console.error("Failed to remove Market UUID:", error);
+    });
+}
+
+// market_uuid 사용법: 
+// setMarketUUID(response?.data.market_uuid);
+
+// const fetchedMarketUUID = await getMarketUUID();
+// console.log("Fetched Market UUID:", fetchedMarketUUID);
+// fe779c3c-a4aa-4b80-8765-a7a561c71465

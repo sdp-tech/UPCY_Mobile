@@ -25,7 +25,7 @@ import { err } from 'react-native-svg';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { SignInParams } from '../SignIn';
-import { getAccessToken } from '../../../common/storage';
+import { getAccessToken, getMarketUUID, setMarketUUID } from '../../../common/storage';
 import { processLoginResponse2 } from '../Login';
 
 const SelectView = styled.View`
@@ -141,6 +141,33 @@ export default function ReformCareer({ form, setForm }: ReformProps) {
     if (careerIndex >= 0) setCareerModal(true);
   }, [careerIndex]);
 
+  const createMarket = async () => {
+    const form_ = { ...form };
+    const accessToken = await getAccessToken();
+    const headers = {
+      Authorization: `Bearer ${accessToken}`
+    };
+    const params = {
+      market_name: form_.nickname + '의 마켓',
+      market_introduce: form_.introduce,
+      market_address: form_.link,
+    };
+    try {
+      const response = await request.post(`/api/market`, params, headers);
+      if (response?.status === 201) {
+        console.log(response?.data);
+        setMarketUUID(response?.data.market_uuid);
+
+      } else if (response?.status === 400) {
+        Alert.alert('이미 등록된 사용자입니다. 부계정 생성의 경우, 잠시 후 다시 시도해주세요.');
+      } else {
+        Alert.alert('프로필 등록에 실패했습니다.');
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   const handleSubmit = async () => {
     const updatedForm = { ...form }; // form을 복사하여 사용
     if (updatedForm.nickname === '' || updatedForm.link === '' || updatedForm.region === '') {
@@ -177,7 +204,7 @@ export default function ReformCareer({ form, setForm }: ReformProps) {
           updatedForm.awards = [
             ...updatedForm.awards,
             {
-              name: value.name, // 공모전 명
+              competition: value.name, // 공모전 명
               prize: value.content, // 수상 내역
             }
           ];
@@ -196,7 +223,7 @@ export default function ReformCareer({ form, setForm }: ReformProps) {
             ...updatedForm.freelancer,
             {
               project_name: value.name, // 프로젝트명
-              explain: value.content, // 상세 설명
+              description: value.content, // 상세 설명
             }
           ];
         }
@@ -220,6 +247,8 @@ export default function ReformCareer({ form, setForm }: ReformProps) {
       try {
         const response = await request.post(`/api/user/reformer`, params, headers);
         if (response?.status === 201) {
+          console.log(response?.data);
+          await createMarket();
           navigation.navigate('ReformSubmit');
         } else if (response?.status === 500) {
           console.log(response);

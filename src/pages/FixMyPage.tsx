@@ -7,7 +7,7 @@ import PencilIcon from "../assets/common/Pencil.svg"
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomScrollView from "../common/CustomScrollView";
 import InputView from "../common/InputView";
-import { getAccessToken, getRefreshToken, removeAccessToken, removeNickname, removeRefreshToken } from "../common/storage";
+import { getAccessToken, getRefreshToken, removeAccessToken, removeMarketUUID, removeNickname, removeRefreshToken } from "../common/storage";
 import { LoginContext } from "../common/Context";
 import { MyPageStackParams } from "./MyPage";
 import DetailScreenHeader from "../components/Home/components/DetailScreenHeader";
@@ -110,11 +110,11 @@ const FixMyPage = ({ navigation, route }: FixMyPageProps) => {
             Authorization: `Bearer ${accessToken}`
         }
         try {
-            const response = await request.post('/api/user/logout', params, headers)
+            const response = await request.post(`/api/user/logout`, params, headers)
             if (response && response.status === 205) {
                 console.log('로그아웃 합니다.')
-                // removeAccessToken();
-                // removeRefreshToken();
+                removeAccessToken();
+                removeRefreshToken();
                 console.log('AccessToken: ', { accessToken }, '| RefreshToken: ', { refreshToken });
 
                 navigation.getParent()?.reset({
