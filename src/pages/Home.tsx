@@ -33,16 +33,6 @@ import WriteReviewPage from '../components/Home/Market/WriteReviewPage';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import ComponentsTest from './ComponentsTest';
 import { PURPLE } from '../styles/GlobalColor';
-import { ProfileSection } from '../components/Home/Market/MarketTabView';
-import ServicePage from '../components/Home/Market/ServicePage';
-import ScrollToTopButton from '../common/ScrollToTopButtonFlat';
-import ReviewPage from '../components/Home/Market/ReviewPage';
-import ScrollTopButton from '../common/ScrollTopButton';
-import Footer from '../common/Footer';
-import { BLACK, White } from '../styles/GlobalColor';
-import InfoPage from '../components/Home/Market/InfoPage';
-// import OrderPage from '../components/Home/Order/OrderPage';
-// FIXME: OrderPage가 존재하지 않는 관계로 임시 주석 처리
 import OrderManagement from '../components/Home/Order/OrderManagement';
 import ReformerMarket from '../components/Home/Market/ReformerMarket';
 import Service from '../components/Home/Market/Service';
@@ -188,7 +178,6 @@ const HomeMainScreen = ({
       return result;
     }, []);
   };
-  const splitItems = splitArrayIntoPairs(items, 2);
 
   const [selectedFilterOption, setSelectedFilterOption] = useState<
     SelectedOptionProps | undefined
