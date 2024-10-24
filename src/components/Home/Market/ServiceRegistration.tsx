@@ -46,8 +46,10 @@ import { useNavigation } from '@react-navigation/native';
 import { RichEditor } from 'react-native-pell-rich-editor';
 import Help from '../../../assets/common/Help.svg';
 import { Modal } from 'react-native';
+import { getAccessToken, getMarketUUID } from '../../../common/storage';
+import Request from '../../../common/requests';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 const ButtonSection = styled.View`
   display: flex;
@@ -120,10 +122,19 @@ export interface Option {
   optionPhotos: PhotoType[];
 }
 
+interface Style {
+  style_name: string;
+}
+
+interface Material {
+  material_name: string;
+}
+
 const ServiceRegistrationPage = ({
   navigation,
   route,
 }: StackScreenProps<HomeStackParams, 'ServiceRegistrationPage'>) => {
+  // 마켓 페이지도 그냥 홈스택에 놔두면, 얘도 냅둬야 하나?
   const { hideBottomBar, showBottomBar } = useBottomBar();
 
   useEffect(() => {
@@ -139,7 +150,6 @@ const ServiceRegistrationPage = ({
       // 그 value 제외하고 리스트 생성
       setStyles(
         [...new Set([...extractedStyles])],
-        // 상태관리
       );
     } else if (type == 'style' && styles.length < 3) {
       // value가 선택된 적이 없으면, 즉 처음 선택하면
@@ -153,7 +163,6 @@ const ServiceRegistrationPage = ({
       // 그 value 제외하고 리스트 생성
       setMaterials(
         [...new Set([...extractedMaterials])],
-        // 상태관리
       );
     } else if (type == 'material') {
       // value가 선택된 적이 없으면, 즉 처음 선택하면
@@ -169,7 +178,7 @@ const ServiceRegistrationPage = ({
     });
   };
 
-  const handleNextPage = () => {
+  const handleNextPage = () => { // 임시등록 
     if (
       !(form.category == '') &&
       !(name == '') &&
@@ -185,6 +194,7 @@ const ServiceRegistrationPage = ({
       Alert.alert('필수 사항들을 모두 입력해주세요');
     }
   };
+  const request = Request();
   const [isOpen, setIsOpen] = useState(false); // 가이드라인 모달
   // 해시태그는 이름만 해시태그지, 실제 기능은 좀 다름. 백에 올릴 필요는 없음
   const [hashtagText, setHashtagText] = useState<string>('');
@@ -192,26 +202,213 @@ const ServiceRegistrationPage = ({
   const [modalOpen, setModalOpen] = useState(false); // 카테고리 모달
   // 이 밑으로는 서비스 자체의 prop
   const [form, setForm] = useState<CategoryProps>({
-    category: '', // 백에 넘겨줄 prop: form.category?
+    category: '', // 백에 넘겨줄 prop: form.category
   });
-  const [styles, setStyles] = useState<string[]>([]);
-  const [materials, setMaterials] = useState<string[]>([]);
-  const [makingTime, setMakingTime] = useState<number>(0);
-  const [name, setName] = useState<string>('');
-  const [price, setPrice] = useState<string>('');
-  const [maxPrice, setMaxPrice] = useState<string>('');
-  const [photos, setPhotos] = useState<PhotoResultProps[]>([]);
-  const [detailphoto, setDetailPhoto] = useState<PhotoType[]>([]);
-  const [inputText, setInputText] = useState(route.params?.inputText || ''); // 서비스 상세
+  const [styles, setStyles] = useState<string[]>([]); // 서비스 스타일 
+  const [materials, setMaterials] = useState<string[]>([]); // 작업 가능 소재 
+  const [makingTime, setMakingTime] = useState<number>(0); // 예상 제작 기간 
+  const [name, setName] = useState<string>(''); // 서비스 이름 
+  const [price, setPrice] = useState<string>(''); // 기본 가격 (예: 20000)
+  const [maxPrice, setMaxPrice] = useState<string>(''); // 최대 가격 (예: 24000)
+  const [photos, setPhotos] = useState<PhotoResultProps[]>([]); // 썸네일 사진 
+  const [detailphoto, setDetailPhoto] = useState<PhotoType[]>([]); // 서비스 설명에 들어가는 사진 
+  const [inputText, setInputText] = useState(route.params?.inputText || ''); // 서비스 설명 내용 
   // 이 밑으론 옵션 개별 요소들 prop
-  const [option, setOption] = useState<string>('');
-  const [addPrice, setAddprice] = useState<string>('');
-  const [optionExplain, setOptionExplain] = useState<string>('');
-  const [optionPhotos, setOptionPhotos] = useState<PhotoType[]>([]);
-  const [optionList, setOptionList] = useState<Option[]>([]);
-
+  const [option, setOption] = useState<string>(''); // 옵션 이름 
+  const [addPrice, setAddprice] = useState<string>(''); // 옵션 가격 (추가가격)
+  const [optionExplain, setOptionExplain] = useState<string>(''); // 옵션 설명 
+  const [optionPhotos, setOptionPhotos] = useState<PhotoType[]>([]); // 옵션 사진 
+  const [optionList, setOptionList] = useState<Option[]>([]); // 위에 것들을 담는 옵션 리스트 
+  // 얘네는 전달할 필요 없음 
   const [isFixing, setIsFixing] = useState(false);
   const [photoAdded, setPhotoAdded] = useState(false);
+
+  const formattedOptions = (optionList || []).map(option => ({
+    option_name: option.option || '', // 옵션 이름
+    option_content: option.optionExplain || '', // 옵션 설명
+    option_price: parseInt(option.addPrice || '0', 10), // 옵션 가격 (문자열을 숫자로 변환)
+  }));
+
+  const formattedStyles: Style[] = (styles || []).map((style) => ({
+    style_name: style || '',
+  }));
+
+  const formattedMaterials: Material[] = (materials || []).map((material) => ({
+    material_name: material || '',
+  }));
+
+  const handleMaterialAndStyleSubmit = async (service_uuid: string) => {
+    const accessToken = await getAccessToken();
+    const market_uuid = await getMarketUUID();
+
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    };
+
+    // 배열이 undefined인 경우 빈 배열로 초기화
+    const materials = formattedMaterials || [];
+    const styles = formattedStyles || [];
+    const options = formattedOptions || [];
+
+    // Material 등록
+    for (const material of materials) {
+      const materialParams = { material_name: material.material_name };
+      try {
+        const response = await request.post(
+          `/api/market/${market_uuid}/service/${service_uuid}/material`,
+          materialParams,
+          headers
+        );
+        if (response?.status === 201) {
+          console.log(`Material ${material.material_name} 등록 완료`);
+        } else {
+          console.log('재료 등록 실패');
+          console.log(response);
+        }
+      } catch (err) {
+        console.error(`Material ${material.material_name} 등록 실패:`, err);
+      }
+    }
+
+    // Style 등록
+    for (const style of styles) {
+      const styleParams = { style_name: style.style_name };
+      try {
+        const response = await request.post(
+          `/api/market/${market_uuid}/service/${service_uuid}/style`,
+          styleParams,
+          headers
+        );
+        if (response?.status === 201) {
+          console.log(`Style ${style.style_name} 등록 완료`);
+        } else {
+          console.log('스타일 등록 실패');
+          console.log(response);
+        }
+      } catch (err) {
+        console.error(`Style ${style.style_name} 등록 실패:`, err);
+      }
+    }
+
+    // OptionList 등록 
+    for (const option of options) {
+      const optionParams = {
+        option_name: option.option_name,
+        option_content: option.option_content,
+        option_price: option.option_price,
+      };
+      try {
+        const response = await request.post(
+          `/api/market/${market_uuid}/service/${service_uuid}/option`,
+          optionParams,
+          headers
+        );
+        if (response?.status === 201) {
+          console.log(`Option 등록 완료`);
+        } else {
+          console.log('옵션 등록 실패');
+          console.log(response);
+        }
+      } catch (err) {
+        console.error(`Option 등록 실패:`, err);
+      }
+    }
+  };
+
+  const handleSubmit = async (temp: boolean) => {
+    const accessToken = await getAccessToken();
+    const market_uuid = await getMarketUUID();
+    // let localPeriod = ''; // 얘는 나중에 개별 서비스 get해올 때 조건 걸어놓으면 될듯 
+    // if (makingTime === 0) {
+    //   localPeriod = '3일';
+    // } else if (makingTime === 1) {
+    //   localPeriod = '5일';
+    // } else if (makingTime === 2) {
+    //   localPeriod = '7일';
+    // } else if (makingTime === 3) {
+    //   localPeriod = '3주';
+    // } else if (makingTime === 4) {
+    //   localPeriod = '5주';
+    // } else if (makingTime === 5) {
+    //   localPeriod = '8주';
+    // } else {
+    //   localPeriod = '알 수 없음';
+    // }
+    const params = {
+      service_title: name,
+      service_content: inputText,
+      service_category: form.category,
+      service_period: makingTime,
+      basic_price: parseInt(price, 10),
+      max_price: parseInt(maxPrice, 10),
+      service_style: formattedStyles,
+      service_material: formattedMaterials,
+      service_option: formattedOptions,
+      temporary: temp,
+    };
+    const headers = {
+      Authorization: `Bearer ${accessToken}`
+    };
+    if (temp) { // 임시저장 눌렀을 경우 
+      const params_ = {
+        service_title: name || '임시 저장 서비스',
+        service_content: inputText || '임시 설명',
+        service_category: form.category || '기타(외주)',
+        service_period: makingTime || 0,
+        basic_price: parseInt(price, 10) || 10000,
+        max_price: parseInt(maxPrice, 10) || 20000,
+        service_style: formattedStyles || [{ style_name: "빈티지" }],
+        service_material: formattedMaterials || [{ material_name: "면" }],
+        service_option: formattedOptions || [{
+          option_content: '임시설명',
+          option_name: "임시옵션",
+          option_price: 1000,
+        }],
+        temporary: temp,
+      };
+      try {
+        const response = await request.post(`/api/market/${market_uuid}/service`, params_, headers)
+        if (response?.status === 201) {
+          console.log(params_);
+          const service_uuid = await response?.data.service_uuid;
+          console.log("Service UUID:", service_uuid);
+          // navigation.navigate('ReformerProfilePage');
+          console.log("임시등록 성공!");
+        }
+      } catch (err) {
+        console.error(err);
+      }
+      navigation.navigate('TempStorage');
+    }
+    else if ( // 일반 등록일 경우, 필수 필드 모두 채워야함 
+      !(form.category == '') &&
+      !(name == '') &&
+      !(styles.length == 0) &&
+      !(inputText == '') &&
+      !(price == '') &&
+      !(maxPrice == '') &&
+      !(photos.length == 0) &&
+      !(materials.length == 0)
+    ) {
+      try {
+        const response = await request.post(`/api/market/${market_uuid}/service`, params, headers)
+        if (response?.status === 201) {
+          console.log(params);
+          const service_uuid = await response?.data.service_uuid;
+          console.log("Service UUID:", service_uuid);
+          // navigation.navigate('ReformerProfilePage');
+          console.log("서비스가 성공적으로 등록되었습니다!");
+        }
+      } catch (err) {
+        console.error(err);
+      }
+
+    } else { // 누락된거 있는 경우 
+      Alert.alert('필수 사항들을 모두 입력해주세요');
+    }
+  }
+
+
 
   useEffect(() => {
     if (route.params?.inputText) {
@@ -249,16 +446,16 @@ const ServiceRegistrationPage = ({
       Alert.alert('아래의 기본 가격을 입력해주세요');
     } else if (maxPrice == '') {
       Alert.alert('아래의 최대 가격(추가 금액의 상한선)을 입력해주세요');
-    } else if (parseInt(maxPrice) < parseInt(addPrice)) {
+    } else if (parseInt(maxPrice, 10) < parseInt(addPrice, 10)) {
       Alert.alert('추가 금액이 최대 가격의 상한선보다 높습니다');
-    } else if (parseInt(price) > parseInt(maxPrice)) {
+    } else if (parseInt(price, 10) > parseInt(maxPrice, 10)) {
       Alert.alert('기본 가격이 최대 가격보다 높습니다');
     } else if (optionExplain.length > 50) {
       Alert.alert('설명은 50자 이내로 입력해주세요');
     } else {
       const newOption = {
         option: option,
-        price: parseInt(addPrice),
+        price: parseInt(addPrice, 10),
         optionExplain: optionExplain,
         isFixing: isFixing,
         addPrice: addPrice,
@@ -296,7 +493,7 @@ const ServiceRegistrationPage = ({
       const updatedOption = {
         ...updatedOptionList[idx], // 기존 옵션 유지
         option: item.option,
-        price: parseInt(item.addPrice),
+        price: parseInt(item.addPrice, 10),
         optionExplain: item.optionExplain,
         isFixing: false, // 수정 완료 후 isFixing을 false로 변경
         addPrice: item.addPrice,
@@ -413,10 +610,12 @@ const ServiceRegistrationPage = ({
         <ButtonSection style={{ flex: 1, marginHorizontal: 10 }}>
           <FooterButton
             style={{ flex: 0.2, backgroundColor: '#612FEF' }}
-            onPress={() => handleNextPage()}>
+            onPress={() => handleSubmit(true)}>
             <Subtitle16B style={{ color: '#FFFFFF' }}>임시저장</Subtitle16B>
           </FooterButton>
-          <FooterButton style={{ flex: 0.7, backgroundColor: '#DBFC72' }}>
+          <FooterButton
+            style={{ flex: 0.7, backgroundColor: '#DBFC72' }}
+            onPress={() => handleSubmit(false)}>
             <Subtitle16B style={{ color: '#612FEF' }}>등록</Subtitle16B>
           </FooterButton>
         </ButtonSection>
@@ -424,14 +623,27 @@ const ServiceRegistrationPage = ({
     </SafeAreaView>
   );
 
+  const handleGoBack = () => {
+    Alert.alert(
+      "정말로 나가시겠습니까?",
+      "",
+      [
+        { text: "임시저장", onPress: () => handleSubmit(true) },
+        { text: "아니오", onPress: () => { } },
+        { text: "네", onPress: navigation.goBack, style: "destructive" }
+      ],
+      { cancelable: false }
+    );
+  }
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <DetailScreenHeader
         title="서비스 등록"
-        leftButton="CustomBack"
-        onPressLeft={() => {}}
+        leftButton="LeftArrow"
+        onPressLeft={() => handleGoBack()}
         rightButton="None"
-        onPressRight={() => {}}
+        onPressRight={() => { }}
         saved={0}
       />
       {/* 헤더부분 */}
@@ -727,7 +939,7 @@ const ServiceRegistrationPage = ({
                       <View style={{ alignItems: 'center' }}>
                         <ImageCarousel
                           images={detailphoto}
-                          setFormImages={() => {}}
+                          setFormImages={() => { }}
                           max={5}
                           originalSize
                           originalHeight={(width - 32) / 2}
@@ -922,16 +1134,31 @@ const ServiceRegistrationPage = ({
         animationType="slide">
         <View style={style.centeredView}>
           <View style={style.modalView}>
+            <Body16B>
+              1. 서비스 제공 시 업씨러에게 받아야 하는 {'\n'}
+              필요 정보를 상세히 작성해요.{'\n'}
+            </Body16B>
             <Text>
-              가이드라인 {'\n'}
-              {'\n'}● 필요한 원단의 최소 사이즈{'\n'}● 리폼 부위 업씨러의 사이즈
-              명시 안내{'\n'}● 주의사항{'\n'}● 특이사항{'\n'}
+              리폼에 필수적인 정보를 업씨러가 잘 제공할 수 있도록자세히 설명해주세요.{'\n'}{'\n'}
+              [예시]{'\n'}{'\n'}
+              ● 필요한 원단의 최소 사이즈 기재{'\n'}
+              ● 리폼 부위의 신체 사이즈 기재 요청{'\n'}
+              ● 리폼이 불가한 소재 안내{'\n'}
+              ● 자주 있는 문의{'\n'}
+              ● 주의사항 및 특이사항{'\n'}{'\n'}
+            </Text>
+            <Body16B>
+              2. 서비스 완성본의 이미지를 업로드해요.{'\n'}
+            </Body16B>
+            <Text>
+              제공하는 서비스의 완성본 예시나 작업 이미지를 서비스 설명과 함께 첨부하시면 업씨러의 선택에
+              도움이 됩니다 :D
             </Text>
             <TouchableOpacity
               onPress={() => {
                 setIsOpen(!isOpen);
               }}>
-              <Text>닫기</Text>
+              <Text style={{ color: 'red' }}>{'\n'}{'\n'}닫기</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -1310,6 +1537,7 @@ const style = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 20,
     padding: 35,
+    paddingVertical: 60,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {

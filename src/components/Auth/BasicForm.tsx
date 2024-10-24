@@ -122,13 +122,13 @@ export default function BasicForm({ navigation, route }: FormProps) {
     '^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$',
   );
 
-  const handleLogin = async () => {
+  const handleLogin = async () => { // 로그인 API 사용해서 토큰 발급 
     const params = {
       email: form.mail + '@' + form.domain,
       password: form.password
     }
     const response = await request.post(`/api/user/login`, params);
-    processLoginResponse2(
+    await processLoginResponse2( // userRole 설정 함수 
       response
     );
   };
