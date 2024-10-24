@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { SafeAreaView, View, Text, FlatList, TouchableOpacity ,Dimensions} from 'react-native';
+import { SafeAreaView, View, Text, FlatList, TouchableOpacity ,Dimensions, Modal, StyleSheet} from 'react-native';
 import { Tabs } from 'react-native-collapsible-tab-view';
 import styled from 'styled-components/native';
 import { Picker } from '@react-native-picker/picker';
-import { BLACK, LIGHTGRAY, PURPLE } from '../../../styles/GlobalColor';
+import { BLACK, LIGHTGRAY, PURPLE,GREEN } from '../../../styles/GlobalColor';
+import { Title20B, Body14R, Body16B, Caption11M } from '../../../styles/GlobalText.tsx';
+
 import { useNavigation } from '@react-navigation/native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { HomeStackParams } from '../../../pages/Home';
@@ -19,14 +21,16 @@ interface OrderInfoProps {
   is_online: boolean;
 }
 
-const OrderInfo: React.FC<OrderInfoProps> = ({ name, customer, estimated_price, is_online }) => (
+const OrderInfo: React.FC<OrderInfoProps> = ({ name, customer, estimated_price, is_online ,navigation}) => (
   <InfoContainer>
     <Text style={{ color: 'black', fontSize: 18, fontWeight: 'bold', marginBottom: 4 }}>{name}</Text>
     <Text style={{ color: 'black', fontSize: 15, marginBottom: 4 }}>주문자: {customer}</Text>
     <Text style={{ color: 'black', fontSize: 15, marginBottom: 4 }}> </Text>
     <Text style={{ color: 'black', fontSize: 15, marginBottom: 4 }}>예상 결제 금액: {estimated_price}</Text>
     <Text style={{ color: 'black', fontSize: 15 }}>거래 방식: {is_online ? '비대면' : '대면'}</Text>
-    <TouchableOpacity style={{ marginTop: 10, alignSelf: 'flex-end' }}>
+    <TouchableOpacity style={{ marginTop: 10, alignSelf: 'flex-end' }}
+          onPress={() => navigation.navigate('QuotationPage')}
+    >
       <Text style={{ color: 'gray', fontSize: 14, fontWeight: 'bold' , textDecorationLine: 'underline'}}>주문서 확인</Text>
     </TouchableOpacity>
   </InfoContainer>
@@ -44,17 +48,17 @@ const OrderStatusLabel = ({ status }) => {
   }
 };
 
-const OrderActionButtons = ({ status, navigation }: { status: string; navigation: any }) => {
+const OrderActionButtons = ({ status, navigation ,onPress}: { status: string; navigation: any;  onPress: () => void }) => (
 
-  return (
+
     <ButtonContainer>
       <ActionButton>
         <ActionText>오픈채팅</ActionText>
       </ActionButton>
 
       {status === 'progress' && (
-        <ActionButton>
-          <ActionText style={{ color: PURPLE }}>거래 완료</ActionText>
+        <ActionButton onPress={onPress}>
+          <ActionText style={{ color: PURPLE }} >거래 완료</ActionText>
         </ActionButton>
       )}
 
@@ -65,7 +69,7 @@ const OrderActionButtons = ({ status, navigation }: { status: string; navigation
       )}
     </ButtonContainer>
   );
-};
+
 
 
 
@@ -91,6 +95,10 @@ const DropdownSection = ({ selectedFilter, setSelectedFilter }) => {''
   );
 };
 
+
+
+
+
 // OrderInfoContainer 스타일 정의
 const OrderInfoContainer = styled.View`
   display: flex;
@@ -112,7 +120,28 @@ interface OrderPageProps extends StackScreenProps<HomeStackParams, 'OrderPage'> 
 
 const OrderPage: React.FC<OrderPageProps> = ({ flatListRef }) => {
    const [selectedFilter, setSelectedFilter] = useState('전체');
-  const navigation = useNavigation();
+   const [isModalVisible, setIsModalVisible] = useState(false);
+   const navigation = useNavigation();
+
+  // 거래 완료 버튼 클릭 핸들러
+  const handleCompletedPress = () => {
+    setIsModalVisible(true);
+  };
+
+  // 모달에서 "거래 완료" 클릭 핸들러
+  const handleConfirmCompleted = () => {
+    setIsModalVisible(false);
+    console.log('거래 완료 선택');
+    navigation.navigate('CompletedOrder');
+  };
+
+  // 모달에서 "나중에" 클릭 핸들러
+  const handleCancel = () => {
+    setIsModalVisible(false);
+    console.log('나중에 선택');
+  };
+
+
 
  const [orderlist, setOrderList] = useState([
     {
@@ -185,16 +214,37 @@ const OrderPage: React.FC<OrderPageProps> = ({ flatListRef }) => {
           customer={order.customer}
           estimated_price={order.estimated_price}
           is_online={order.is_online}
+          navigation={navigation}
           />
           </View>
           <OrderDateText style={{ color: BLACK }}>{order.orderDate}</OrderDateText>
           <OrderStatusLabel status={order.status} />
-          <OrderActionButtons status={order.status} navigation={navigation} />
+          <OrderActionButtons status={order.status} navigation={navigation} onPress={handleCompletedPress} />
          </OrderInfoBox>
       )}
       keyExtractor={(item, index) => index.toString()}
       style={{ marginBottom: 60 }}
     />
+
+      <Modal transparent={true} visible={isModalVisible} onRequestClose={handleCancel}>
+        <ModalContainer>
+          <ModalBox>
+            <Body14R style={{  color: BLACK, textAlign: 'center', marginBottom: 10 }}>
+              거래 완료된 상품의 경우 반품/교환 요청이 {'\n'} 불가능하므로 신중히 결정해주세요.
+            </Body14R>
+            <ButtonContainer>
+              <TouchableOpacity onPress={handleCancel} style={styles.laterButton}>
+                <Body16B style={{ color: 'white', textAlign:'center' }}>나중에</Body16B>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleConfirmCompleted} style={styles.completeButton}>
+                <Body16B style={{ color: PURPLE, textAlign:'center' }}>거래 완료</Body16B>
+              </TouchableOpacity>
+            </ButtonContainer>
+          </ModalBox>
+        </ModalContainer>
+      </Modal>
+
+
    </SafeAreaView>
   );
 };
@@ -231,6 +281,7 @@ const ButtonContainer = styled.View`
   flex-direction: row;
   justify-content: space-between;
   margin-top: 15px;
+  width: '100%';
 `;
 
 const ActionText = styled.Text`
@@ -270,6 +321,44 @@ const PickerContainer = styled.View`
   justify-content: center;
 
 `;
+
+
+const ModalBox = styled.View`
+  width: 300px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 10px;
+`;
+
+
+const ModalContainer = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+`;
+
+const styles = StyleSheet.create({
+
+  laterButton: {
+    backgroundColor: '#6200EE',
+    padding: 10,
+    borderRadius: 10,
+    flex: 1,
+    marginRight: 10,
+  },
+
+
+  completeButton: {
+    backgroundColor: '#CCFF90',
+    padding: 10,
+    borderRadius: 10,
+    flex: 1,
+    marginLeft: 10,
+  },
+
+});
+
 
 
 export default OrderPage;
