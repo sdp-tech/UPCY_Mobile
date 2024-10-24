@@ -35,9 +35,9 @@ import ComponentsTest from './ComponentsTest';
 import { PURPLE } from '../styles/GlobalColor';
 import OrderManagement from '../components/Home/Order/OrderManagement';
 import ReformerMarket from '../components/Home/Market/ReformerMarket';
+import ReformerProfileService from '../components/Auth/Reformer/Profile/Service';
 import Service from '../components/Home/Market/Service';
 import { PhotoType } from '../hooks/useImagePicker';
-import ReformerProfilePage from '../components/Auth/Reformer/ReformerProfilePage';
 import { Styles } from '../types/UserTypes';
 
 export type HomeStackParams = {
@@ -71,7 +71,6 @@ export type HomeStackParams = {
   SentRejection: undefined;
   WriteReviewPage: undefined;
   ReformerMarket: undefined;
-  ReformerProfilePage: undefined;
   TestComponents: undefined;
 };
 
@@ -126,12 +125,9 @@ const HomeScreen = ({
       <HomeStack.Screen name="Rejection" component={Rejection} />
       <HomeStack.Screen name="SentRejection" component={SentRejection} />
       <HomeStack.Screen name="WriteReviewPage" component={WriteReviewPage} />
-      <HomeStack.Screen
-        name="ReformerProfilePage"
-        component={ReformerProfilePage}
-      />
       <HomeStack.Screen name="TestComponents" component={ComponentsTest} />
       <HomeStack.Screen name="ReformerMarket" component={ReformerMarket} />
+      <HomeStack.Screen name="ReformerProfileService" component={ReformerProfileService} />
     </HomeStack.Navigator>
   );
 };
@@ -206,6 +202,9 @@ const HomeMainScreen = ({
           {selectedTab === 'Market' && <ReformerMarket />}
           {selectedTab === 'temp' && (
             <ScrollView>
+              <Button onPress={() => navigation.navigate('ReformerProfileService')}>
+                <Text>리포머 프로필</Text>
+              </Button>
               <Button onPress={handlePopupButtonPress}>
                 <ButtonText>팝업 표시</ButtonText>
               </Button>
@@ -243,10 +242,6 @@ const HomeMainScreen = ({
               </Button>
               <Button onPress={() => navigation.navigate('WriteReviewPage')}>
                 <Text>후기 작성 페이지</Text>
-              </Button>
-              <Button
-                onPress={() => navigation.navigate('ReformerProfilePage')}>
-                <Text>리폼러 프로필 페이지</Text>
               </Button>
               <Button onPress={() => navigation.navigate('TestComponents')}>
                 <Text>공통 컴포넌트 테스트</Text>
