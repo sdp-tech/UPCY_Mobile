@@ -5,18 +5,18 @@ import {
 } from '@react-navigation/stack';
 import { TabProps } from '../../App';
 import {
+  getAccessToken,
   removeAccessToken,
   removeNickname,
   removeRefreshToken,
 } from '../common/storage';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { LoginContext } from '../common/Context';
 import DetailScreenHeader from '../components/Home/components/DetailScreenHeader';
 import { Title20B } from '../styles/GlobalText';
 import TextToggle from '../common/TextToggle';
 import { BLACK } from '../styles/GlobalColor';
 import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
-import OrderPage from '../components/Home/Order/OrderPage';
 import ServicePage from '../components/Home/Market/ServicePage';
 import ScrollTopButton from '../common/ScrollTopButton';
 import ReviewPage from '../components/Home/Market/ReviewPage';
@@ -25,6 +25,9 @@ import FixMyPage from './FixMyPage';
 import Login from '../components/Auth/Login';
 import { PhotoType } from '../hooks/useImagePicker';
 import Request from '../common/requests';
+import OrderPage from '../components/Home/Order/OrderPage';
+import { useFocusEffect } from '@react-navigation/native';
+import { print } from '@gorhom/bottom-sheet/lib/typescript/utilities/logger';
 
 export type MyPageStackParams = {
   MyPage: { userInfo?: any | undefined };
@@ -55,81 +58,88 @@ const MyPageScreen = ({
   );
 };
 
-const ProfileSection = ({
-  nickname,
-  backgroundphoto,
-  profile_image,
-  editProfile,
-  introduce,
-}: {
-  nickname: string;
-  backgroundphoto: any;
-  profile_image: PhotoType | any;
-  editProfile: any;
-  introduce: string;
-}) => {
-  return (
-    <View style={{ alignItems: 'center' }}>
-      <DetailScreenHeader
-        title=""
-        leftButton="CustomBack"
-        onPressLeft={() => {}}
-        rightButton="Edit"
-        onPressRight={editProfile}
-      />
-      <ImageBackground
-        style={{ width: '100%', height: 200 }}
-        imageStyle={{ height: 160 }}
-        source={{ uri: backgroundphoto }}>
-        <View
-          style={{
-            width: '100%',
-            height: 160,
-            backgroundColor: '#00000066',
-            opacity: 0.7,
-          }}
-        />
-        {profile_image === undefined || profile_image.uri == undefined ? ( // 전자는 편집페이지에서 사진 삭제했을 경우, 후자는 가장 처음에 로딩될 경우
-          <Image
-            style={{
-              alignSelf: 'center',
-              width: 90,
-              height: 90,
-              borderRadius: 180,
-              position: 'absolute',
-              top: 110,
-            }}
-            source={{
-              uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
-            }}
-          />
-        ) : (
-          <Image
-            style={{
-              alignSelf: 'center',
-              width: 90,
-              height: 90,
-              borderRadius: 180,
-              position: 'absolute',
-              top: 110,
-            }}
-            source={{ uri: profile_image.uri }}
-          />
-        )}
-      </ImageBackground>
-      <Title20B style={{ marginTop: 8 }}>{nickname}</Title20B>
-      <View style={{ padding: 20, paddingTop: 0, paddingBottom: 0 }}>
-        <TextToggle text={introduce} />
-      </View>
-    </View>
-  );
-};
+
 
 const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
+
+  const ProfileSection = ({
+    nickname,
+    backgroundphoto,
+    profile_image,
+    editProfile,
+    introduce,
+  }: {
+    nickname: string;
+    backgroundphoto: any;
+    profile_image: PhotoType;
+    editProfile: any;
+    introduce: string;
+  }) => {
+    return (
+      <View style={{ alignItems: 'center' }}>
+        <DetailScreenHeader
+          title=""
+          leftButton="CustomBack"
+          onPressLeft={() => { }}
+          rightButton="Edit"
+          onPressRight={editProfile}
+        /><ImageBackground
+          style={{ width: '100%', height: 200 }}
+          imageStyle={{ height: 160 }}
+          source={{ uri: backgroundphoto }}>
+          <View
+            style={{
+              width: '100%',
+              height: 160,
+              backgroundColor: '#00000066',
+              opacity: 0.7,
+            }}
+          />
+          {profile_image === undefined || profile_image.uri === undefined ? ( // 전자는 편집페이지에서 사진 삭제했을 경우, 후자는 가장 처음에 로딩될 경우
+            <Image
+              style={{
+                alignSelf: 'center',
+                width: 90,
+                height: 90,
+                borderRadius: 180,
+                position: 'absolute',
+                top: 110,
+              }}
+              source={{
+                uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
+              }}
+            />
+          ) : (
+            <Image
+              style={{
+                alignSelf: 'center',
+                width: 90,
+                height: 90,
+                borderRadius: 180,
+                position: 'absolute',
+                top: 110,
+              }}
+              source={
+                profile_image
+                  ? { uri: profile_image.uri } // 유효한 URL이면 그대로 사용
+                  : { uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp' } // 기본 이미지 URL 사용
+              }
+            />
+          )}
+        </ImageBackground>
+        <Title20B style={{ marginTop: 8 }}>{nickname}</Title20B>
+        <View style={{ padding: 20, paddingTop: 0, paddingBottom: 0 }}>
+          <TextToggle text={introduce} />
+        </View>
+      </View>
+    );
+  };
+
+
   const request = Request();
   const { isLogin, setLogin } = useContext(LoginContext);
   const [userInfo, setUserInfo] = useState({
-    nickname: route.params?.nickname || '이하늘',
+    nickname: route.params?.nickname || '',
     backgroundphoto:
       'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
     profile_image:
@@ -137,9 +147,8 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
       'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
     introduce:
       route.params?.introduce ||
-      '나는야 업씨러 이하늘 환경을 사랑하지요 눈누난나',
+      '',
   });
-  // 나중에 프로필수정 로직 구현되고 나면, profilepho랑 backgroundphoto 할당하면 됨
 
   useEffect(() => {
     if (route.params?.userInfo) {
@@ -147,20 +156,29 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
     }
   }, [route.params?.userInfo]);
 
-  const getProfile = async () => {
+
+  const getProfile = async () => { // 유저 프로필 가져오기-> setUserInfo로 관리
+    const accessToken = await getAccessToken();
+    const headers = {
+      Authorization: `Bearer ${accessToken}`
+    }
     try {
-      const path = '/api/user';
-      const response = await request.get(path, {}, {});
-      // 요청이 성공했을 때의 처리
+      const response = await request.get(`/api/user`, {}, headers);
+      const encodedUrl = encodeURI(response.data.profile_image_url);
+      const decodedUri = decodeURIComponent(encodedUrl);
+      const profileImage: PhotoType = {
+        fileName: response.data.profile_image_url ? 'profile.jpg' : undefined,
+        width: undefined, // width는 알 수 없으므로 undefined로 설정
+        height: undefined, // height는 알 수 없으므로 undefined로 설정
+        uri: decodedUri || 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
+      };
       if (response.status === 200) {
         console.log('User data fetched successfully:', response.data);
         setUserInfo({
           nickname: response.data.nickname,
-          backgroundphoto:
+          backgroundphoto: // 우선 기본이미지 
             'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
-          profile_image:
-            response.data.profile_image_url ||
-            'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
+          profile_image: profileImage,
           introduce:
             response.data.introduce ||
             '나는야 업씨러 이하늘 환경을 사랑하지요 눈누난나',
@@ -177,25 +195,17 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
     }
   };
 
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     if (isLogin) {
-  //       getProfile(); // 로그인 상태일 때 프로필을 가져옴
-  //     }
-  //   }, [isLogin]),
-  // );
+  useFocusEffect(
+    useCallback(() => {
+      if (isLogin) {
+        getProfile(); // 로그인 상태일 때 프로필을 가져옴
+      }
+    }, [isLogin]),
+  );
 
-  const handleLogout = () => {
-    removeAccessToken();
-    removeNickname();
-    removeRefreshToken();
-    setLogin(false);
-    navigation.getParent()?.navigate('홈');
-  };
-
-  const goReformRegister = () => {
-    navigation.navigate('ReformProfile');
-  };
+  // const goReformRegister = () => {
+  //   navigation.navigate('ReformProfile');
+  // };
 
   const [routes] = useState([
     { key: 'order', title: '주문' },
@@ -206,7 +216,7 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      {/* 이 밑의 탭들은 더미 데이터  */}
+      {/* 탭은 수정 필요 */}
       <Tabs.Container
         renderHeader={props => (
           <View>
@@ -217,8 +227,6 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
               editProfile={() => navigation.navigate('FixMyPage', { userInfo })}
               introduce={userInfo.introduce}
             />
-            {/* <Button onPress={goReformRegister} title="프로필 등록" />
-          <Button onPress={handleLogout} title="로그아웃" /> */}
           </View>
         )}
         headerContainerStyle={{
@@ -242,15 +250,14 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
               fontSize: 16,
             }}
             onTabPress={() => Alert.alert('준비중입니다!ㅠㅠ')}
-            // 룩북, 좋아요 모아보기 기능 구현되면 위의 onTapPress는 삭제할 것
+          // 룩북, 좋아요 모아보기 기능 구현되면 위의 onTapPress는 삭제할 것
           />
         )}
       >
 
-
         {routes.map(route =>
         (<Tabs.Tab key={route.key} name={route.title}>
-            {route.key === 'order' && <OrderPage />}
+          {route.key === 'order' && <OrderPage />}
 
           {route.key === 'like' &&
             <View>

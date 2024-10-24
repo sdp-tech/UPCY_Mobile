@@ -35,13 +35,16 @@ function removeSecureValue(key) {
 const nicknameKeyName = 'nickname';
 const accessTokenKeyName = 'accessToken';
 const refreshTokenKeyName = 'refreshToken';
+const userRole = 'customer';
+// reformer, admin 
 
 export async function getNickname() {
   return await getSecureValue(nicknameKeyName);
 }
 
 export function setNickname(nickname) {
-  setSecureValue(nicknameKeyName, nickname);
+  const sanitizedNickname = nickname || ""; // 기본값 설정
+  setSecureValue(nicknameKeyName, sanitizedNickname);
 }
 
 export function removeNickname() {
@@ -74,6 +77,15 @@ export function setRefreshToken(token) {
 
 export function removeRefreshToken() {
   removeSecureValue(refreshTokenKeyName);
+}
+
+export async function getUserRole() {
+  const role = await getSecureValue(userRole);
+  return role;
+}
+
+export function setUserRole(role) {
+  setSecureValue(userRole, role);
 }
 
 const marketUUIDKeyName = 'marketUUID';

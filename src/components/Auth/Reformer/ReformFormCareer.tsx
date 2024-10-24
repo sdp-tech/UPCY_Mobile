@@ -26,7 +26,6 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { SignInParams } from '../SignIn';
 import { getAccessToken, getMarketUUID, setMarketUUID } from '../../../common/storage';
-import { processLoginResponse2 } from '../Login';
 
 const SelectView = styled.View`
   display: flex;
