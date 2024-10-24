@@ -12,7 +12,14 @@ import { HomeStackParams } from '../../../pages/Home';
 
 
 
-const OrderInfo = ({ name, customer,  estimated_price, is_online }) => (
+interface OrderInfoProps {
+  name: string;
+  customer: string;
+  estimated_price: string;
+  is_online: boolean;
+}
+
+const OrderInfo: React.FC<OrderInfoProps> = ({ name, customer, estimated_price, is_online }) => (
   <InfoContainer>
     <Text style={{ color: 'black', fontSize: 18, fontWeight: 'bold', marginBottom: 4 }}>{name}</Text>
     <Text style={{ color: 'black', fontSize: 15, marginBottom: 4 }}>주문자: {customer}</Text>
