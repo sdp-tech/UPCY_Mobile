@@ -19,7 +19,7 @@ const CompletedOrder = () => {
       <Title20B style={{marginBottom: 10, textAlign: 'center'}}></Title20B>
       <Image source={require('../../../assets/completed.png')} style={{width: 200, height: 200}} />
       <Title20B style={{textAlign: 'center', marginTop: 10}}>거래가 완료 되었습니다</Title20B>
-      <TouchableOpacity style={{flexDirection: 'row', borderRadius: 5, backgroundColor: GREEN, marginTop: 160, marginBottom:20 , width:'90%', alignItems: 'center', justifyContent: 'space-between', paddingRight: 20}} onPress={() => navigation.navigate('WriteReviewPage')}>
+      <TouchableOpacity style={{flexDirection: 'row', borderRadius: 5, backgroundColor: GREEN, marginTop: 160, marginBottom:15 , width:'90%', alignItems: 'center', justifyContent: 'space-between', paddingRight: 20}} onPress={() => navigation.navigate('WriteReviewPage')}>
            <View style={{padding: 16}}>
           <Body14M>구매한 상품이 마음에 드시나요?</Body14M>
           <Body16B>후기 작성하러 가기</Body16B>
