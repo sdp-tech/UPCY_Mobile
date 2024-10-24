@@ -5,10 +5,10 @@ import { Picker } from '@react-native-picker/picker';
 import { BLACK, LIGHTGRAY, PURPLE } from '../../../styles/GlobalColor';
 import { Body16M, Caption11M, Caption12M, Body14R, Subtitle16B, Subtitle16M, Subtitle18M, Title20B } from '../../../styles/GlobalText';
 import { getStatusBarHeight } from 'react-native-safearea-height';
+import CheckBox from '@react-native-community/checkbox';
 
 import InputBox from '../../../common/InputBox';
 import BottomButton from '../../../common/BottomButton';
-import CheckBox from '../../../common/CheckBox';
 
 import { StackScreenProps } from '@react-navigation/stack';
 import { HomeStackParams } from '../../../pages/Home';
@@ -48,7 +48,7 @@ const Filter = ({ value, onPress, isSelected }: FilterProps) => {
 const styles = StyleSheet.create({
   filterButton: {
     padding: 8,
-    borderRadius: 20,
+    borderRadius: 10,
     borderWidth: 1,
     borderColor: PURPLE,
     marginRight: 10,
@@ -96,10 +96,12 @@ const styles = StyleSheet.create({
   optionCard: {
     padding: 10,
     marginVertical: 10,
-    borderRadius: 10,
+    marginHorizontal: 10,
+    borderRadius: 5,
     borderWidth: 1,
     borderColor: PURPLE,
     backgroundColor: '#fff',
+    flex:1,
   },
   selectedOptionCard: {
     backgroundColor: '#EDE7F6',
@@ -212,13 +214,16 @@ const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 
     },
   ];
 
+  const optionTitles = options.map(option => option.title);
+
+
   const [text, setText] = useState<string>('');
   const [photos, setPhotos] = useState<PhotoResultProps[]>([]);
   const [refPhotos, setRefPhotos] = useState<PhotoResultProps[]>([]);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [isChecked, setIsChecked] = useState<boolean>(false);
-  const [selectedOptions, setSelectedOptions] = useState<number[]>([]);
   const [selectedMaterial, setSelectedMaterial] = useState<string[]>([]);
+  const [selectedOptions, setSelectedOptions] = useState<number[]>([]); //옵션 상세
   const [selectedFilter, setSelectedFilter] = useState<string>(''); // 거래 방식
   const [faceToFaceRegion, setFaceToFaceRegion] = useState<string>(''); // 대면 지역
   const [deliveryType, setDeliveryType] = useState<string>('');
@@ -253,14 +258,14 @@ const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 
   };
 
   const handleOptionPress = (index: number) => {
-      setSelectedOptions(prevSelectedOptions => {
-        if (prevSelectedOptions.includes(index)) {
-          return prevSelectedOptions.filter(optionIndex => optionIndex !== index);
-        } else {
-          return [...prevSelectedOptions, index];
-        }
-      });
-    };
+     setSelectedOptions(prevSelectedOptions => {
+       if (prevSelectedOptions.includes(index)) {
+         return prevSelectedOptions.filter(optionIndex => optionIndex !== index);
+       } else {
+         return [...prevSelectedOptions, index];
+       }
+     });
+   };
 
 const handleNextPress = () => {
   if (!selectedFilter) {
@@ -272,7 +277,7 @@ const handleNextPress = () => {
   navigation.navigate('InputInfo', {
      materials: selectedMaterial,
      transactionMethod: selectedFilter,
-     options: selectedOptionsDetails, // 선택한 옵션
+     options: selectedOptions, // 선택한 옵션
      additionalRequest: text,
    });
  };
@@ -298,7 +303,7 @@ const handleNextPress = () => {
         </View>
       </ImageBackground>
       <View style={{ justifyContent: 'center' }}>
-        <Subtitle16B style={{ textAlign: 'center', paddingVertical: 20 }}>주문서 작성</Subtitle16B>
+        <Subtitle18M style={{ textAlign: 'center',fontWeight: 'bold', paddingVertical: 10 }}>주문서 작성</Subtitle18M>
         {photos.length > 0 &&
           <Carousel
             data={splitPhotos}
@@ -323,10 +328,10 @@ const handleNextPress = () => {
         }
         <View style={{ marginTop: 10, marginLeft: 120, marginRight: 120 }}>
           <PhotoOptions
-            style={Object.assign({}, styles.grayButton, { margin: 5, marginBottom: 5 })} // Object.assign을 사용하여 스타일 병합
+            style={Object.assign({}, styles.grayButton, { marginright: 5, marginBottom: 5 })}
             max={4}
             setPhoto={setPhotos}
-            buttonLabel='작업할 이미지 첨부'
+            buttonLabel='의뢰할 의류 사진 첨부  '
           />
         </View>
       </View>
@@ -337,51 +342,68 @@ const handleNextPress = () => {
               showDuplicate ={true}
               onMaterialSelect ={setSelectedMaterial}/>
      <Subtitle16M style={{ paddingHorizontal: 15, marginBottom: 5 }}>기타 재질</Subtitle16M>
-     <InputBox value={text} setValue={setText} placeholder='의뢰하시는 재질을 입력해주세요' long  style={{ height: 50 }}/>
+    <View style={{ paddingHorizontal: 10, flex: 1 }}>
+        <InputBox
+        value={text}
+        setValue={setText}
+        placeholder='의뢰하시는 소재가 상단에 없는 경우 작성해주세요'
+        long
+        style={{ height: 50, flex: 1 }}
+        />
+    </View>
 
       <View style={{ height: 32, backgroundColor: 'white' }} />
      <View style={{ borderBottomWidth: 5, borderColor: '#D9D9D9'}}/>
 
 
+
+
+
       {/* 옵션 섹션 추가 */}
-      <View style={{ paddingVertical: 20, borderBottomWidth: 5, borderColor: '#D9D9D9', backgroundColor: '#FFFFFF', marginBottom: 20 }}>
-        <FilterBox style={{ justifyContent: 'space-between' }}>
-          <Subtitle18M style={{ paddingHorizontal: 15, marginBottom: 5 }}>옵션 상세</Subtitle18M>
-          <Caption11M style={{ color: PURPLE }}>• 중복 가능</Caption11M>
-        </FilterBox>
-
-
-        {options.map((option, optionIndex) => (
-          <TouchableOpacity
-            key={optionIndex}
-            style={[styles.optionCard, selectedOptions.includes(optionIndex) && styles.selectedOptionCard]}
-            onPress={() => handleOptionPress(optionIndex)}
-          >
-              <Subtitle16M style={selectedOptions.includes(optionIndex) ? styles.selectedOptionText : { color: PURPLE }}>
-                {option.option}
-              </Subtitle16M>
-
-           <View style={styles.optionHeader}>
-              <Subtitle16M style={selectedOptions.includes(optionIndex) ? styles.selectedOptionText : { color: BLACK }}>
-              {option.title}
-            </Subtitle16M>
-           <Body16M style={selectedOptions.includes(optionIndex) ? styles.selectedOptionText : { color: BLACK, textAlign: 'right' }}>
-              {option.price}
-            </Body16M>
-           </View>
-
-            <View style={styles.optionContent}>
-            <View style={styles.optionDescription}>
-              <Body14R style={{ color: BLACK }}>{option.description}</Body14R>
-            </View>
-            <View style={styles.optionImage}>
-                <Image source={{ uri: option.image }} style={styles.optionImage} />
-            </View>
+          <View style={styles.optionBox}>
+            <View style={styles.filterBox}>
+              <Subtitle18M style={{ paddingHorizontal: 15, marginBottom: 5 }}>옵션 상세</Subtitle18M>
+              <Caption11M style={{ color: PURPLE }}>• 중복 가능</Caption11M>
             </View>
 
-          </TouchableOpacity>
-        ))}
-      </View>
+            {options.map((option, optionIndex) => (
+              <View key={optionIndex} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <CheckBox
+                  value={selectedOptions.includes(optionIndex)}
+                  onValueChange={() => handleOptionPress(optionIndex)}
+                  tintColors={{ true: PURPLE, false: '#D9D9D9' }}
+                />
+                <TouchableOpacity
+                  key={optionIndex}
+                  style={[styles.optionCard, selectedOptions.includes(optionIndex) && styles.selectedOptionCard]}
+                  onPress={() => handleOptionPress(optionIndex)}
+                >
+                  <Subtitle16M style={selectedOptions.includes(optionIndex) ? styles.selectedOptionText : { color: PURPLE }}>
+                    {option.title}
+                  </Subtitle16M>
+
+                  <View style={styles.optionHeader}>
+                    <Subtitle16M style={selectedOptions.includes(optionIndex) ? styles.selectedOptionText : { color: BLACK }}>
+                      {option.title}
+                    </Subtitle16M>
+                    <Body16M style={selectedOptions.includes(optionIndex) ? styles.selectedOptionText : { color: BLACK, textAlign: 'right' }}>
+                      {option.price}
+                    </Body16M>
+                  </View>
+
+                  <View style={styles.optionContent}>
+                    <View style={styles.optionDescription}>
+                      <Body14R style={{ color: BLACK }}>{option.description}</Body14R>
+                    </View>
+                    <View style={styles.optionImage}>
+                      <Image source={{ uri: option.image }} style={styles.optionImage} />
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            ))}
+          </View>
+
 
       <View style={{ paddingVertical: 20, borderBottomWidth: 5, borderColor: '#D9D9D9', backgroundColor: '#FFFFFF', marginBottom: 20 }}>
         <Subtitle18M style={{ paddingHorizontal: 15, marginBottom: 5 }}>추가 요청사항</Subtitle18M>
@@ -407,9 +429,9 @@ const handleNextPress = () => {
             slider
           />
         }
-        <View style={{ paddingHorizontal: 15, marginTop: 15 }}>
+        <View style={{ paddingHorizontal: 13, marginTop: 15 }}>
           <PhotoOptions
-            style={Object.assign({}, styles.grayButton, { margin: 5, marginBottom: 5 })} // Object.assign을 사용하여 스타일 병합
+            style={Object.assign({}, styles.grayButton, { margin: 5, marginBottom: 5 })}
             max={4}
             setPhoto={setRefPhotos}
             buttonLabel='참고 이미지 첨부'

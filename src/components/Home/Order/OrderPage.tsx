@@ -12,14 +12,15 @@ import { HomeStackParams } from '../../../pages/Home';
 
 
 
-const OrderInfo = ({ name, customer, orderDate, is_online }) => (
+const OrderInfo = ({ name, customer,  estimated_price, is_online }) => (
   <InfoContainer>
     <Text style={{ color: 'black', fontSize: 18, fontWeight: 'bold', marginBottom: 4 }}>{name}</Text>
     <Text style={{ color: 'black', fontSize: 15, marginBottom: 4 }}>주문자: {customer}</Text>
-    <Text style={{ color: 'black', fontSize: 15, marginBottom: 4 }}>주문 일시: {orderDate}</Text>
+    <Text style={{ color: 'black', fontSize: 15, marginBottom: 4 }}> </Text>
+    <Text style={{ color: 'black', fontSize: 15, marginBottom: 4 }}>예상 결제 금액: {estimated_price}</Text>
     <Text style={{ color: 'black', fontSize: 15 }}>거래 방식: {is_online ? '비대면' : '대면'}</Text>
     <TouchableOpacity style={{ marginTop: 10, alignSelf: 'flex-end' }}>
-      <Text style={{ color: 'gray', fontSize: 14, fontWeight: 'bold' }}>주문서 확인</Text>
+      <Text style={{ color: 'gray', fontSize: 14, fontWeight: 'bold' , textDecorationLine: 'underline'}}>주문서 확인</Text>
     </TouchableOpacity>
   </InfoContainer>
 );
@@ -28,7 +29,7 @@ const OrderInfo = ({ name, customer, orderDate, is_online }) => (
 const OrderStatusLabel = ({ status }) => {
   switch (status) {
     case 'progress':
-      return <StatusText style={{ color: 'gray' }}>배송중</StatusText>;
+      return <StatusText style={{ color: PURPLE }}>배송중</StatusText>;
     case 'completed':
       return <StatusText style={{ color: PURPLE }}>거래 완료</StatusText>;
     default:
@@ -112,6 +113,7 @@ const OrderPage: React.FC<OrderPageProps> = ({ flatListRef }) => {
       name: '청바지 서비스',
       customer: '###',
       orderDate: '2024-05-22',
+      estimated_price: '25000원',
       is_online: true,
       photoUri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
       status: 'progress',
@@ -121,6 +123,7 @@ const OrderPage: React.FC<OrderPageProps> = ({ flatListRef }) => {
       name: '니트 서비스',
       customer: '@@@',
       orderDate: '2024-05-22',
+      estimated_price: '25000원',
       is_online: false,
       photoUri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
       status: 'completed',
@@ -130,6 +133,7 @@ const OrderPage: React.FC<OrderPageProps> = ({ flatListRef }) => {
       name: '에코백 서비스',
       customer: '&&&',
       orderDate: '2024-05-22',
+      estimated_price: '25000원',
       is_online: false,
       photoUri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
       status: 'before',
@@ -139,6 +143,7 @@ const OrderPage: React.FC<OrderPageProps> = ({ flatListRef }) => {
       name: '청바지 에코백 서비스',
       customer: '$$$',
       orderDate: '2024-06-22',
+      estimated_price: '25000원',
       is_online: true,
       photoUri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
       status: 'completed',
@@ -165,15 +170,17 @@ const OrderPage: React.FC<OrderPageProps> = ({ flatListRef }) => {
       )}
       renderItem={({ item: order }: any) => (
         <OrderInfoBox>
+         <View style={{ marginTop: 15 }} />
          <View style={{ flexDirection: 'row' }}>
            <ImageContainer source={{ uri: order.photoUri }} />
          <OrderInfo
           name={order.name}
           customer={order.customer}
-          orderDate={order.orderDate}
+          estimated_price={order.estimated_price}
           is_online={order.is_online}
           />
           </View>
+          <OrderDateText style={{ color: BLACK }}>{order.orderDate}</OrderDateText>
           <OrderStatusLabel status={order.status} />
           <OrderActionButtons status={order.status} navigation={navigation} />
          </OrderInfoBox>
@@ -205,6 +212,14 @@ const StatusText = styled.Text`
   font-weight: bold;
 `;
 
+const OrderDateText = styled.Text`
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  font-size: 14px;
+  font-weight: bold;
+`;
+
 const ButtonContainer = styled.View`
   flex-direction: row;
   justify-content: space-between;
@@ -230,8 +245,8 @@ const ActionButton = styled.TouchableOpacity`
 `;
 
 const ImageContainer = styled.Image`
-  width: 100px;
-  height: 100px;
+  width: 130px;
+  height: 130px;
   border-radius: 8px;
 `;
 
