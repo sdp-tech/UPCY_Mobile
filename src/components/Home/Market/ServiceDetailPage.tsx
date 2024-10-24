@@ -28,6 +28,7 @@ import DetailScreenHeader from '../components/DetailScreenHeader';
 import ScrollToTopButton from '../../../common/ScrollToTopButtonFlat';
 import HeartButton from '../../../common/HeartButton';
 import { Styles } from '../../../types/UserTypes';
+import ReviewPage from './ReviewPage';
 
 const { width, height } = Dimensions.get('window');
 
@@ -249,25 +250,6 @@ const Profile = ({
           </TouchableOpacity>
           <Text style={TextStyles.reformerName}>{reformerName}</Text>
         </View>
-        <View
-          style={{
-            flex: 1,
-            alignItems: 'flex-end',
-            justifyContent: 'flex-end',
-          }}>
-          <View
-            style={{
-              marginRight: 15,
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <TouchableOpacity onPress={() => {}}>
-              <Review color={BLACK} />
-            </TouchableOpacity>
-            <Text style={{ marginTop: 8 }}>후기({reviewNum})</Text>
-          </View>
-        </View>
       </View>
     </View>
   );
@@ -337,8 +319,7 @@ const ServiceDetailPageMainScreen = ({
           <ScrollToTopButton flatListRef={flatListRef} />
         </Tabs.Tab>
         <Tabs.Tab name={`후기(${reviewNum})`}>
-          {/*5는 임시 숫자임. 실제 데이터 넣어야 함.*/}
-          <OptionBox flatListRef={optionPageRef} />
+          <ReviewPage flatListRef={optionPageRef} />
         </Tabs.Tab>
       </Tabs.Container>
       <Footer />

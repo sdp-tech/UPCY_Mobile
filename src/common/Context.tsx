@@ -1,41 +1,67 @@
 import React, { ReactNode, createContext, useContext, useEffect, useState } from 'react';
-import { getAccessToken } from './storage';
+import { getAccessToken, setNickname, setUserRole } from './storage';
 import Request from './requests';
 import { Alert } from 'react-native';
 
 type UserType = {
-  nickname?: string;
-  marketname?: string;
-  introduce?: string;
-  link?: string;
   email: string;
-  region: string;
-  is_reformer: boolean;
-  is_consumer: boolean;
-
+  phone: string;
+  nickname: string;
+  agreement_terms: boolean;
+  adress: string;
+  profile_image_url: string;
+  introduce: string;
+  is_active: boolean;
+  role: string;
 };
 
 export const UserContext = createContext<{
   user: UserType | null;
+  role: string;
   setUser: (user: UserType) => void;
+  setRole: (role: string) => void;
 }>({
   user: null,
+  role: '',
   setUser: () => { },
+  setRole: () => { },
 });
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
+  function sanitizeUserData(data: any) { // null 오류 안 나도록 기본값 설정
+    return {
+      email: data.email || "",
+      phone: data.phone || "",
+      nickname: data.nickname || "",
+      agreement_terms: data.agreement_terms !== undefined ? data.agreement_terms : false,
+      adress: data.address || "",
+      profile_image_url: data.profile_image_url || "https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp",
+      introduce: data.introduce || "",
+      is_active: data.is_active !== undefined ? data.is_active : false,
+      role: data.role || "customer"
+    };
+  }
+
   const [user, setUser] = useState<UserType | null>(null);
+  const [role, setRole] = useState<string>(''); // 빈 문자열로 초기화
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const request = Request();
 
   useEffect(() => {
     const fetchUserData = async () => {
+      const accessToken = await getAccessToken();
+      const headers = {
+        Authorization: `Bearer ${accessToken}`
+      }
       try {
-        // Request의 get 메소드를 사용하여 유저 정보를 가져옴
-        const response = await request.get('api/user', {}, {}); // API URL에 맞게 수정
+        const response = await request.get(`/api/user`, {}, headers);
         if (response && response.status === 200) {
-          setUser(response.data);  // 전역 상태에 유저 데이터를 저장
+          console.log('유저 데이터를 저장합니다.');
+          const sanitizedUserData = sanitizeUserData(response.data);
+          setUser(sanitizedUserData); // 전역 상태에 유저 데이터를 저장
+          setUserRole(sanitizedUserData.role);
+          console.log('Saving credentials:', sanitizedUserData);
         } else {
           setError('유저 정보를 불러오는 중 문제가 발생했습니다.');
         }
@@ -51,7 +77,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     fetchUserData();  // Provider가 마운트될 때 유저 데이터 가져옴
   }, []);
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user, role, setUser, setRole }}>
       {children}
     </UserContext.Provider>
   );

@@ -61,8 +61,8 @@ type Career = {
 export type CareerType = Career[];
 
 type Awards = {
-  name: string; // 공모전명
-  prize: string | undefined; // 수상내역
+  competition: string; // 공모전명 
+  prize: string | undefined; // 수상내역 
 };
 export type AwardsType = Awards[];
 
@@ -73,8 +73,8 @@ type Certifi = {
 export type CertifiType = Certifi[];
 
 type Free = {
-  project_name: string; // 프로젝트명
-  explain: string | undefined; // 상세설명
+  project_name: string; // 프로젝트명 
+  description: string | undefined; // 상세설명 
 };
 export type FreeType = Free[];
 

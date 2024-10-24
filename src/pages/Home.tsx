@@ -33,21 +33,11 @@ import WriteReviewPage from '../components/Home/Market/WriteReviewPage';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import ComponentsTest from './ComponentsTest';
 import { PURPLE } from '../styles/GlobalColor';
-import { ProfileSection } from '../components/Home/Market/MarketTabView';
-import ServicePage from '../components/Home/Market/ServicePage';
-import ScrollToTopButton from '../common/ScrollToTopButtonFlat';
-import ReviewPage from '../components/Home/Market/ReviewPage';
-import ScrollTopButton from '../common/ScrollTopButton';
-import Footer from '../common/Footer';
-import { BLACK, White } from '../styles/GlobalColor';
-import InfoPage from '../components/Home/Market/InfoPage';
-// import OrderPage from '../components/Home/Order/OrderPage';
-// FIXME: OrderPage가 존재하지 않는 관계로 임시 주석 처리
 import OrderManagement from '../components/Home/Order/OrderManagement';
 import ReformerMarket from '../components/Home/Market/ReformerMarket';
+import ReformerProfileService from '../components/Auth/Reformer/Profile/Service';
 import Service from '../components/Home/Market/Service';
 import { PhotoType } from '../hooks/useImagePicker';
-import ReformerProfilePage from '../components/Auth/Reformer/ReformerProfilePage';
 import { Styles } from '../types/UserTypes';
 
 export type HomeStackParams = {
@@ -56,9 +46,11 @@ export type HomeStackParams = {
   ServiceDetailPage: {
     // id?: number;
     serviceName: string;
+    reformerName: string;
     basicPrice: number;
     maxPrice: number;
     tags: Styles[];
+    reviewNum: number;
     backgroundImageUri: string;
     profileImageUri?: string;
   };
@@ -79,7 +71,6 @@ export type HomeStackParams = {
   SentRejection: undefined;
   WriteReviewPage: undefined;
   ReformerMarket: undefined;
-  ReformerProfilePage: undefined;
   TestComponents: undefined;
 };
 
@@ -134,12 +125,9 @@ const HomeScreen = ({
       <HomeStack.Screen name="Rejection" component={Rejection} />
       <HomeStack.Screen name="SentRejection" component={SentRejection} />
       <HomeStack.Screen name="WriteReviewPage" component={WriteReviewPage} />
-      <HomeStack.Screen
-        name="ReformerProfilePage"
-        component={ReformerProfilePage}
-      />
       <HomeStack.Screen name="TestComponents" component={ComponentsTest} />
       <HomeStack.Screen name="ReformerMarket" component={ReformerMarket} />
+      <HomeStack.Screen name="ReformerProfileService" component={ReformerProfileService} />
     </HomeStack.Navigator>
   );
 };
@@ -186,7 +174,6 @@ const HomeMainScreen = ({
       return result;
     }, []);
   };
-  const splitItems = splitArrayIntoPairs(items, 2);
 
   const [selectedFilterOption, setSelectedFilterOption] = useState<
     SelectedOptionProps | undefined
@@ -215,6 +202,9 @@ const HomeMainScreen = ({
           {selectedTab === 'Market' && <ReformerMarket />}
           {selectedTab === 'temp' && (
             <ScrollView>
+              <Button onPress={() => navigation.navigate('ReformerProfileService')}>
+                <Text>리포머 프로필</Text>
+              </Button>
               <Button onPress={handlePopupButtonPress}>
                 <ButtonText>팝업 표시</ButtonText>
               </Button>
@@ -252,10 +242,6 @@ const HomeMainScreen = ({
               </Button>
               <Button onPress={() => navigation.navigate('WriteReviewPage')}>
                 <Text>후기 작성 페이지</Text>
-              </Button>
-              <Button
-                onPress={() => navigation.navigate('ReformerProfilePage')}>
-                <Text>리폼러 프로필 페이지</Text>
               </Button>
               <Button onPress={() => navigation.navigate('TestComponents')}>
                 <Text>공통 컴포넌트 테스트</Text>

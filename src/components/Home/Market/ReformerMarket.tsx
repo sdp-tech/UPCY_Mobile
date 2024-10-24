@@ -147,14 +147,14 @@ const CategoryButton = styled.TouchableOpacity`
   border-width: 1px;
   border-color: #612fef;
   background-color: ${(
-    { props }: { props: any }, // TODO: 나중에 props의 type specify 필요
-  ) => (props.pressed ? '#612FEF' : '#FFFFFF')};
+  { props }: { props: any }, // TODO: 나중에 props의 type specify 필요
+) => (props.pressed ? '#612FEF' : '#FFFFFF')};
 `;
 
 const CategoryButtonText = styled.Text`
   color: ${(
-    { props }: { props: any }, // TODO: 나중에 props의 type specify 필요
-  ) => (props.pressed ? '#FFFFFF' : '#222222')};
+  { props }: { props: any }, // TODO: 나중에 props의 type specify 필요
+) => (props.pressed ? '#FFFFFF' : '#222222')};
 `;
 
 const CategoryBox = styled.View`
