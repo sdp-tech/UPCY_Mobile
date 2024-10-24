@@ -46,9 +46,9 @@ const QuotationPage = ({ navigation, route }: StackScreenProps<HomeStackParams, 
   };
 
   const quotation = [
-    { key: '재질', data: materials }, // QuotationForm에서 선택한 재질
+    { key: '소재', data: materials }, // QuotationForm에서 선택한 재질
     { key: '추가 요청사항', data: additionalRequest || '없음' }, // 추가 요청사항, 없으면 '없음'
-    { key: '옵션 상세', data: options.map(option => option.title).join(', ') || '없음' }, // 선택한 옵션들, 없으면 '없음'
+    { key: '추가한 옵션', data: options.map(option => option.title).join(', ') || '없음' }, // 선택한 옵션들, 없으면 '없음'
     { key: '거래 방식', data: transactionMethod }, //선택한 거래 방식 (대면/비대면)
     { key: '이름', data: name },
     { key: '연락처', data: tel },
@@ -75,21 +75,19 @@ const QuotationPage = ({ navigation, route }: StackScreenProps<HomeStackParams, 
       <BackButton onPress={() => navigation.goBack()}>
         <Arrow color={BLACK} />
       </BackButton>
-      <ImageBackground
-        source={{ uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp' }}
-        style={{ width: '100%', height: '100%' }}
-      >
-        <View style={{ position: 'absolute', width: '100%', height: '100%', backgroundColor: BLACK, opacity: 0.9 }} />
-        <Title20B style={{ marginTop: statusBarHeight, color: 'white', textAlign: 'center' }}>주문서 확인</Title20B>
-        <View style={{ paddingVertical: 35, paddingHorizontal: 20 }}>
-          <Title20B style={{ color: 'white', marginBottom: 3 }}>마켓명 (SDP의 상점)</Title20B>
-          <Caption12M style={{ color: 'white', marginBottom: 18 }}>리폼러 닉네임 (전성식탁)</Caption12M>
-          <Body16M style={{ color: 'white' }}>마켓 소개글</Body16M>
-        </View>
+
+        <Title20B style={{ marginTop: 5, marginBottom:15, color: 'black', textAlign: 'center' }}>주문서 확인</Title20B>
+
 
         <View style={{ backgroundColor: 'white', marginHorizontal: 10 }}>
-          <View style={{ backgroundColor: GREEN, marginHorizontal: 20, paddingVertical: 5, alignItems: 'center' }}>
-            <Filter14M style={{ color: PURPLE }}>주문서 영수증</Filter14M>
+          <View style={{ marginHorizontal: 20, paddingVertical: 10, alignItems: 'center' }}>
+            <Filter14M style={{ color: 'black' }}>주문서</Filter14M>
+            <View style={{ height: 1, backgroundColor: PURPLE, width: '100%', marginTop: 5 , marginBottom:20}} />
+            <Subtitle16M style={{ color: 'black', marginBottom: 5 }}>청바지로 에코백 만들어드립니다</Subtitle16M>
+            <Body14R style={{ color: 'black' }}>주문번호: 08WH9A</Body14R>
+            <Caption12M style={{ color: 'black' }}>2024-10-31 17:05</Caption12M>
+
+
           </View>
           {quotation.map((item, index) => {
             return (
@@ -119,10 +117,10 @@ const QuotationPage = ({ navigation, route }: StackScreenProps<HomeStackParams, 
                       }}
                       slider
                     />
-                    <Body14R style={{ textAlign: 'center' }}>이렇게 저렇게 해주세요</Body14R>
+                    <Body14R style={{ textAlign: 'center' , marginBottom:20}}>이렇게 저렇게 해주세요</Body14R>
                   </>
                 )}
-                {item.key === '옵션 상세' && (
+                {item.key === '추가한 옵션' && (
                   <View style={{ backgroundColor: 'white', marginHorizontal: 10, paddingVertical: 20 }}>
                     {options.map((option, optionIndex) => (
                       <View key={optionIndex} style={styles.optionCard}>
@@ -145,20 +143,33 @@ const QuotationPage = ({ navigation, route }: StackScreenProps<HomeStackParams, 
 
                       </View>
                     ))}
+                    <View style={{ marginTop: 20 }}>
+                        <TextBox>
+                          <Subtitle16M style={{ flex: 1 }}>서비스 금액</Subtitle16M>
+                          <Body14R style={{ flex: 1.5, textAlign: 'right' }}>19900원</Body14R>
+                        </TextBox>
+                        <TextBox>
+                          <Subtitle16M style={{ flex: 1 }}>옵션 추가 금액</Subtitle16M>
+                          <Body14R style={{ flex: 1.5, textAlign: 'right' }}>2000원</Body14R>
+                        </TextBox>
+                         <View style={{ height: 1, backgroundColor: BLACK, width: '100%', paddingHorizontal:20 , marginBottom:20}} />
+
+                        <TextBox>
+                          <Subtitle16M style={{ flex: 1 }}>예상 결제 금액</Subtitle16M>
+                          <Body14R style={{ flex: 1.5, textAlign: 'right' }}>21900원</Body14R>
+                        </TextBox>
+                    </View>
+
                   </View>
                 )}
+
               </View>
+
             );
           })}
         </View>
         <View style={{backgroundColor: "#F4F4F4", marginHorizontal: 10, alignItems: 'center', paddingVertical: 15}}>
-          <Subtitle16M style={{color: PURPLE}}>안내문</Subtitle16M>
-          <Caption11M style={{color: BLACK, marginVertical: 5}}>
-                     증빙자료를 첨부하시면 담당자 검토 후, 확인 마크를 달아드립니다.{'\n'}
-                     첨부 가능 자료 :  재학증명서, 졸업증명서, 성적 증명서{'\n'}
-                      (용량입력) 이하 (파일형식 입력) 파일만 등록 가능합니다{'\n'}
-                      제출한 자료는 의뢰인에게 노출되지 않습니다{'\n'}
-          </Caption11M>
+
             <CheckBox
             style={{ paddingHorizontal: 30, alignSelf: 'center', marginVertical: 5 }}
             pressed={checkBoxPressed}
@@ -167,14 +178,12 @@ const QuotationPage = ({ navigation, route }: StackScreenProps<HomeStackParams, 
           />
          </View>
         <View style={{padding: 10, marginVertical: 30}}>
-          <BottomButton value={'주문서 보내기'} pressed={false}
-            // onPress={showModal}
-            onPress={() => navigation.navigate('SentQuotation')}
+          <BottomButton value={'주문서 보내기'}  onPress={handleSendQuotation}
             />
           <View style={{marginVertical: 5}} />
           <BottomButton value={'취소하기'} pressed={true} onPress={() => setModalVisible(true)} />
         </View>
-      </ImageBackground>
+
       <Modal visible={finishModal} transparent={true}>
         {/* 리폼러일 경우 */}
         <View style={{backgroundColor: 'black', opacity: 0.8, height: '100%', alignItems: 'center', justifyContent: 'center'}}>
@@ -183,10 +192,7 @@ const QuotationPage = ({ navigation, route }: StackScreenProps<HomeStackParams, 
           <Subtitle16M style={{color: 'white', textAlign: 'center'}}>의뢰인이 카톡 링크를 통해{'\n'}상담을 신청할 거예요</Subtitle16M>
         </View>
       </Modal>
-      <Modal visible={modalVisible}>
-        {/* 리폼러일 경우 */}
-        <Rejection onClose={() => setModalVisible(false)} />
-      </Modal>
+
     </ScrollView>
   )
 }

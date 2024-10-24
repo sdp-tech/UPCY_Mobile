@@ -57,9 +57,11 @@ const styles = StyleSheet.create({
   selectedFilterButton: {
     backgroundColor: PURPLE, // 선택된 경우의 배경색
   },
-  text: {
-    color: '#333',
+  selectedFilterButton2: {
+    borderColor: PURPLE,
+    backgroundColor: '#F0F0FF',
   },
+
   selectedText: {
     color: 'white', // 선택된 경우의 텍스트색
   },
@@ -71,11 +73,7 @@ const styles = StyleSheet.create({
     borderColor: '#D9D9D9',
     borderWidth: 0.5,
   },
-  optionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 10,
-  },
+
   optionText: {
     fontSize: 14,
     color: '#666',
@@ -133,25 +131,34 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#F0F0F0',
     borderRadius: 8,
-  }
+  },
 });
+
+
+const toggleSelection = <T,>(
+  selectedItems: T[],
+  setSelectedItems: Dispatch<SetStateAction<T[]>>,
+  item: T
+) => {
+  setSelectedItems((prevSelectedItems) => {
+    if (prevSelectedItems.includes(item)) {
+      return prevSelectedItems.filter((selectedItem) => selectedItem !== item);
+    } else {
+      return [...prevSelectedItems, item];
+    }
+  });
+};
+
 
 const FilterSection = ({ label, items, showDuplicate = true, onMaterialSelect }: FilterSectionProps) => {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
-  const handleSelectItem = (item: string) => {
-    if (selectedItems.includes(item)) {
-      // 이미 선택된 항목이면 제거
-      const updatedItems = selectedItems.filter(selectedItem => selectedItem !== item);
-      setSelectedItems(updatedItems);
-      onMaterialSelect(updatedItems); // 부모로 업데이트된 배열을 전달
-    } else {
-      // 새로운 항목을 배열에 추가
-      const updatedItems = [...selectedItems, item];
-      setSelectedItems(updatedItems);
-      onMaterialSelect(updatedItems); // 부모로 업데이트된 배열을 전달
-    }
-  };
+ const handleSelectItem = (item: string) => {
+    toggleSelection(selectedItems, setSelectedItems, item);
+    setSelectedItems((updatedItems) => {
+      onMaterialSelect(updatedItems);
+      return updatedItems;
+    });  };
 
   return (
     <FilterContainer>
@@ -214,9 +221,8 @@ const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 
     },
   ];
 
-  const optionTitles = options.map(option => option.title);
 
-
+  const [showDuplicate] = useState(true);
   const [text, setText] = useState<string>('');
   const [photos, setPhotos] = useState<PhotoResultProps[]>([]);
   const [refPhotos, setRefPhotos] = useState<PhotoResultProps[]>([]);
@@ -258,14 +264,12 @@ const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 
   };
 
   const handleOptionPress = (index: number) => {
-     setSelectedOptions(prevSelectedOptions => {
-       if (prevSelectedOptions.includes(index)) {
-         return prevSelectedOptions.filter(optionIndex => optionIndex !== index);
-       } else {
-         return [...prevSelectedOptions, index];
-       }
-     });
+     toggleSelection(selectedOptions, setSelectedOptions, index);
    };
+
+  const handleFilterSelection = (filterType: string) => {
+    setSelectedFilter(filterType);
+  };
 
 const handleNextPress = () => {
   if (!selectedFilter) {
@@ -273,11 +277,12 @@ const handleNextPress = () => {
     return;
   }
 
+  const selectedOptionDetails = selectedOptions.map(index => options[index]);
 
   navigation.navigate('InputInfo', {
      materials: selectedMaterial,
      transactionMethod: selectedFilter,
-     options: selectedOptions, // 선택한 옵션
+     options: selectedOptionDetails, // 선택한 옵션
      additionalRequest: text,
    });
  };
@@ -359,12 +364,12 @@ const handleNextPress = () => {
 
 
 
-      {/* 옵션 섹션 추가 */}
-          <View style={styles.optionBox}>
-            <View style={styles.filterBox}>
-              <Subtitle18M style={{ paddingHorizontal: 15, marginBottom: 5 }}>옵션 상세</Subtitle18M>
-              <Caption11M style={{ color: PURPLE }}>• 중복 가능</Caption11M>
-            </View>
+      <View style={styles.optionBox}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 5 }}>
+          <Subtitle18M style={{ paddingHorizontal: 15 }}>옵션 상세</Subtitle18M>
+          {showDuplicate && <Caption11M style={{ color: PURPLE }}>• 중복 가능</Caption11M>}
+        </View>
+
 
             {options.map((option, optionIndex) => (
               <View key={optionIndex} style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -406,7 +411,11 @@ const handleNextPress = () => {
 
 
       <View style={{ paddingVertical: 20, borderBottomWidth: 5, borderColor: '#D9D9D9', backgroundColor: '#FFFFFF', marginBottom: 20 }}>
-        <Subtitle18M style={{ paddingHorizontal: 15, marginBottom: 5 }}>추가 요청사항</Subtitle18M>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 5 }}>
+          <Subtitle18M style={{ paddingHorizontal: 15 }}>추가 요청사항</Subtitle18M>
+          { <Caption11M style={{ color: PURPLE }}>* 최대 2장 (PNG,JPG) </Caption11M>}
+        </View>
+
         {refPhotos.length > 0 &&
           <Carousel
             data={splitRefPhotos}
@@ -444,46 +453,39 @@ const handleNextPress = () => {
 
 
       <View style={{ paddingHorizontal: 15, paddingVertical: 20, backgroundColor: '#FFFFFF' }}>
-        <Subtitle18M style={{ marginBottom: 10 }}>거래 방식 선택</Subtitle18M>
-        <FilterBox style={{ alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 80 }}>
-          {['비대면', '대면'].map((item, index) => (
-            <Filter
-              key={index}
-              value={item}
-              isSelected={selectedFilter === item}
-              onPress={() => handleOnePress(item)}
-            />
-          ))}
-        </FilterBox>
+         <Subtitle18M style={{ marginBottom: 10 }}>거래 방식 선택</Subtitle18M>
 
-        {selectedFilter === '대면' && (
-          <View style={styles.optionBox}>
-            <Text style={styles.optionTitle}>대면 지역 선택</Text>
-            <Picker
-              selectedValue={faceToFaceRegion}
-              onValueChange={(itemValue) => setFaceToFaceRegion(itemValue)}
-            >
-              <Picker.Item label="신촌" value="신촌" />
-              <Picker.Item label="홍대" value="홍대" />
-              <Picker.Item label="강남" value="강남" />
-              <Picker.Item label="성수" value="성수" />
-            </Picker>
-          </View>
-        )}
 
-        {selectedFilter === '비대면' && (
-          <View style={styles.optionBox}>
-            <Text style={styles.optionTitle}>택배 유형 선택</Text>
-            <Picker
-              selectedValue={deliveryType}
-              onValueChange={(itemValue) => setDeliveryType(itemValue)}
-            >
-              <Picker.Item label="우체국 택배" value="우체국 택배" />
-              <Picker.Item label="편의점 택배" value="편의점 택배" />
-            </Picker>
-          </View>
-        )}
-      </View>
+                {/* 비대면 버튼 */}
+                <TouchableOpacity
+                  style={[
+                    styles.filterButton,
+                    selectedFilter === '비대면' && styles.selectedFilterButton2,
+                  ]}
+                  onPress={() => handleFilterSelection('비대면')}
+                >
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Text style={styles.filterText}>📦</Text>
+                    <Text style={styles.filterText}>비대면</Text>
+                  </View>
+                  <Text style={styles.filterDescription}>오픈채팅에서 리폼접수 주소를 주고 받으세요!</Text>
+                </TouchableOpacity>
+
+                {/* 대면 버튼 */}
+                <TouchableOpacity
+                  style={[
+                    styles.filterButton,
+                    selectedFilter === '대면' && styles.selectedFilterButton2,
+                  ]}
+                  onPress={() => handleFilterSelection('대면')}
+                >
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Text style={styles.filterText}>📍</Text>
+                    <Text style={styles.filterText}>대면</Text>
+                  </View>
+                  <Text style={styles.filterDescription}>오픈채팅에서 리폼과 약속을 잡아보세요!</Text>
+                </TouchableOpacity>
+              </View>
 
       <View style={{ paddingHorizontal: 45, paddingVertical: 20 }}>
         <BottomButton value='다음' pressed={false} onPress={handleNextPress} />
