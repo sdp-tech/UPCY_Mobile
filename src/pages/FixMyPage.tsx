@@ -31,7 +31,7 @@ type ProfileType = {
 };
 
 function ProfilePic({ form, setForm }: ProfileProps) {
-    const [photo, setPhoto] = useState(form.profile_image);
+    const [photo, setPhoto] = useState(form.profile_image); // 프로필 사진은 form.profile_image.uri?
     const [handleAddButtonPress, handleImagePress] = useImagePicker(setPhoto);
 
     useEffect(() => {
@@ -67,12 +67,12 @@ function ProfilePic({ form, setForm }: ProfileProps) {
                         paddingVertical: 0,
                         paddingHorizontal: 0,
                         marginBottom: 0,
+                        opacity: 10
                     }}>
                     {photo !== undefined && (
                         <Image
                             source={{ uri: photo.uri }}
                             style={{ width: 'auto', height: '100%', borderRadius: 100 }}
-                            alt={photo.fileName}
                         />
                     )}
                 </View>
@@ -99,10 +99,66 @@ function ProfilePic({ form, setForm }: ProfileProps) {
 const FixMyPage = ({ navigation, route }: FixMyPageProps) => {
     const { isLogin, setLogin } = useContext(LoginContext);
     const request = Request();
+    const userInfo = route.params.userInfo;
+    const [form, setForm] = useState<ProfileType>({
+        profile_image: userInfo.profile_image,
+        nickname: userInfo.nickname,
+        introduce: userInfo.introduce,
+    });
+
+    const UpdateImage = async () => {
+        const accessToken = await getAccessToken();
+        const headers = {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'multipart/form-data', // multipart/form-data 설정
+        };
+        const formData = new FormData();
+        formData.append('profile_image', {
+            uri: form.profile_image?.uri, // 파일의 URI
+            type: 'image/jpeg', // 이미지 형식 (예: 'image/jpeg')
+            name: form.profile_image?.fileName || 'profile.jpg', // 파일 이름
+        });
+        try {
+            const response = await request.post(`/api/user/profile-image`, formData, headers)
+            if (response && response.status === 201) {
+                console.log('프로필 이미지 수정 성공')
+            } else {
+                console.log('이미지 업로드 실패');
+                console.log(response);
+            }
+        }
+        catch (err) {
+            console.error(err)
+        }
+    }
+
+    const UpdateUser = async () => { // 유저 프로필 업데이트 
+        const accessToken = await getAccessToken();
+        const headers = {
+            Authorization: `Bearer ${accessToken}`
+        }
+        const data = {
+            nickname: form.nickname,
+            introduce: form.introduce,
+        }
+        try {
+            const response = await request.put(`/api/user`, data, headers);
+            if (response && response.status === 200) {
+                await UpdateImage(); // 유저 프로필 이미지 업데이트 
+                console.log('유저 데이터 업데이트 성공', response.data);
+                navigation.navigate({ name: 'MyPage', params: { userInfo: userInfo }, merge: true });
+            }
+            else {
+                console.log(response);
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
     const Logout = async () => {
         const accessToken = await getAccessToken();
         const refreshToken = await getRefreshToken();
-        setLogin(false);
         const params = {
             refresh: refreshToken
         }
@@ -111,25 +167,23 @@ const FixMyPage = ({ navigation, route }: FixMyPageProps) => {
         }
         try {
             const response = await request.post(`/api/user/logout`, params, headers)
-            if (response && response.status === 205) {
+            if (response && response.status === 200) {
                 console.log('로그아웃 합니다.')
                 removeAccessToken();
                 removeRefreshToken();
+                setLogin(false);
                 console.log('AccessToken: ', { accessToken }, '| RefreshToken: ', { refreshToken });
-
                 navigation.getParent()?.reset({
                     index: 0, // 스택 초기화 
                     routes: [{ name: 'Home' }],
                 });
             } else {
-                console.error('Unexpected response status: ', response?.status);
+                console.log(response);
             }
-
         }
         catch (err) {
             console.error(err)
         }
-
     };
 
     function handleLogout(): () => void {
@@ -145,14 +199,6 @@ const FixMyPage = ({ navigation, route }: FixMyPageProps) => {
             );
         }
     }
-
-    const userInfo = route.params.userInfo;
-
-    const [form, setForm] = useState<ProfileType>({
-        profile_image: userInfo.profile_image,
-        nickname: userInfo.nickname,
-        introduce: userInfo.introduce,
-    });
 
     useEffect(() => {
         userInfo.nickname = form.nickname;
@@ -173,10 +219,6 @@ const FixMyPage = ({ navigation, route }: FixMyPageProps) => {
             );
         };
     };
-
-    function handleSave(): () => void {
-        return () => { navigation.navigate({ name: 'MyPage', params: { userInfo: userInfo }, merge: true }); };
-    }
 
     const { width } = Dimensions.get('screen');
     return (
@@ -220,7 +262,7 @@ const FixMyPage = ({ navigation, route }: FixMyPageProps) => {
                         />
                     </View>
                     <View style={{ flexDirection: "row", flexGrow: 1, alignSelf: "center" }}>
-                        <Button title='저장하기' onPress={handleSave()} />
+                        <Button title='저장하기' onPress={UpdateUser} />
                         <Button title="로그아웃" onPress={handleLogout()} color='red' />
                     </View>
                 </CustomScrollView>

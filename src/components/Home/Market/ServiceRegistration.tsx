@@ -315,7 +315,7 @@ const ServiceRegistrationPage = ({
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (temp: boolean) => {
     const accessToken = await getAccessToken();
     const market_uuid = await getMarketUUID();
     // let localPeriod = ''; // 얘는 나중에 개별 서비스 get해올 때 조건 걸어놓으면 될듯 
@@ -344,11 +344,43 @@ const ServiceRegistrationPage = ({
       service_style: formattedStyles,
       service_material: formattedMaterials,
       service_option: formattedOptions,
+      temporary: temp,
     };
     const headers = {
       Authorization: `Bearer ${accessToken}`
     };
-    if (
+    if (temp) { // 임시저장 눌렀을 경우 
+      const params_ = {
+        service_title: name || '임시 저장 서비스',
+        service_content: inputText || '임시 설명',
+        service_category: form.category || '기타(외주)',
+        service_period: makingTime || 0,
+        basic_price: parseInt(price, 10) || 10000,
+        max_price: parseInt(maxPrice, 10) || 20000,
+        service_style: formattedStyles || [{ style_name: "빈티지" }],
+        service_material: formattedMaterials || [{ material_name: "면" }],
+        service_option: formattedOptions || [{
+          option_content: '임시설명',
+          option_name: "임시옵션",
+          option_price: 1000,
+        }],
+        temporary: temp,
+      };
+      try {
+        const response = await request.post(`/api/market/${market_uuid}/service`, params_, headers)
+        if (response?.status === 201) {
+          console.log(params_);
+          const service_uuid = await response?.data.service_uuid;
+          console.log("Service UUID:", service_uuid);
+          // navigation.navigate('ReformerProfilePage');
+          console.log("임시등록 성공!");
+        }
+      } catch (err) {
+        console.error(err);
+      }
+      navigation.navigate('TempStorage');
+    }
+    else if ( // 일반 등록일 경우, 필수 필드 모두 채워야함 
       !(form.category == '') &&
       !(name == '') &&
       !(styles.length == 0) &&
@@ -370,7 +402,8 @@ const ServiceRegistrationPage = ({
       } catch (err) {
         console.error(err);
       }
-    } else {
+
+    } else { // 누락된거 있는 경우 
       Alert.alert('필수 사항들을 모두 입력해주세요');
     }
   }
@@ -577,12 +610,12 @@ const ServiceRegistrationPage = ({
         <ButtonSection style={{ flex: 1, marginHorizontal: 10 }}>
           <FooterButton
             style={{ flex: 0.2, backgroundColor: '#612FEF' }}
-            onPress={() => handleNextPage()}>
+            onPress={() => handleSubmit(true)}>
             <Subtitle16B style={{ color: '#FFFFFF' }}>임시저장</Subtitle16B>
           </FooterButton>
           <FooterButton
             style={{ flex: 0.7, backgroundColor: '#DBFC72' }}
-            onPress={() => handleSubmit()}>
+            onPress={() => handleSubmit(false)}>
             <Subtitle16B style={{ color: '#612FEF' }}>등록</Subtitle16B>
           </FooterButton>
         </ButtonSection>
@@ -590,12 +623,25 @@ const ServiceRegistrationPage = ({
     </SafeAreaView>
   );
 
+  const handleGoBack = () => {
+    Alert.alert(
+      "정말로 나가시겠습니까?",
+      "",
+      [
+        { text: "임시저장", onPress: () => handleSubmit(true) },
+        { text: "아니오", onPress: () => { } },
+        { text: "네", onPress: navigation.goBack, style: "destructive" }
+      ],
+      { cancelable: false }
+    );
+  }
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <DetailScreenHeader
         title="서비스 등록"
         leftButton="LeftArrow"
-        onPressLeft={() => { }}
+        onPressLeft={() => handleGoBack()}
         rightButton="None"
         onPressRight={() => { }}
         saved={0}
@@ -1105,15 +1151,15 @@ const ServiceRegistrationPage = ({
               2. 서비스 완성본의 이미지를 업로드해요.{'\n'}
             </Body16B>
             <Text>
-              제공하는 서비스의 완성본 예시나 작업 이미지를 서비스 설명과 함께 첨부하시면 업씨러의 선택에 
-                          도움이 됩니다 :D
-                </Text>
+              제공하는 서비스의 완성본 예시나 작업 이미지를 서비스 설명과 함께 첨부하시면 업씨러의 선택에
+              도움이 됩니다 :D
+            </Text>
             <TouchableOpacity
               onPress={() => {
                 setIsOpen(!isOpen);
               }}>
               <Text style={{ color: 'red' }}>{'\n'}{'\n'}닫기</Text>
-              </TouchableOpacity>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>

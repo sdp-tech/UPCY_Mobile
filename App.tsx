@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { View, TouchableOpacity, Text } from 'react-native';
 import {
   NavigationContainer,
@@ -20,7 +20,7 @@ import MyPageIcon from './src/assets/navbar/MyPage.svg';
 import SignIn from './src/components/Auth/SignIn';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomBarProvider, useBottomBar } from './contexts/BottomBarContext';
-import { LoginProvider, UserProvider } from './src/common/Context';
+import { LoginContext, LoginProvider, UserProvider } from './src/common/Context';
 import Reformer from './src/components/Auth/Reformer/Reformer';
 import SplashScreen from './src/common/SplashScreen';
 
@@ -51,24 +51,24 @@ function App(): React.JSX.Element {
   return (
     <BottomBarProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        {/* <UserProvider> */}
         <LoginProvider>
-          <NavigationContainer theme={GlobalTheme}>
-            {!isSplashFinished ? (
-              <SplashScreen onFinish={finishSplash} />
-            ) : (
-              <Stack.Navigator
-                screenOptions={() => ({
-                  headerShown: false,
-                })}>
-                <Stack.Screen name="Home" component={HomeTab} />
-                <Stack.Screen name="Signin" component={SignIn} />
-                <Stack.Screen name="ReformProfile" component={Reformer} />
-              </Stack.Navigator>
-            )}
-          </NavigationContainer>
+          <UserProvider>
+            <NavigationContainer theme={GlobalTheme}>
+              {!isSplashFinished ? (
+                <SplashScreen onFinish={finishSplash} />
+              ) : (
+                <Stack.Navigator
+                  screenOptions={() => ({
+                    headerShown: false,
+                  })}>
+                  <Stack.Screen name="Home" component={HomeTab} />
+                  <Stack.Screen name="Signin" component={SignIn} />
+                  <Stack.Screen name="ReformProfile" component={Reformer} />
+                </Stack.Navigator>
+              )}
+            </NavigationContainer>
+          </UserProvider>
         </LoginProvider>
-        {/* </UserProvider> */}
       </GestureHandlerRootView>
     </BottomBarProvider>
   );
@@ -100,7 +100,7 @@ const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
       }}>
       {state.routes.map((route, index) => {
         const isFocused = state.index == index;
-        const onPress = () => {
+        const onPress = () => { // 하단 탭바 추가하면 여기 수정해야합니다!!!! 
           if (route.name == '홈') {
             if (isFocused)
               navigation.reset({

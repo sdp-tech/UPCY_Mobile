@@ -92,7 +92,7 @@ export default function Request() {
           ...headers,
         },
       });
-      console.log('request test => ', response);
+      // console.log('request test => ', response);
       return response;
     });
   };
@@ -105,11 +105,11 @@ export default function Request() {
           ...headers,
         },
       });
-      console.log('headers', {
-        Authorization: headerValue,
-        ...headers,
-      });
-      console.log('request test => ', response);
+      // console.log('headers', {
+      //   Authorization: headerValue,
+      //   ...headers,
+      // });
+      // console.log('request test => ', response);
       return response;
     });
   };
@@ -122,7 +122,7 @@ export default function Request() {
           ...headers,
         },
       });
-      console.log('request test => ', response);
+      // console.log('request test => ', response);
       return response;
     });
   };
@@ -137,7 +137,7 @@ export default function Request() {
           ...headers,
         },
       });
-      console.log('request test => ', response);
+      // console.log('request test => ', response);
       return response;
     });
   };
@@ -150,7 +150,7 @@ export default function Request() {
           ...headers,
         },
       });
-      console.log('request test => ', response);
+      // console.log('request test => ', response);
       return response;
     });
   };
