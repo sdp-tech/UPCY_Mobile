@@ -7,6 +7,8 @@ import { getStatusBarHeight } from 'react-native-safearea-height';
 import { Title20B, Body14R, Caption11M } from '../../../styles/GlobalText.tsx';
 import { BLACK, BLACK2 } from '../../../styles/GlobalColor.tsx';
 
+import { useNavigation } from '@react-navigation/native';
+
 import { StackScreenProps } from '@react-navigation/stack';
 import { HomeStackParams } from '../../../pages/Home';
 
@@ -17,13 +19,15 @@ import ScrollToTopButton from '../../../common/ScrollToTopButtonFlat.tsx';
 import ScrollTopButton from '../../../common/ScrollTopButton.tsx';
 
 
-const OrderInfo = ({ id, name, customer, orderDate, is_online }) => (
+const OrderInfo = ({ id, name, customer, orderDate, is_online , navigation}) => (
   <InfoContainer>
     <Text style={{ color: 'black', fontSize: 18, fontWeight: 'bold', marginBottom: 4 }}>{name}</Text>
     <Text style={{ color: 'black', fontSize: 15 , marginBottom: 4}}>주문자: {customer}</Text>
     <Text style={{ color: 'black', fontSize: 15 , marginBottom: 4 }}>주문 일시: {orderDate}</Text>
     <Text style={{ color: 'black', fontSize: 15 }}>거래 방식: {is_online ? '비대면' : '대면'}</Text>
-    <TouchableOpacity style={{ marginTop: 10, alignSelf: 'flex-end' }}>
+    <TouchableOpacity style={{ marginTop: 10, alignSelf: 'flex-end' }}
+        onPress={() => navigation.navigate('QuotationPage')}
+    >
       <Text style={{ color: 'gray', fontSize: 14, fontWeight: 'bold' }}>주문서 확인</Text>
     </TouchableOpacity>
   </InfoContainer>
@@ -32,6 +36,7 @@ const OrderInfo = ({ id, name, customer, orderDate, is_online }) => (
 const OrderManagement = () => {
   const { width } = Dimensions.get('window');
   const scrollRef = useRef<ScrollView | null>(null);
+  const navigation = useNavigation();
 
   const [orderlist, setOrderList] = useState([
     {
@@ -125,6 +130,8 @@ const OrderManagement = () => {
                     customer={order.customer}
                     orderDate={order.orderDate}
                     is_online={order.is_online}
+                    navigation={navigation}
+
                   />
                 </OrderInfoBox>
               ))
@@ -147,6 +154,9 @@ const OrderManagement = () => {
                     customer={order.customer}
                     orderDate={order.orderDate}
                     is_online={order.is_online}
+                    navigation={navigation}
+
+
                   />
                 </OrderInfoBox>
               ))
@@ -169,6 +179,7 @@ const OrderManagement = () => {
                     customer={order.customer}
                     orderDate={order.orderDate}
                     is_online={order.is_online}
+                    navigation={navigation}
                   />
                 </OrderInfoBox>
               ))

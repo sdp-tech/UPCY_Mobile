@@ -34,6 +34,7 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import ComponentsTest from './ComponentsTest';
 import { PURPLE } from '../styles/GlobalColor';
 import OrderManagement from '../components/Home/Order/OrderManagement';
+import CompletedOrder from '../components/Home/Order/CompletedOrder';
 import ReformerMarket from '../components/Home/Market/ReformerMarket';
 import ReformerProfileService from '../components/Auth/Reformer/Profile/Service';
 import Service from '../components/Home/Market/Service';
@@ -55,6 +56,7 @@ export type HomeStackParams = {
     profileImageUri?: string;
   };
   OrderManagement: undefined;
+  CompletedOrder: undefined;
   GoodsDetailPage: undefined;
   QuotationForm: undefined;
   QuotationPage: undefined;
@@ -108,6 +110,7 @@ const HomeScreen = ({
       <HomeStack.Screen name="QuotationPage" component={QuotationPage} />
       <HomeStack.Screen name="SentQuotation" component={SentQuotation} />
       <HomeStack.Screen name="OrderManagement" component={OrderManagement} />
+      <HomeStack.Screen name="CompletedOrder" component={CompletedOrder} />
       <HomeStack.Screen
         name="GoodsDetailPage"
         component={GoodsDetailPageScreen}
