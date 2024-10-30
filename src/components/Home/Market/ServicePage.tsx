@@ -7,9 +7,13 @@ import ServiceItem from '../components/ServiceItem';
 
 interface ServicePageProps {
   scrollViewRef: React.RefObject<ScrollView>;
+  navigation: any;
 }
 
-const ServicePage: React.FC<ServicePageProps> = ({ scrollViewRef }) => {
+const ServicePage: React.FC<ServicePageProps> = ({
+  scrollViewRef,
+  navigation,
+}) => {
   const [service, setService] = useState<boolean>(false);
   const [product, setProduct] = useState<boolean>(false);
 
@@ -36,14 +40,15 @@ const ServicePage: React.FC<ServicePageProps> = ({ scrollViewRef }) => {
         {service ? (
           <View>
             {items.map((item, index) => (
-              <ServiceItem key={index} onPress={() => {}} />
+              <ServiceItem key={index} navigation={navigation} />
             ))}
           </View>
         ) : (
           <Carousel
             data={[...new Array(1).keys()]}
             renderItem={({ item, index }: any) => {
-              return <ServiceItem onPress={() => {}} key={index} />;
+              // TODO
+              return <ServiceItem key={index} navigation={navigation} />;
             }}
             slider
           />

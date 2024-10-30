@@ -151,7 +151,10 @@ const MarketTabView = ({
             {route.key === 'profile' && <InfoPage />}
             {route.key === 'service' && (
               <View>
-                <ServicePage scrollViewRef={scrollRef} />
+                <ServicePage
+                  scrollViewRef={scrollRef}
+                  navigation={navigation}
+                />
                 <ScrollTopButton scrollViewRef={scrollRef} />
               </View>
             )}
