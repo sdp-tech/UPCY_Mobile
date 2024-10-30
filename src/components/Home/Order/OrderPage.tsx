@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { SafeAreaView, View, Text, FlatList, TouchableOpacity ,Dimensions, Modal, StyleSheet} from 'react-native';
+import { SafeAreaView, View, Text, FlatList, TouchableOpacity, Dimensions, Modal, StyleSheet } from 'react-native';
 import { Tabs } from 'react-native-collapsible-tab-view';
 import styled from 'styled-components/native';
 import { Picker } from '@react-native-picker/picker';
-import { BLACK, LIGHTGRAY, PURPLE,GREEN } from '../../../styles/GlobalColor';
+import { BLACK, LIGHTGRAY, PURPLE, GREEN } from '../../../styles/GlobalColor';
 import { Title20B, Body14R, Body16B, Caption11M } from '../../../styles/GlobalText.tsx';
 
 import { useNavigation } from '@react-navigation/native';
@@ -19,9 +19,10 @@ interface OrderInfoProps {
   customer: string;
   estimated_price: string;
   is_online: boolean;
+  navigation: any;
 }
 
-const OrderInfo: React.FC<OrderInfoProps> = ({ name, customer, estimated_price, is_online ,navigation}) => (
+const OrderInfo: React.FC<OrderInfoProps> = ({ name, customer, estimated_price, is_online, navigation }) => (
   <InfoContainer>
     <Text style={{ color: 'black', fontSize: 18, fontWeight: 'bold', marginBottom: 4 }}>{name}</Text>
     <Text style={{ color: 'black', fontSize: 15, marginBottom: 4 }}>주문자: {customer}</Text>
@@ -29,15 +30,15 @@ const OrderInfo: React.FC<OrderInfoProps> = ({ name, customer, estimated_price, 
     <Text style={{ color: 'black', fontSize: 15, marginBottom: 4 }}>예상 결제 금액: {estimated_price}</Text>
     <Text style={{ color: 'black', fontSize: 15 }}>거래 방식: {is_online ? '비대면' : '대면'}</Text>
     <TouchableOpacity style={{ marginTop: 10, alignSelf: 'flex-end' }}
-          onPress={() => navigation.navigate('QuotationPage')}
+      onPress={() => navigation.navigate('QuotationPage')}
     >
-      <Text style={{ color: 'gray', fontSize: 14, fontWeight: 'bold' , textDecorationLine: 'underline'}}>주문서 확인</Text>
+      <Text style={{ color: 'gray', fontSize: 14, fontWeight: 'bold', textDecorationLine: 'underline' }}>주문서 확인</Text>
     </TouchableOpacity>
   </InfoContainer>
 );
 
 
-const OrderStatusLabel = ({ status }) => {
+const OrderStatusLabel = ({ status }: any) => {
   switch (status) {
     case 'progress':
       return <StatusText style={{ color: PURPLE }}>배송중</StatusText>;
@@ -48,49 +49,52 @@ const OrderStatusLabel = ({ status }) => {
   }
 };
 
-const OrderActionButtons = ({ status, navigation ,onPress}: { status: string; navigation: any;  onPress: () => void }) => (
+const OrderActionButtons = ({ status, navigation, onPress }: { status: string; navigation: any; onPress: () => void }) => (
 
 
-    <ButtonContainer>
-      <ActionButton>
-        <ActionText>오픈채팅</ActionText>
+  <ButtonContainer>
+    <ActionButton>
+      <ActionText>오픈채팅</ActionText>
+    </ActionButton>
+
+    {status === 'progress' && (
+      <ActionButton onPress={onPress}>
+        <ActionText style={{ color: PURPLE }} >거래 완료</ActionText>
       </ActionButton>
+    )}
 
-      {status === 'progress' && (
-        <ActionButton onPress={onPress}>
-          <ActionText style={{ color: PURPLE }} >거래 완료</ActionText>
-        </ActionButton>
-      )}
+    {status === 'completed' && (
+      <ActionButton onPress={() => navigation.navigate('WriteReviewPage')}>
+        <ActionText style={{ color: PURPLE }}>리뷰 작성</ActionText>
+      </ActionButton>
+    )}
+  </ButtonContainer>
+);
 
-      {status === 'completed' && (
-        <ActionButton onPress={() => navigation.navigate('WriteReviewPage')}>
-          <ActionText style={{ color: PURPLE }}>리뷰 작성</ActionText>
-        </ActionButton>
-      )}
-    </ButtonContainer>
-  );
-
-
+interface FilterProps {
+  selectedFilter: any;
+  setSelectedFilter: any;
+}
 
 
 // DropdownSection 컴포넌트 정의
-const DropdownSection = ({ selectedFilter, setSelectedFilter }) => {''
-    const screenWidth = Dimensions.get('window').width
+const DropdownSection = ({ selectedFilter, setSelectedFilter }: FilterProps) => {
+  const screenWidth = Dimensions.get('window').width
 
   return (
-    <View style={{ paddingVertical: 10, paddingHorizontal: 10, borderBottomColor: LIGHTGRAY , borderBottomWidth: 0}}>
+    <View style={{ paddingVertical: 10, paddingHorizontal: 10, borderBottomColor: LIGHTGRAY, borderBottomWidth: 0 }}>
       <PickerContainer screenWidth={screenWidth}>
-      <Picker
-        selectedValue={selectedFilter}
-        onValueChange={(itemValue) => setSelectedFilter(itemValue)}
-        style={{ height: 50, width: '100%', color:'white',   justifyContent: 'center',textAlignVertical: 'center',  }}
-      >
-        <Picker.Item label="전체" value="전체" style={{ fontSize: 13 }}  />
-        <Picker.Item label="거래 전" value="거래 전" style={{ fontSize: 13 }} />
-        <Picker.Item label="거래 중" value="거래 중" style={{ fontSize: 13 }} />
-        <Picker.Item label="완료" value="완료" style={{ fontSize: 13 }} />
-      </Picker>
-     </PickerContainer>
+        <Picker
+          selectedValue={selectedFilter}
+          onValueChange={(itemValue) => setSelectedFilter(itemValue)}
+          style={{ height: 50, width: '100%', color: 'white', justifyContent: 'center', textAlignVertical: 'center', }}
+        >
+          <Picker.Item label="전체" value="전체" style={{ fontSize: 13 }} />
+          <Picker.Item label="거래 전" value="거래 전" style={{ fontSize: 13 }} />
+          <Picker.Item label="거래 중" value="거래 중" style={{ fontSize: 13 }} />
+          <Picker.Item label="완료" value="완료" style={{ fontSize: 13 }} />
+        </Picker>
+      </PickerContainer>
     </View>
   );
 };
@@ -106,22 +110,22 @@ const OrderInfoContainer = styled.View`
   padding: 15px;
   background-color: white;
   border-radius: 8px;
-  margin-horizontal: 15px;
   margin-bottom: 10px;
   border: 1px solid white;
 `;
 
 
 
-interface OrderPageProps extends StackScreenProps<HomeStackParams, 'OrderPage'> {
+export interface OrderPageProps extends StackScreenProps<HomeStackParams, 'OrderManagement'> {
   flatListRef: React.RefObject<FlatList<any>>;
+  navigation: any;
+  route: any;
 }
 
 
-const OrderPage: React.FC<OrderPageProps> = ({ flatListRef }) => {
-   const [selectedFilter, setSelectedFilter] = useState('전체');
-   const [isModalVisible, setIsModalVisible] = useState(false);
-   const navigation = useNavigation();
+const OrderPage: React.FC<OrderPageProps> = ({ flatListRef, navigation, route }) => {
+  const [selectedFilter, setSelectedFilter] = useState('전체');
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   // 거래 완료 버튼 클릭 핸들러
   const handleCompletedPress = () => {
@@ -143,7 +147,7 @@ const OrderPage: React.FC<OrderPageProps> = ({ flatListRef }) => {
 
 
 
- const [orderlist, setOrderList] = useState([
+  const [orderlist, setOrderList] = useState([
     {
       id: '00001',
       name: '청바지 서비스',
@@ -195,49 +199,49 @@ const OrderPage: React.FC<OrderPageProps> = ({ flatListRef }) => {
   });
 
   return (
-   <SafeAreaView style={{ flex: 1 , backgroundColor: '#f0f0f0'}}>
-    <Tabs.FlatList
-      ref={flatListRef}
-      bounces={false}
-      overScrollMode="never"
-      data={filteredOrders}
-      ListHeaderComponent={() => (
-        <DropdownSection selectedFilter={selectedFilter} setSelectedFilter={setSelectedFilter} />
-      )}
-      renderItem={({ item: order }: any) => (
-        <OrderInfoBox>
-         <View style={{ marginTop: 15 }} />
-         <View style={{ flexDirection: 'row' }}>
-           <ImageContainer source={{ uri: order.photoUri }} />
-         <OrderInfo
-          name={order.name}
-          customer={order.customer}
-          estimated_price={order.estimated_price}
-          is_online={order.is_online}
-          navigation={navigation}
-          />
-          </View>
-          <OrderDateText style={{ color: BLACK }}>{order.orderDate}</OrderDateText>
-          <OrderStatusLabel status={order.status} />
-          <OrderActionButtons status={order.status} navigation={navigation} onPress={handleCompletedPress} />
-         </OrderInfoBox>
-      )}
-      keyExtractor={(item, index) => index.toString()}
-      style={{ marginBottom: 60 }}
-    />
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#f0f0f0' }}>
+      <Tabs.FlatList
+        ref={flatListRef}
+        bounces={false}
+        overScrollMode="never"
+        data={filteredOrders}
+        ListHeaderComponent={() => (
+          <DropdownSection selectedFilter={selectedFilter} setSelectedFilter={setSelectedFilter} />
+        )}
+        renderItem={({ item: order }: any) => (
+          <OrderInfoBox>
+            <View style={{ marginTop: 15 }} />
+            <View style={{ flexDirection: 'row' }}>
+              <ImageContainer source={{ uri: order.photoUri }} />
+              <OrderInfo
+                name={order.name}
+                customer={order.customer}
+                estimated_price={order.estimated_price}
+                is_online={order.is_online}
+                navigation={navigation}
+              />
+            </View>
+            <OrderDateText style={{ color: BLACK }}>{order.orderDate}</OrderDateText>
+            <OrderStatusLabel status={order.status} />
+            <OrderActionButtons status={order.status} navigation={navigation} onPress={handleCompletedPress} />
+          </OrderInfoBox>
+        )}
+        keyExtractor={(item, index) => index.toString()}
+        style={{ marginBottom: 60 }}
+      />
 
       <Modal transparent={true} visible={isModalVisible} onRequestClose={handleCancel}>
         <ModalContainer>
           <ModalBox>
-            <Body14R style={{  color: BLACK, textAlign: 'center', marginBottom: 10 }}>
+            <Body14R style={{ color: BLACK, textAlign: 'center', marginBottom: 10 }}>
               거래 완료된 상품의 경우 반품/교환 요청이 {'\n'} 불가능하므로 신중히 결정해주세요.
             </Body14R>
             <ButtonContainer>
               <TouchableOpacity onPress={handleCancel} style={styles.laterButton}>
-                <Body16B style={{ color: 'white', textAlign:'center' }}>나중에</Body16B>
+                <Body16B style={{ color: 'white', textAlign: 'center' }}>나중에</Body16B>
               </TouchableOpacity>
               <TouchableOpacity onPress={handleConfirmCompleted} style={styles.completeButton}>
-                <Body16B style={{ color: PURPLE, textAlign:'center' }}>거래 완료</Body16B>
+                <Body16B style={{ color: PURPLE, textAlign: 'center' }}>거래 완료</Body16B>
               </TouchableOpacity>
             </ButtonContainer>
           </ModalBox>
@@ -245,7 +249,7 @@ const OrderPage: React.FC<OrderPageProps> = ({ flatListRef }) => {
       </Modal>
 
 
-   </SafeAreaView>
+    </SafeAreaView>
   );
 };
 
@@ -255,7 +259,6 @@ const OrderInfoBox = styled.View`
   border-radius: 14px;
   border-color: ${PURPLE};
   border-width: 1px;
-  backgroundColor: white;
   padding: 19px;
   margin: 10px;
   justify-content: space-between;
@@ -314,7 +317,7 @@ const InfoContainer = styled.View`
 `;
 
 const PickerContainer = styled.View`
-  width: ${(props) => props.screenWidth * 0.3};
+  width: ${(props: any) => props.screenWidth * 0.3};
   height: 40px;
   border-radius: 25px;
   background-color: ${PURPLE};
