@@ -43,9 +43,11 @@ import { Styles } from '../types/UserTypes';
 
 export type HomeStackParams = {
   Home: undefined;
-  Market: undefined;
+  // 혼란 방지를 위해 Market -> MarketTabView로 수정하였습니다.
+  // Market: undefined;
   ServiceDetailPage: {
-    // id?: number;
+    // TODO: add later
+    // id: string;
     serviceName: string;
     reformerName: string;
     basicPrice: number;
@@ -74,6 +76,11 @@ export type HomeStackParams = {
   WriteReviewPage: undefined;
   ReformerMarket: undefined;
   TestComponents: undefined;
+  MarketTabView: {
+    // TODO: add later
+    // id: string;
+    reformerName: string;
+  };
 };
 
 const HomeStack = createStackNavigator<HomeStackParams>();
@@ -97,7 +104,7 @@ const HomeScreen = ({
         headerShown: false,
       })}>
       <HomeStack.Screen name="Home" component={HomeMainScreen} />
-      <HomeStack.Screen name="Market" component={MarketTabView} />
+      <HomeStack.Screen name="MarketTabView" component={MarketTabView} />
       <HomeStack.Screen
         name="ServiceDetailPage"
         component={ServiceDetailPageScreen}
@@ -130,7 +137,10 @@ const HomeScreen = ({
       <HomeStack.Screen name="WriteReviewPage" component={WriteReviewPage} />
       <HomeStack.Screen name="TestComponents" component={ComponentsTest} />
       <HomeStack.Screen name="ReformerMarket" component={ReformerMarket} />
-      <HomeStack.Screen name="ReformerProfileService" component={ReformerProfileService} />
+      <HomeStack.Screen
+        name="ReformerProfileService"
+        component={ReformerProfileService}
+      />
     </HomeStack.Navigator>
   );
 };
@@ -205,13 +215,17 @@ const HomeMainScreen = ({
           {selectedTab === 'Market' && <ReformerMarket />}
           {selectedTab === 'temp' && (
             <ScrollView>
-              <Button onPress={() => navigation.navigate('ReformerProfileService')}>
+              <Button
+                onPress={() => navigation.navigate('ReformerProfileService')}>
                 <Text>리포머 프로필</Text>
               </Button>
               <Button onPress={handlePopupButtonPress}>
                 <ButtonText>팝업 표시</ButtonText>
               </Button>
-              <Button onPress={() => navigation.navigate('Market')}>
+              <Button
+                onPress={() =>
+                  navigation.navigate('MarketTabView', { reformerName: '예시' })
+                }>
                 <Text>마켓</Text>
               </Button>
               <Button onPress={() => navigation.navigate('QuotationForm')}>
