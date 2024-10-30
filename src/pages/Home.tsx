@@ -74,6 +74,7 @@ export type HomeStackParams = {
   WriteReviewPage: undefined;
   ReformerMarket: undefined;
   TestComponents: undefined;
+  MarketTabView: undefined;
 };
 
 const HomeStack = createStackNavigator<HomeStackParams>();
@@ -130,7 +131,10 @@ const HomeScreen = ({
       <HomeStack.Screen name="WriteReviewPage" component={WriteReviewPage} />
       <HomeStack.Screen name="TestComponents" component={ComponentsTest} />
       <HomeStack.Screen name="ReformerMarket" component={ReformerMarket} />
-      <HomeStack.Screen name="ReformerProfileService" component={ReformerProfileService} />
+      <HomeStack.Screen
+        name="ReformerProfileService"
+        component={ReformerProfileService}
+      />
     </HomeStack.Navigator>
   );
 };
@@ -205,7 +209,8 @@ const HomeMainScreen = ({
           {selectedTab === 'Market' && <ReformerMarket />}
           {selectedTab === 'temp' && (
             <ScrollView>
-              <Button onPress={() => navigation.navigate('ReformerProfileService')}>
+              <Button
+                onPress={() => navigation.navigate('ReformerProfileService')}>
                 <Text>리포머 프로필</Text>
               </Button>
               <Button onPress={handlePopupButtonPress}>

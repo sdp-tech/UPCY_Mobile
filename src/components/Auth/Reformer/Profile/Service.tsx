@@ -102,7 +102,7 @@ export const ProfileSection = ({
 const MarketTabView = ({
   navigation,
   route,
-}: StackScreenProps<HomeStackParams, 'Market'>) => {
+}: StackScreenProps<HomeStackParams, 'MarketTabView'>) => {
   const [activeTab, setActiveTab] = useState('profile'); // 활성화된 탭 상태 관리
   const scrollRef = useRef<ScrollView | null>(null);
 
