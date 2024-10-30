@@ -27,8 +27,14 @@ import ServicePage from './ServicePage.tsx';
 import DetailScreenHeader from '../components/DetailScreenHeader.tsx';
 import ScrollTopButton from '../../../common/ScrollTopButton.tsx';
 
-export const ProfileSection = ({ navigation }: { navigation: any }) => {
-  const marketName: string = '이하늘의 마켓';
+export const ProfileSection = ({
+  navigation,
+  reformerName,
+}: {
+  navigation: any;
+  reformerName: string;
+}) => {
+  const marketName: string = reformerName + '의 마켓';
   const selfIntroduce: string =
     '안녕하세요 리폼러 이하늘입니다! 저는 업씨대학교 패션디자인학과에 수석입학했고요 짱짱 천재에요';
   const rate: number = 4.5; // 평점
@@ -109,10 +115,15 @@ const ProfileHeader = ({
   );
 };
 
+type MarketTabViewProps = {
+  reformerName: string;
+};
+
 const MarketTabView = ({
   navigation,
   route,
-}: StackScreenProps<HomeStackParams, 'Market'>) => {
+}: StackScreenProps<HomeStackParams, 'MarketTabView'>) => {
+  const { reformerName }: MarketTabViewProps = route.params || '정보 없음';
   const [routes] = useState([
     { key: 'profile', title: '프로필' },
     { key: 'service', title: '서비스' },
@@ -123,7 +134,9 @@ const MarketTabView = ({
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Tabs.Container
-        renderHeader={props => <ProfileSection navigation={navigation} />}
+        renderHeader={props => (
+          <ProfileSection navigation={navigation} reformerName={reformerName} />
+        )}
         headerContainerStyle={{
           shadowOpacity: 0,
           borderBottomWidth: 1,

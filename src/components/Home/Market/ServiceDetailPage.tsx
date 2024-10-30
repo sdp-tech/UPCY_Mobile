@@ -244,7 +244,11 @@ const Profile = ({
         <View style={{ marginLeft: 20, justifyContent: 'center' }}>
           <TouchableOpacity
             style={{ flexDirection: 'row', alignItems: 'center' }}
-            onPress={() => navigation.navigate('Market')}>
+            onPress={() =>
+              navigation.navigate('MarketTabView', {
+                reformerName: reformerName,
+              })
+            }>
             <Text style={TextStyles.marketName}>{reformerName}의 마켓</Text>
             <Arrow style={styles.marketArrow} />
           </TouchableOpacity>
