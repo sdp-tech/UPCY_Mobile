@@ -8,11 +8,13 @@ import ServiceItem from '../components/ServiceItem';
 interface ServicePageProps {
   scrollViewRef: React.RefObject<ScrollView>;
   navigation: any;
+  reformerName?: string;
 }
 
 const ServicePage: React.FC<ServicePageProps> = ({
   scrollViewRef,
   navigation,
+  reformerName = '리폼러',
 }) => {
   const [service, setService] = useState<boolean>(false);
   const [product, setProduct] = useState<boolean>(false);
@@ -36,7 +38,7 @@ const ServicePage: React.FC<ServicePageProps> = ({
       bounces={false}
       overScrollMode="never">
       <View style={styles.container}>
-        <Text style={TextStyles.title}>리폼러의 서비스</Text>
+        <Text style={TextStyles.title}>{reformerName}의 서비스</Text>
         {service ? (
           <View>
             {items.map((item, index) => (

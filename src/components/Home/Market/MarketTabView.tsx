@@ -167,6 +167,7 @@ const MarketTabView = ({
                 <ServicePage
                   scrollViewRef={scrollRef}
                   navigation={navigation}
+                  reformerName={reformerName}
                 />
                 <ScrollTopButton scrollViewRef={scrollRef} />
               </View>
