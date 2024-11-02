@@ -1578,6 +1578,11 @@
   resolved "https://registry.npmjs.org/@pkgr/core/-/core-0.1.0.tgz"
   integrity sha512-Zwq5OCzuwJC2jwqmpEQt7Ds1DTi6BWSwoGkbb1n9pO3hzb35BoJELx7c0T23iDkBGkh2e7tvOtjF3tr3OaQHDQ==
 
+"@react-native-community/checkbox@^0.5.17":
+  version "0.5.17"
+  resolved "https://registry.npmjs.org/@react-native-community/checkbox/-/checkbox-0.5.17.tgz"
+  integrity sha512-ZZx/eOH3SIxBg+hvA2zRd7lX5zPQEWcZU8C8Dn7WLdpJkiTkPmIUDFHWrmzxCnwZcyoD+BIt6gUZPKGGb9WmeQ==
+
 "@react-native-community/cli-clean@12.3.0":
   version "12.3.0"
   resolved "https://registry.npmjs.org/@react-native-community/cli-clean/-/cli-clean-12.3.0.tgz"

@@ -22,58 +22,58 @@ const DetailBox = () => {
     list: string[];
     optionList: Option[];
   }[] = [
-    { label: 'period', data: '3주', list: [], optionList: [] },
-    {
-      label: 'service',
-      data: `1958년에는 원예시험장을 설립하여 연구를 본격화하기 시작하였고...`,
-      list: [],
-      optionList: [],
-    },
-    {
-      label: 'image',
-      data: 'https://search.pstatic.net/common/?src=http%3A%2F%2Fshop1.phinf.naver.net%2F20220209_239%2F1644400118557CudbV_JPEG%2F45535946365331675_377614541.jpg&type=sc960_832',
-      list: [],
-      optionList: [],
-    },
-    {
-      label: 'material',
-      list: [
-        '면',
-        '폴리에스테르',
-        '나일론',
-        '데님',
-        '울',
-        '모달',
-        '아크릴',
-        '코듀로이',
-      ],
-      data: '',
-      optionList: [],
-    },
-    {
-      label: 'option',
-      data: '',
-      list: [],
-      optionList: [
-        {
-          option: '뚝딱이 단추',
-          optionExplain: '가방 입구에 똑딱이 단추를 추가할 수 있어요.',
-          isFixing: false,
-          addPrice: '+1000원',
-          photoAdded: false,
-          optionPhotos: [],
-        },
-        {
-          option: '주머니 지퍼',
-          optionExplain: '주머니에 귀여운 지퍼를 달아보세요.',
-          isFixing: false,
-          addPrice: '+1000원',
-          photoAdded: false,
-          optionPhotos: [],
-        },
-      ],
-    },
-  ];
+      { label: 'period', data: '3주', list: [], optionList: [] },
+      {
+        label: 'service',
+        data: `1958년에는 원예시험장을 설립하여 연구를 본격화하기 시작하였고...`,
+        list: [],
+        optionList: [],
+      },
+      {
+        label: 'image',
+        data: 'https://search.pstatic.net/common/?src=http%3A%2F%2Fshop1.phinf.naver.net%2F20220209_239%2F1644400118557CudbV_JPEG%2F45535946365331675_377614541.jpg&type=sc960_832',
+        list: [],
+        optionList: [],
+      },
+      {
+        label: 'material',
+        list: [
+          '면',
+          '폴리에스테르',
+          '나일론',
+          '데님',
+          '울',
+          '모달',
+          '아크릴',
+          '코듀로이',
+        ],
+        data: '',
+        optionList: [],
+      },
+      {
+        label: 'option',
+        data: '',
+        list: [],
+        optionList: [
+          {
+            option: '뚝딱이 단추',
+            optionExplain: '가방 입구에 똑딱이 단추를 추가할 수 있어요.',
+            isFixing: false,
+            addPrice: '+1000원',
+            photoAdded: false,
+            optionPhotos: [],
+          },
+          {
+            option: '주머니 지퍼',
+            optionExplain: '주머니에 귀여운 지퍼를 달아보세요.',
+            isFixing: false,
+            addPrice: '+1000원',
+            photoAdded: false,
+            optionPhotos: [],
+          },
+        ],
+      },
+    ];
 
   return (
     <View>

@@ -10,11 +10,13 @@ import BottomButton from '../../../common/BottomButton';
 import Postcode from '@actbase/react-daum-postcode';
 import { StackScreenProps } from '@react-navigation/stack';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { HomeStackParams } from '../../../pages/Home';
 
-interface InputInfoProps {
+export type InputInfoProps = StackScreenProps<HomeStackParams, 'InputInfo'> & {
   onClose: () => void;
   onNavigate: () => void;
-  navigation: StackNavigationProp<RootStackParamList, 'InputInfo'>;
+  navigation: StackNavigationProp<HomeStackParams, 'InputInfo'>;
+  route: any;
 }
 
 export interface InfoProps {
@@ -26,7 +28,8 @@ export interface InfoProps {
 
 const statusBarHeight = getStatusBarHeight(true);
 
-const InputInfo = ({ onClose, navigation, onNavigate ,route }: InputInfoProps) => {
+const InputInfo = ({ onClose, navigation, onNavigate, route }: InputInfoProps): React.JSX.Element => {
+  // 컴포넌트 내부 구현
   const [postModal, setPostModal] = useState(false); // 모달 가시성 관리
   const [selectedAddress, setSelectedAddress] = useState(''); // 선택한 주소를 저장
   const [postalCode, setPostalCode] = useState(''); // 우편번호를 저장
@@ -42,21 +45,17 @@ const InputInfo = ({ onClose, navigation, onNavigate ,route }: InputInfoProps) =
   };
 
 
-    // name, tel, zonecode, selectedAddress를 QuotationPage로 전달
+  // name, tel, zonecode, selectedAddress를 QuotationPage로 전달
 
   const handleNextPress = () => {
-
-
-
-
     navigation.navigate('QuotationPage', {
       materials: route.params.materials,
       transactionMethod: route.params.transactionMethod,
       options: route.params.options,
       additionalRequest: route.params.additionalRequest,
-      name,
-      tel,
-      zonecode : postalCode,
+      name: name,
+      tel: tel,
+      zonecode: postalCode,
       address: selectedAddress
     });
   };
@@ -110,9 +109,9 @@ const InputInfo = ({ onClose, navigation, onNavigate ,route }: InputInfoProps) =
         </View>
         <View style={{ paddingHorizontal: 45, paddingVertical: 20 }}>
           <BottomButton value={'다음'}
-          pressed={false}
-          onPress={handleNextPress}
-           />
+            pressed={false}
+            onPress={handleNextPress}
+          />
           <View style={{ marginVertical: 5 }} />
         </View>
 

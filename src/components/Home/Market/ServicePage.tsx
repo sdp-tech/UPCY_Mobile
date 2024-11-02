@@ -7,9 +7,15 @@ import ServiceItem from '../components/ServiceItem';
 
 interface ServicePageProps {
   scrollViewRef: React.RefObject<ScrollView>;
+  navigation: any;
+  reformerName?: string;
 }
 
-const ServicePage: React.FC<ServicePageProps> = ({ scrollViewRef }) => {
+const ServicePage: React.FC<ServicePageProps> = ({
+  scrollViewRef,
+  navigation,
+  reformerName = '리폼러',
+}) => {
   const [service, setService] = useState<boolean>(false);
   const [product, setProduct] = useState<boolean>(false);
 
@@ -32,18 +38,19 @@ const ServicePage: React.FC<ServicePageProps> = ({ scrollViewRef }) => {
       bounces={false}
       overScrollMode="never">
       <View style={styles.container}>
-        <Text style={TextStyles.title}>리폼러의 서비스</Text>
+        <Text style={TextStyles.title}>{reformerName}의 서비스</Text>
         {service ? (
           <View>
             {items.map((item, index) => (
-              <ServiceItem key={index} onPress={() => {}} />
+              <ServiceItem key={index} navigation={navigation} />
             ))}
           </View>
         ) : (
           <Carousel
             data={[...new Array(1).keys()]}
             renderItem={({ item, index }: any) => {
-              return <ServiceItem onPress={() => {}} key={index} />;
+              // TODO
+              return <ServiceItem key={index} navigation={navigation} />;
             }}
             slider
           />

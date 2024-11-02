@@ -62,7 +62,7 @@ const ReviewComponent = ({ feedBack }: any) => {
   );
 };
 
-const WriteReviewPage: React.FC<WriteReviewPageProps> = ({ scrollViewRef }) => {
+const WriteReviewPage = ({ scrollViewRef }: WriteReviewPageProps) => {
   const navigation = useNavigation();
   const [detail, setDetail] = useState('');
   const [marketName] = useState('마켓명');

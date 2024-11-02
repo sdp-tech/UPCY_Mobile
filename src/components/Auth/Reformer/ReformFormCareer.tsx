@@ -140,14 +140,14 @@ export default function ReformCareer({ form, setForm }: ReformProps) {
     if (careerIndex >= 0) setCareerModal(true);
   }, [careerIndex]);
 
-  const createMarket = async () => {
+  const createMarket = async () => { // 마켓 등록 함수
     const form_ = { ...form };
     const accessToken = await getAccessToken();
     const headers = {
       Authorization: `Bearer ${accessToken}`
     };
     const params = {
-      market_name: form_.nickname + '의 마켓',
+      market_name: form_.nickname,
       market_introduce: form_.introduce,
       market_address: form_.link,
     };
@@ -156,7 +156,6 @@ export default function ReformCareer({ form, setForm }: ReformProps) {
       if (response?.status === 201) {
         console.log(response?.data);
         setMarketUUID(response?.data.market_uuid);
-
       } else if (response?.status === 400) {
         Alert.alert('이미 등록된 사용자입니다. 부계정 생성의 경우, 잠시 후 다시 시도해주세요.');
       } else {
@@ -232,9 +231,7 @@ export default function ReformCareer({ form, setForm }: ReformProps) {
       const headers = {
         Authorization: `Bearer ${accessToken}`
       };
-      const params = { // 수정 필요?
-        nickname: updatedForm.nickname,
-        introduce: updatedForm.introduce,
+      const params = {
         reformer_link: updatedForm.link,
         reformer_area: updatedForm.region,
         education: updatedForm.education,
@@ -244,6 +241,7 @@ export default function ReformCareer({ form, setForm }: ReformProps) {
         freelancer: updatedForm.freelancer,
       };
       try {
+        console.log(params);
         const response = await request.post(`/api/user/reformer`, params, headers);
         if (response?.status === 201) {
           console.log(response?.data);
@@ -251,7 +249,6 @@ export default function ReformCareer({ form, setForm }: ReformProps) {
           navigation.navigate('ReformSubmit');
         } else if (response?.status === 500) {
           console.log(response);
-
           Alert.alert('다시 시도해주세요.')
         } else {
           console.log(response);
@@ -259,7 +256,45 @@ export default function ReformCareer({ form, setForm }: ReformProps) {
         }
       } catch (err) {
         console.log(err);
-
+        // 이 아래는 닉네임, 소개글 
+      }
+      const data = {
+        nickname: updatedForm.nickname,
+        introduce: updatedForm.introduce,
+      }
+      try {
+        const response = await request.put(`/api/user`, data, headers);
+        if (response && response.status === 200) {
+          console.log(data, '닉네임, 소개글 등록 성공');
+        }
+        else {
+          console.log(response);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+      // 이 아래는 프로필 이미지 등록 
+      const headers_ = {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'multipart/form-data', // multipart/form-data 설정
+      };
+      const formData = new FormData();
+      formData.append('profile_image', {
+        uri: form.picture?.uri, // 파일의 URI
+        type: 'image/jpeg', // 이미지 형식 (예: 'image/jpeg')
+        name: form.picture?.fileName || 'profile.jpg', // 파일 이름
+      });
+      try {
+        const response = await request.post(`/api/user/profile-image`, formData, headers_)
+        if (response && response.status === 201) {
+          console.log(formData, '프로필 이미지 등록 성공')
+        } else {
+          console.log('이미지 업로드 실패');
+          console.log(response);
+        }
+      }
+      catch (err) {
+        console.error(err)
       }
     }
   };

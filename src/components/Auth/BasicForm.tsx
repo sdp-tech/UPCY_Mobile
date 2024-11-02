@@ -30,6 +30,7 @@ import SignupCompleteModal from '../../common/SignUpCompleteModal';
 import { CommonActions } from '@react-navigation/native';
 import { getAccessToken, setAccessToken, setRefreshToken } from '../../common/storage';
 import { processLoginResponse2 } from './Login';
+import { PhotoType } from '../../hooks/useImagePicker';
 
 interface Agreement {
   a: boolean;
@@ -38,13 +39,14 @@ interface Agreement {
   d: boolean;
 }
 
-export interface SignupProps {
+export interface BasicFormProps2 {
   mail: string;
   domain: string | undefined;
   password: string;
   nickname?: string;
   agreement: Agreement;
   introduce?: string;
+  profile_image: PhotoType | undefined;
 }
 
 interface CheckBtnProps {
@@ -101,7 +103,7 @@ function CheckButton({ checked, onPress }: CheckBtnProps) {
 export default function BasicForm({ navigation, route }: FormProps) {
   const is_reformer = route.params?.is_reformer ?? false;
   const { width, height } = Dimensions.get('window');
-  const [form, setForm] = useState<SignupProps>({
+  const [form, setForm] = useState<BasicFormProps2>({
     mail: '',
     domain: undefined,
     password: '',
@@ -112,7 +114,8 @@ export default function BasicForm({ navigation, route }: FormProps) {
       c: false,
       d: false,
     },
-    introduce: ''
+    introduce: '',
+    profile_image: undefined,
   });
   const [checkPw, setCheckPw] = useState('');
   const [isModalVisible, setModalVisible] = useState(false); // 리폼러 가입 모달 
@@ -167,9 +170,9 @@ export default function BasicForm({ navigation, route }: FormProps) {
       const response = await request.post(`/api/user/signup`, params);
       if (response?.status === 201) {
         console.log(params);
-        const accessToken = response.data.access;
-        const refreshToken = response.data.refresh;
-        console.log({ accessToken }, ',', { refreshToken });
+        const accessToken = await response.data.access;
+        const refreshToken = await response.data.refresh;
+        console.log({ accessToken }, '||', { refreshToken });
         handleNext();
       } else if (response?.status === 500) {
         console.log(response);

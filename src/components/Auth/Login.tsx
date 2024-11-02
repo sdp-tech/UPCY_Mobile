@@ -31,7 +31,7 @@ interface LoginInputProps {
   onChangeText: (text: string) => void;
 }
 
-type UserType = {
+export type UserType = {
   email: string;
   phone: string;
   nickname: string;
