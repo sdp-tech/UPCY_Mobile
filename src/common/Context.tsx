@@ -2,18 +2,8 @@ import React, { ReactNode, createContext, useContext, useEffect, useState } from
 import { getAccessToken, setNickname, setUserRole } from './storage';
 import Request from './requests';
 import { Alert } from 'react-native';
+import { UserType } from '../components/Auth/Login';
 
-type UserType = {
-  email: string;
-  phone: string;
-  nickname: string;
-  agreement_terms: boolean;
-  adress: string;
-  profile_image_url: string;
-  introduce: string;
-  is_active: boolean;
-  role: string;
-};
 
 export const UserContext = createContext<{
   user: UserType | null;

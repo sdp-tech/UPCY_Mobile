@@ -12,7 +12,7 @@ import RightArrow from '../../assets/common/RightArrow.svg';
 import LeftArrow from '../../assets/common/Arrow.svg';
 import Request from '../../common/requests';
 
-export interface SignupProp {
+interface SignupProp {
   navigation: any;
   route: any;
 }

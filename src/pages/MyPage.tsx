@@ -87,17 +87,17 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
         <DetailScreenHeader
           title=""
           leftButton="CustomBack"
-          onPressLeft={() => {}}
+          onPressLeft={() => { }}
           rightButton="Edit"
           onPressRight={editProfile}
         />
         <ImageBackground
-          style={{ width: '100%', height: 200 }}
+          style={{ width: "100%", height: 200 }}
           imageStyle={{ height: 160 }}
           source={{ uri: backgroundphoto }}>
           <View
             style={{
-              width: '100%',
+              width: "100%",
               height: 160,
               backgroundColor: '#00000066',
               opacity: 0.7,
@@ -131,8 +131,8 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
                 profile_image
                   ? { uri: profile_image.uri } // 유효한 URL이면 그대로 사용
                   : {
-                      uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
-                    } // 기본 이미지 URL 사용
+                    uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
+                  } // 기본 이미지 URL 사용
               }
             />
           )}
@@ -260,21 +260,22 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
               fontSize: 16,
             }}
             onTabPress={() => Alert.alert('준비중입니다!ㅠㅠ')}
-            // 룩북, 좋아요 모아보기 기능 구현되면 위의 onTapPress는 삭제할 것
+          // 룩북, 좋아요 모아보기 기능 구현되면 위의 onTapPress는 삭제할 것
           />
-        )}>
-        {routes.map(route => (
-          <Tabs.Tab key={route.key} name={route.title}>
-            {/* {route.key === 'order' && <OrderPage />} */}
+        )}
+      >
 
-            {route.key === 'like' && (
-              <View>
-                <ReviewPage flatListRef={flatListRef} />
-                <ScrollToTopButton flatListRef={flatListRef} />
-              </View>
-            )}
-          </Tabs.Tab>
-        ))}
+        {routes.map(route =>
+        (<Tabs.Tab key={route.key} name={route.title}>
+          {route.key === 'order' && <OrderPage flatListRef={flatListRef} navigation={navigation} route={route} />}
+
+          {route.key === 'like' &&
+            <View>
+              <ReviewPage flatListRef={flatListRef} />
+              <ScrollToTopButton flatListRef={flatListRef} />
+            </View>}
+        </Tabs.Tab>)
+        )}
       </Tabs.Container>
     </SafeAreaView>
   );

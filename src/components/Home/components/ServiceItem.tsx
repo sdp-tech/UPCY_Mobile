@@ -1,5 +1,6 @@
 import { View } from 'react-native';
 import { ServiceCard } from '../Market/Service';
+// 마켓 페이지 -> 서비스 탭에 들어가는 컴포넌트임 
 
 interface ServiceItemProps {
   navigation: any;
