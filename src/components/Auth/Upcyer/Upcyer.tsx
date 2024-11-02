@@ -14,25 +14,31 @@ import BottomButton from '../../../common/BottomButton';
 import PencilIcon from '../../../assets/common/Pencil.svg';
 import InputView from '../../../common/InputView';
 import CustomScrollView from '../../../common/CustomScrollView';
-import { useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { PhotoType, useImagePicker } from '../../../hooks/useImagePicker';
 import { useNavigation } from '@react-navigation/native';
 import Check from '../../../assets/common/CheckIcon.svg'
 import DetailScreenHeader from '../../Home/components/DetailScreenHeader';
-import { SignupProp } from '../Signup';
 import { getAccessToken } from '../../../common/storage';
 import Request from '../../../common/requests';
-import { SignupProps } from '../BasicForm';
+import { BasicFormProps2 } from '../BasicForm';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { SignInParams } from '../SignIn';
 
-type UpcyProfileType = {
-    picture: undefined | PhotoType;
-    nickname: string;
-    introduce: string;
+interface UpcyerProps {
+    form: BasicFormProps2;
+    setForm: Dispatch<SetStateAction<BasicFormProps2>>;
 }
 
-function ProfilePic() {
-    const [photo, setPhoto] = useState<PhotoType | undefined>(undefined);
+function ProfilePic({ form, setForm }: UpcyerProps) {
+    const [photo, setPhoto] = useState(form.profile_image);
     const [handleAddButtonPress, handleImagePress] = useImagePicker(setPhoto);
+
+    useEffect(() => {
+        setForm(prev => {
+            return { ...prev, profile_image: photo };
+        });
+    }, [photo]);
 
     return (
         <View
@@ -82,29 +88,14 @@ function ProfilePic() {
     );
 }
 
-export const UpcyFormProfile = ({ navigation, route }: SignupProp) => {
+export const UpcyFormProfile = (navigation: any, route: any) => {
     const { width } = Dimensions.get('screen');
     const [isModalVisible, setModalVisible] = useState(false);
     const [nickname, setNickname] = useState('');
     const [introduce, setIntroduce] = useState('');
     const request = Request();
     const { form } = route.params;
-    const [form_, setForm] = useState<SignupProps>(form);
-
-    const handleButtonPress = () => {
-        // 모달을 표시
-
-        setModalVisible(true);
-
-        // 3초 후 모달 닫고 페이지 이동
-        setTimeout(() => {
-            setModalVisible(false);
-            navigation.getParent()?.reset({
-                index: 0, // 첫 번째 화면부터 시작
-                routes: [{ name: 'Login' }],
-            });
-        }, 3000); // 3000ms = 3초
-    };
+    const [form_, setForm] = useState<BasicFormProps2>(form);
 
     const handleSubmit = async () => {
         const params = {
@@ -159,7 +150,7 @@ export const UpcyFormProfile = ({ navigation, route }: SignupProp) => {
                 }}>
 
                 <View style={{ flexGrow: 1 }}>
-                    <ProfilePic />
+                    <ProfilePic form={form_} setForm={setForm} />
                     <InputView
                         title="닉네임"
                         value={form_.nickname}

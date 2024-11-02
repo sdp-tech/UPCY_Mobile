@@ -19,7 +19,6 @@ import ReformCareer from './ReformFormCareer';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { PhotoType } from '../../../hooks/useImagePicker';
 import DetailScreenHeader from '../../Home/components/DetailScreenHeader';
-import { SignupProp } from '../Signup';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 // type page = 'profile' | 'style' | 'field';
@@ -63,7 +62,7 @@ export type RpContextType = {
   setSteps: Dispatch<SetStateAction<number>>;
 };
 
-export default function Reformer({ navigation, route }: SignupProp) {
+export default function Reformer(navigation: any, route: any) {
   const defaultProfile: ReformProfileType = {
     picture: undefined,
     nickname: '',

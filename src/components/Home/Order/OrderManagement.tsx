@@ -18,15 +18,23 @@ import DetailScreenHeader from '../components/DetailScreenHeader.tsx';
 import ScrollToTopButton from '../../../common/ScrollToTopButtonFlat.tsx';
 import ScrollTopButton from '../../../common/ScrollTopButton.tsx';
 
+type OrderInfoType = {
+  id: string;
+  name: string;
+  customer: string;
+  orderDate: string;
+  is_online: boolean;
+  navigation: any;
+}
 
-const OrderInfo = ({ id, name, customer, orderDate, is_online , navigation}) => (
+const OrderInfo = ({ id, name, customer, orderDate, is_online, navigation }: OrderInfoType) => (
   <InfoContainer>
     <Text style={{ color: 'black', fontSize: 18, fontWeight: 'bold', marginBottom: 4 }}>{name}</Text>
-    <Text style={{ color: 'black', fontSize: 15 , marginBottom: 4}}>주문자: {customer}</Text>
-    <Text style={{ color: 'black', fontSize: 15 , marginBottom: 4 }}>주문 일시: {orderDate}</Text>
+    <Text style={{ color: 'black', fontSize: 15, marginBottom: 4 }}>주문자: {customer}</Text>
+    <Text style={{ color: 'black', fontSize: 15, marginBottom: 4 }}>주문 일시: {orderDate}</Text>
     <Text style={{ color: 'black', fontSize: 15 }}>거래 방식: {is_online ? '비대면' : '대면'}</Text>
     <TouchableOpacity style={{ marginTop: 10, alignSelf: 'flex-end' }}
-        onPress={() => navigation.navigate('QuotationPage')}
+      onPress={() => navigation.navigate('QuotationPage')}
     >
       <Text style={{ color: 'gray', fontSize: 14, fontWeight: 'bold' }}>주문서 확인</Text>
     </TouchableOpacity>
@@ -83,39 +91,41 @@ const OrderManagement = () => {
   const completedOrders = orderlist.filter(order => order.status === 'completed'); // 거래 완료
 
   return (
-   <SafeAreaView style={{ flex: 1 , backgroundColor: '#f0f0f0'}}>
-         <Tabs.Container
-             renderHeader={() => (
-                 <DetailScreenHeader
-                    title='주문 관리'
-                    leftButton='CustomBack'
-                    onPressLeft={() => {}}
-                  />
-              )}
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#f0f0f0' }}>
+      <Tabs.Container
+        renderHeader={() => (
+          <DetailScreenHeader
+            title='주문 관리'
+            leftButton='CustomBack'
+            onPressLeft={() => { }}
+            rightButton='None'
+            onPressRight={() => { }}
+          />
+        )}
 
-         headerContainerStyle={{
-             shadowOpacity: 0,
-             borderBottomWidth: 1,
-             borderColor: '#D9D9D9'
-           }}
-           renderTabBar={props => (
-             <MaterialTabBar
-               {...props}
-               indicatorStyle={{
-                 backgroundColor: '#BDBDBD',
-                 height: 2
-               }}
-               style={{
-                 backgroundColor: 'white',
-               }}
-               labelStyle={{
-                 color: BLACK,
-                 fontWeight: '700',
-                 fontSize: 16
-               }}
-             />
-           )}
-         >
+        headerContainerStyle={{
+          shadowOpacity: 0,
+          borderBottomWidth: 1,
+          borderColor: '#D9D9D9'
+        }}
+        renderTabBar={props => (
+          <MaterialTabBar
+            {...props}
+            indicatorStyle={{
+              backgroundColor: '#BDBDBD',
+              height: 2
+            }}
+            style={{
+              backgroundColor: 'white',
+            }}
+            labelStyle={{
+              color: BLACK,
+              fontWeight: '700',
+              fontSize: 16
+            }}
+          />
+        )}
+      >
 
         {/* 거래 전 탭 */}
         <Tabs.Tab name="새 주문">
@@ -123,9 +133,10 @@ const OrderManagement = () => {
             {newOrders.length > 0 ? (
               newOrders.map((order, index) => (
                 <OrderInfoBox key={index}>
-                   <IdText>{order.id}</IdText>
+                  <IdText>{order.id}</IdText>
                   <ImageContainer source={{ uri: order.photoUri }} />
                   <OrderInfo
+                    id={order.id}
                     name={order.name}
                     customer={order.customer}
                     orderDate={order.orderDate}
@@ -147,9 +158,10 @@ const OrderManagement = () => {
             {progressOrders.length > 0 ? (
               progressOrders.map((order, index) => (
                 <OrderInfoBox key={index}>
-                 <IdText>{order.id}</IdText>
+                  <IdText>{order.id}</IdText>
                   <ImageContainer source={{ uri: order.photoUri }} />
                   <OrderInfo
+                    id={order.id}
                     name={order.name}
                     customer={order.customer}
                     orderDate={order.orderDate}
@@ -175,6 +187,7 @@ const OrderManagement = () => {
                   <IdText>{order.id}</IdText>
                   <ImageContainer source={{ uri: order.photoUri }} />
                   <OrderInfo
+                    id={order.id}
                     name={order.name}
                     customer={order.customer}
                     orderDate={order.orderDate}
@@ -198,7 +211,6 @@ const OrderInfoBox = styled.View`
   border-radius: 14px;
   border-color: white;
   border-width: 1px;
-  backgroundColor: white;
   flex-direction: row;
   padding: 19px;
   padding-top: 30px;

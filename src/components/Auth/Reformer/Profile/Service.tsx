@@ -1,5 +1,14 @@
 import React, { useRef, useState } from 'react';
-import { SafeAreaView, ScrollView, View, Text, TouchableOpacity, Image, ImageBackground, StyleSheet } from 'react-native';
+import {
+  SafeAreaView,
+  ScrollView,
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  ImageBackground,
+  StyleSheet,
+} from 'react-native';
 import { Tabs, MaterialTabBar } from 'react-native-collapsible-tab-view';
 import { BLACK, PURPLE } from '../../../../styles/GlobalColor.tsx';
 import StarIcon from '../../../../assets/common/Star.svg';
@@ -10,7 +19,10 @@ import TempStorage from '../../../../components/Home/Market/TempStorage.tsx';
 import ServiceRegistration from '../../../../components/Home/Market/ServiceRegistration.tsx';
 import FixMyPage from '../../../../pages/FixMyPage.tsx';
 import ScrollTopButton from '../../../../common/ScrollTopButton.tsx';
-import { StackScreenProps, createStackNavigator } from '@react-navigation/stack';
+import {
+  StackScreenProps,
+  createStackNavigator,
+} from '@react-navigation/stack';
 import styled from 'styled-components/native';
 
 // Stack Navigator 생성
@@ -21,18 +33,26 @@ export default function AppNavigator() {
     <Stack.Navigator
       initialRouteName="MarketTabView"
       screenOptions={{
-        headerShown: false,  // 헤더를 아예 숨기도록 설정
-      }}
-    >
+        headerShown: false, // 헤더를 아예 숨기도록 설정
+      }}>
       <Stack.Screen name="MarketTabView" component={MarketTabView} />
       <Stack.Screen name="TempStorage" component={TempStorage} />
-      <Stack.Screen name="ServiceRegistration" component={ServiceRegistration} />
+      <Stack.Screen
+        name="ServiceRegistration"
+        component={ServiceRegistration}
+      />
       <Stack.Screen name="FixMyPage" component={FixMyPage} />
     </Stack.Navigator>
   );
 }
 
-export const ProfileSection = ({ navigation, userInfo }: { navigation: any, userInfo: any }) => {
+export const ProfileSection = ({
+  navigation,
+  userInfo,
+}: {
+  navigation: any;
+  userInfo: any;
+}) => {
   const marketName = '이하늘의 마켓';
   const rate = 4.5;
   const reviewNumber = 100;
@@ -82,7 +102,7 @@ export const ProfileSection = ({ navigation, userInfo }: { navigation: any, user
 const MarketTabView = ({
   navigation,
   route,
-}: StackScreenProps<HomeStackParams, 'Market'>) => {
+}: StackScreenProps<HomeStackParams, 'MarketTabView'>) => {
   const [activeTab, setActiveTab] = useState('profile'); // 활성화된 탭 상태 관리
   const scrollRef = useRef<ScrollView | null>(null);
 
@@ -90,19 +110,24 @@ const MarketTabView = ({
   const userInfo = {
     nickname: '이하늘',
     introduce: '나는야 업씨러 이하늘 환경을 사랑하지요 눈누난나',
-    profile_image: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
+    profile_image:
+      'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
   };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Tabs.Container
-        renderHeader={props => <ProfileSection navigation={navigation} userInfo={userInfo} />}
+        renderHeader={props => (
+          <ProfileSection navigation={navigation} userInfo={userInfo} />
+        )}
         headerContainerStyle={{
           shadowOpacity: 0,
           borderBottomWidth: 1,
           borderColor: '#D9D9D9',
         }}
-        onIndexChange={index => setActiveTab(index === 0 ? 'profile' : 'service')} // 탭 변경 시 상태 업데이트
+        onIndexChange={index =>
+          setActiveTab(index === 0 ? 'profile' : 'service')
+        } // 탭 변경 시 상태 업데이트
         renderTabBar={props => (
           <MaterialTabBar
             {...props}
@@ -125,7 +150,7 @@ const MarketTabView = ({
         </Tabs.Tab>
         <Tabs.Tab name="서비스" key="service">
           <View>
-            <ServicePage scrollViewRef={scrollRef} />
+            <ServicePage scrollViewRef={scrollRef} navigation={navigation} />
             <ScrollTopButton scrollViewRef={scrollRef} />
             {/* 리폼러의 서비스 아래에 임시저장 버튼 추가 */}
             <TouchableOpacity
@@ -186,7 +211,7 @@ const styles = StyleSheet.create({
   profileHeaderRateBox: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'center',  // 별점 중앙 정렬
+    justifyContent: 'center', // 별점 중앙 정렬
     alignItems: 'center',
     marginTop: 8,
   },

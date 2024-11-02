@@ -1,4 +1,15 @@
-import { Alert, Button, FlatList, Image, ImageBackground, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Alert,
+  Button,
+  FlatList,
+  Image,
+  ImageBackground,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {
   StackScreenProps,
   createStackNavigator,
@@ -17,7 +28,6 @@ import { Title20B } from '../styles/GlobalText';
 import TextToggle from '../common/TextToggle';
 import { BLACK } from '../styles/GlobalColor';
 import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
-import ServicePage from '../components/Home/Market/ServicePage';
 import ScrollTopButton from '../common/ScrollTopButton';
 import ReviewPage from '../components/Home/Market/ReviewPage';
 import ScrollToTopButton from '../common/ScrollToTopButtonFlat';
@@ -58,10 +68,7 @@ const MyPageScreen = ({
   );
 };
 
-
-
 const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
-
   const ProfileSection = ({
     nickname,
     backgroundphoto,
@@ -83,13 +90,14 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
           onPressLeft={() => { }}
           rightButton="Edit"
           onPressRight={editProfile}
-        /><ImageBackground
-          style={{ width: '100%', height: 200 }}
+        />
+        <ImageBackground
+          style={{ width: "100%", height: 200 }}
           imageStyle={{ height: 160 }}
           source={{ uri: backgroundphoto }}>
           <View
             style={{
-              width: '100%',
+              width: "100%",
               height: 160,
               backgroundColor: '#00000066',
               opacity: 0.7,
@@ -122,7 +130,9 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
               source={
                 profile_image
                   ? { uri: profile_image.uri } // 유효한 URL이면 그대로 사용
-                  : { uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp' } // 기본 이미지 URL 사용
+                  : {
+                    uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
+                  } // 기본 이미지 URL 사용
               }
             />
           )}
@@ -135,7 +145,6 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
     );
   };
 
-
   const request = Request();
   const { isLogin, setLogin } = useContext(LoginContext);
   const [userInfo, setUserInfo] = useState({
@@ -145,9 +154,7 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
     profile_image:
       route.params?.profile_image ||
       'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
-    introduce:
-      route.params?.introduce ||
-      '',
+    introduce: route.params?.introduce || '',
   });
 
   useEffect(() => {
@@ -156,12 +163,12 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
     }
   }, [route.params?.userInfo]);
 
-
-  const getProfile = async () => { // 유저 프로필 가져오기-> setUserInfo로 관리
+  const getProfile = async () => {
+    // 유저 프로필 가져오기-> setUserInfo로 관리
     const accessToken = await getAccessToken();
     const headers = {
-      Authorization: `Bearer ${accessToken}`
-    }
+      Authorization: `Bearer ${accessToken}`,
+    };
     try {
       const response = await request.get(`/api/user`, {}, headers);
       const encodedUrl = encodeURI(response.data.profile_image_url);
@@ -170,13 +177,16 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
         fileName: response.data.profile_image_url ? 'profile.jpg' : undefined,
         width: undefined, // width는 알 수 없으므로 undefined로 설정
         height: undefined, // height는 알 수 없으므로 undefined로 설정
-        uri: decodedUri || 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
+        uri:
+          decodedUri ||
+          'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
       };
       if (response.status === 200) {
         console.log('User data fetched successfully:', response.data);
         setUserInfo({
           nickname: response.data.nickname,
-          backgroundphoto: // 우선 기본이미지 
+          // 우선 기본이미지
+          backgroundphoto:
             'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
           profile_image: profileImage,
           introduce:
@@ -257,7 +267,7 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
 
         {routes.map(route =>
         (<Tabs.Tab key={route.key} name={route.title}>
-          {route.key === 'order' && <OrderPage />}
+          {route.key === 'order' && <OrderPage flatListRef={flatListRef} navigation={navigation} route={route} />}
 
           {route.key === 'like' &&
             <View>
@@ -267,7 +277,6 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
         </Tabs.Tab>)
         )}
       </Tabs.Container>
-
     </SafeAreaView>
   );
 };

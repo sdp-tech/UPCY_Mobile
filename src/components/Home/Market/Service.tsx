@@ -125,6 +125,7 @@ const ServiceMarket = ({
         {serviceCardData.map(card => {
           return (
             <ServiceCard
+              key={card.name}
               name={card.name}
               price={card.price}
               tags={card.tags}
