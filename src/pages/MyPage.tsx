@@ -90,11 +90,11 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
           title=""
           leftButton="CustomBack"
           onPressLeft={() => { }}
-          rightButton="Edit"
+          rightButton="Fix"
           onPressRight={editProfile}
         />
         <View>
-          <View style={{ width: width, height: height * 0.16, backgroundColor: '#BDBDBD' }} />
+          <View style={{ width: width, height: height * 0.11, backgroundColor: '#BDBDBD' }} />
           {profile_image === undefined || profile_image.uri === undefined ? ( // 전자는 편집페이지에서 사진 삭제했을 경우, 후자는 가장 처음에 로딩될 경우
             <Image
               style={{
@@ -103,7 +103,7 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
                 height: width * 0.21,
                 borderRadius: 180,
                 position: 'absolute',
-                top: height * 0.11,
+                top: height * 0.06,
               }}
               source={{
                 uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
@@ -117,7 +117,7 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
                 height: width * 0.21,
                 borderRadius: 180,
                 position: 'absolute',
-                top: height * 0.11,
+                top: height * 0.06,
               }}
               source={
                 profile_image
