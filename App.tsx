@@ -13,10 +13,13 @@ import {
 
 import HomeScreen from './src/pages/Home';
 import MyPageScreen from './src/pages/MyPage';
+import OrderManagement from './src/components/Home/Order/OrderManagement';
+
 import useLoginGuard from './src/hooks/useLoginGuard';
 
 import HomeIcon from './src/assets/navbar/Home.svg';
 import MyPageIcon from './src/assets/navbar/MyPage.svg';
+import OrderManagementIcon from './src/assets/navbar/OrderManagement.svg';
 import SignIn from './src/components/Auth/SignIn';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomBarProvider, useBottomBar } from './contexts/BottomBarContext';
@@ -107,7 +110,13 @@ const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
                 routes: [{ name: route.name, params: { id: undefined } }],
               });
             else navigation.navigate(route.name, { id: undefined });
-          } else if (route.name == '마이페이지') {
+          } else if (route.name == '주문관리') {
+                  if (isFocused)
+                    navigation.reset({
+                      routes: [{ name: route.name, params: { id: undefined } }],
+                    });
+                  else navigation.navigate(route.name, { id: undefined });
+                } else if (route.name == '마이페이지') {
             if (isFocused)
               navigation.reset({
                 routes: [{ name: route.name, params: { id: undefined } }],
@@ -129,7 +138,9 @@ const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
             {
               {
                 0: <HomeIcon color="#000000" opacity={isFocused ? 1 : 0.4} />,
-                1: <MyPageIcon color="#000000" opacity={isFocused ? 1 : 0.4} />,
+                1: <OrderManagementIcon color="#000000" opacity={isFocused ? 1 : 0.4} />,
+                2: <MyPageIcon color="#000000" opacity={isFocused ? 1 : 0.4} />,
+
               }[index]
             }
 
@@ -164,6 +175,7 @@ const HomeTab = (): JSX.Element => {
         component={HomeScreen}
         options={{ tabBarStyle: { display: 'none' } }}
       />
+      <Tab.Screen name={'주문관리'} component={OrderManagement} />
       <Tab.Screen name={'마이페이지'} component={MyPageScreen} />
     </Tab.Navigator>
   );
