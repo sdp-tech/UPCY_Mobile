@@ -130,10 +130,14 @@ export default function BasicForm({ navigation, route }: FormProps) {
       email: form.mail + '@' + form.domain,
       password: form.password
     }
-    const response = await request.post(`/api/user/login`, params);
-    await processLoginResponse2( // userRole 설정 함수 
-      response
-    );
+    if (form.mail === '' || form.password === '') {
+      Alert.alert('이메일과 비밀번호를 모두 입력해주세요.')
+    } else {
+      const response = await request.post(`/api/user/login`, params);
+      await processLoginResponse2( // userRole 설정 함수 
+        response
+      );
+    }
   };
 
   const passwordValidation = async () => {
