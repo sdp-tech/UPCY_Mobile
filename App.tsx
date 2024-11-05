@@ -111,12 +111,12 @@ const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
               });
             else navigation.navigate(route.name, { id: undefined });
           } else if (route.name == '주문관리') {
-                  if (isFocused)
-                    navigation.reset({
-                      routes: [{ name: route.name, params: { id: undefined } }],
-                    });
-                  else navigation.navigate(route.name, { id: undefined });
-                } else if (route.name == '마이페이지') {
+            if (isFocused)
+              navigation.reset({
+                routes: [{ name: route.name, params: { id: undefined } }],
+              });
+            else navigation.navigate(route.name, { id: undefined });
+          } else if (route.name == '마이페이지') {
             if (isFocused)
               navigation.reset({
                 routes: [{ name: route.name, params: { id: undefined } }],

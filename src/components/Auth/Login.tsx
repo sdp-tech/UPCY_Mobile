@@ -114,7 +114,7 @@ export async function processLoginResponse( // 통상 로그인시 호출 함수
   setUser: (user: UserType) => void // setUser 전달
 ) {
   // const navigation = useNavigation<StackNavigationProp<MyPageProps>>();
-  if (response?.status == 200) {
+  if (response?.status === 200) {
     const accessToken = await response.data.access;
     const refreshToken = await response.data.refresh;
     setAccessToken(accessToken);
@@ -124,14 +124,10 @@ export async function processLoginResponse( // 통상 로그인시 호출 함수
     navigate(); // 인자로 전달받은 네비게이팅 수행
     console.log('로그인 성공');
 
-  } else if (response.status == 400) {
-    Alert.alert(
-      response.data.extra.fields !== undefined
-        ? response.data.extra.fields.detail
-        : response.data.message,
-    );
-  } else {
-    Alert.alert('예상치 못한 오류가 발생하였습니다.');
+  } else if (response.status === 400) {
+    Alert.alert('비밀번호가 틀렸습니다.');
+  } else if (response.status === 404) {
+    Alert.alert('이메일을 찾을 수 없습니다.');
   }
 };
 
@@ -143,17 +139,21 @@ export default function Login({ navigation, route }: LoginProps) {
   const request = Request();
 
   const handleLogin = async () => { // 로그인 함수 
-    const response = await request.post(`/api/user/login`, form);
-    processLoginResponse(
-      response,
-      () => {
-        const parentNav = navigation.getParent();
-        if (parentNav != undefined) parentNav.goBack();
-        else navigation.navigate('Home');
-      },
-      setLogin,
-      setUser // setUser 전달,
-    );
+    if (form.email === '' || form.password === '') {
+      Alert.alert('이메일과 비밀번호를 모두 입력해주세요.')
+    } else {
+      const response = await request.post(`/api/user/login`, form);
+      processLoginResponse(
+        response,
+        () => {
+          const parentNav = navigation.getParent();
+          if (parentNav != undefined) parentNav.goBack();
+          else navigation.navigate('Home');
+        },
+        setLogin,
+        setUser // setUser 전달,
+      );
+    }
   };
 
   return (
