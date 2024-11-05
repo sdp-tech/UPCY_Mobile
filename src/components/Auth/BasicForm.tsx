@@ -14,7 +14,7 @@ import DownArrow from '../../assets/common/DownArrow.svg';
 import LeftArrow from '../../assets/common/Arrow.svg';
 import Logo from '../../assets/common/Logo.svg';
 import { FormProps } from './SignIn';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import InputBox from '../../common/InputBox';
 import InputView from '../../common/InputView';
 import BottomButton from '../../common/BottomButton';
@@ -104,18 +104,18 @@ export default function BasicForm({ navigation, route }: FormProps) {
   const is_reformer = route.params?.is_reformer ?? false;
   const { width, height } = Dimensions.get('window');
   const [form, setForm] = useState<BasicFormProps2>({
-    mail: '',
-    domain: undefined,
-    password: '',
-    nickname: '',
-    agreement: {
+    mail: route.params?.mail || '',
+    domain: route.params?.domain || undefined,
+    password: route.params?.password || '',
+    nickname: route.params?.nickname || '',
+    agreement: route.params?.agreement || {
       a: false,
       b: false,
       c: false,
       d: false,
     },
-    introduce: '',
-    profile_image: undefined,
+    introduce: route.params?.introduce || '',
+    profile_image: route.params?.profile_image || undefined,
   });
   const [checkPw, setCheckPw] = useState('');
   const [isModalVisible, setModalVisible] = useState(false); // 리폼러 가입 모달 
@@ -124,6 +124,12 @@ export default function BasicForm({ navigation, route }: FormProps) {
   const passwordRegExp = new RegExp(
     '^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$',
   );
+
+  useEffect(() => {
+    if (route.params?.form) {
+      setForm(route.params.form)
+    }
+  }, [route.params?.form]);
 
   const handleLogin = async () => { // 로그인 API 사용해서 토큰 발급 
     const params = {
@@ -141,18 +147,19 @@ export default function BasicForm({ navigation, route }: FormProps) {
   };
 
   const passwordValidation = async () => {
-    if (form.agreement.a === false || form.agreement.b === false || form.agreement.c === false ||
-      form.domain === undefined || form.mail === '') {
+    const form_ = { ...form }
+    if (form_.agreement.a === false || form_.agreement.b === false || form_.agreement.c === false ||
+      form_.domain === undefined || form_.mail === '') {
       Alert.alert('필수 사항들을 모두 입력해주세요.')
-    } else if (!form.domain.includes('.')) {
+    } else if (!form_.domain.includes('.')) {
       Alert.alert('올바른 이메일 형식이 아닙니다.')
     } else { // 누락된거 없을 때 
-      if (passwordRegExp.exec(form.password)) {
+      if (passwordRegExp.exec(form_.password)) {
         if (is_reformer === true) { // 리폼러의 경우 
           await handleSubmit(); // 일단 회원가입 하고, 
           handleLogin(); // 토큰 발급 로직 
         } else { // 업씨러의 경우 
-          navigation.navigate('Upcyer', { form })
+          navigation.navigate('Upcyer', { form_ })
         }
       } else {
         Alert.alert('비밀번호가 올바르지 않습니다.');
@@ -371,6 +378,7 @@ export default function BasicForm({ navigation, route }: FormProps) {
                 value="다음"
                 pressed={false}
                 onPress={() => {
+                  console.log(form);
                   passwordValidation();
                 }}
                 // onPress={() => handleNext()} // 이건 임시. 

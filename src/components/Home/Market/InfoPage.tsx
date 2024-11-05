@@ -4,6 +4,7 @@ import styled from 'styled-components/native';
 import { Body14R, Body16B } from '../../../styles/GlobalText';
 
 //TODO: ReformerProfilePage로 이름 수정
+// 개별 마켓 페이지 누르면 보이는 '프로필' 탭에 있는 페이지임! 
 const InfoPage = () => {
   const data = [
     {
