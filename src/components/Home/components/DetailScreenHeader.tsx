@@ -1,5 +1,5 @@
 import { SafeAreaView, TouchableOpacity, View } from 'react-native';
-import { Body14M, Subtitle18B } from '../../../styles/GlobalText';
+import { Body14M, Subtitle18B, Body16B } from '../../../styles/GlobalText';
 import React from 'react';
 import { BLACK, LIGHTGRAY } from '../../../styles/GlobalColor';
 import LeftArrowIcon from '../../../assets/common/Arrow.svg';
@@ -11,7 +11,7 @@ interface HeaderProps {
   title: string;
   leftButton: 'CustomBack' | 'LeftArrow' | 'Exit' | 'None';
   onPressLeft: () => void;
-  rightButton: 'Save' | 'Search' | 'Edit' | 'Exit' | 'None';
+  rightButton: 'Save' | 'Search' | 'Edit' | 'Exit' | 'None' | 'Fix';
   onPressRight: () => void;
   saved?: number;
   border?: boolean;
@@ -34,6 +34,7 @@ const DetailScreenHeader = ({
     LeftArrow: <View style={{ marginLeft: 14 }}><LeftArrowIcon color={BLACK} /></View>,
     CustomBack: <CustomBackButton />,
     None: <></>,
+    Fix: <Body16B style={{ color: '#929292', marginRight: 10 }}>...</Body16B>,
   };
   return (
     <SafeAreaView

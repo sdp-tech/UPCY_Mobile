@@ -6,6 +6,7 @@ import Reformer from './Reformer/Reformer';
 import BasicForm, { BasicFormProps2 } from './BasicForm';
 import ReformFormSubmit from './Reformer/ReformFormSubmit';
 import { UpcyFormProfile } from '../Auth/Upcyer/Upcyer'
+import { BottomSheetModalStackBehavior } from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetModal';
 
 export interface FormProps {
   route: any;
@@ -23,9 +24,9 @@ export type SignInParams = {
   Login: undefined;
   Signup: undefined;
   Reformer: undefined;
-  Basic: undefined;
+  Basic: { form?: any | undefined };
   ReformSubmit: undefined;
-  Upcyer: { form: BasicFormProps2 };
+  Upcyer: { form: any };
 };
 
 export default function SignIn() { // 스택 네비게이터 설정 
