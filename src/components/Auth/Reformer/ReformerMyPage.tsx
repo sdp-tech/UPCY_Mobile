@@ -10,15 +10,15 @@ import {
   StyleSheet,
 } from 'react-native';
 import { Tabs, MaterialTabBar } from 'react-native-collapsible-tab-view';
-import { BLACK, PURPLE } from '../../../../styles/GlobalColor.tsx';
-import StarIcon from '../../../../assets/common/Star.svg';
-import Arrow from '../../../../assets/common/Arrow.svg';
-import ServicePage from '../../../../components/Home/Market/ServicePage';
-import InfoPage from '../../../../components/Home/Market/InfoPage.tsx';
-import TempStorage from '../../../../components/Home/Market/TempStorage.tsx';
-import ServiceRegistration from '../../../../components/Home/Market/ServiceRegistration.tsx';
-import FixMyPage from '../../../../pages/FixMyPage.tsx';
-import ScrollTopButton from '../../../../common/ScrollTopButton.tsx';
+import { BLACK, PURPLE } from '../../../styles/GlobalColor.tsx';
+import StarIcon from '../../../assets/common/Star.svg';
+import Arrow from '../../../assets/common/Arrow.svg';
+import ServicePage from '../../../components/Home/Market/ServicePage';
+import InfoPage from '../../../components/Home/Market/InfoPage.tsx';
+import TempStorage from '../../../components/Home/Market/TempStorage.tsx';
+import ServiceRegistration from '../../../components/Home/Market/ServiceRegistration.tsx';
+import FixMyPage from '../../../pages/FixMyPage.tsx';
+import ScrollTopButton from '../../../common/ScrollTopButton.tsx';
 import {
   StackScreenProps,
   createStackNavigator,

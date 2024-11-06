@@ -2,18 +2,8 @@ import React, { ReactNode, createContext, useContext, useEffect, useState } from
 import { getAccessToken, setNickname, setUserRole } from './storage';
 import Request from './requests';
 import { Alert } from 'react-native';
+import { UserType } from '../components/Auth/Login';
 
-type UserType = {
-  email: string;
-  phone: string;
-  nickname: string;
-  agreement_terms: boolean;
-  adress: string;
-  profile_image_url: string;
-  introduce: string;
-  is_active: boolean;
-  role: string;
-};
 
 export const UserContext = createContext<{
   user: UserType | null;
@@ -92,17 +82,27 @@ export const LoginContext = createContext({
 
 export const LoginProvider = ({ children }: { children: ReactNode }) => {
   const [isLogin, setIsLogin] = useState<boolean>(false);
+  const { setUser, setRole } = useUser();
+
+  const logout = () => {
+      setUser(null);
+      setRole('');
+      setIsLogin(false);
+  };
+
   const setLogin = (value: boolean) => {
     setIsLogin(value);
+    if (!value) logout();
   };
+
   const checkLogin = async () => {
     // const token = await getAccessToken();
     // if (token) {
     //   setIsLogin(true);
     // } else {
     //   setIsLogin(false)
-    // } 
-    setIsLogin(false) // 위의 코드가 실제 코드입니다. 지금 이건 디버깅용입니다. 
+    // }
+    setIsLogin(false) // 위의 코드가 실제 코드입니다. 지금 이건 디버깅용입니다.
     // (위의 코드는 앱을 리빌드 해도 액세스토큰이 남아있어서 회원가입 플로우 수정이 불가함)
   };
   useEffect(() => {

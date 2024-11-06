@@ -36,7 +36,7 @@ import { PURPLE } from '../styles/GlobalColor';
 import OrderManagement from '../components/Home/Order/OrderManagement';
 import CompletedOrder from '../components/Home/Order/CompletedOrder';
 import ReformerMarket from '../components/Home/Market/ReformerMarket';
-import ReformerProfileService from '../components/Auth/Reformer/Profile/Service';
+import ReformerProfileService from '../components/Auth/Reformer/ReformerMyPage';
 import Service from '../components/Home/Market/Service';
 import { PhotoType } from '../hooks/useImagePicker';
 import { Styles } from '../types/UserTypes';
