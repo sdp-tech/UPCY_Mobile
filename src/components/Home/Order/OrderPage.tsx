@@ -136,7 +136,7 @@ const OrderPage: React.FC<OrderPageProps> = ({ flatListRef, navigation, route })
   const handleConfirmCompleted = () => {
     setIsModalVisible(false);
     console.log('거래 완료 선택');
-    navigation.navigate('CompletedOrder');
+    navigation.navigate('CompletedOrderPop');
   };
 
   // 모달에서 "나중에" 클릭 핸들러

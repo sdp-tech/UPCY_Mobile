@@ -167,7 +167,7 @@ const OrderManagement = () => {
                     orderDate={order.orderDate}
                     is_online={order.is_online}
                     navigation={navigation}
-
+wlr
 
                   />
                 </OrderInfoBox>
