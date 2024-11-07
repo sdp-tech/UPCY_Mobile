@@ -90,7 +90,9 @@ function ProfilePic({ form, setForm }: ProfileProps) {
                     bottom: 0,
                     right: 0,
                 }}>
-                <PencilIcon strokeWidth={1} />
+                <TouchableOpacity onPress={photo === undefined ? handleAddButtonPress : handleImagePress}>
+                    <PencilIcon strokeWidth={1} />
+                </TouchableOpacity>
             </View>
         </View>
     );

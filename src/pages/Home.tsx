@@ -13,7 +13,7 @@ import CustomHeader from '../common/CustomHeader';
 import HomeTabView, { SelectedOptionProps } from '../components/Home/HomeMain';
 import MarketTabView from '../components/Home/Market/MarketTabView';
 import QuotationForm from '../components/Home/Quotation/QuotationForm';
-import QuotationPage from '../components/Home/Quotation/QuotationPage';
+import QuotationPage, { QuotationProps } from '../components/Home/Quotation/QuotationPage';
 import SentQuotation from '../components/Home/Quotation/SentQuotation';
 import TempStorage from '../components/Home/Market/TempStorage';
 import ServiceRegistrationPage from '../components/Home/Market/ServiceRegistration';
@@ -25,7 +25,7 @@ import WriteDetailPage from '../components/Home/Market/WriteDetailPage';
 import AddPortfolio from '../components/Home/Portfolio/AddPortfolio';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
-import InputInfo from '../components/Home/Quotation/InputInfo';
+import InputInfo, { InputInfoProps } from '../components/Home/Quotation/InputInfo';
 import QuotationConfirm from '../components/Home/Quotation/QuotationConfirm';
 import Rejection from '../components/Home/Quotation/Rejection';
 import SentRejection from '../components/Home/Quotation/SentRejection';
@@ -61,7 +61,7 @@ export type HomeStackParams = {
   CompletedOrder: undefined;
   GoodsDetailPage: undefined;
   QuotationForm: undefined;
-  QuotationPage: undefined;
+  QuotationPage: QuotationProps;
   SentQuotation: undefined;
   ServiceRegistrationPage: { inputText?: string; detailphoto?: PhotoType[] };
   GoodsRegistrationPage: undefined;
@@ -81,6 +81,7 @@ export type HomeStackParams = {
     // id: string;
     reformerName: string;
   };
+  ReformerProfileService: undefined;
 };
 
 const HomeStack = createStackNavigator<HomeStackParams>();
@@ -196,11 +197,11 @@ const HomeMainScreen = ({
     <Fragment>
       <SafeAreaView style={{ flex: 0, backgroundColor: PURPLE }} />
       <SafeAreaView style={{ flex: 1 }}>
-        <CustomHeader onSearch={() => {}} onTabChange={handleTabChange} />
+        <CustomHeader onSearch={() => { }} onTabChange={handleTabChange} />
         <BottomSheetModalProvider>
           <View>
             <HomeTabView
-              onSearch={() => {}}
+              onSearch={() => { }}
               selectedTab={selectedTab}
               onTabChange={handleTabChange}
               setSelectedFilterOption={setSelectedFilterOption}

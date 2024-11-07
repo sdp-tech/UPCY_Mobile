@@ -1,46 +1,11 @@
-import { Dispatch, SetStateAction, createContext, useEffect, useState } from 'react';
-import { Text, View } from 'react-native';
-import { FormProps } from '../SignIn';
-import ReformFormHeader from './ReformFormHeader';
-import ReformFormProfile from './ReformFormProfile';
-import {
-  FieldType,
-  EducType,
-  MaterialType,
-  RegionType,
-  StyleType,
-  CareerType,
-  AwardsType,
-  CertifiType,
-  FreeType
-} from '../../../types/UserTypes';
-import ReformFormStyle from './ReformFormStyle';
-import ReformCareer from './ReformFormCareer';
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { PhotoType } from '../../../hooks/useImagePicker';
-import DetailScreenHeader from '../../Home/components/DetailScreenHeader';
-import { SignupProp } from '../Signup';
+import { Dispatch, SetStateAction, useState } from 'react';
+import { Text, View, TouchableOpacity, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-// type page = 'profile' | 'style' | 'field';
-
-export interface ReformProps {
-  form: ReformProfileType;
-  setForm: Dispatch<SetStateAction<ReformProfileType>>;
-}
-
-export interface ModalProps extends ReformProps {
-  open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
-}
-
-interface BasicFormProp {
-  email: string;
-  mailDomain: string;
-  password: string;
-  region: string;
-  marketing: boolean;
-}
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import ReformFormProfile from './ReformFormProfile';
+import BackArrow from '../../../assets/common/Arrow.svg'; // Import the back arrow icon
+import { PhotoType } from '../../../hooks/useImagePicker';
+import { RegionType, EducType, CareerType, AwardsType, CertifiType, FreeType, FieldType } from '../../../types/UserTypes';
 
 export type ReformProfileType = {
   picture?: undefined | PhotoType;
@@ -56,14 +21,7 @@ export type ReformProfileType = {
   field: FieldType;
 };
 
-export type RpContextType = {
-  value: ReformProfileType;
-  steps: number;
-  setValue: Dispatch<SetStateAction<ReformProfileType>>;
-  setSteps: Dispatch<SetStateAction<number>>;
-};
-
-export default function Reformer({ navigation, route }: SignupProp) {
+export default function Reformer({ navigation }) {
   const defaultProfile: ReformProfileType = {
     picture: undefined,
     nickname: '',
@@ -77,29 +35,53 @@ export default function Reformer({ navigation, route }: SignupProp) {
     freelancer: [],
     field: [],
   };
-  const [profileForm, setProfileForm] = useState(defaultProfile);
 
-  const handleSubmit = () => {
-    navigation.navigate('ReformSubmit');
-  };
+  const [profileForm, setProfileForm] = useState(defaultProfile);
 
   return (
     <SafeAreaView style={{ flex: 1, flexDirection: "column" }}>
       <BottomSheetModalProvider>
-        <DetailScreenHeader
-          title=''
-          leftButton='LeftArrow'
-          rightButton='None'
-          onPressLeft={() => { navigation.getParent()?.navigate('Home') }}
-          onPressRight={() => { }} />
+        {/* Custom Header */}
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+            <BackArrow width={24} height={24} color="#222" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>프로필 등록</Text>
+        </View>
+
         <View style={{ flex: 1 }}>
           <ReformFormProfile
             form={profileForm}
             setForm={setProfileForm}
           />
-
         </View>
       </BottomSheetModalProvider>
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 56,
+    paddingHorizontal: 16,
+    justifyContent: 'center',
+  },
+  backButton: {
+    position: 'absolute',
+    left: 5, // Position the back arrow 16px from the left
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 16,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontStyle: 'normal',
+    fontFamily: "Pretendard Variable",
+    fontWeight: '700', // Make the title bold
+    color: '#222',
+    textAlign: 'center',
+    lineHeight: 24,
+  },
+});

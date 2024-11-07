@@ -1,6 +1,7 @@
 import {
   Alert,
   Button,
+  Dimensions,
   FlatList,
   Image,
   ImageBackground,
@@ -36,7 +37,7 @@ import Login from '../../../components/Auth/Login';
 import { PhotoType } from '../hooks/useImagePicker';
 import Request from '../../../common/requests';
 import useUser from '../common/Context';
-import OrderPage from '../components/Home/Order/OrderPage';
+import OrderPage from '../../../components/Home/Order/OrderPage';
 import { useFocusEffect } from '@react-navigation/native';
 import { print } from '@gorhom/bottom-sheet/lib/typescript/utilities/logger';
 export type MyPageStackParams = {
@@ -69,6 +70,7 @@ const MyPageScreen = ({
 };
 
 const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
+  const { width, height } = Dimensions.get('screen');
   const ProfileSection = ({
     nickname,
     backgroundphoto,
@@ -88,30 +90,20 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
           title=""
           leftButton="CustomBack"
           onPressLeft={() => {}}
-          rightButton="Edit"
+          rightButton="Fix"
           onPressRight={editProfile}
         />
-        <ImageBackground
-          style={{ width: '100%', height: 200 }}
-          imageStyle={{ height: 160 }}
-          source={{ uri: backgroundphoto }}>
-          <View
-            style={{
-              width: '100%',
-              height: 160,
-              backgroundColor: '#00000066',
-              opacity: 0.7,
-            }}
-          />
+        <View>
+          <View style={{ width: width, height: height * 0.11, backgroundColor: '#BDBDBD'}} />
           {profile_image === undefined || profile_image.uri === undefined ? ( // 전자는 편집페이지에서 사진 삭제했을 경우, 후자는 가장 처음에 로딩될 경우
             <Image
               style={{
                 alignSelf: 'center',
-                width: 90,
-                height: 90,
+                width: width * 0.21,
+                height: width * 0.21,
                 borderRadius: 180,
                 position: 'absolute',
-                top: 110,
+                top: height * 0.06,
               }}
               source={{
                 uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
@@ -121,11 +113,11 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
             <Image
               style={{
                 alignSelf: 'center',
-                width: 90,
-                height: 90,
+                width: width * 0.21,
+                height: width * 0.21,
                 borderRadius: 180,
                 position: 'absolute',
-                top: 110,
+                top: height * 0.06,
               }}
               source={
                 profile_image
@@ -136,8 +128,8 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
               }
             />
           )}
-        </ImageBackground>
-        <Title20B style={{ marginTop: 8 }}>{nickname}</Title20B>
+        </View>
+        <Title20B style={{ marginTop: height * 0.05 }}>{nickname}</Title20B>
         <View style={{ padding: 20, paddingTop: 0, paddingBottom: 0 }}>
           <TextToggle text={introduce} />
         </View>
@@ -217,7 +209,10 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
   //   navigation.navigate('ReformProfile');
   // };
 
-  const [routes] = useState([{ key: 'order', title: '주문' }]);
+  const [routes] = useState([
+      { key: 'order', title: '주문내역' },
+      // { key: 'like', title: '좋아요' },
+  ]);
   const flatListRef = useRef<FlatList>(null);
   const scrollRef = useRef<ScrollView | null>(null);
 
@@ -256,21 +251,21 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
               fontWeight: '700',
               fontSize: 16,
             }}
-            onTabPress={() => Alert.alert('준비중입니다!ㅠㅠ')}
+            //onTabPress={() => Alert.alert('준비중입니다!ㅠㅠ')}
             // 룩북, 좋아요 모아보기 기능 구현되면 위의 onTapPress는 삭제할 것
           />
         )}>
         {routes.map(route => (
-          <Tabs.Tab key={route.key} name={route.title}>
-            {/* {route.key === 'order' && <OrderPage />} */}
+          (<Tabs.Tab key={route.key} name={route.title}>
+              {route.key === 'order' && <OrderPage flatListRef={flatListRef} navigation={navigation} route={route} />}
 
-            {route.key === 'like' && (
-              <View>
-                <ReviewPage flatListRef={flatListRef} />
-                <ScrollToTopButton flatListRef={flatListRef} />
-              </View>
-            )}
-          </Tabs.Tab>
+              {/* {route.key === 'like' &&
+                 <View>
+                     <ReviewPage flatListRef={flatListRef} />
+                     <ScrollToTopButton flatListRef={flatListRef} />
+                     </View>}
+                 </View>} */}
+             </Tabs.Tab>)
         ))}
       </Tabs.Container>
     </SafeAreaView>

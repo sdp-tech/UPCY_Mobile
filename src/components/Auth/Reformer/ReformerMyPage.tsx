@@ -24,7 +24,9 @@ import {
   createStackNavigator,
 } from '@react-navigation/stack';
 import styled from 'styled-components/native';
+import DetailScreenHeader from '../../../components/Home/components/DetailScreenHeader.tsx';
 
+// 리폼러 입장에서 보는 마이페이지! 
 // Stack Navigator 생성
 const Stack = createStackNavigator();
 
@@ -59,6 +61,13 @@ export const ProfileSection = ({
 
   return (
     <View>
+      <DetailScreenHeader
+        title=''
+        onPressLeft={() => { }}
+        onPressRight={() => navigation.navigate('FixMyPage', { userInfo })}
+        leftButton='CustomBack'
+        rightButton='Fix'
+      />
       {/* 배경 이미지와 프로필 사진 추가 */}
       <ImageBackground
         style={{ width: '100%', height: 200 }}
