@@ -257,7 +257,7 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
         )}>
         {routes.map(route => (
           (<Tabs.Tab key={route.key} name={route.title}>
-              {route.key === 'order' && <OrderPage flatListRef={flatListRef} navigation={navigation} route={route} />}
+a              {route.key === 'order' && <OrderPage flatListRef={flatListRef} navigation={navigation} route={route} />}
 
               {/* {route.key === 'like' &&
                  <View>
