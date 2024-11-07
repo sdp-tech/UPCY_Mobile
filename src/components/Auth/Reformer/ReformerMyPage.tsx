@@ -10,24 +10,23 @@ import {
   StyleSheet,
 } from 'react-native';
 import { Tabs, MaterialTabBar } from 'react-native-collapsible-tab-view';
-import { BLACK, PURPLE } from '../../../../styles/GlobalColor.tsx';
-import StarIcon from '../../../../assets/common/Star.svg';
-import Arrow from '../../../../assets/common/Arrow.svg';
-import ServicePage from '../../../../components/Home/Market/ServicePage';
-import InfoPage from '../../../../components/Home/Market/InfoPage.tsx';
-import TempStorage from '../../../../components/Home/Market/TempStorage.tsx';
-import ServiceRegistration from '../../../../components/Home/Market/ServiceRegistration.tsx';
-import FixMyPage from '../../../../pages/FixMyPage.tsx';
-import ScrollTopButton from '../../../../common/ScrollTopButton.tsx';
+import { BLACK, PURPLE } from '../../../styles/GlobalColor.tsx';
+import StarIcon from '../../../assets/common/Star.svg';
+import Arrow from '../../../assets/common/Arrow.svg';
+import ServicePage from '../../../components/Home/Market/ServicePage';
+import InfoPage from '../../../components/Home/Market/InfoPage.tsx';
+import TempStorage from '../../../components/Home/Market/TempStorage.tsx';
+import ServiceRegistration from '../../../components/Home/Market/ServiceRegistration.tsx';
+import FixMyPage from '../../../pages/FixMyPage.tsx';
+import ScrollTopButton from '../../../common/ScrollTopButton.tsx';
+import LoginContext from '../../../common/Context';
 import {
   StackScreenProps,
   createStackNavigator,
 } from '@react-navigation/stack';
 import styled from 'styled-components/native';
-import DetailScreenHeader from '../../../Home/components/DetailScreenHeader.tsx';
+import DetailScreenHeader from '../../../components/Home/components/DetailScreenHeader.tsx';
 
-// 리폼러 입장에서 보는 마이페이지! 
-// Stack Navigator 생성
 const Stack = createStackNavigator();
 
 export default function AppNavigator() {
@@ -35,7 +34,7 @@ export default function AppNavigator() {
     <Stack.Navigator
       initialRouteName="MarketTabView"
       screenOptions={{
-        headerShown: false, // 헤더를 아예 숨기도록 설정
+        headerShown: false,
       }}>
       <Stack.Screen name="MarketTabView" component={MarketTabView} />
       <Stack.Screen name="TempStorage" component={TempStorage} />
@@ -56,31 +55,24 @@ export const ProfileSection = ({
   userInfo: any;
 }) => {
   const marketName = '이하늘의 마켓';
-  const rate = 4.5;
-  const reviewNumber = 100;
 
   return (
-    <View>
+    <View style={{backgroundColor: "#FFF"}}>
       <DetailScreenHeader
         title=''
-        onPressLeft={() => { }}
+        onPressLeft={() => {}}
         onPressRight={() => navigation.navigate('FixMyPage', { userInfo })}
         leftButton='CustomBack'
         rightButton='Fix'
+        style = {{ backgroundColor: '#E9EBF8' }}
       />
-      {/* 배경 이미지와 프로필 사진 추가 */}
-      <ImageBackground
-        style={{ width: '100%', height: 200 }}
-        imageStyle={{ height: 160 }}
-        source={{
-          uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
-        }}>
+      <View style={{ width: '100%', height: 119, backgroundColor: '#E9EBF8' }}>
         <View
           style={{
+
             width: '100%',
-            height: 160,
-            backgroundColor: '#00000066',
-            opacity: 0.7,
+            height: 119,
+            backgroundColor: '#E9EBF8',
           }}
         />
         <Image
@@ -90,20 +82,16 @@ export const ProfileSection = ({
             height: 90,
             borderRadius: 180,
             position: 'absolute',
-            top: 110,
+            top: 74,
           }}
           source={{
             uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
           }}
         />
-      </ImageBackground>
-      <Text style={TextStyles.marketName}>{marketName}</Text>
-      <View style={styles.profileHeaderRateBox}>
-        <StarIcon color={PURPLE} />
-        <Text style={TextStyles.rate}>{rate}</Text>
-        <Text style={TextStyles.reviewNumber}>({reviewNumber})</Text>
-        <Arrow color={BLACK} style={styles.arrow} />
       </View>
+      <View style={{ height: 57 }} />
+      <Text style={TextStyles.marketName}>{marketName}</Text>
+      <View style={{ height: 10 }} />
     </View>
   );
 };
@@ -112,10 +100,9 @@ const MarketTabView = ({
   navigation,
   route,
 }: StackScreenProps<HomeStackParams, 'MarketTabView'>) => {
-  const [activeTab, setActiveTab] = useState('profile'); // 활성화된 탭 상태 관리
+  const [activeTab, setActiveTab] = useState('profile');
   const scrollRef = useRef<ScrollView | null>(null);
 
-  // userInfo 예시 데이터
   const userInfo = {
     nickname: '이하늘',
     introduce: '나는야 업씨러 이하늘 환경을 사랑하지요 눈누난나',
@@ -136,7 +123,7 @@ const MarketTabView = ({
         }}
         onIndexChange={index =>
           setActiveTab(index === 0 ? 'profile' : 'service')
-        } // 탭 변경 시 상태 업데이트
+        }
         renderTabBar={props => (
           <MaterialTabBar
             {...props}
@@ -159,23 +146,22 @@ const MarketTabView = ({
         </Tabs.Tab>
         <Tabs.Tab name="서비스" key="service">
           <View>
-            <ServicePage scrollViewRef={scrollRef} navigation={navigation} />
-            <ScrollTopButton scrollViewRef={scrollRef} />
-            {/* 리폼러의 서비스 아래에 임시저장 버튼 추가 */}
             <TouchableOpacity
               style={styles.saveButton}
               onPress={() => navigation.navigate('TempStorage')}>
-              <Text style={styles.saveButtonText}>임시저장 (2)</Text>
+              <Text style={styles.saveButtonText}>임시저장 (5)</Text>
             </TouchableOpacity>
+            <ServicePage scrollViewRef={scrollRef} navigation={navigation} />
+            <ScrollTopButton scrollViewRef={scrollRef} />
           </View>
         </Tabs.Tab>
       </Tabs.Container>
 
-      {/* 조건부로 버튼을 렌더링 */}
       {activeTab === 'service' ? (
         <TouchableOpacity
           style={styles.fixedButton}
-          onPress={() => navigation.navigate('ServiceRegistration')}>
+          onPress={() => navigation.navigate(
+              'ServiceRegistration')}>
           <Text style={styles.fixedButtonText}>서비스 추가</Text>
         </TouchableOpacity>
       ) : (
@@ -190,37 +176,45 @@ const MarketTabView = ({
 };
 
 const styles = StyleSheet.create({
-  saveButton: {
-    marginTop: 10, // 리폼러의 서비스 아래에 위치
-    marginHorizontal: 15,
-    backgroundColor: '#f0f0f0',
-    padding: 8,
-    borderRadius: 8,
-  },
-  saveButtonText: {
-    color: '#612fef',
-    fontWeight: 'bold',
+   saveButton: {
+      height: 35,
+      paddingVertical: 10,
+      paddingHorizontal: 16,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 4,
+      backgroundColor: '#DBFC72', // var(--NeonGreen-upcy-green) 값으로 설정
+      flexDirection: 'row', // 가로 방향 배치 설정
+      alignSelf: 'flex-start',
+   },
+   saveButtonText: {
+       marginLeft: 10, // gap 대신 텍스트에 좌측 여백 설정
+      color: '#612FEF',
+      fontSize: 14,
+      fontWeight: '600',
+      lineHeight: 24,
   },
   fixedButton: {
     position: 'absolute',
     bottom: 20,
     left: 0,
     right: 0,
-    backgroundColor: '#612fef',
+    backgroundColor: '#DBFC72',
     padding: 15,
     marginHorizontal: 20,
     borderRadius: 10,
     alignItems: 'center',
   },
   fixedButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: '#612FEF',
+    fontWeight: '600',
     fontSize: 16,
+    lineHeight: 24,
   },
   profileHeaderRateBox: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'center', // 별점 중앙 정렬
+    justifyContent: 'center',
     alignItems: 'center',
     marginTop: 8,
   },
