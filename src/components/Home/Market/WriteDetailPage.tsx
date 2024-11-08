@@ -11,14 +11,13 @@ import DetailScreenHeader from '../components/DetailScreenHeader';
 import { useBottomBar } from '../../../../contexts/BottomBarContext';
 import ImageCarousel from '../../../common/ImageCarousel';
 import { PhotoType } from '../../../hooks/useImagePicker';
+import { MyPageStackParams } from '../../../pages/MyPage';
 
 
 const { width, height } = Dimensions.get('window');
 
 
-type WriteDetailPageProps = StackScreenProps<HomeStackParams, 'WriteDetailPage'>;
-
-const WriteDetailPage: React.FC<WriteDetailPageProps> = ({ navigation, route }) => {
+const WriteDetailPage = ({ navigation, route }: StackScreenProps<MyPageStackParams, 'WriteDetailPage'>) => {
   const { inputText } = route.params; // route 파라미터 전달받아옴 
   const { detailphoto } = route.params;
   const [localInput, setLocalInput] = useState(inputText); // 로컬변수 지정 

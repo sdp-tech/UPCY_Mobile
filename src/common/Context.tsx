@@ -85,9 +85,8 @@ export const LoginProvider = ({ children }: { children: ReactNode }) => {
   const { setUser, setRole } = useUser();
 
   const logout = () => {
-      setUser(null);
-      setRole('');
-      setIsLogin(false);
+    setRole('customer');
+    setIsLogin(false);
   };
 
   const setLogin = (value: boolean) => {
