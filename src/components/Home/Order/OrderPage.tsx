@@ -9,6 +9,7 @@ import { Title20B, Body14R, Body16B, Caption11M } from '../../../styles/GlobalTe
 import { useNavigation } from '@react-navigation/native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { HomeStackParams } from '../../../pages/Home';
+import { OrderProps, OrderStackParams } from './OrderManagement.tsx';
 
 
 
@@ -22,7 +23,7 @@ interface OrderInfoProps {
   navigation: any;
 }
 
-const OrderInfo: React.FC<OrderInfoProps> = ({ name, customer, estimated_price, is_online, navigation }) => (
+const OrderInfo = ({ name, customer, estimated_price, is_online, navigation }: OrderInfoProps) => (
   <InfoContainer>
     <Text style={{ color: 'black', fontSize: 18, fontWeight: 'bold', marginBottom: 4 }}>{name}</Text>
     <Text style={{ color: 'black', fontSize: 15, marginBottom: 4 }}>주문자: {customer}</Text>
@@ -114,16 +115,10 @@ const OrderInfoContainer = styled.View`
   border: 1px solid white;
 `;
 
+// 리폼러가 마이페이지에서 보는 주문관리 탭 
 
 
-export interface OrderPageProps extends StackScreenProps<HomeStackParams, 'OrderManagement'> {
-  flatListRef: React.RefObject<FlatList<any>>;
-  navigation: any;
-  route: any;
-}
-
-
-const OrderPage: React.FC<OrderPageProps> = ({ flatListRef, navigation, route }) => {
+const OrderPage = ({ flatListRef, navigation, route }: OrderProps) => {
   const [selectedFilter, setSelectedFilter] = useState('전체');
   const [isModalVisible, setIsModalVisible] = useState(false);
 

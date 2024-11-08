@@ -1,72 +1,23 @@
-import React, { useContext } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useUser, LoginContext } from '../common/Context';
-import LockIcon from "../assets/common/Lock.svg";
-import ReformerMyPage from '../components/Auth/Reformer/ReformerMyPage.tsx';
-import ConsumerMyPage from '../components/Auth/Upcyer/UpcyerMyPage.tsx';
+import Lock from "../assets/common/Lock.svg";
+import { ReformerMyPageScreen } from '../components/Auth/Reformer/ReformerMyPage.tsx';
+import { UpcyerMyPageMainScreen } from '../components/Auth/Upcyer/UpcyerMyPage.tsx';
 import Login from '../components/Auth/Login';
-import ReformerProfile from '../components/Auth/Reformer/Reformer.tsx';
-import { createStackNavigator } from '@react-navigation/stack';
-
-const Stack = createStackNavigator();
-
-const MyPageScreen = ({ navigation }) => {
-  const { user } = useUser();
-  const { isLogin } = useContext(LoginContext);
-
-  if (!isLogin) {
-    return <Login />;
-  }
-
-//   if (user.nickname === "") {
-//     return (
-//       <View style={styles.container}>
-//         <View style={styles.centerContent}>
-//           <LockIcon width={60} height={60} style={styles.icon} />
-//           <Text style={styles.message}>
-//             리폼러 프로필 등록을 완료해야{'\n'}나의 서비스를 제공할 수 있습니다.
-//           </Text>
-//         </View>
-//
-//         <TouchableOpacity
-//           style={styles.button}
-//           onPress={() => navigation.navigate('ReformerProfile')} // Navigate to profile registration page
-//         >
-//           <Text style={styles.buttonText}>리폼러 프로필 등록하기</Text>
-//         </TouchableOpacity>
-//       </View>
-//     );
-//   } else {
-    if (user.role === 'reformer') {
-      return <ReformerMyPage userInfo={user} navigation={navigation} />;
-    } else if (user.role === 'customer') {
-      return <ConsumerMyPage userInfo={user} navigation={navigation} />;
-    } else {
-      return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <Text>Role not assigned or data missing</Text>
-        </View>
-      );
-    }
-//   }
-};
-
-const MyPageStack = () => {
-  return (
-    <Stack.Navigator initialRouteName="MyPage">
-      <Stack.Screen
-        name="MyPage"
-        component={MyPageScreen}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="ReformerProfile"
-        component={ReformerProfile}
-        options={{ headerShown: false }} // Title for ReformerProfile screen
-      />
-    </Stack.Navigator>
-  );
-};
+import { createStackNavigator, StackScreenProps } from '@react-navigation/stack';
+import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
+import { TabProps } from '../../App.tsx';
+import { getAccessToken, getUserRole } from '../common/storage.js';
+import TempStorage from '../components/Home/Market/TempStorage.tsx';
+import ServiceRegistrationPage from '../components/Home/Market/ServiceRegistration.tsx';
+import WriteDetailPage from '../components/Home/Market/WriteDetailPage.tsx';
+import { PhotoType } from '../hooks/useImagePicker.ts';
+import FixMyPage from './FixMyPage.tsx';
+import Request from '../common/requests.js';
+import { useFocusEffect } from '@react-navigation/native';
+import { Body16B } from '../styles/GlobalText.tsx';
+import BottomButton from '../common/BottomButton.tsx';
 
 const styles = StyleSheet.create({
   container: {
@@ -110,4 +61,155 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MyPageStack;
+export type MyPageStackParams = {
+  MyPage: { userInfo?: any | undefined };
+  FixMyPage: { userInfo: any };
+  Login: undefined;
+  ReformerMyPageScreen: { navigation: any, route: any };
+  UpcyerMyPageMainScreen: { navigation: any, route: any };
+  TempStorage: undefined;
+  ServiceRegistrationPage: { inputText?: string; detailphoto?: PhotoType[] };
+  WriteDetailPage: { inputText: string; detailphoto?: PhotoType[] };
+};
+
+export interface MypageStackProps {
+  navigation: any;
+  route: any;
+}
+
+const MyPageStack = createStackNavigator<MyPageStackParams>();
+const MyPageScreen = ({
+  navigation,
+  route,
+}: BottomTabScreenProps<TabProps, '마이페이지'>) => {
+  return (
+    <MyPageStack.Navigator initialRouteName="MyPage">
+      <MyPageStack.Screen name="MyPage" component={MyPageMainScreen} options={{ headerShown: false }} />
+      <MyPageStack.Screen name="ReformerMyPageScreen" component={ReformerMyPageScreen} options={{ headerShown: false }} />
+      <MyPageStack.Screen name="UpcyerMyPageMainScreen" component={UpcyerMyPageMainScreen} options={{ headerShown: false }} />
+      <MyPageStack.Screen name="TempStorage" component={TempStorage} options={{ headerShown: false }} />
+      <MyPageStack.Screen name="ServiceRegistrationPage" component={ServiceRegistrationPage} options={{ headerShown: false }} />
+      <MyPageStack.Screen name="WriteDetailPage" component={WriteDetailPage} options={{ headerShown: false }} />
+      <MyPageStack.Screen name="FixMyPage" component={FixMyPage} options={{ headerShown: false }} />
+      <MyPageStack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+    </MyPageStack.Navigator>
+  );
+};
+
+const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
+  const request = Request();
+  const { isLogin, setLogin } = useContext(LoginContext);
+  const [role, setRole] = useState<string | false>('');
+  const [userInfo, setUserInfo] = useState({
+    nickname: route.params?.userInfo?.nickname || '',
+    backgroundphoto:
+      route.params?.userInfo?.backgroundphoto ||
+      'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
+    profile_image:
+      route.params?.userInfo?.profile_image ||
+      'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
+    introduce: route.params?.userInfo?.introduce || '',
+  });
+
+
+
+  useEffect(() => {
+    if (route.params?.userInfo) {
+      setUserInfo(route.params.userInfo);
+    }
+  }, [route.params?.userInfo]);
+
+  const getProfile = async () => {
+    // 유저 프로필 가져오기-> setUserInfo로 관리
+    const accessToken = await getAccessToken();
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    };
+    try {
+      const response = await request.get(`/api/user`, {}, headers);
+      const encodedUrl = encodeURI(response.data.profile_image_url);
+      const decodedUri = decodeURIComponent(encodedUrl);
+      const profileImage: PhotoType = {
+        fileName: response.data.profile_image_url ? 'profile.jpg' : undefined,
+        width: undefined, // width는 알 수 없으므로 undefined로 설정
+        height: undefined, // height는 알 수 없으므로 undefined로 설정
+        uri:
+          decodedUri ||
+          'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
+      };
+      if (response.status === 200) {
+        console.log('User data fetched successfully:', response.data);
+        setUserInfo({
+          nickname: response.data.nickname,
+          // 우선 기본이미지
+          backgroundphoto:
+            'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
+          profile_image: profileImage,
+          introduce:
+            response.data.introduce ||
+            '나는야 업씨러 이하늘 환경을 사랑하지요 눈누난나',
+        });
+        setRole(response.data.role);
+        return response.data;
+      } else {
+        console.log('Failed to fetch user data:', response);
+        return null;
+      }
+    } catch (error) {
+      // 에러 처리
+      console.error('Error fetching user data:', error);
+      return null;
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      if (isLogin) {
+        getProfile(); // 로그인 상태일 때 프로필을 가져옴
+      }
+    }, [isLogin]),
+  );
+
+  if (userInfo.nickname === '' || userInfo.nickname === null) {
+    return (
+      <View style={{ flexDirection: 'column', alignItems: "center", flex: 1, justifyContent: 'center', alignSelf: "center" }}>
+        <Lock />
+        <Body16B>{''}</Body16B>
+        <Body16B style={{ color: "#612FEF", }}>리폼러 프로필 등록을 완료해야</Body16B>
+        <Body16B style={{ color: "#612FEF", }}>나의 서비스를 제공할 수 있습니다.</Body16B>
+        <BottomButton
+          disable={false}
+          value="리폼러 프로필 등록하기"
+          pressed={false}
+          onPress={() => {
+            navigation.navigate('Signin', { screen: 'Reformer' }); // 최상위 스택에 접근
+          }}
+          style={{
+            width: '90%',
+            alignSelf: 'center',
+            marginTop: 'auto',
+            marginBottom: 20,
+            position: "absolute",
+            bottom: 0,
+          }}
+        />
+      </View>
+    );
+  } else {
+    if (role === 'reformer') {
+      return <ReformerMyPageScreen navigation={navigation} route={route} />;
+    } else if (role === 'customer') {
+      return <UpcyerMyPageMainScreen navigation={navigation} route={route} />;
+    } else {
+      return (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text>Role not assigned or data missing</Text>
+        </View>
+      );
+    }
+  }
+};
+
+
+
+export default MyPageScreen;

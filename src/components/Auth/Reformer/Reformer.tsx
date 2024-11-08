@@ -6,6 +6,17 @@ import ReformFormProfile from './ReformFormProfile';
 import BackArrow from '../../../assets/common/Arrow.svg'; // Import the back arrow icon
 import { PhotoType } from '../../../hooks/useImagePicker';
 import { RegionType, EducType, CareerType, AwardsType, CertifiType, FreeType, FieldType } from '../../../types/UserTypes';
+import { useNavigation } from '@react-navigation/native';
+
+export interface ReformProps {
+  form: ReformProfileType;
+  setForm: Dispatch<SetStateAction<ReformProfileType>>;
+}
+
+export interface ModalProps extends ReformProps {
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+}
 
 export type ReformProfileType = {
   picture?: undefined | PhotoType;
@@ -21,7 +32,8 @@ export type ReformProfileType = {
   field: FieldType;
 };
 
-export default function Reformer({ navigation }) {
+export default function Reformer() {
+  const navigation = useNavigation();
   const defaultProfile: ReformProfileType = {
     picture: undefined,
     nickname: '',
@@ -43,7 +55,7 @@ export default function Reformer({ navigation }) {
       <BottomSheetModalProvider>
         {/* Custom Header */}
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <TouchableOpacity onPress={() => { navigation.getParent()?.navigate('홈'); }} style={styles.backButton}>
             <BackArrow width={24} height={24} color="#222" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>프로필 등록</Text>

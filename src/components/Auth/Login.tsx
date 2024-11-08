@@ -219,11 +219,11 @@ export default function Login({ navigation, route }: LoginProps) {
             <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
               <Caption11M style={{ color: '#ffffff' }}>회원가입</Caption11M>
             </TouchableOpacity>
-            <Caption11M style={{ color: '#ffffff' }}> | </Caption11M>
-            <Caption11M style={{ color: '#ffffff' }}>비밀번호 찾기</Caption11M>
+            {/* <Caption11M style={{ color: '#ffffff' }}> | </Caption11M>
+            <Caption11M style={{ color: '#ffffff' }}>비밀번호 찾기</Caption11M> */}
           </View>
         </View>
-        <View // 아래에 소셜로그인 구현 필요 
+        {/* <View // 아래에 소셜로그인 구현 필요 
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
@@ -252,7 +252,7 @@ export default function Login({ navigation, route }: LoginProps) {
               height: 48,
               borderRadius: 100,
             }}></TouchableOpacity>
-        </View>
+        </View> */}
       </SafeAreaView>
     </Fragment>
   );

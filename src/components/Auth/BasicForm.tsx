@@ -6,7 +6,7 @@ import {
   TextInput,
   Alert,
 } from 'react-native';
-import { Body16B, Body16M, Caption11M } from '../../styles/GlobalText';
+import { Body16B, Body16M, Caption11M, Caption14M } from '../../styles/GlobalText';
 import styled from 'styled-components/native';
 import { BLACK2, PURPLE } from '../../styles/GlobalColor';
 import CheckIcon from '../../assets/common/CheckIcon.svg';
@@ -40,6 +40,7 @@ interface Agreement {
 }
 
 export interface BasicFormProps2 {
+  full_name: string;
   mail: string;
   domain: string | undefined;
   password: string;
@@ -58,33 +59,12 @@ const SectionView = styled.View`
   position: relative;
   margin-top: 8px;
   margin-bottom: 8px;
+  padding: 0px 0px 0px 6px;
 `;
 
 const TermsView = styled(SectionView)`
   flex-direction: row;
   align-items: center;
-`;
-
-const MailView = styled.View`
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const SelectView = styled.View`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  height: 44px;
-  width: 44%;
-  border-width: 2px;
-  border-color: #929292;
-  border-radius: 5px;
-  padding-left: 16px;
-  padding-right: 10px;
 `;
 
 // 페이지 들어올 때, is_reformer인지 is_consumer인지 받아오는거 해야함.
@@ -104,6 +84,7 @@ export default function BasicForm({ navigation, route }: FormProps) {
   const is_reformer = route.params?.is_reformer ?? false;
   const { width, height } = Dimensions.get('window');
   const [form, setForm] = useState<BasicFormProps2>({
+    full_name: route.params?.full_name || '',
     mail: route.params?.mail || '',
     domain: route.params?.domain || undefined,
     password: route.params?.password || '',
@@ -147,19 +128,20 @@ export default function BasicForm({ navigation, route }: FormProps) {
   };
 
   const passwordValidation = async () => {
-    const form_ = { ...form }
-    if (form_.agreement.a === false || form_.agreement.b === false || form_.agreement.c === false ||
-      form_.domain === undefined || form_.mail === '') {
+    if (form.agreement.a === false || form.agreement.b === false || form.agreement.c === false ||
+      form.domain === undefined || form.mail === '' || form.full_name === '') {
       Alert.alert('필수 사항들을 모두 입력해주세요.')
-    } else if (!form_.domain.includes('.')) {
+    } else if (!form.domain.includes('.')) {
       Alert.alert('올바른 이메일 형식이 아닙니다.')
     } else { // 누락된거 없을 때 
-      if (passwordRegExp.exec(form_.password)) {
+      if (passwordRegExp.exec(form.password)) {
         if (is_reformer === true) { // 리폼러의 경우 
           await handleSubmit(); // 일단 회원가입 하고, 
           handleLogin(); // 토큰 발급 로직 
         } else { // 업씨러의 경우 
-          navigation.navigate('Upcyer', { form_ })
+          await handleSubmit2();
+          handleLogin();
+          navigation.navigate('Upcyer', { form })
         }
       } else {
         Alert.alert('비밀번호가 올바르지 않습니다.');
@@ -171,8 +153,35 @@ export default function BasicForm({ navigation, route }: FormProps) {
     }
   };
 
+  const handleSubmit2 = async () => { // 수정된 백 API 따라서 수정 필요
+    const params = {
+      full_name: form.full_name,
+      email: form.mail + '@' + form.domain,
+      password: form.password,
+      agreement_terms: form.agreement.d,
+    };
+    try {
+      const response = await request.post(`/api/user/signup`, params);
+      if (response?.status === 201) {
+        console.log(params);
+        const accessToken = await response.data.access;
+        const refreshToken = await response.data.refresh;
+        console.log({ accessToken }, '||', { refreshToken });
+      } else if (response?.status === 500) {
+        console.log(response);
+        Alert.alert('이미 가입된 이메일입니다.');
+      } else {
+        console.error('Error Status:', response?.status);
+        Alert.alert('가입에 실패했습니다.');
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const handleSubmit = async () => { // 수정된 백 API 따라서 수정 필요
     const params = {
+      full_name: form.full_name,
       email: form.mail + '@' + form.domain,
       password: form.password,
       agreement_terms: form.agreement.d,
@@ -205,7 +214,17 @@ export default function BasicForm({ navigation, route }: FormProps) {
     setModalVisible(false); // 모달 닫기
   };
 
-
+  const setAllAgreementsTrue = () => {
+    setForm(prev => ({
+      ...prev,
+      agreement: {
+        a: true,
+        b: true,
+        c: true,
+        d: true,
+      },
+    }));
+  };
 
   return (
     <BottomSheetModalProvider>
@@ -222,26 +241,33 @@ export default function BasicForm({ navigation, route }: FormProps) {
               <LeftArrow color="#222" />
             </TouchableOpacity>
             <Logo
+              fill="#612FEF"
               color="#612FEF"
               width={150}
-              height={40}
+              height={width * 0.12}
               style={{ alignSelf: 'center', marginVertical: 20 }}
+              strokeWidth={1}
             />
             <View
               style={{
                 marginHorizontal: width * 0.04,
                 flex: 1,
               }}>
-              <SectionView style={{ zIndex: 1 }}>
-                <Body16B>이메일</Body16B>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    width: '100%',
-                  }}>
-                  <InputBox
+              <InputView
+                title="이름"
+                value={form.full_name}
+                setValue={text =>
+                  setForm(prev => {
+                    return { ...prev, full_name: text };
+                  })
+                }
+                placeholder="입력해 주세요"
+                style={{ height: 44, marginTop: 8 }}
+              />
+              <View style={{ flexDirection: "row", justifyContent: "center", zIndex: 1 }}>
+                <View style={{ flex: 1, alignContent: "flex-start", flexDirection: "column" }}>
+                  <InputView
+                    title="이메일"
                     value={form.mail}
                     setValue={text =>
                       setForm(prev => {
@@ -249,12 +275,16 @@ export default function BasicForm({ navigation, route }: FormProps) {
                       })
                     }
                     placeholder="입력해 주세요"
-                    style={{ height: 44, marginTop: 8, width: '44%' }}
+                    style={{ height: 44, marginTop: 8 }}
                   />
-                  <Body16M style={{ color: BLACK2 }}>@</Body16M>
+                </View>
+                <View style={{ flex: 0.2, justifyContent: "center", alignItems: "center", marginTop: 30 }}>
+                  <Body16M style={{ color: BLACK2, flex: 0.2 }}>@</Body16M>
+                </View>
+                <View style={{ flex: 1 }}>
                   <DropdownWrite
                     title="직접 입력"
-                    width="44%"
+                    width="100%"
                     value={form.domain}
                     setValue={text =>
                       setForm(prev => {
@@ -262,9 +292,10 @@ export default function BasicForm({ navigation, route }: FormProps) {
                       })
                     }
                     items={['gmail.com', 'naver.com', 'kakao.com']}
+                    style={{ flex: 1, marginTop: 34 }}
                   />
                 </View>
-              </SectionView>
+              </View>
               <InputView
                 title="비밀번호"
                 value={form.password}
@@ -296,7 +327,6 @@ export default function BasicForm({ navigation, route }: FormProps) {
                     '비밀번호가 일치하지 않습니다.',
                 }}
               />
-
               <TermsView>
                 <Caption11M>만 19세 이상입니다. </Caption11M>
                 <Caption11M style={{ color: PURPLE }}>(필수)</Caption11M>
@@ -363,35 +393,44 @@ export default function BasicForm({ navigation, route }: FormProps) {
                   }
                 />
               </TermsView>
-              <BottomButton
-                disable={
-                  false
-                  // !agreement.a ||
-                  // !agreement.b ||
-                  // !agreement.c ||
-                  // form.mail === '' ||
-                  // form.domain === '' ||
-                  // form.password === '' ||
-                  // form.password !== checkPw ||
-                  // form.region !== ''
-                }
-                value="다음"
-                pressed={false}
-                onPress={() => {
-                  console.log(form);
-                  passwordValidation();
-                }}
-                // onPress={() => handleNext()} // 이건 임시. 
-                style={{
-                  width: '75%',
-                  alignSelf: 'center',
-                  marginTop: 'auto',
-                  marginBottom: 30,
-                }}
-              />
+              <TouchableOpacity style={{
+                borderRadius: 5,
+                backgroundColor: form.agreement?.a && form.agreement?.b && form.agreement?.c && form.agreement?.d ? "#e7e0fd" : '#DFDFDF',
+                borderStyle: "solid",
+                borderColor: "#cebffa",
+                borderWidth: 1,
+                width: "100%",
+                height: 44,
+                justifyContent: 'center',
+                alignItems: 'center',
+                flexDirection: "row",
+                paddingLeft: 12,
+              }}
+                onPress={setAllAgreementsTrue}
+              >
+                <Caption14M style={{ color: form.agreement?.a && form.agreement?.b && form.agreement?.c && form.agreement?.d ? PURPLE : '#929292' }}>전체 동의합니다.</Caption14M>
+                <CheckButton
+                  checked={form.agreement?.a && form.agreement?.b && form.agreement?.c && form.agreement?.d ? true : false}
+                  onPress={setAllAgreementsTrue}
+                />
+              </TouchableOpacity>
             </View>
           </View>
         </CustomScrollView>
+        <BottomButton
+          disable={false}
+          value="다음"
+          pressed={false}
+          onPress={() => {
+            passwordValidation();
+          }}
+          style={{
+            width: '90%',
+            alignSelf: 'center',
+            marginTop: 'auto',
+            marginBottom: 40,
+          }}
+        />
         <SignupCompleteModal visible={isModalVisible} onClose={handleCloseModal} />
       </SafeAreaView>
     </BottomSheetModalProvider>

@@ -36,7 +36,6 @@ import { PURPLE } from '../styles/GlobalColor';
 import OrderManagement from '../components/Home/Order/OrderManagement';
 import CompletedOrder from '../components/Home/Order/CompletedOrder';
 import ReformerMarket from '../components/Home/Market/ReformerMarket';
-import ReformerProfileService from '../components/Auth/Reformer/ReformerMyPage';
 import Service from '../components/Home/Market/Service';
 import { PhotoType } from '../hooks/useImagePicker';
 import { Styles } from '../types/UserTypes';
@@ -57,15 +56,12 @@ export type HomeStackParams = {
     backgroundImageUri: string;
     profileImageUri?: string;
   };
-  OrderManagement: undefined;
-  CompletedOrder: undefined;
   GoodsDetailPage: undefined;
   QuotationForm: undefined;
   QuotationPage: QuotationProps;
   SentQuotation: undefined;
-  ServiceRegistrationPage: { inputText?: string; detailphoto?: PhotoType[] };
+  // ServiceRegistrationPage: { inputText?: string; detailphoto?: PhotoType[] };
   GoodsRegistrationPage: undefined;
-  TempStorage: undefined;
   TempStorageEdit: undefined;
   WriteDetailPage: { inputText: string; detailphoto?: PhotoType[] };
   AddPortfolio: undefined;
@@ -73,7 +69,6 @@ export type HomeStackParams = {
   QuotationConfirm: undefined;
   Rejection: undefined;
   SentRejection: undefined;
-  WriteReviewPage: undefined;
   ReformerMarket: undefined;
   TestComponents: undefined;
   MarketTabView: {
@@ -81,7 +76,6 @@ export type HomeStackParams = {
     // id: string;
     reformerName: string;
   };
-  ReformerProfileService: undefined;
 };
 
 const HomeStack = createStackNavigator<HomeStackParams>();
@@ -110,15 +104,13 @@ const HomeScreen = ({
         name="ServiceDetailPage"
         component={ServiceDetailPageScreen}
       />
-      <HomeStack.Screen
+      {/* <HomeStack.Screen
         name="ServiceRegistrationPage"
         component={ServiceRegistrationPage}
-      />
+      /> */}
       <HomeStack.Screen name="QuotationForm" component={QuotationForm} />
       <HomeStack.Screen name="QuotationPage" component={QuotationPage} />
       <HomeStack.Screen name="SentQuotation" component={SentQuotation} />
-      <HomeStack.Screen name="OrderManagement" component={OrderManagement} />
-      <HomeStack.Screen name="CompletedOrder" component={CompletedOrder} />
       <HomeStack.Screen
         name="GoodsDetailPage"
         component={GoodsDetailPageScreen}
@@ -127,7 +119,6 @@ const HomeScreen = ({
         name="GoodsRegistrationPage"
         component={GoodsRegistrationPage}
       />
-      <HomeStack.Screen name="TempStorage" component={TempStorage} />
       <HomeStack.Screen name="TempStorageEdit" component={TempStorageEdit} />
       <HomeStack.Screen name="WriteDetailPage" component={WriteDetailPage} />
       <HomeStack.Screen name="AddPortfolio" component={AddPortfolio} />
@@ -135,13 +126,8 @@ const HomeScreen = ({
       <HomeStack.Screen name="QuotationConfirm" component={QuotationConfirm} />
       <HomeStack.Screen name="Rejection" component={Rejection} />
       <HomeStack.Screen name="SentRejection" component={SentRejection} />
-      <HomeStack.Screen name="WriteReviewPage" component={WriteReviewPage} />
       <HomeStack.Screen name="TestComponents" component={ComponentsTest} />
       <HomeStack.Screen name="ReformerMarket" component={ReformerMarket} />
-      <HomeStack.Screen
-        name="ReformerProfileService"
-        component={ReformerProfileService}
-      />
     </HomeStack.Navigator>
   );
 };
@@ -216,10 +202,6 @@ const HomeMainScreen = ({
           {selectedTab === 'Market' && <ReformerMarket />}
           {selectedTab === 'temp' && (
             <ScrollView>
-              <Button
-                onPress={() => navigation.navigate('ReformerProfileService')}>
-                <Text>리포머 프로필</Text>
-              </Button>
               <Button onPress={handlePopupButtonPress}>
                 <ButtonText>팝업 표시</ButtonText>
               </Button>
@@ -239,12 +221,6 @@ const HomeMainScreen = ({
                 onPress={() => navigation.navigate('ServiceDetailPage', {})}>
                 <Text>서비스 디테일</Text>
               </Button>
-              <Button
-                onPress={() =>
-                  navigation.navigate('ServiceRegistrationPage', {})
-                }>
-                <Text>서비스등록</Text>
-              </Button>
               <Button onPress={() => navigation.navigate('GoodsDetailPage')}>
                 <Text>상품 디테일</Text>
               </Button>
@@ -254,12 +230,6 @@ const HomeMainScreen = ({
               </Button>
               <Button onPress={() => navigation.navigate('AddPortfolio')}>
                 <Text>포트폴리오 등록</Text>
-              </Button>
-              <Button onPress={() => navigation.navigate('OrderManagement')}>
-                <Text>주문관리</Text>
-              </Button>
-              <Button onPress={() => navigation.navigate('WriteReviewPage')}>
-                <Text>후기 작성 페이지</Text>
               </Button>
               <Button onPress={() => navigation.navigate('TestComponents')}>
                 <Text>공통 컴포넌트 테스트</Text>

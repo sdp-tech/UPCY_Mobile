@@ -384,7 +384,7 @@ export default function CareerModal({
                 }}
                 max={1}
               />
-            </View> */} 
+            </View> */}
             {/* 파일 업로드 로직은 백엔드 구현되고 나면 다시 적용 */}
             <View style={{ marginTop: 'auto' }}>
               <BottomButton
