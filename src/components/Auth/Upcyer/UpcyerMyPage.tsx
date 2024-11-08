@@ -1,27 +1,18 @@
 import {
-  Alert,
-  Button,
+  // Alert,
   Dimensions,
   FlatList,
   Image,
-  ImageBackground,
   SafeAreaView,
   ScrollView,
-  Text,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import {
   StackScreenProps,
   createStackNavigator,
 } from '@react-navigation/stack';
-import { TabProps } from '../../App';
-import {
-  getAccessToken,
-  removeAccessToken,
-  removeNickname,
-  removeRefreshToken,
-} from '../../../common/storage';
+import { TabProps } from '../../../../App';
+import { getAccessToken } from '../../../common/storage';
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { LoginContext } from '../../../common/Context';
 import DetailScreenHeader from '../../../components/Home/components/DetailScreenHeader';
@@ -29,17 +20,15 @@ import { Title20B } from '../../../styles/GlobalText';
 import TextToggle from '../../../common/TextToggle';
 import { BLACK } from '../../../styles/GlobalColor';
 import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
-import ScrollTopButton from '../../../common/ScrollTopButton';
-import ReviewPage from '../../../components/Home/Market/ReviewPage';
-import ScrollToTopButton from '../../../common/ScrollToTopButtonFlat';
+// import ReviewPage from '../../../components/Home/Market/ReviewPage';
+// import ScrollToTopButton from '../../../common/ScrollToTopButtonFlat';
 import FixMyPage from '../../../pages/FixMyPage';
 import Login from '../../../components/Auth/Login';
-import { PhotoType } from '../hooks/useImagePicker';
+import { PhotoType } from '../../../hooks/useImagePicker';
 import Request from '../../../common/requests';
-import useUser from '../common/Context';
 import OrderPage from '../../../components/Home/Order/OrderPage';
 import { useFocusEffect } from '@react-navigation/native';
-import { print } from '@gorhom/bottom-sheet/lib/typescript/utilities/logger';
+
 export type MyPageStackParams = {
   MyPage: { userInfo?: any | undefined };
   FixMyPage: { userInfo: any };
@@ -94,7 +83,13 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
           onPressRight={editProfile}
         />
         <View>
-          <View style={{ width: width, height: height * 0.11, backgroundColor: '#BDBDBD'}} />
+          <View
+            style={{
+              width: width,
+              height: height * 0.11,
+              backgroundColor: '#BDBDBD',
+            }}
+          />
           {profile_image === undefined || profile_image.uri === undefined ? ( // 전자는 편집페이지에서 사진 삭제했을 경우, 후자는 가장 처음에 로딩될 경우
             <Image
               style={{
@@ -210,8 +205,8 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
   // };
 
   const [routes] = useState([
-      { key: 'order', title: '주문내역' },
-      // { key: 'like', title: '좋아요' },
+    { key: 'order', title: '주문내역' },
+    // { key: 'like', title: '좋아요' },
   ]);
   const flatListRef = useRef<FlatList>(null);
   const scrollRef = useRef<ScrollView | null>(null);
@@ -220,7 +215,7 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
     <SafeAreaView style={{ flex: 1 }}>
       {/* 탭은 수정 필요 */}
       <Tabs.Container
-        renderHeader={(props) => (
+        renderHeader={props => (
           <View>
             <ProfileSection
               nickname={userInfo.nickname}
@@ -256,16 +251,21 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
           />
         )}>
         {routes.map(route => (
-          (<Tabs.Tab key={route.key} name={route.title}>
-a              {route.key === 'order' && <OrderPage flatListRef={flatListRef} navigation={navigation} route={route} />}
-
-              {/* {route.key === 'like' &&
+          <Tabs.Tab key={route.key} name={route.title}>
+            {route.key === 'order' && (
+              <OrderPage
+                flatListRef={flatListRef}
+                navigation={navigation}
+                route={route}
+              />
+            )}
+            {/* {route.key === 'like' &&
                  <View>
                      <ReviewPage flatListRef={flatListRef} />
                      <ScrollToTopButton flatListRef={flatListRef} />
                      </View>}
                  </View>} */}
-             </Tabs.Tab>)
+          </Tabs.Tab>
         ))}
       </Tabs.Container>
     </SafeAreaView>
