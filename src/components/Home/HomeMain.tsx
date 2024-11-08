@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { StyleFilterButton } from './components/StyleFilterButton';
 import styled from 'styled-components/native';
@@ -92,9 +93,11 @@ const HomeTabView = ({
     setDropdownOpen(false);
   };
 
-  const onPressStyleFilterList = (/*selectedStyles: Styles[]*/) => {
-    // TODO: set selectedStyles here
-  };
+  useFocusEffect(
+    useCallback(() => {
+      setStyleFilterOpen(false);
+    }, []),
+  );
 
   return (
     <>
