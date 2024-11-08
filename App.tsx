@@ -23,7 +23,11 @@ import OrderManagementIcon from './src/assets/navbar/OrderManagement.svg';
 import SignIn from './src/components/Auth/SignIn';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomBarProvider, useBottomBar } from './contexts/BottomBarContext';
-import { LoginContext, LoginProvider, UserProvider } from './src/common/Context';
+import {
+  LoginContext,
+  LoginProvider,
+  UserProvider,
+} from './src/common/Context';
 import Reformer from './src/components/Auth/Reformer/Reformer';
 import SplashScreen from './src/common/SplashScreen';
 
@@ -80,6 +84,7 @@ function App(): React.JSX.Element {
 export type TabProps = {
   홈: undefined;
   마이페이지: undefined;
+  주문관리: undefined;
 };
 
 const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
@@ -103,7 +108,8 @@ const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
       }}>
       {state.routes.map((route, index) => {
         const isFocused = state.index == index;
-        const onPress = () => { // 하단 탭바 추가하면 여기 수정해야합니다!!!! 
+        const onPress = () => {
+          // 하단 탭바 추가하면 여기 수정해야합니다!!!!
           if (route.name == '홈') {
             if (isFocused)
               navigation.reset({
@@ -138,9 +144,13 @@ const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
             {
               {
                 0: <HomeIcon color="#000000" opacity={isFocused ? 1 : 0.4} />,
-                1: <OrderManagementIcon color="#000000" opacity={isFocused ? 1 : 0.4} />,
+                1: (
+                  <OrderManagementIcon
+                    color="#000000"
+                    opacity={isFocused ? 1 : 0.4}
+                  />
+                ),
                 2: <MyPageIcon color="#000000" opacity={isFocused ? 1 : 0.4} />,
-
               }[index]
             }
 
