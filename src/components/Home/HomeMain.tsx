@@ -4,8 +4,8 @@ import { StyleFilterButton } from './components/StyleFilterButton';
 import styled from 'styled-components/native';
 import DetailModal from './Market/GoodsDetailOptionsModal';
 import DropDown from '../../assets/common/DropDown.svg';
-import FilterElement from './Market/FilterElement';
 import { Styles } from '../../types/UserTypes';
+import HomeStyleFilterElement from './components/HomeStyleFilterElement';
 
 const CategoryBox = styled.View`
   z-index: 1000;
@@ -49,6 +49,7 @@ const stylesList: Styles[] = [
   '스트릿',
   '키치',
   '스포티',
+  '홈웨어',
   '걸리시',
 ] as Styles[];
 
@@ -76,6 +77,7 @@ const HomeTabView = ({
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [styleFilterOpen, setStyleFilterOpen] = useState<boolean>(false);
   const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
+  const [pressedStyles, setPressedStyles] = useState<Styles[]>(stylesList);
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
   const [selectedOption, setSelectedOption] = useState<SelectedOptionProps>(
     selectOptionDropdown[0],
@@ -104,15 +106,18 @@ const HomeTabView = ({
               flexDirection: 'row',
               justifyContent: 'space-between',
             }}>
-            <StyleFilterButton onPressStyleFilterButton={setStyleFilterOpen} />
-            {/* FIXME */}
-            {/* {styleFilterOpen && (
-            <FilterElement
-              list={stylesList}
-              onPress={onPressStyleFilterList}
-              type="style"
-            />
-          )} */}
+            <View style={{ flex: 1, flexDirection: 'column' }}>
+              <StyleFilterButton
+                onPressStyleFilterButton={setStyleFilterOpen}
+              />
+              {styleFilterOpen && (
+                <HomeStyleFilterElement
+                  list={pressedStyles}
+                  setStyleFilterOpen={setStyleFilterOpen}
+                  setPressedStyles={setPressedStyles}
+                />
+              )}
+            </View>
             <View style={styles.dropdownContainer}>
               <TouchableOpacity
                 onPress={toggleDropdown}
