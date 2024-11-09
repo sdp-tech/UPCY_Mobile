@@ -21,6 +21,7 @@ import DetailModal from '../Market/GoodsDetailOptionsModal';
 import { SelectedOptionProps } from '../HomeMain.tsx';
 import { getAccessToken } from '../../../common/storage.js';
 import Request from '../../../common/requests.js';
+import RenderHTML from 'react-native-render-html';
 
 // 홈화면에 있는, 서비스 전체 리스트!
 interface ServiceCardProps {
@@ -296,7 +297,9 @@ export const ServiceCard = ({
         <Subtitle18B>{service_title}</Subtitle18B>
         <HeartButton like={like} onPress={() => setLike(!like)} />
       </View>
-      <Body14R>{service_content}</Body14R>
+      <Body14R>
+        <RenderHTML contentWidth={100} source={{ html: service_content }} />
+      </Body14R>
     </TouchableOpacity>
   );
 };
