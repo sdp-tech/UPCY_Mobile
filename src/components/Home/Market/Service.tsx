@@ -27,13 +27,30 @@ import Request from '../../../common/requests.js';
 interface ServiceCardProps {
   name: string; // 리폼러 이름
   basic_price: number;
-  service_styles: Styles[];
-  imageUri: string;
+  service_styles?: Styles[];
+  imageUri?: string;
   service_title: string;
   service_content: string;
   market_uuid: string;
   service_uuid: string;
 }
+
+export type ServiceResponseType = {
+  // TODO: any type 나중에 알아보고 수정
+  basic_price: number;
+  market_uuid: string;
+  max_price: number;
+  service_category: string;
+  service_content: string; // HTML이라서 이거도 type 수정 필요
+  service_image: any[];
+  service_material: any[];
+  service_option: any[];
+  service_period: number;
+  service_style: any[];
+  service_title: string;
+  service_uuid: string;
+  temporary: boolean;
+};
 
 interface ServiceCardComponentProps extends ServiceCardProps {
   navigation?: any;
@@ -122,6 +139,10 @@ const EntireServiceMarket = ({
         const response = await request.get(`/api/market/service`, headers);
         if (response && response.status === 200) {
           // servicecard 코드 작성해야함!!
+          const serviceListResults: ServiceResponseType[] =
+            response.data.results;
+          const extractedServiceCardData = extractData(serviceListResults);
+          setServiceCardData(extractedServiceCardData);
         } else {
           Alert.alert('오류가 발생했습니다.');
           console.log(response);
@@ -135,6 +156,19 @@ const EntireServiceMarket = ({
     }
   };
 
+  const extractData = (rawData: ServiceResponseType[]) => {
+    return rawData.map(service => ({
+      name: service.service_title,
+      basic_price: service.basic_price,
+      // service_styles: service.service_style as Styles[],
+      // imageUri: service.service_image?.[0] ?? '', // 이미지 배열의 첫 번째 요소를 URI로 설정
+      service_title: service.service_title,
+      service_content: service.service_content,
+      market_uuid: service.market_uuid,
+      service_uuid: service.service_uuid,
+    })) as ServiceCardProps[];
+  };
+
   // 컴포넌트가 처음 렌더링될 때 API 호출
   useEffect(() => {
     fetchData();
@@ -143,7 +177,7 @@ const EntireServiceMarket = ({
   useEffect(() => {
     // filter by selected styles
     const styleFilteredData = serviceCardDummyData.filter(card => {
-      card.service_styles.some(style => selectedStylesList.includes(style));
+      card.service_styles?.some(style => selectedStylesList.includes(style));
     });
     if (selectedFilterOption == '가격순') {
       // filter by basic_price
@@ -248,7 +282,7 @@ export const ServiceCard = ({
         <Text style={TextStyles.serviceCardName}>{name}</Text>
         <Text style={TextStyles.serviceCardPrice}>{basic_price} 원 ~</Text>
         <View style={styles.service_style}>
-          {service_styles.map((service_style, index) => {
+          {service_styles?.map((service_style, index) => {
             return (
               <Text style={TextStyles.serviceCardTag} key={index}>
                 {service_style}
