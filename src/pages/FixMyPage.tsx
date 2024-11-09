@@ -12,6 +12,7 @@ import { LoginContext } from "../common/Context";
 import { MyPageStackParams } from "./MyPage";
 import DetailScreenHeader from "../components/Home/components/DetailScreenHeader";
 import Request from "../common/requests";
+import BottomButton from "../common/BottomButton";
 export interface MypageProps extends ProfileProps {
     route: any;
     navigation: any;
@@ -28,6 +29,7 @@ type ProfileType = {
     profile_image: undefined | PhotoType;
     nickname: string;
     introduce: string;
+    role: string;
 };
 
 function ProfilePic({ form, setForm }: ProfileProps) {
@@ -106,6 +108,7 @@ const FixMyPage = ({ navigation, route }: FixMyPageProps) => {
         profile_image: userInfo.profile_image,
         nickname: userInfo.nickname,
         introduce: userInfo.introduce,
+        role: userInfo.role,
     });
 
     const UpdateImage = async () => {
@@ -224,52 +227,56 @@ const FixMyPage = ({ navigation, route }: FixMyPageProps) => {
 
     const { width } = Dimensions.get('screen');
     return (
+
         <SafeAreaView style={{ flex: 1 }}>
             <DetailScreenHeader
                 title='프로필 수정'
                 leftButton="LeftArrow"
                 rightButton="None"
                 onPressLeft={handleBackPress()}
-                onPressRight={handleBackPress()}
+                onPressRight={() => { }}
             />
-            <View>
-                <CustomScrollView
-                    additionalStyles={{
-                        minHeight: 650,
-                        marginHorizontal: width * 0.04,
-                    }}
-                    bounces={false} overScrollMode="never">
-                    <View style={{ flexGrow: 1 }}>
-                        <ProfilePic form={form} setForm={setForm} />
-                        <InputView
-                            title="닉네임"
-                            value={form.nickname}
-                            setValue={v => {
-                                setForm(prev => {
-                                    return { ...prev, nickname: v };
-                                });
-                            }}
-                            placeholder={userInfo.nickname}
-                        />
-                        <InputView
-                            title="소개글"
-                            value={form.introduce}
-                            setValue={v => {
-                                setForm(prev => {
-                                    return { ...prev, introduce: v };
-                                });
-                            }}
-                            long={true}
-                            placeholder={userInfo.introduce}
-                        />
-                    </View>
-                    <View style={{ flexDirection: "row", flexGrow: 1, alignSelf: "center" }}>
-                        <Button title='저장하기' onPress={UpdateUser} />
-                        <Button title="로그아웃" onPress={handleLogout()} color='red' />
-                    </View>
-                </CustomScrollView>
-            </View>
+            {userInfo.role === 'customer' &&
+                <View>
+                    <CustomScrollView
+                        additionalStyles={{
+                            minHeight: 650,
+                            marginHorizontal: width * 0.04,
+                        }}
+                        bounces={false} overScrollMode="never">
+                        <View style={{ flexGrow: 1 }}>
+                            <ProfilePic form={form} setForm={setForm} />
+                            <InputView
+                                title="닉네임"
+                                value={form.nickname}
+                                setValue={v => {
+                                    setForm(prev => {
+                                        return { ...prev, nickname: v };
+                                    });
+                                }}
+                                placeholder={userInfo.nickname}
+                            />
+                            {/* <InputView
+                                title="소개글"
+                                value={form.introduce}
+                                setValue={v => {
+                                    setForm(prev => {
+                                        return { ...prev, introduce: v };
+                                    });
+                                }}
+                                long={true}
+                                placeholder={userInfo.introduce}
+                            /> */}
+                        </View>
+
+                        <View style={{ alignItems: 'center' }}>
+                            <BottomButton value={"저장하기"} pressed={false} onPress={UpdateUser} style={{ width: '90%' }} />
+                        </View>
+                    </CustomScrollView>
+                </View>
+            }
         </SafeAreaView>
+
     );
 }
 

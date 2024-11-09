@@ -118,6 +118,7 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
       route.params?.profile_image ||
       'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
     introduce: route.params?.introduce || '',
+    role: 'reformer',
   });
 
   useEffect(() => {
@@ -155,6 +156,7 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
           introduce:
             response.data.introduce ||
             '나는야 업씨러 이하늘 환경을 사랑하지요 눈누난나',
+          role: 'reformer'
         });
         return response.data;
       } else {
