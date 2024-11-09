@@ -1,12 +1,10 @@
 import {
   Dimensions,
   SafeAreaView,
-  ScrollView,
   Text,
   TouchableOpacity,
   View,
   StyleSheet,
-  useWindowDimensions,
   ImageBackground,
   FlatList,
 } from 'react-native';
@@ -19,12 +17,12 @@ import Arrow from '../../../assets/common/Arrow.svg';
 import { useEffect, useRef, useState } from 'react';
 import DetailBox from './DetailBox';
 import Footer from '../../../common/Footer';
-import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
+// import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
 import { useBottomBar } from '../../../../contexts/BottomBarContext';
 import DetailScreenHeader from '../components/DetailScreenHeader';
-import ScrollToTopButton from '../../../common/ScrollToTopButtonFlat';
+// import ScrollToTopButton from '../../../common/ScrollToTopButtonFlat';
 // import HeartButton from '../../../common/HeartButton';
-import ReviewPage from './ReviewPage';
+// import ReviewPage from './ReviewPage';
 import DetailBox2 from './DetailBox2';
 
 const { width, height } = Dimensions.get('window');

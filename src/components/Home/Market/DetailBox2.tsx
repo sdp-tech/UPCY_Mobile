@@ -12,13 +12,30 @@ const PeriodBox = ({ period }: { period: number }) => {
   );
 };
 
-const ContentBox = ({ content }: { content: string }) => {
+const ContentBox = (/*{ content }: { content: string }*/) => {
   return (
     <View style={styles.eachBox}>
       <View style={styles.contentLine}>
         <Text style={TextStyles.eachlabel}>서비스 상세</Text>
-        <Text style={TextStyles.eachData}> {content} </Text>
+        {/* <Text style={TextStyles.eachData}> {content} </Text> */}
       </View>
+    </View>
+  );
+};
+
+const MaterialBox = () => {
+  return (
+    <View style={styles.eachBox}>
+      <Text style={TextStyles.eachlabel}>작업 가능한 소재</Text>
+    </View>
+  );
+};
+
+// TODO: OptionBox.tsx component 사용하도록 변경
+const OptionBox = () => {
+  return (
+    <View style={styles.eachBox}>
+      <Text style={TextStyles.eachlabel}>옵션 상세</Text>
     </View>
   );
 };
@@ -32,7 +49,9 @@ const DetailBox2 = ({ servicePeriod /*serviceContent*/ }: DetailBox2Props) => {
   return (
     <>
       <PeriodBox period={servicePeriod} />
-      {/* <ContentBox content={serviceContent} /> */}
+      <ContentBox /*content={serviceContent}*/ />
+      <MaterialBox />
+      <OptionBox />
     </>
   );
 };
