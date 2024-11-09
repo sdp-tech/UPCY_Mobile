@@ -9,7 +9,9 @@ import {
 import { TabProps } from '../../App';
 import { ScrollView } from 'react-native-gesture-handler';
 
+// TODO: 나중에 CustomHeader2 사용
 import CustomHeader from '../common/CustomHeader';
+import CustomHeader2 from '../common/CustomHeader2';
 import HomeTabView, { SelectedOptionProps } from '../components/Home/HomeMain';
 import MarketTabView from '../components/Home/Market/MarketTabView';
 import QuotationForm from '../components/Home/Quotation/QuotationForm';
@@ -190,7 +192,9 @@ const HomeMainScreen = ({
     <Fragment>
       <SafeAreaView style={{ flex: 0, backgroundColor: PURPLE }} />
       <SafeAreaView style={{ flex: 1 }}>
+        {/* TODO: 나중에 CustomHeader2 사용 */}
         <CustomHeader onSearch={() => {}} onTabChange={handleTabChange} />
+        {/* <CustomHeader2 /> */}
         <BottomSheetModalProvider>
           <View>
             <HomeTabView
