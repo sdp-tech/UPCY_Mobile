@@ -38,22 +38,21 @@ interface CustomHeader2Props {
 }
 
 const CustomHeader2 = ({ navigation }: CustomHeader2Props) => {
-  const handleSearchFocus = () => {
-    // TODO: SearchPage로 이동하도록
+  const handleOnPress = () => {
     navigation.navigate('SearchPage');
   };
   return (
     <FrameBox>
       <Logo color="#612FEF" width={41.572} height={18} />
       <SearchContainer>
-        <TouchableOpacity onPress={handleSearchFocus}>
+        <TouchableOpacity onPress={handleOnPress}>
           <SearchInput
             placeholder="검색어를 입력해보세요"
             placeholderTextColor="#929292"
             editable={false}
           />
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleSearchFocus}>
+        <TouchableOpacity onPress={handleOnPress}>
           <Search stroke={'#000'} />
         </TouchableOpacity>
       </SearchContainer>
