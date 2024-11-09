@@ -233,7 +233,7 @@ export const ServiceCard = ({
           basicPrice: basic_price,
           maxPrice: MAX_PRICE,
           reviewNum: REVIEW_NUM,
-          service_styles: service_styles,
+          tags: service_styles,
           backgroundImageUri: imageUri,
           profileImageUri: imageUri,
         });

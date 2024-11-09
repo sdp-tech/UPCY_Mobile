@@ -158,7 +158,10 @@ const Banner = ({ backgroundImageUri, tags }: BannerProps) => {
         style={{ width: '100%', height: width * 0.5 }}
         imageStyle={{ height: width * 0.5 }}
         source={{
-          uri: backgroundImageUri,
+          uri:
+            backgroundImageUri ||
+            'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
+          // backgroundImageUri가 없는 경우 기본 이미지
         }}
       />
       <View style={styles.tagContainer}>
