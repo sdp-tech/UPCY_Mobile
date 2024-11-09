@@ -29,6 +29,7 @@ const styles = StyleSheet.create({
     gap: 4,
     borderRadius: 12,
     flexShrink: 0,
+    width: 100,
   },
 });
 

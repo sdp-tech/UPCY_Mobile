@@ -7,6 +7,7 @@ export type Styles =
   | '스트릿'
   | '키치'
   | '스포티'
+  | '홈웨어'
   | '걸리시';
 type Materials = '가죽' | '스웨이드' | '벨벳' | '데님' | '퍼' | '실크' | '울';
 interface File {
@@ -61,8 +62,8 @@ type Career = {
 export type CareerType = Career[];
 
 type Awards = {
-  competition: string; // 공모전명 
-  prize: string | undefined; // 수상내역 
+  competition: string; // 공모전명
+  prize: string | undefined; // 수상내역
 };
 export type AwardsType = Awards[];
 
@@ -73,8 +74,8 @@ type Certifi = {
 export type CertifiType = Certifi[];
 
 type Free = {
-  project_name: string; // 프로젝트명 
-  description: string | undefined; // 상세설명 
+  project_name: string; // 프로젝트명
+  description: string | undefined; // 상세설명
 };
 export type FreeType = Free[];
 

@@ -1,14 +1,10 @@
 import {
-  Alert,
-  Button,
+  // Alert,
   Dimensions,
   FlatList,
   Image,
-  ImageBackground,
   SafeAreaView,
   ScrollView,
-  Text,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import {
@@ -28,11 +24,11 @@ import { Title20B } from '../../../styles/GlobalText';
 import TextToggle from '../../../common/TextToggle';
 import { BLACK } from '../../../styles/GlobalColor';
 import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
-import ScrollTopButton from '../../../common/ScrollTopButton';
-import ReviewPage from '../../../components/Home/Market/ReviewPage';
-import ScrollToTopButton from '../../../common/ScrollToTopButtonFlat';
+// import ReviewPage from '../../../components/Home/Market/ReviewPage';
+// import ScrollToTopButton from '../../../common/ScrollToTopButtonFlat';
 import FixMyPage from '../../../pages/FixMyPage';
 import Login from '../../../components/Auth/Login';
+
 import Request from '../../../common/requests';
 import OrderPage from '../../../components/Home/Order/OrderPage';
 import { useFocusEffect } from '@react-navigation/native';
@@ -191,7 +187,7 @@ export const UpcyerMyPageMainScreen = ({ navigation, route }: MypageStackProps) 
     <SafeAreaView style={{ flex: 1 }}>
       {/* 탭은 수정 필요 */}
       <Tabs.Container
-        renderHeader={(props) => (
+        renderHeader={props => (
           <View>
             <ProfileSection
               nickname={userInfo.nickname}
@@ -229,7 +225,6 @@ export const UpcyerMyPageMainScreen = ({ navigation, route }: MypageStackProps) 
         {routes.map(route_ => (
           (<Tabs.Tab key={route_.key} name={route_.title}>
             {route_.key === 'order' && <OrderPage flatListRef={flatListRef} navigation={navigation} route={route} />}
-
             {/* {route.key === 'like' &&
                  <View>
                      <ReviewPage flatListRef={flatListRef} />
