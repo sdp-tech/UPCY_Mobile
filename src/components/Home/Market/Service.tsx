@@ -18,71 +18,49 @@ import {
 import { LIGHTGRAY } from '../../../styles/GlobalColor';
 import HeartButton from '../../../common/HeartButton';
 import DetailModal from '../Market/GoodsDetailOptionsModal';
-import { Styles } from '../../../types/UserTypes.ts';
 import { SelectedOptionProps } from '../HomeMain.tsx';
 import { getAccessToken } from '../../../common/storage.js';
 import Request from '../../../common/requests.js';
+import RenderHTML from 'react-native-render-html';
 
 // 홈화면에 있는, 서비스 전체 리스트!
 interface ServiceCardProps {
   name: string; // 리폼러 이름
   basic_price: number;
-  service_styles: Styles[];
-  imageUri: string;
+  service_styles?: string[];
+  imageUri?: string;
   service_title: string;
   service_content: string;
   market_uuid: string;
   service_uuid: string;
 }
 
+export type ServiceResponseType = {
+  // TODO: any type 나중에 알아보고 수정
+  basic_price: number;
+  market_uuid: string;
+  max_price: number;
+  service_category: string;
+  service_content: string;
+  service_image: any[];
+  service_material: any[];
+  service_option: any[];
+  service_period: number;
+  service_style: any[];
+  service_title: string;
+  service_uuid: string;
+  temporary: boolean;
+};
+
 interface ServiceCardComponentProps extends ServiceCardProps {
   navigation?: any;
 }
 
-// TODO: replace the below dummy data
 // API 연결 시 이 부분만 바꾸면 됩니다!
 const MAX_PRICE: number = 24000;
-const serviceCardDummyData: ServiceCardProps[] = [
-  {
-    name: '하느리퐁퐁',
-    basic_price: 100000,
-    service_styles: ['빈티지', '미니멀', '캐주얼'] as Styles[],
-    imageUri:
-      'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
-    service_title: '청바지 에코백 만들어 드립니다',
-    service_content:
-      '안입는 청바지를 활용한 나만의 에코백! 아주 좋은 에코백 환경에도 좋고 나에게도 좋고 어찌구저찌구한 에코백입니다 최고임 짱짱',
-    market_uuid: 'ss',
-    service_uuid: 'k1',
-  },
-  {
-    name: '똥구르리리',
-    basic_price: 20000,
-    service_styles: ['미니멀'] as Styles[],
-    imageUri:
-      'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
-    service_title: '커스텀 짐색',
-    service_content:
-      '안입는 청바지를 활용한 나만의 에코백! 아주 좋은 에코백 환경에도 좋고 나에게도 좋고 어찌구저찌구한 에코백입니다 최고임 짱짱',
-    market_uuid: 'ss',
-    service_uuid: 'k2',
-  },
-  {
-    name: '훌라훌라맨',
-    basic_price: 50000,
-    service_styles: ['빈티지'] as Styles[],
-    imageUri:
-      'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
-    service_title: '청바지 에코백 만들어 드립니다',
-    service_content:
-      '안입는 청바지를 활용한 나만의 에코백! 아주 좋은 에코백 환경에도 좋고 나에게도 좋고 어찌구저찌구한 에코백입니다 최고임 짱짱',
-    market_uuid: 'ss',
-    service_uuid: 'k3',
-  },
-];
 
 type ServiceMarketProps = {
-  selectedStylesList: Styles[];
+  selectedStylesList: string[];
   selectedFilterOption?: SelectedOptionProps;
   navigation: any;
 };
@@ -103,8 +81,9 @@ const EntireServiceMarket = ({
   const [loading, setLoading] = useState(true); // 로딩용
   const request = Request();
   const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
-  const [serviceCardData, setServiceCardData] =
-    useState<ServiceCardProps[]>(serviceCardDummyData);
+  const [serviceCardData, setServiceCardData] = useState<ServiceCardProps[]>(
+    [] as ServiceCardProps[],
+  );
 
   const serviceTitle: string = '지금 주목해야 할 업사이클링 서비스';
   const serviceDescription: string = '안 입는 옷을 장마 기간에 필요한 물품으로';
@@ -121,7 +100,10 @@ const EntireServiceMarket = ({
         // API 호출
         const response = await request.get(`/api/market/service`, headers);
         if (response && response.status === 200) {
-          // servicecard 코드 작성해야함!!
+          const serviceListResults: ServiceResponseType[] =
+            response.data.results;
+          const extractedServiceCardData = extractData(serviceListResults);
+          setServiceCardData(extractedServiceCardData);
         } else {
           Alert.alert('오류가 발생했습니다.');
           console.log(response);
@@ -135,24 +117,42 @@ const EntireServiceMarket = ({
     }
   };
 
+  const extractData = (rawData: ServiceResponseType[]) => {
+    return rawData.map(service => ({
+      name: service.service_title,
+      basic_price: service.basic_price,
+      service_styles: service.service_style.map(
+        style => style.style_name,
+      ) as string[],
+      imageUri: service.service_image?.[0] ?? '',
+      service_title: service.service_title,
+      service_content: service.service_content,
+      market_uuid: service.market_uuid,
+      service_uuid: service.service_uuid,
+    })) as ServiceCardProps[];
+  };
+
   // 컴포넌트가 처음 렌더링될 때 API 호출
   useEffect(() => {
     fetchData();
   }, []);
 
   useEffect(() => {
-    // filter by selected styles
-    const styleFilteredData = serviceCardDummyData.filter(card => {
-      card.service_styles.some(style => selectedStylesList.includes(style));
-    });
-    if (selectedFilterOption == '가격순') {
-      // filter by basic_price
-      const sortedByPriceData = [...styleFilteredData].sort(
-        (a, b) => a.basic_price - b.basic_price,
-      );
-      setServiceCardData(sortedByPriceData);
+    if (serviceCardData) {
+      // filter by selected styles
+      // const styleFilteredData = serviceCardData.filter(card => {
+      //   card.service_styles?.some(style => selectedStylesList.includes(style));
+      // });
+      if (selectedFilterOption == '가격순') {
+        // filter by basic_price
+        // const sortedByPriceData = [...styleFilteredData].sort(
+        const sortedByPriceData = [...serviceCardData].sort(
+          (a, b) => a.basic_price - b.basic_price,
+        );
+        setServiceCardData(sortedByPriceData);
+      }
+      // TODO: add more filtering logic here
     }
-    // TODO: add more filtering logic here
   }, [selectedFilterOption, selectedStylesList]);
 
   // 로딩 중일 때 로딩 스피너 표시
@@ -248,7 +248,7 @@ export const ServiceCard = ({
         <Text style={TextStyles.serviceCardName}>{name}</Text>
         <Text style={TextStyles.serviceCardPrice}>{basic_price} 원 ~</Text>
         <View style={styles.service_style}>
-          {service_styles.map((service_style, index) => {
+          {service_styles?.map((service_style, index) => {
             return (
               <Text style={TextStyles.serviceCardTag} key={index}>
                 {service_style}
@@ -261,7 +261,9 @@ export const ServiceCard = ({
         <Subtitle18B>{service_title}</Subtitle18B>
         <HeartButton like={like} onPress={() => setLike(!like)} />
       </View>
-      <Body14R>{service_content}</Body14R>
+      <Body14R>
+        <RenderHTML contentWidth={300} source={{ html: service_content }} />
+      </Body14R>
     </TouchableOpacity>
   );
 };

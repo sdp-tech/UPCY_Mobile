@@ -42,7 +42,6 @@ import CompletedOrder from '../components/Home/Order/CompletedOrder';
 import ReformerMarket from '../components/Home/Market/ReformerMarket';
 import Service from '../components/Home/Market/Service';
 import { PhotoType } from '../hooks/useImagePicker';
-import { Styles } from '../types/UserTypes';
 import { stylesList } from '../components/Home/HomeMain';
 
 export type HomeStackParams = {
@@ -56,7 +55,7 @@ export type HomeStackParams = {
     reformerName: string;
     basicPrice: number;
     maxPrice: number;
-    tags: Styles[];
+    tags: string[];
     reviewNum: number;
     backgroundImageUri: string;
     profileImageUri?: string;
@@ -185,7 +184,7 @@ const HomeMainScreen = ({
   >('추천순');
 
   const [selectedStylesList, setSelectedStylesList] =
-    useState<Styles[]>(stylesList);
+    useState<string[]>(stylesList);
 
   return (
     <Fragment>
