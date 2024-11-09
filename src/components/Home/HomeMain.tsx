@@ -120,14 +120,14 @@ const HomeTabView = ({
               <StyleFilterButton
                 onPressStyleFilterButton={setStyleFilterOpen}
               />
-              {styleFilterOpen && (
+              {/* {styleFilterOpen && (
                 <HomeStyleFilterElement
                   list={pressedStyles}
                   setStyleFilterOpen={setStyleFilterOpen}
                   setPressedStyles={setPressedStyles}
                   setFinalPressedStyles={setSelectedStylesList}
                 />
-              )}
+              )} */}
             </View>
             <View style={styles.dropdownContainer}>
               <TouchableOpacity
