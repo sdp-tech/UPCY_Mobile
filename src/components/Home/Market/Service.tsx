@@ -27,12 +27,14 @@ import RenderHTML from 'react-native-render-html';
 interface ServiceCardProps {
   name: string; // 리폼러 이름
   basic_price: number;
+  max_price: number;
   service_styles?: string[];
   imageUri?: string;
   service_title: string;
   service_content: string;
   market_uuid: string;
   service_uuid: string;
+  service_period: number;
 }
 
 export type ServiceResponseType = {
@@ -55,9 +57,6 @@ export type ServiceResponseType = {
 interface ServiceCardComponentProps extends ServiceCardProps {
   navigation?: any;
 }
-
-// API 연결 시 이 부분만 바꾸면 됩니다!
-const MAX_PRICE: number = 24000;
 
 type ServiceMarketProps = {
   selectedStylesList: string[];
@@ -121,6 +120,7 @@ const EntireServiceMarket = ({
     return rawData.map(service => ({
       name: service.service_title,
       basic_price: service.basic_price,
+      max_price: service.max_price,
       service_styles: service.service_style.map(
         style => style.style_name,
       ) as string[],
@@ -129,6 +129,7 @@ const EntireServiceMarket = ({
       service_content: service.service_content,
       market_uuid: service.market_uuid,
       service_uuid: service.service_uuid,
+      service_period: service.service_period,
     })) as ServiceCardProps[];
   };
 
@@ -189,12 +190,14 @@ const EntireServiceMarket = ({
               key={card.service_uuid}
               name={card.name}
               basic_price={card.basic_price}
+              max_price={card.max_price}
               service_styles={card.service_styles}
               imageUri={card.imageUri}
               service_title={card.service_title}
               service_content={card.service_content}
               market_uuid={card.market_uuid}
               service_uuid={card.service_uuid}
+              service_period={card.service_period}
               navigation={navigation}
             />
           ))
@@ -209,6 +212,7 @@ const EntireServiceMarket = ({
 export const ServiceCard = ({
   name,
   basic_price,
+  max_price,
   service_styles,
   imageUri,
   service_title,
@@ -216,6 +220,7 @@ export const ServiceCard = ({
   navigation,
   market_uuid,
   service_uuid,
+  service_period,
 }: ServiceCardComponentProps) => {
   const [like, setLike] = useState(false);
 
@@ -231,11 +236,12 @@ export const ServiceCard = ({
           reformerName: name,
           serviceName: service_title,
           basicPrice: basic_price,
-          maxPrice: MAX_PRICE,
+          maxPrice: max_price,
           reviewNum: REVIEW_NUM,
           tags: service_styles,
           backgroundImageUri: imageUri,
           profileImageUri: imageUri,
+          servicePeriod: service_period,
         });
       }}>
       <ImageBackground

@@ -25,6 +25,7 @@ import DetailScreenHeader from '../components/DetailScreenHeader';
 import ScrollToTopButton from '../../../common/ScrollToTopButtonFlat';
 // import HeartButton from '../../../common/HeartButton';
 import ReviewPage from './ReviewPage';
+import DetailBox2 from './DetailBox2';
 
 const { width, height } = Dimensions.get('window');
 
@@ -37,6 +38,8 @@ type ServiceDetailPageProps = {
   tags: string[];
   backgroundImageUri: string;
   profileImageUri?: string;
+  servicePeriod: number;
+  serviceContent: string;
 };
 
 export type DetailPageStackParams = {
@@ -49,6 +52,8 @@ export type DetailPageStackParams = {
     tags: string[];
     backgroundImageUri: string;
     profileImageUri?: string;
+    servicePeriod: number;
+    serviceContent: string;
   };
 };
 
@@ -67,6 +72,8 @@ const ServiceDetailPageScreen = ({
     tags,
     backgroundImageUri,
     profileImageUri,
+    servicePeriod,
+    serviceContent,
   }: ServiceDetailPageProps = route.params;
   return (
     <DetailPageStack.Navigator
@@ -85,6 +92,8 @@ const ServiceDetailPageScreen = ({
           tags,
           backgroundImageUri,
           profileImageUri,
+          servicePeriod,
+          serviceContent,
         }}
       />
     </DetailPageStack.Navigator>
@@ -265,40 +274,34 @@ const ServiceDetailPageMainScreen = ({
     tags,
     backgroundImageUri,
     profileImageUri,
+    servicePeriod,
+    serviceContent,
   } = route.params;
 
-  const layout = useWindowDimensions();
   const [index, setIndex] = useState<number>(0);
   const optionPageRef = useRef<FlatList<any>>(null);
 
-  const handleScrollToHeader = () => {
-    const currentFlatListRef = index === 0 ? flatListRef : optionPageRef;
-    flatListRef.current?.scrollToOffset({ offset: -height, animated: true });
-  };
-  const [routes] = useState([
-    { key: 'detail', title: '상세설명' },
-    { key: 'option', title: '후기' },
-  ]);
-  const scrollRef = useRef<ScrollView>(null);
-  const flatListRef = useRef<FlatList>(null);
+  // const flatListRef = useRef<FlatList>(null);
 
-  const renderHeader = () => (
-    <ProfileSection
-      navigation={navigation}
-      reformerName={reformerName}
-      serviceName={serviceName}
-      basicPrice={basicPrice}
-      maxPrice={maxPrice}
-      reviewNum={reviewNum}
-      tags={tags}
-      backgroundImageUri={backgroundImageUri}
-      profileImageUri={profileImageUri}
-    />
-  );
+  // const renderHeader = () => (
+  //   <ProfileSection
+  //     navigation={navigation}
+  //     reformerName={reformerName}
+  //     serviceName={serviceName}
+  //     basicPrice={basicPrice}
+  //     maxPrice={maxPrice}
+  //     reviewNum={reviewNum}
+  //     tags={tags}
+  //     backgroundImageUri={backgroundImageUri}
+  //     profileImageUri={profileImageUri}
+  //   />
+  // );
+
+  console.log('service_content:::: ', serviceContent);
 
   return (
     <SafeAreaView style={{ flex: 1, position: 'relative' }}>
-      <Tabs.Container
+      {/* <Tabs.Container
         renderHeader={renderHeader}
         allowHeaderOverscroll={false}
         onIndexChange={setIndex}
@@ -317,7 +320,23 @@ const ServiceDetailPageMainScreen = ({
         <Tabs.Tab name={`후기(${reviewNum})`}>
           <ReviewPage flatListRef={optionPageRef} />
         </Tabs.Tab>
-      </Tabs.Container>
+      </Tabs.Container> */}
+      <ProfileSection
+        navigation={navigation}
+        reformerName={reformerName}
+        serviceName={serviceName}
+        basicPrice={basicPrice}
+        maxPrice={maxPrice}
+        reviewNum={reviewNum}
+        tags={tags}
+        backgroundImageUri={backgroundImageUri}
+        profileImageUri={profileImageUri}
+      />
+      <DetailBox2
+        servicePeriod={servicePeriod}
+        serviceContent={serviceContent}
+      />
+      <View style={{ marginBottom: 400 }} />
       <Footer />
     </SafeAreaView>
   );
@@ -375,6 +394,7 @@ const TextStyles = StyleSheet.create({
     flexDirection: 'row',
     borderBottomWidth: 1,
     borderBlockColor: '#dcdcdc',
+    paddingBottom: 20,
   },
   scrollToHeaderButton: {
     position: 'absolute',

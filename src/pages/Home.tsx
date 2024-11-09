@@ -56,6 +56,7 @@ export type HomeStackParams = {
     reviewNum: number;
     backgroundImageUri: string;
     profileImageUri?: string;
+    servicePeriod: number;
   };
   GoodsDetailPage: undefined;
   QuotationForm: undefined;
@@ -226,10 +227,6 @@ const HomeMainScreen = ({
               </Button>
               <Button onPress={() => navigation.navigate('QuotationPage')}>
                 <Text>주문서 확인</Text>
-              </Button>
-              <Button
-                onPress={() => navigation.navigate('ServiceDetailPage', {})}>
-                <Text>서비스 디테일</Text>
               </Button>
               <Button onPress={() => navigation.navigate('GoodsDetailPage')}>
                 <Text>상품 디테일</Text>
