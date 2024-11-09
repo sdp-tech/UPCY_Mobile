@@ -11,8 +11,12 @@ import {
   StackScreenProps,
   createStackNavigator,
 } from '@react-navigation/stack';
-import { TabProps } from '../../../../App';
-import { getAccessToken } from '../../../common/storage';
+import {
+  getAccessToken,
+  removeAccessToken,
+  removeNickname,
+  removeRefreshToken,
+} from '../../../common/storage';
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { LoginContext } from '../../../common/Context';
 import DetailScreenHeader from '../../../components/Home/components/DetailScreenHeader';
@@ -24,41 +28,16 @@ import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
 // import ScrollToTopButton from '../../../common/ScrollToTopButtonFlat';
 import FixMyPage from '../../../pages/FixMyPage';
 import Login from '../../../components/Auth/Login';
-import { PhotoType } from '../../../hooks/useImagePicker';
+
 import Request from '../../../common/requests';
 import OrderPage from '../../../components/Home/Order/OrderPage';
 import { useFocusEffect } from '@react-navigation/native';
+import { print } from '@gorhom/bottom-sheet/lib/typescript/utilities/logger';
+import { TabProps } from '../../../../App';
+import { PhotoType } from '../../../hooks/useImagePicker';
+import { MyPageStackParams, MypageStackProps } from '../../../pages/MyPage';
 
-export type MyPageStackParams = {
-  MyPage: { userInfo?: any | undefined };
-  FixMyPage: { userInfo: any };
-  Login: undefined;
-};
-
-export interface MypageStackProps {
-  navigation: any;
-  route: any;
-}
-
-const MyPageStack = createStackNavigator<MyPageStackParams>();
-
-const MyPageScreen = ({
-  navigation,
-  route,
-}: StackScreenProps<TabProps, '마이페이지'>) => {
-  return (
-    <MyPageStack.Navigator
-      screenOptions={() => ({
-        headerShown: false,
-      })}>
-      <MyPageStack.Screen name="MyPage" component={MyPageMainScreen} />
-      <MyPageStack.Screen name="FixMyPage" component={FixMyPage} />
-      <MyPageStack.Screen name="Login" component={Login} />
-    </MyPageStack.Navigator>
-  );
-};
-
-const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
+export const UpcyerMyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
   const { width, height } = Dimensions.get('screen');
   const ProfileSection = ({
     nickname,
@@ -73,23 +52,18 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
     editProfile: any;
     introduce: string;
   }) => {
+    const { width, height } = Dimensions.get('screen');
     return (
       <View style={{ alignItems: 'center' }}>
         <DetailScreenHeader
           title=""
           leftButton="CustomBack"
-          onPressLeft={() => {}}
+          onPressLeft={() => { }}
           rightButton="Fix"
           onPressRight={editProfile}
         />
         <View>
-          <View
-            style={{
-              width: width,
-              height: height * 0.11,
-              backgroundColor: '#BDBDBD',
-            }}
-          />
+          <View style={{ width: width, height: height * 0.11, backgroundColor: '#E9EBF8' }} />
           {profile_image === undefined || profile_image.uri === undefined ? ( // 전자는 편집페이지에서 사진 삭제했을 경우, 후자는 가장 처음에 로딩될 경우
             <Image
               style={{
@@ -118,16 +92,14 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
                 profile_image
                   ? { uri: profile_image.uri } // 유효한 URL이면 그대로 사용
                   : {
-                      uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
-                    } // 기본 이미지 URL 사용
+                    uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
+                  } // 기본 이미지 URL 사용
               }
             />
           )}
         </View>
-        <Title20B style={{ marginTop: height * 0.05 }}>{nickname}</Title20B>
-        <View style={{ padding: 20, paddingTop: 0, paddingBottom: 0 }}>
-          <TextToggle text={introduce} />
-        </View>
+        <Title20B style={{ marginTop: height * 0.06 }}>{nickname}</Title20B>
+
       </View>
     );
   };
@@ -246,30 +218,22 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
               fontWeight: '700',
               fontSize: 16,
             }}
-            //onTabPress={() => Alert.alert('준비중입니다!ㅠㅠ')}
-            // 룩북, 좋아요 모아보기 기능 구현되면 위의 onTapPress는 삭제할 것
+          //onTabPress={() => Alert.alert('준비중입니다!ㅠㅠ')}
+          // 룩북, 좋아요 모아보기 기능 구현되면 위의 onTapPress는 삭제할 것
           />
         )}>
-        {routes.map(route => (
-          <Tabs.Tab key={route.key} name={route.title}>
-            {route.key === 'order' && (
-              <OrderPage
-                flatListRef={flatListRef}
-                navigation={navigation}
-                route={route}
-              />
-            )}
+        {routes.map(route_ => (
+          (<Tabs.Tab key={route_.key} name={route_.title}>
+            {route_.key === 'order' && <OrderPage flatListRef={flatListRef} navigation={navigation} route={route} />}
             {/* {route.key === 'like' &&
                  <View>
                      <ReviewPage flatListRef={flatListRef} />
                      <ScrollToTopButton flatListRef={flatListRef} />
                      </View>}
                  </View>} */}
-          </Tabs.Tab>
+          </Tabs.Tab>)
         ))}
       </Tabs.Container>
     </SafeAreaView>
   );
 };
-
-export default MyPageScreen;

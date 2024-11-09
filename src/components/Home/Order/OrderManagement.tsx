@@ -9,14 +9,19 @@ import { BLACK, BLACK2 } from '../../../styles/GlobalColor.tsx';
 
 import { useNavigation } from '@react-navigation/native';
 
-import { StackScreenProps } from '@react-navigation/stack';
-import { HomeStackParams } from '../../../pages/Home';
+import { createStackNavigator, StackScreenProps } from '@react-navigation/stack';
 
 import Hashtag from '../../../common/Hashtag.tsx';
 
 import DetailScreenHeader from '../components/DetailScreenHeader.tsx';
 import ScrollToTopButton from '../../../common/ScrollToTopButtonFlat.tsx';
 import ScrollTopButton from '../../../common/ScrollTopButton.tsx';
+import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
+import { TabProps } from '../../../../App.tsx';
+import OrderPage from './OrderPage.tsx';
+import QuotationPage, { QuotationProps } from '../Quotation/QuotationPage.tsx';
+import CompletedOrder from './CompletedOrder.tsx';
+import WriteReviewPage from '../Market/WriteReviewPage.tsx';
 
 type OrderInfoType = {
   id: string;
@@ -25,6 +30,35 @@ type OrderInfoType = {
   orderDate: string;
   is_online: boolean;
   navigation: any;
+}
+
+export type OrderProps = {
+  navigation: any;
+  route: any;
+  flatListRef?: React.RefObject<FlatList<any>>;
+}
+
+export type OrderStackParams = {
+  OrderPage: undefined;
+  CompletedOrder: undefined;
+  QuotationPage: QuotationProps;
+  WriteReviewPage: undefined;
+}
+
+const OrderStack = createStackNavigator<OrderStackParams>();
+
+const OrderScreen = ({
+  navigation,
+  route,
+}: BottomTabScreenProps<TabProps, '주문관리'>) => {
+  return (
+    <OrderStack.Navigator>
+      <OrderStack.Screen name="OrderPage" component={OrderPage} />
+      <OrderStack.Screen name="CompletedOrder" component={CompletedOrder} />
+      <OrderStack.Screen name="QuotationPage" component={QuotationPage} />
+      <OrderStack.Screen name="WriteReviewPage" component={WriteReviewPage} />
+    </OrderStack.Navigator>
+  )
 }
 
 const OrderInfo = ({ id, name, customer, orderDate, is_online, navigation }: OrderInfoType) => (
@@ -41,10 +75,9 @@ const OrderInfo = ({ id, name, customer, orderDate, is_online, navigation }: Ord
   </InfoContainer>
 );
 
-const OrderManagement = () => {
+const OrderManagement = ({ navigation, route }: BottomTabScreenProps<TabProps, '주문관리'>) => {
   const { width } = Dimensions.get('window');
   const scrollRef = useRef<ScrollView | null>(null);
-  const navigation = useNavigation();
 
   const [orderlist, setOrderList] = useState([
     {

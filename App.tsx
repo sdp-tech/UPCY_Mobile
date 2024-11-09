@@ -3,7 +3,6 @@ import { View, TouchableOpacity, Text } from 'react-native';
 import {
   NavigationContainer,
   DefaultTheme,
-  getFocusedRouteNameFromRoute,
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {
@@ -16,7 +15,6 @@ import MyPageScreen from './src/pages/MyPage';
 import OrderManagement from './src/components/Home/Order/OrderManagement';
 
 import useLoginGuard from './src/hooks/useLoginGuard';
-
 import HomeIcon from './src/assets/navbar/Home.svg';
 import MyPageIcon from './src/assets/navbar/MyPage.svg';
 import OrderManagementIcon from './src/assets/navbar/OrderManagement.svg';
@@ -32,12 +30,12 @@ import Reformer from './src/components/Auth/Reformer/Reformer';
 import SplashScreen from './src/common/SplashScreen';
 
 export type StackProps = {
-  Home: undefined;
+  Main: undefined;
   Signin: undefined;
   ReformProfile: undefined;
 };
 
-const Stack = createNativeStackNavigator<StackProps>();
+const AppStack = createNativeStackNavigator<StackProps>(); // 최상위 스택. SignInStack에는 바텀바 안 뜸.
 
 const GlobalTheme = {
   ...DefaultTheme,
@@ -64,14 +62,13 @@ function App(): React.JSX.Element {
               {!isSplashFinished ? (
                 <SplashScreen onFinish={finishSplash} />
               ) : (
-                <Stack.Navigator
-                  screenOptions={() => ({
-                    headerShown: false,
-                  })}>
-                  <Stack.Screen name="Home" component={HomeTab} />
-                  <Stack.Screen name="Signin" component={SignIn} />
-                  <Stack.Screen name="ReformProfile" component={Reformer} />
-                </Stack.Navigator>
+                <AppStack.Navigator
+                  screenOptions={{ headerShown: false }}
+                >
+                  <AppStack.Screen name="Main" component={MainTabNavigator} />
+                  <AppStack.Screen name="Signin" component={SignIn} />
+                  <AppStack.Screen name="ReformProfile" component={Reformer} />
+                </AppStack.Navigator>
               )}
             </NavigationContainer>
           </UserProvider>
@@ -83,23 +80,22 @@ function App(): React.JSX.Element {
 
 export type TabProps = {
   홈: undefined;
+  주문관리: undefined;
   마이페이지: undefined;
   주문관리: undefined;
 };
 
 const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
   const loginGuard = useLoginGuard();
-  const { options } = descriptors;
-  const { isVisible } = useBottomBar(); // 바텀바 보임/숨김 상태를 가져옵니다.
+  const { isVisible } = useBottomBar(); // 바텀바 보임/숨김 상태를 가져옴.
 
   if (!isVisible) {
-    return null; // isVisible이 false일 경우 탭바를 렌더링하지 않습니다.
+    return null; // isVisible이 false일 경우 탭바를 렌더링하지 않음.
   }
 
   return (
     <View
       style={{
-        display: 'flex',
         height: 86,
         flexDirection: 'row',
         justifyContent: 'space-around',
@@ -107,52 +103,31 @@ const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
         paddingHorizontal: 10,
       }}>
       {state.routes.map((route, index) => {
-        const isFocused = state.index == index;
+        const isFocused = state.index === index; // 한 번 더 눌렀을 때 
         const onPress = () => {
-          // 하단 탭바 추가하면 여기 수정해야합니다!!!!
-          if (route.name == '홈') {
-            if (isFocused)
-              navigation.reset({
-                routes: [{ name: route.name, params: { id: undefined } }],
-              });
-            else navigation.navigate(route.name, { id: undefined });
-          } else if (route.name == '주문관리') {
-            if (isFocused)
-              navigation.reset({
-                routes: [{ name: route.name, params: { id: undefined } }],
-              });
-            else navigation.navigate(route.name, { id: undefined });
-          } else if (route.name == '마이페이지') {
-            if (isFocused)
-              navigation.reset({
-                routes: [{ name: route.name, params: { id: undefined } }],
-              });
-            else navigation.navigate(route.name, { id: undefined });
+          if (isFocused) {
+            navigation.reset({
+              routes: [{ name: route.name }],
+            });
+          } else {
+            navigation.navigate(route.name);
           }
         };
+
         return (
           <TouchableOpacity
             key={index}
-            onPress={route.name == '마이페이지' ? loginGuard(onPress) : onPress}
-            // onPress={onPress}
+            onPress={route.name === '마이페이지' ? loginGuard(onPress) : onPress}
             style={{
               width: '20%',
-              display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
             }}>
             {
-              {
-                0: <HomeIcon color="#000000" opacity={isFocused ? 1 : 0.4} />,
-                1: (
-                  <OrderManagementIcon
-                    color="#000000"
-                    opacity={isFocused ? 1 : 0.4}
-                  />
-                ),
-                2: <MyPageIcon color="#000000" opacity={isFocused ? 1 : 0.4} />,
-              }[index]
-            }
+              홈: <HomeIcon color="#000000" opacity={isFocused ? 1 : 0.4} />,
+              주문관리: <OrderManagementIcon color="#000000" opacity={isFocused ? 1 : 0.4} />,
+              마이페이지: <MyPageIcon color="#000000" opacity={isFocused ? 1 : 0.4} />,
+            }[route.name]}
 
             <Text
               style={{
@@ -171,22 +146,18 @@ const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
 };
 
 const Tab = createBottomTabNavigator<TabProps>();
-const HomeTab = (): JSX.Element => {
+
+// 하단 탭 네비게이터 정의
+const MainTabNavigator = () => {
   return (
     <Tab.Navigator
       tabBar={props => <CustomTab {...props} />}
-      id="MainHome"
       initialRouteName="홈"
-      screenOptions={() => ({
-        headerShown: false,
-      })}>
-      <Tab.Screen
-        name={'홈'}
-        component={HomeScreen}
-        options={{ tabBarStyle: { display: 'none' } }}
-      />
-      <Tab.Screen name={'주문관리'} component={OrderManagement} />
-      <Tab.Screen name={'마이페이지'} component={MyPageScreen} />
+      screenOptions={{ headerShown: false }}
+    >
+      <Tab.Screen name="홈" component={HomeScreen} />
+      <Tab.Screen name="주문관리" component={OrderManagement} />
+      <Tab.Screen name="마이페이지" component={MyPageScreen} />
     </Tab.Navigator>
   );
 };

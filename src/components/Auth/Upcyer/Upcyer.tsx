@@ -103,6 +103,7 @@ export const UpcyFormProfile = ({ navigation, route }: UpcyerPageProps) => {
     const request = Request();
     const form = route.params.form;
     const [form_, setForm] = useState<BasicFormProps2>({
+        full_name: form?.full_name || '',
         mail: form?.mail || '',
         domain: form?.domain || '',
         password: form?.password || '',
@@ -113,30 +114,54 @@ export const UpcyFormProfile = ({ navigation, route }: UpcyerPageProps) => {
     });
 
     useEffect(() => {
-        form.agreement = form_.agreement;
-        form.domain = form_.domain;
-        form.introduce = form_.introduce;
-        form.mail = form_.mail;
-        form.nickname = form_.nickname;
-        form.password = form_.password;
-        form.profile_image = form_.profile_image;
-    }, [form_])
+        if (route.params?.form) {
+            console.log("Form received in UpcyFormProfile:", route.params.form);
+            setForm(route.params.form);
+        } else {
+            console.warn("Form parameter is missing in UpcyFormProfile");
+        }
+    }, [route.params?.form]);
+
 
     const handleSubmit = async () => {
+        const accessToken = await getAccessToken();
+        // 이 아래는 프로필 이미지 등록 
+        const headers_ = {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'multipart/form-data', // multipart/form-data 설정
+        };
+        const formData = new FormData();
+        formData.append('profile_image', {
+            uri: form_.profile_image?.uri, // 파일의 URI
+            type: 'image/jpeg', // 이미지 형식 (예: 'image/jpeg')
+            name: form_.profile_image?.fileName || 'profile.jpg', // 파일 이름
+        });
+        try {
+            const response = await request.post(`/api/user/profile-image`, formData, headers_)
+            if (response && response.status === 201) {
+                console.log(formData, '프로필 이미지 등록 성공')
+            } else {
+                console.log('이미지 업로드 실패');
+                console.log(response);
+            }
+        }
+        catch (err) {
+            console.error(err)
+        }
+        // 이 아래는 닉네임, 소개글 
+        const headers = {
+            Authorization: `Bearer ${accessToken}`
+        };
         const params = {
-            email: form_.mail + '@' + form_.domain,
-            password: form_.password,
             nickname: form_.nickname,
-            agreement_terms: form_.agreement.d,
             introduce: form_.introduce,
         };
         if (form_.nickname != '') {
             try {
-                const response = await request.post('/api/user/signup', params);
-                if (response?.status === 201) {
+                const response = await request.put(`/api/user`, params, headers);
+                if (response?.status === 200) {
                     console.log(params);
                     setModalVisible(true);
-
                     // 3초 후 모달 닫고 페이지 이동
                     setTimeout(() => {
                         setModalVisible(false);
@@ -155,6 +180,7 @@ export const UpcyFormProfile = ({ navigation, route }: UpcyerPageProps) => {
             } catch (err) {
                 console.log(err);
             }
+
         } else {
             Alert.alert('닉네임을 입력해주세요.')
         }
@@ -186,7 +212,7 @@ export const UpcyFormProfile = ({ navigation, route }: UpcyerPageProps) => {
                         }
                         caption={{ default: '본인을 나타내는 닉네임을 작성해주세요' }}
                     />
-                    <InputView
+                    {/* <InputView
                         title="소개글"
                         value={form_?.introduce}
                         setValue={(value) =>
@@ -196,25 +222,21 @@ export const UpcyFormProfile = ({ navigation, route }: UpcyerPageProps) => {
                         }
                         caption={{ default: '본인을 소개하는 글을 작성해주세요' }}
                         long={true}
-                    />
-                    <Pressable onPress={() => console.log(form)}>
-                        <Text>ddddddd</Text>
-                    </Pressable>
-                    <BottomButton
-                        value="완료"
-                        pressed={false}
-                        onPress={handleSubmit}
-                        style={{
-                            width: '75%',
-                            alignSelf: 'center',
-                            marginTop: 'auto',
-                            marginBottom: 10,
-                        }}
-                    />
+                    /> */}
                 </View>
-
             </CustomScrollView>
-
+            <BottomButton
+                value="완료"
+                pressed={false}
+                onPress={handleSubmit}
+                style={{
+                    width: '90%',
+                    alignSelf: 'center',
+                    marginBottom: 40,
+                    position: "absolute",
+                    bottom: 0,
+                }}
+            />
             <Modal visible={isModalVisible} transparent={true} animationType="slide" onRequestClose={() => {
                 setModalVisible(false);  // 백 버튼 등으로 모달을 닫을 때 처리
             }}>
