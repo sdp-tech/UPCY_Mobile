@@ -26,7 +26,7 @@ import { BLACK } from '../../../styles/GlobalColor';
 import { useBottomBar } from '../../../../contexts/BottomBarContext';
 import DetailScreenHeader from '../components/DetailScreenHeader';
 import ScrollToTopButton from '../../../common/ScrollToTopButtonFlat';
-import HeartButton from '../../../common/HeartButton';
+// import HeartButton from '../../../common/HeartButton';
 import ReviewPage from './ReviewPage';
 
 const { width, height } = Dimensions.get('window');
@@ -205,9 +205,9 @@ const Header = ({
           최대 <Text style={TextStyles.Price}> {maxPrice} 원</Text>
         </Text>
       </View>
-      <View style={{ margin: 15 }}>
+      {/* <View style={{ margin: 15 }}>
         <HeartButton like={like} onPress={() => setLike(!like)} />
-      </View>
+      </View> */}
     </View>
   );
 };

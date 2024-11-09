@@ -16,7 +16,7 @@ import {
   Body14R,
 } from '../../../styles/GlobalText';
 import { LIGHTGRAY } from '../../../styles/GlobalColor';
-import HeartButton from '../../../common/HeartButton';
+// import HeartButton from '../../../common/HeartButton';
 import DetailModal from '../Market/GoodsDetailOptionsModal';
 import { SelectedOptionProps } from '../HomeMain.tsx';
 import { getAccessToken } from '../../../common/storage.js';
@@ -259,7 +259,7 @@ export const ServiceCard = ({
       </ImageBackground>
       <View style={styles.titleContainer}>
         <Subtitle18B>{service_title}</Subtitle18B>
-        <HeartButton like={like} onPress={() => setLike(!like)} />
+        {/* <HeartButton like={like} onPress={() => setLike(!like)} /> */}
       </View>
       <Body14R>
         <RenderHTML contentWidth={300} source={{ html: service_content }} />
