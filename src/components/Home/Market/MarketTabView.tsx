@@ -13,7 +13,7 @@ import {
 import { Tabs, MaterialTabBar } from 'react-native-collapsible-tab-view';
 import { Caption11M } from '../../../styles/GlobalText.tsx';
 import { BLACK, BLACK2, PURPLE } from '../../../styles/GlobalColor.tsx';
-import StarIcon from '../../../assets/common/Star.svg';
+// import StarIcon from '../../../assets/common/Star.svg';
 
 import { StackScreenProps } from '@react-navigation/stack';
 import { HomeStackParams } from '../../../pages/Home';
@@ -22,7 +22,7 @@ import InfoPage from './InfoPage.tsx';
 
 import Footer from '../../../common/Footer.tsx';
 
-import Arrow from '../../../assets/common/Arrow.svg';
+// import Arrow from '../../../assets/common/Arrow.svg';
 import ServicePage from './ServicePage.tsx';
 import DetailScreenHeader from '../components/DetailScreenHeader.tsx';
 import ScrollTopButton from '../../../common/ScrollTopButton.tsx';
@@ -34,7 +34,7 @@ export const ProfileSection = ({
   navigation: any;
   reformerName: string;
 }) => {
-  const marketName: string = reformerName + '의 마켓';
+  const marketName: string = reformerName;
   const selfIntroduce: string =
     '안녕하세요 리폼러 이하늘입니다! 저는 업씨대학교 패션디자인학과에 수석입학했고요 짱짱 천재에요';
   const rate: number = 4.5; // 평점
@@ -44,8 +44,8 @@ export const ProfileSection = ({
     <View style={{ alignItems: 'center' }}>
       <ProfileHeader
         marketName={marketName}
-        rate={rate}
-        reviewNumber={reviewNumber}
+        // rate={rate}
+        // reviewNumber={reviewNumber}
       />
       <View style={{ padding: 20, paddingTop: 0, paddingBottom: 0 }}>
         {/* 이 밑에거 지우면 이상하게 에러남... 그냥 냅둬도 되는 거라 무시하셔도 됩니다.  */}
@@ -59,12 +59,12 @@ export const ProfileSection = ({
 
 const ProfileHeader = ({
   marketName,
-  rate,
-  reviewNumber,
+  // rate,
+  // reviewNumber,
 }: {
   marketName: string;
-  rate: number;
-  reviewNumber: number;
+  // rate: number;
+  // reviewNumber: number;
 }) => {
   return (
     <>
@@ -104,13 +104,12 @@ const ProfileHeader = ({
         />
       </ImageBackground>
       <Text style={TextStyles.marketName}>{marketName}</Text>
-      <View style={styles.profileHeaderRateBox}>
+      {/* <View style={styles.profileHeaderRateBox}>
         <StarIcon color={PURPLE} />
         <Text style={TextStyles.rate}>{rate}</Text>
         <Text style={TextStyles.reviewNumber}>({reviewNumber})</Text>
         <Arrow color={BLACK} style={styles.arrow} />
-        {/* TODO: click event 걸기 */}
-      </View>
+      </View> */}
     </>
   );
 };
