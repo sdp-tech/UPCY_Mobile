@@ -133,6 +133,7 @@ const ProfileSection = ({
       <DetailScreenHeader
         title=""
         leftButton="CustomBack"
+        rightButton="Report"
         onPressLeft={() => {}}
         onPressRight={() => {}}
       />

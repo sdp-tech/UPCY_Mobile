@@ -6,12 +6,13 @@ import LeftArrowIcon from '../../../assets/common/Arrow.svg';
 import CloseIcon from '../../../assets/header/Close.svg';
 import SearchIcon from '../../../assets/header/Search.svg';
 import { CustomBackButton } from './CustomBackButton';
+import { CustomReportButton } from './CustomReportButton';
 
 interface HeaderProps {
   title: string;
   leftButton: 'CustomBack' | 'LeftArrow' | 'Exit' | 'None';
   onPressLeft: () => void;
-  rightButton?: 'Save' | 'Search' | 'Edit' | 'Exit' | 'None' | 'Fix';
+  rightButton: 'Save' | 'Search' | 'Edit' | 'Exit' | 'None' | 'Fix' | 'Report';
   onPressRight: () => void;
   saved?: number;
   border?: boolean;
@@ -39,6 +40,7 @@ const DetailScreenHeader = ({
     CustomBack: <CustomBackButton />,
     None: <></>,
     Fix: <Body16B style={{ color: '#929292', marginRight: 10 }}>...</Body16B>,
+    Report: <CustomReportButton />,
   };
   return (
     <SafeAreaView
@@ -62,15 +64,13 @@ const DetailScreenHeader = ({
       <View style={{ alignSelf: 'center', flex: 1 }}>
         <Subtitle18B style={{ textAlign: 'center' }}>{title}</Subtitle18B>
       </View>
-      {rightButton && (
-        <View style={{ flex: 1 }}>
-          <TouchableOpacity
-            onPress={onPressRight}
-            style={{ alignSelf: 'flex-end' }}>
-            {Buttons[rightButton]}
-          </TouchableOpacity>
-        </View>
-      )}
+      <View style={{ flex: 1 }}>
+        <TouchableOpacity
+          onPress={onPressRight}
+          style={{ alignSelf: 'flex-end' }}>
+          {Buttons[rightButton]}
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
