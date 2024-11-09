@@ -41,7 +41,7 @@ export type ServiceResponseType = {
   market_uuid: string;
   max_price: number;
   service_category: string;
-  service_content: string; // HTML이라서 이거도 type 수정 필요
+  service_content: string;
   service_image: any[];
   service_material: any[];
   service_option: any[];
@@ -100,7 +100,6 @@ const EntireServiceMarket = ({
         // API 호출
         const response = await request.get(`/api/market/service`, headers);
         if (response && response.status === 200) {
-          // servicecard 코드 작성해야함!!
           const serviceListResults: ServiceResponseType[] =
             response.data.results;
           const extractedServiceCardData = extractData(serviceListResults);
