@@ -1,9 +1,6 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { View, TouchableOpacity, Text } from 'react-native';
-import {
-  NavigationContainer,
-  DefaultTheme,
-} from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {
   BottomTabBarProps,
@@ -62,9 +59,7 @@ function App(): React.JSX.Element {
               {!isSplashFinished ? (
                 <SplashScreen onFinish={finishSplash} />
               ) : (
-                <AppStack.Navigator
-                  screenOptions={{ headerShown: false }}
-                >
+                <AppStack.Navigator screenOptions={{ headerShown: false }}>
                   <AppStack.Screen name="Main" component={MainTabNavigator} />
                   <AppStack.Screen name="Signin" component={SignIn} />
                   <AppStack.Screen name="ReformProfile" component={Reformer} />
@@ -80,7 +75,6 @@ function App(): React.JSX.Element {
 
 export type TabProps = {
   홈: undefined;
-  주문관리: undefined;
   마이페이지: undefined;
   주문관리: undefined;
 };
@@ -103,7 +97,7 @@ const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
         paddingHorizontal: 10,
       }}>
       {state.routes.map((route, index) => {
-        const isFocused = state.index === index; // 한 번 더 눌렀을 때 
+        const isFocused = state.index === index; // 한 번 더 눌렀을 때
         const onPress = () => {
           if (isFocused) {
             navigation.reset({
@@ -117,17 +111,28 @@ const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
         return (
           <TouchableOpacity
             key={index}
-            onPress={route.name === '마이페이지' ? loginGuard(onPress) : onPress}
+            onPress={
+              route.name === '마이페이지' ? loginGuard(onPress) : onPress
+            }
             style={{
               width: '20%',
               alignItems: 'center',
               justifyContent: 'center',
             }}>
             {
-              홈: <HomeIcon color="#000000" opacity={isFocused ? 1 : 0.4} />,
-              주문관리: <OrderManagementIcon color="#000000" opacity={isFocused ? 1 : 0.4} />,
-              마이페이지: <MyPageIcon color="#000000" opacity={isFocused ? 1 : 0.4} />,
-            }[route.name]}
+              {
+                홈: <HomeIcon color="#000000" opacity={isFocused ? 1 : 0.4} />,
+                주문관리: (
+                  <OrderManagementIcon
+                    color="#000000"
+                    opacity={isFocused ? 1 : 0.4}
+                  />
+                ),
+                마이페이지: (
+                  <MyPageIcon color="#000000" opacity={isFocused ? 1 : 0.4} />
+                ),
+              }[route.name]
+            }
 
             <Text
               style={{
@@ -153,8 +158,7 @@ const MainTabNavigator = () => {
     <Tab.Navigator
       tabBar={props => <CustomTab {...props} />}
       initialRouteName="홈"
-      screenOptions={{ headerShown: false }}
-    >
+      screenOptions={{ headerShown: false }}>
       <Tab.Screen name="홈" component={HomeScreen} />
       <Tab.Screen name="주문관리" component={OrderManagement} />
       <Tab.Screen name="마이페이지" component={MyPageScreen} />
