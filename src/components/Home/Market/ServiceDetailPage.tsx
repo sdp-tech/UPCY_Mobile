@@ -332,7 +332,7 @@ const ServiceDetailPageMainScreen = ({
       />
       <DetailBox2
         servicePeriod={servicePeriod}
-        serviceContent={serviceContent}
+        // serviceContent={serviceContent}
       />
       <View style={{ marginBottom: 400 }} />
       <Footer />
