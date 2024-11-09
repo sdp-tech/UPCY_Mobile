@@ -21,7 +21,7 @@ export const StyleFilterButton = ({
 const styles = StyleSheet.create({
   button: {
     display: 'flex',
-    backgroundColor: '#DBFC72',
+    backgroundColor: '#E9EBF8',
     height: 32,
     paddingHorizontal: 14,
     justifyContent: 'center',

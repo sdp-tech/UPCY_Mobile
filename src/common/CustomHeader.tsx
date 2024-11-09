@@ -1,20 +1,18 @@
 import { useEffect, useState } from 'react';
-import { Filter14M } from '../styles/GlobalText';
 import {
   Text,
   View,
   TouchableOpacity,
-  Dimensions,
+  // Dimensions,
   StyleSheet,
 } from 'react-native';
 import Search from '../assets/common/Search.svg';
 import Logo from '../assets/common/Logo.svg';
 import Bell from '../assets/common/Bell.svg';
 import styled from 'styled-components/native';
-import Advertisment from '../assets/common/Advertisement.svg';
-import { GREEN } from '../styles/GlobalColor';
+// import Advertisment from '../assets/common/Advertisement.svg';
 
-const screenWidth = Dimensions.get('window').width;
+// const screenWidth = Dimensions.get('window').width;
 
 const FrameBox = styled.View`
   display: flex;
@@ -48,34 +46,34 @@ const ToggleButton = styled.TouchableOpacity<{ pressed: boolean }>`
     props.pressed ? '#FFFFFF' : 'transparent'};
 `;
 
-const BannerText = styled.View`
-  position: absolute;
-  bottom: 10px;
-  left: 10px;
-  padding: 5px;
-`;
+// const BannerText = styled.View`
+//   position: absolute;
+//   bottom: 10px;
+//   left: 10px;
+//   padding: 5px;
+// `;
 
-const BannerTitle = styled.Text`
-  color: white;
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 24px;
-`;
+// const BannerTitle = styled.Text`
+//   color: white;
+//   font-size: 18px;
+//   font-weight: 700;
+//   line-height: 24px;
+// `;
 
-const BannerSubtitle = styled.Text`
-  color: white;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 24px;
-`;
+// const BannerSubtitle = styled.Text`
+//   color: white;
+//   font-size: 14px;
+//   font-weight: 400;
+//   line-height: 24px;
+// `;
 
-const BannerPageNumber = styled.Text`
-  position: absolute;
-  bottom: 10px;
-  right: 20px;
-  color: white;
-  font-size: 14px;
-`;
+// const BannerPageNumber = styled.Text`
+//   position: absolute;
+//   bottom: 10px;
+//   right: 20px;
+//   color: white;
+//   font-size: 14px;
+// `;
 
 interface CustomHeaderProps {
   onSearch: () => void;

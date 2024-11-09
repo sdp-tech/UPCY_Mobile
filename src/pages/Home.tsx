@@ -9,7 +9,9 @@ import {
 import { TabProps } from '../../App';
 import { ScrollView } from 'react-native-gesture-handler';
 
+// TODO: 나중에 CustomHeader2 사용
 import CustomHeader from '../common/CustomHeader';
+import CustomHeader2 from '../common/CustomHeader2';
 import HomeTabView, { SelectedOptionProps } from '../components/Home/HomeMain';
 import MarketTabView from '../components/Home/Market/MarketTabView';
 import QuotationForm from '../components/Home/Quotation/QuotationForm';
@@ -17,8 +19,7 @@ import QuotationPage, {
   QuotationProps,
 } from '../components/Home/Quotation/QuotationPage';
 import SentQuotation from '../components/Home/Quotation/SentQuotation';
-import TempStorage from '../components/Home/Market/TempStorage';
-import ServiceRegistrationPage from '../components/Home/Market/ServiceRegistration';
+// import ServiceRegistrationPage from '../components/Home/Market/ServiceRegistration';
 import ServiceDetailPageScreen from '../components/Home/Market/ServiceDetailPage';
 import GoodsDetailPageScreen from '../components/Home/Market/GoodsDetailPage';
 import GoodsRegistrationPage from '../components/Home/Market/GoodsRegistration';
@@ -27,22 +28,18 @@ import WriteDetailPage from '../components/Home/Market/WriteDetailPage';
 import AddPortfolio from '../components/Home/Portfolio/AddPortfolio';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
-import InputInfo, {
-  InputInfoProps,
-} from '../components/Home/Quotation/InputInfo';
+import InputInfo from '../components/Home/Quotation/InputInfo';
 import QuotationConfirm from '../components/Home/Quotation/QuotationConfirm';
 import Rejection from '../components/Home/Quotation/Rejection';
 import SentRejection from '../components/Home/Quotation/SentRejection';
-import WriteReviewPage from '../components/Home/Market/WriteReviewPage';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import ComponentsTest from './ComponentsTest';
 import { PURPLE } from '../styles/GlobalColor';
-import OrderManagement from '../components/Home/Order/OrderManagement';
-import CompletedOrder from '../components/Home/Order/CompletedOrder';
 import ReformerMarket from '../components/Home/Market/ReformerMarket';
 import Service from '../components/Home/Market/Service';
 import { PhotoType } from '../hooks/useImagePicker';
 import { stylesList } from '../components/Home/HomeMain';
+import SearchPage from './SearchPage';
 
 export type HomeStackParams = {
   Home: undefined;
@@ -80,6 +77,7 @@ export type HomeStackParams = {
     // id: string;
     reformerName: string;
   };
+  SearchPage: undefined;
 };
 
 const HomeStack = createStackNavigator<HomeStackParams>();
@@ -132,6 +130,7 @@ const HomeScreen = ({
       <HomeStack.Screen name="SentRejection" component={SentRejection} />
       <HomeStack.Screen name="TestComponents" component={ComponentsTest} />
       <HomeStack.Screen name="ReformerMarket" component={ReformerMarket} />
+      <HomeStack.Screen name="SearchPage" component={SearchPage} />
     </HomeStack.Navigator>
   );
 };
@@ -190,7 +189,9 @@ const HomeMainScreen = ({
     <Fragment>
       <SafeAreaView style={{ flex: 0, backgroundColor: PURPLE }} />
       <SafeAreaView style={{ flex: 1 }}>
+        {/* TODO: 나중에 CustomHeader2 사용 */}
         <CustomHeader onSearch={() => {}} onTabChange={handleTabChange} />
+        {/* <CustomHeader2 navigation={navigation} /> */}
         <BottomSheetModalProvider>
           <View>
             <HomeTabView

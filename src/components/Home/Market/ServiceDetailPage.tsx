@@ -16,17 +16,14 @@ import {
 } from '@react-navigation/stack';
 import { HomeStackParams } from '../../../pages/Home';
 import Arrow from '../../../assets/common/Arrow.svg';
-import Review from '../../../assets/common/Review.svg';
 import { useEffect, useRef, useState } from 'react';
 import DetailBox from './DetailBox';
-import OptionBox from './OptionBox';
 import Footer from '../../../common/Footer';
 import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
-import { BLACK } from '../../../styles/GlobalColor';
 import { useBottomBar } from '../../../../contexts/BottomBarContext';
 import DetailScreenHeader from '../components/DetailScreenHeader';
 import ScrollToTopButton from '../../../common/ScrollToTopButtonFlat';
-import HeartButton from '../../../common/HeartButton';
+// import HeartButton from '../../../common/HeartButton';
 import ReviewPage from './ReviewPage';
 
 const { width, height } = Dimensions.get('window');
@@ -130,21 +127,20 @@ const ProfileSection = ({
         title=""
         leftButton="CustomBack"
         onPressLeft={() => {}}
-        rightButton="Search"
         onPressRight={() => {}}
       />
       <Banner backgroundImageUri={backgroundImageUri} tags={tags} />
+      <Profile
+        reformerName={reformerName}
+        reviewNum={reviewNum}
+        navigation={navigation}
+      />
       <Header
         like={like}
         setLike={setLike}
         serviceName={serviceName}
         basicPrice={basicPrice}
         maxPrice={maxPrice}
-      />
-      <Profile
-        reformerName={reformerName}
-        reviewNum={reviewNum}
-        navigation={navigation}
       />
     </SafeAreaView>
   );
@@ -162,7 +158,10 @@ const Banner = ({ backgroundImageUri, tags }: BannerProps) => {
         style={{ width: '100%', height: width * 0.5 }}
         imageStyle={{ height: width * 0.5 }}
         source={{
-          uri: backgroundImageUri,
+          uri:
+            backgroundImageUri ||
+            'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
+          // backgroundImageUri가 없는 경우 기본 이미지
         }}
       />
       <View style={styles.tagContainer}>
@@ -205,9 +204,9 @@ const Header = ({
           최대 <Text style={TextStyles.Price}> {maxPrice} 원</Text>
         </Text>
       </View>
-      <View style={{ margin: 15 }}>
+      {/* <View style={{ margin: 15 }}>
         <HeartButton like={like} onPress={() => setLike(!like)} />
-      </View>
+      </View> */}
     </View>
   );
 };
@@ -226,11 +225,7 @@ const Profile = ({
   navigation,
 }: ProfileProps) => {
   return (
-    <View
-      style={{
-        ...TextStyles.borderBottom2,
-        justifyContent: 'space-between',
-      }}>
+    <View style={{ justifyContent: 'space-between' }}>
       <View style={{ padding: 15, flexDirection: 'row' }}>
         {/* TODO: add profile picture here */}
         <View
@@ -248,10 +243,9 @@ const Profile = ({
                 reformerName: reformerName,
               })
             }>
-            <Text style={TextStyles.marketName}>{reformerName}의 마켓</Text>
+            <Text style={TextStyles.reformerName}>{reformerName}</Text>
             <Arrow style={styles.marketArrow} />
           </TouchableOpacity>
-          <Text style={TextStyles.reformerName}>{reformerName}</Text>
         </View>
       </View>
     </View>
@@ -261,7 +255,6 @@ const Profile = ({
 const ServiceDetailPageMainScreen = ({
   navigation,
   route,
-  // fix here
 }: StackScreenProps<DetailPageStackParams, 'DetailPage'>) => {
   const {
     reformerName,
@@ -332,7 +325,8 @@ const ServiceDetailPageMainScreen = ({
 
 const TextStyles = StyleSheet.create({
   Title: {
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingBottom: 12,
     color: '#222222',
     fontWeight: '700',
     fontSize: 18,
@@ -350,12 +344,13 @@ const TextStyles = StyleSheet.create({
     color: '#612EFE',
   },
   PriceInfo: {
-    fontWeight: '600',
+    fontWeight: '700',
     fontSize: 14,
     paddingLeft: 16,
     paddingRight: 16,
     paddingBottom: 8,
     color: 'rgba(34, 34, 34, 0.50)',
+    lineHeight: 24,
   },
   Price: {
     fontWeight: '700',
@@ -379,10 +374,6 @@ const TextStyles = StyleSheet.create({
   borderBottom1: {
     flexDirection: 'row',
     borderBottomWidth: 1,
-    borderBlockColor: '#dcdcdc',
-  },
-  borderBottom2: {
-    borderBottomWidth: 6,
     borderBlockColor: '#dcdcdc',
   },
   scrollToHeaderButton: {
@@ -441,7 +432,12 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     lineHeight: 24,
   },
-  marketArrow: { marginLeft: -4, transform: [{ scaleX: -1 }], color: '#000' },
+  marketArrow: {
+    paddingLeft: 9,
+    marginLeft: -4,
+    transform: [{ scaleX: -1 }],
+    color: '#000',
+  },
 });
 
 export default ServiceDetailPageScreen;

@@ -11,7 +11,7 @@ interface HeaderProps {
   title: string;
   leftButton: 'CustomBack' | 'LeftArrow' | 'Exit' | 'None';
   onPressLeft: () => void;
-  rightButton: 'Save' | 'Search' | 'Edit' | 'Exit' | 'None' | 'Fix';
+  rightButton?: 'Save' | 'Search' | 'Edit' | 'Exit' | 'None' | 'Fix';
   onPressRight: () => void;
   saved?: number;
   border?: boolean;
@@ -31,7 +31,11 @@ const DetailScreenHeader = ({
     Search: <SearchIcon color={BLACK} style={{ marginRight: 5 }} />,
     Edit: <Body14M style={{ color: '#929292', marginRight: 10 }}>편집</Body14M>,
     Exit: <CloseIcon color={BLACK} style={{ marginHorizontal: 5 }} />,
-    LeftArrow: <View style={{ marginLeft: 14 }}><LeftArrowIcon color={BLACK} /></View>,
+    LeftArrow: (
+      <View style={{ marginLeft: 14 }}>
+        <LeftArrowIcon color={BLACK} />
+      </View>
+    ),
     CustomBack: <CustomBackButton />,
     None: <></>,
     Fix: <Body16B style={{ color: '#929292', marginRight: 10 }}>...</Body16B>,
@@ -58,13 +62,15 @@ const DetailScreenHeader = ({
       <View style={{ alignSelf: 'center', flex: 1 }}>
         <Subtitle18B style={{ textAlign: 'center' }}>{title}</Subtitle18B>
       </View>
-      <View style={{ flex: 1 }}>
-        <TouchableOpacity
-          onPress={onPressRight}
-          style={{ alignSelf: 'flex-end' }}>
-          {Buttons[rightButton]}
-        </TouchableOpacity>
-      </View>
+      {rightButton && (
+        <View style={{ flex: 1 }}>
+          <TouchableOpacity
+            onPress={onPressRight}
+            style={{ alignSelf: 'flex-end' }}>
+            {Buttons[rightButton]}
+          </TouchableOpacity>
+        </View>
+      )}
     </SafeAreaView>
   );
 };
