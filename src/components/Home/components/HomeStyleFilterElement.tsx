@@ -7,13 +7,12 @@ import {
   Caption11M,
 } from '../../../styles/GlobalText';
 import { PURPLE } from '../../../styles/GlobalColor';
-import { Styles } from '../../../types/UserTypes';
 
 interface filterElementProps {
-  list: Styles[];
+  list: string[];
   setStyleFilterOpen: (styleFilterOpen: boolean) => void;
-  setPressedStyles: (pressedStyles: Styles[]) => void;
-  setFinalPressedStyles: (finalPressedStyles: Styles[]) => void;
+  setPressedStyles: (pressedStyles: string[]) => void;
+  setFinalPressedStyles: (finalPressedStyles: string[]) => void;
 }
 
 const HomeStyleFilterElement = ({
@@ -22,7 +21,7 @@ const HomeStyleFilterElement = ({
   setPressedStyles,
   setFinalPressedStyles,
 }: filterElementProps) => {
-  const filterList: Styles[] = [
+  const filterList: string[] = [
     '빈티지',
     '미니멀',
     '캐주얼',
@@ -35,11 +34,11 @@ const HomeStyleFilterElement = ({
     '걸리시',
   ];
 
-  const [pressed, setPressed] = useState<Styles[]>(list);
+  const [pressed, setPressed] = useState<string[]>(list);
 
-  const handlePress = (style: Styles) => {
+  const handlePress = (style: string) => {
     setPressed(prevStyles => {
-      let updatedStyles: Styles[];
+      let updatedStyles: string[];
       if (prevStyles.includes(style)) {
         updatedStyles = prevStyles.filter(item => item !== style);
       } else {

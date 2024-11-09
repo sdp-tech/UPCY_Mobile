@@ -27,7 +27,6 @@ import { useBottomBar } from '../../../../contexts/BottomBarContext';
 import DetailScreenHeader from '../components/DetailScreenHeader';
 import ScrollToTopButton from '../../../common/ScrollToTopButtonFlat';
 import HeartButton from '../../../common/HeartButton';
-import { Styles } from '../../../types/UserTypes';
 import ReviewPage from './ReviewPage';
 
 const { width, height } = Dimensions.get('window');
@@ -38,7 +37,7 @@ type ServiceDetailPageProps = {
   basicPrice: number;
   maxPrice: number;
   reviewNum: number;
-  tags: Styles[];
+  tags: string[];
   backgroundImageUri: string;
   profileImageUri?: string;
 };
@@ -50,7 +49,7 @@ export type DetailPageStackParams = {
     basicPrice: number;
     maxPrice: number;
     reviewNum: number;
-    tags: Styles[];
+    tags: string[];
     backgroundImageUri: string;
     profileImageUri?: string;
   };
@@ -102,7 +101,7 @@ type ProfileSectionProps = {
   basicPrice: number;
   maxPrice: number;
   reviewNum: number;
-  tags: Styles[];
+  tags: string[];
   backgroundImageUri: string;
   profileImageUri?: string;
 };
@@ -153,7 +152,7 @@ const ProfileSection = ({
 
 type BannerProps = {
   backgroundImageUri: string;
-  tags: Styles[];
+  tags: string[];
 };
 
 const Banner = ({ backgroundImageUri, tags }: BannerProps) => {

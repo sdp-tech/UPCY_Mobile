@@ -18,7 +18,6 @@ import {
 import { LIGHTGRAY } from '../../../styles/GlobalColor';
 import HeartButton from '../../../common/HeartButton';
 import DetailModal from '../Market/GoodsDetailOptionsModal';
-import { Styles } from '../../../types/UserTypes.ts';
 import { SelectedOptionProps } from '../HomeMain.tsx';
 import { getAccessToken } from '../../../common/storage.js';
 import Request from '../../../common/requests.js';
@@ -27,7 +26,7 @@ import Request from '../../../common/requests.js';
 interface ServiceCardProps {
   name: string; // 리폼러 이름
   basic_price: number;
-  service_styles?: Styles[];
+  service_styles?: string[];
   imageUri?: string;
   service_title: string;
   service_content: string;
@@ -63,7 +62,7 @@ const serviceCardDummyData: ServiceCardProps[] = [
   {
     name: '하느리퐁퐁',
     basic_price: 100000,
-    service_styles: ['빈티지', '미니멀', '캐주얼'] as Styles[],
+    service_styles: ['빈티지', '미니멀', '캐주얼'] as string[],
     imageUri:
       'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
     service_title: '청바지 에코백 만들어 드립니다',
@@ -75,7 +74,7 @@ const serviceCardDummyData: ServiceCardProps[] = [
   {
     name: '똥구르리리',
     basic_price: 20000,
-    service_styles: ['미니멀'] as Styles[],
+    service_styles: ['미니멀'] as string[],
     imageUri:
       'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
     service_title: '커스텀 짐색',
@@ -87,7 +86,7 @@ const serviceCardDummyData: ServiceCardProps[] = [
   {
     name: '훌라훌라맨',
     basic_price: 50000,
-    service_styles: ['빈티지'] as Styles[],
+    service_styles: ['빈티지'] as string[],
     imageUri:
       'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
     service_title: '청바지 에코백 만들어 드립니다',
@@ -99,7 +98,7 @@ const serviceCardDummyData: ServiceCardProps[] = [
 ];
 
 type ServiceMarketProps = {
-  selectedStylesList: Styles[];
+  selectedStylesList: string[];
   selectedFilterOption?: SelectedOptionProps;
   navigation: any;
 };
@@ -160,8 +159,10 @@ const EntireServiceMarket = ({
     return rawData.map(service => ({
       name: service.service_title,
       basic_price: service.basic_price,
-      // service_styles: service.service_style as Styles[],
-      // imageUri: service.service_image?.[0] ?? '', // 이미지 배열의 첫 번째 요소를 URI로 설정
+      service_styles: service.service_style.map(
+        style => style.style_name,
+      ) as string[],
+      imageUri: service.service_image?.[0] ?? '',
       service_title: service.service_title,
       service_content: service.service_content,
       market_uuid: service.market_uuid,

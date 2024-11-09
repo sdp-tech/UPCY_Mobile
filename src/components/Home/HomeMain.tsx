@@ -5,7 +5,6 @@ import { StyleFilterButton } from './components/StyleFilterButton';
 import styled from 'styled-components/native';
 import DetailModal from './Market/GoodsDetailOptionsModal';
 import DropDown from '../../assets/common/DropDown.svg';
-import { Styles } from '../../types/UserTypes';
 import HomeStyleFilterElement from './components/HomeStyleFilterElement';
 
 const CategoryBox = styled.View`
@@ -41,7 +40,7 @@ const selectOptionDropdown: SelectedOptionProps[] = [
   '판매순',
 ] as SelectedOptionProps[];
 
-export const stylesList: Styles[] = [
+export const stylesList: string[] = [
   '빈티지',
   '미니멀',
   '캐주얼',
@@ -52,7 +51,7 @@ export const stylesList: Styles[] = [
   '스포티',
   '홈웨어',
   '걸리시',
-] as Styles[];
+] as string[];
 
 interface HomeTabViewProps {
   onSearch: () => void;
@@ -61,7 +60,7 @@ interface HomeTabViewProps {
   setSelectedFilterOption?: (
     selectedFilterOption: SelectedOptionProps | undefined,
   ) => void;
-  setSelectedStylesList: (selectedStylesList: Styles[]) => void;
+  setSelectedStylesList: (selectedStylesList: string[]) => void;
 }
 
 const HomeTabView = ({
@@ -80,7 +79,7 @@ const HomeTabView = ({
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [styleFilterOpen, setStyleFilterOpen] = useState<boolean>(false);
   const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
-  const [pressedStyles, setPressedStyles] = useState<Styles[]>(stylesList);
+  const [pressedStyles, setPressedStyles] = useState<string[]>(stylesList);
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
   const [selectedOption, setSelectedOption] = useState<SelectedOptionProps>(
     selectOptionDropdown[0],
