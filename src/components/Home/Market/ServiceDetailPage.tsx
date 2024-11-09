@@ -297,8 +297,6 @@ const ServiceDetailPageMainScreen = ({
   //   />
   // );
 
-  console.log('service_content:::: ', serviceContent);
-
   return (
     <SafeAreaView style={{ flex: 1, position: 'relative' }}>
       {/* <Tabs.Container
