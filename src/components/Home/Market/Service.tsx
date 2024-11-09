@@ -23,11 +23,11 @@ import { SelectedOptionProps } from '../HomeMain.tsx';
 import { getAccessToken } from '../../../common/storage.js';
 import Request from '../../../common/requests.js';
 
-// 홈화면에 있는, 서비스 전체 리스트! 
+// 홈화면에 있는, 서비스 전체 리스트!
 interface ServiceCardProps {
-  name: string; // 리폼러 이름 
+  name: string; // 리폼러 이름
   basic_price: number;
-  service_styles: string[];
+  service_styles: Styles[];
   imageUri: string;
   service_title: string;
   service_content: string;
@@ -82,11 +82,13 @@ const serviceCardDummyData: ServiceCardProps[] = [
 ];
 
 type ServiceMarketProps = {
+  selectedStylesList: Styles[];
   selectedFilterOption?: SelectedOptionProps;
   navigation: any;
 };
 
 const EntireServiceMarket = ({
+  selectedStylesList,
   selectedFilterOption,
   navigation,
 }: ServiceMarketProps) => {
@@ -110,18 +112,16 @@ const EntireServiceMarket = ({
   const fetchData = async () => {
     const accessToken = await getAccessToken();
     const headers = {
-      Authorization: `Bearer ${accessToken}`
-    }
+      Authorization: `Bearer ${accessToken}`,
+    };
     if (accessToken === undefined) {
       console.log('이 경우에는 어떻게 할까요..?');
-
     } else {
       try {
         // API 호출
         const response = await request.get(`/api/market/service`, headers);
         if (response && response.status === 200) {
-          // servicecard 코드 작성해야함!! 
-
+          // servicecard 코드 작성해야함!!
         } else {
           Alert.alert('오류가 발생했습니다.');
           console.log(response);
@@ -141,15 +141,19 @@ const EntireServiceMarket = ({
   }, []);
 
   useEffect(() => {
+    // filter by selected styles
+    const styleFilteredData = serviceCardDummyData.filter(card => {
+      card.service_styles.some(style => selectedStylesList.includes(style));
+    });
     if (selectedFilterOption == '가격순') {
       // filter by basic_price
-      const sortedByPriceData = [...serviceCardDummyData].sort(
+      const sortedByPriceData = [...styleFilteredData].sort(
         (a, b) => a.basic_price - b.basic_price,
       );
       setServiceCardData(sortedByPriceData);
     }
     // TODO: add more filtering logic here
-  }, [selectedFilterOption]);
+  }, [selectedFilterOption, selectedStylesList]);
 
   // 로딩 중일 때 로딩 스피너 표시
   if (loading) {
@@ -179,8 +183,8 @@ const EntireServiceMarket = ({
         setSelectedStyles={setSelectedStyles}
       />
       <View style={{ backgroundColor: LIGHTGRAY }}>
-        {serviceCardData.map(card => {
-          return (
+        {serviceCardData.length > 0 ? (
+          serviceCardData.map(card => (
             <ServiceCard
               key={card.service_uuid}
               name={card.name}
@@ -193,8 +197,10 @@ const EntireServiceMarket = ({
               service_uuid={card.service_uuid}
               navigation={navigation}
             />
-          );
-        })}
+          ))
+        ) : (
+          <Text>선택된 스타일의 서비스가 없습니다.</Text>
+        )}
       </View>
     </ScrollView>
   );

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { StyleFilterButton } from './components/StyleFilterButton';
@@ -41,7 +41,7 @@ const selectOptionDropdown: SelectedOptionProps[] = [
   '판매순',
 ] as SelectedOptionProps[];
 
-const stylesList: Styles[] = [
+export const stylesList: Styles[] = [
   '빈티지',
   '미니멀',
   '캐주얼',
@@ -61,13 +61,15 @@ interface HomeTabViewProps {
   setSelectedFilterOption?: (
     selectedFilterOption: SelectedOptionProps | undefined,
   ) => void;
+  setSelectedStylesList: (selectedStylesList: Styles[]) => void;
 }
 
 const HomeTabView = ({
   onSearch,
   onTabChange,
   selectedTab,
-  setSelectedFilterOption, // selected filter option
+  setSelectedFilterOption, // selected filter (right button) option
+  setSelectedStylesList, // selected styles (left button)
 }: HomeTabViewProps) => {
   const [form, setForm] = useState<SignupProps>({
     mail: '',
@@ -99,6 +101,12 @@ const HomeTabView = ({
     }, []),
   );
 
+  useEffect(() => {
+    if (selectedOption) {
+      setSelectedFilterOption?.(selectedOption);
+    }
+  }, [selectedOption, setSelectedFilterOption]);
+
   return (
     <>
       <CategoryBox>
@@ -118,6 +126,7 @@ const HomeTabView = ({
                   list={pressedStyles}
                   setStyleFilterOpen={setStyleFilterOpen}
                   setPressedStyles={setPressedStyles}
+                  setFinalPressedStyles={setSelectedStylesList}
                 />
               )}
             </View>

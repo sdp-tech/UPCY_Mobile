@@ -13,12 +13,14 @@ interface filterElementProps {
   list: Styles[];
   setStyleFilterOpen: (styleFilterOpen: boolean) => void;
   setPressedStyles: (pressedStyles: Styles[]) => void;
+  setFinalPressedStyles: (finalPressedStyles: Styles[]) => void;
 }
 
 const HomeStyleFilterElement = ({
   list,
   setStyleFilterOpen,
   setPressedStyles,
+  setFinalPressedStyles,
 }: filterElementProps) => {
   const filterList: Styles[] = [
     '빈티지',
@@ -38,16 +40,20 @@ const HomeStyleFilterElement = ({
   const handlePress = (style: Styles) => {
     setPressed(prevStyles => {
       let updatedStyles: Styles[];
-
       if (prevStyles.includes(style)) {
         updatedStyles = prevStyles.filter(item => item !== style);
       } else {
         updatedStyles = [...prevStyles, style];
       }
-
       setPressedStyles(updatedStyles);
       return updatedStyles;
     });
+  };
+
+  const applyStyles = () => {
+    // TODO: 렌더링 관련 고치기
+    // setFinalPressedStyles(pressed);
+    setStyleFilterOpen(false);
   };
 
   return (
@@ -94,9 +100,7 @@ const HomeStyleFilterElement = ({
         </View>
         <TouchableOpacity
           style={{ alignItems: 'center', paddingBottom: 10 }}
-          onPress={() => {
-            setStyleFilterOpen(false);
-          }}>
+          onPress={applyStyles}>
           <Text style={{ color: '#000' }}>적용하기</Text>
         </TouchableOpacity>
       </View>
