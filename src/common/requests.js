@@ -130,14 +130,13 @@ export default function Request() {
   const del = async (path, params, headers) => {
     return await defaultRequest(path, async (url, headerValue) => {
       const response = await axios.delete(url, {
-        params: params,
-
         headers: {
           Authorization: headerValue,
           ...headers,
         },
+        params: params, // URL의 쿼리 파라미터로 전달
       });
-      // console.log('request test => ', response);
+      console.log('request test => ', response);
       return response;
     });
   };

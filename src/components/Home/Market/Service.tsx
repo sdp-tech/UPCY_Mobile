@@ -104,6 +104,7 @@ const EntireServiceMarket = ({
             response.data.results;
           const extractedServiceCardData = extractData(serviceListResults);
           setServiceCardData(extractedServiceCardData);
+          console.log('서비스 목록 로드 완료');
         } else {
           Alert.alert('오류가 발생했습니다.');
           console.log(response);

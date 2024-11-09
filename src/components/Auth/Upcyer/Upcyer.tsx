@@ -136,27 +136,28 @@ export const UpcyFormProfile = ({ navigation, route }: UpcyerPageProps) => {
             type: 'image/jpeg', // 이미지 형식 (예: 'image/jpeg')
             name: form_.profile_image?.fileName || 'profile.jpg', // 파일 이름
         });
-        try {
-            const response = await request.post(`/api/user/profile-image`, formData, headers_)
-            if (response && response.status === 201) {
-                console.log(formData, '프로필 이미지 등록 성공')
-            } else {
-                console.log('이미지 업로드 실패');
-                console.log(response);
-            }
-        }
-        catch (err) {
-            console.error(err)
-        }
-        // 이 아래는 닉네임, 소개글 
-        const headers = {
-            Authorization: `Bearer ${accessToken}`
-        };
-        const params = {
-            nickname: form_.nickname,
-            introduce: form_.introduce,
-        };
         if (form_.nickname != '') {
+            try {
+                const response = await request.post(`/api/user/profile-image`, formData, headers_)
+                if (response && response.status === 201) {
+                    console.log(formData, '프로필 이미지 등록 성공')
+                } else {
+                    console.log('이미지 업로드 실패');
+                    console.log(response);
+                }
+            }
+            catch (err) {
+                console.error(err)
+            }
+            // 이 아래는 닉네임, 소개글 
+            const headers = {
+                Authorization: `Bearer ${accessToken}`
+            };
+            const params = {
+                nickname: form_.nickname,
+                introduce: form_.introduce,
+            };
+
             try {
                 const response = await request.put(`/api/user`, params, headers);
                 if (response?.status === 200) {
@@ -180,7 +181,6 @@ export const UpcyFormProfile = ({ navigation, route }: UpcyerPageProps) => {
             } catch (err) {
                 console.log(err);
             }
-
         } else {
             Alert.alert('닉네임을 입력해주세요.')
         }
@@ -189,7 +189,7 @@ export const UpcyFormProfile = ({ navigation, route }: UpcyerPageProps) => {
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <DetailScreenHeader
-                title=''
+                title='프로필 등록'
                 rightButton='None'
                 leftButton='LeftArrow'
                 onPressLeft={() => { navigation.goBack() }}

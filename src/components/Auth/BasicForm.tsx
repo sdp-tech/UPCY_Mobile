@@ -328,8 +328,8 @@ export default function BasicForm({ navigation, route }: FormProps) {
                 }}
               />
               <TermsView>
-                <Caption11M>만 19세 이상입니다. </Caption11M>
                 <Caption11M style={{ color: PURPLE }}>(필수)</Caption11M>
+                <Caption11M>만 14세 이상입니다. </Caption11M>
                 <CheckButton
                   checked={form.agreement?.a ?? false}
                   onPress={() =>
