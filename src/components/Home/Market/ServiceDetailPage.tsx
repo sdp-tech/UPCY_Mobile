@@ -130,17 +130,17 @@ const ProfileSection = ({
         onPressRight={() => {}}
       />
       <Banner backgroundImageUri={backgroundImageUri} tags={tags} />
+      <Profile
+        reformerName={reformerName}
+        reviewNum={reviewNum}
+        navigation={navigation}
+      />
       <Header
         like={like}
         setLike={setLike}
         serviceName={serviceName}
         basicPrice={basicPrice}
         maxPrice={maxPrice}
-      />
-      <Profile
-        reformerName={reformerName}
-        reviewNum={reviewNum}
-        navigation={navigation}
       />
     </SafeAreaView>
   );
@@ -225,11 +225,7 @@ const Profile = ({
   navigation,
 }: ProfileProps) => {
   return (
-    <View
-      style={{
-        ...TextStyles.borderBottom2,
-        justifyContent: 'space-between',
-      }}>
+    <View style={{ justifyContent: 'space-between' }}>
       <View style={{ padding: 15, flexDirection: 'row' }}>
         {/* TODO: add profile picture here */}
         <View
@@ -247,10 +243,9 @@ const Profile = ({
                 reformerName: reformerName,
               })
             }>
-            <Text style={TextStyles.marketName}>{reformerName}의 마켓</Text>
+            <Text style={TextStyles.reformerName}>{reformerName}</Text>
             <Arrow style={styles.marketArrow} />
           </TouchableOpacity>
-          <Text style={TextStyles.reformerName}>{reformerName}</Text>
         </View>
       </View>
     </View>
@@ -260,7 +255,6 @@ const Profile = ({
 const ServiceDetailPageMainScreen = ({
   navigation,
   route,
-  // fix here
 }: StackScreenProps<DetailPageStackParams, 'DetailPage'>) => {
   const {
     reformerName,
@@ -331,7 +325,8 @@ const ServiceDetailPageMainScreen = ({
 
 const TextStyles = StyleSheet.create({
   Title: {
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingBottom: 12,
     color: '#222222',
     fontWeight: '700',
     fontSize: 18,
@@ -349,12 +344,13 @@ const TextStyles = StyleSheet.create({
     color: '#612EFE',
   },
   PriceInfo: {
-    fontWeight: '600',
+    fontWeight: '700',
     fontSize: 14,
     paddingLeft: 16,
     paddingRight: 16,
     paddingBottom: 8,
     color: 'rgba(34, 34, 34, 0.50)',
+    lineHeight: 24,
   },
   Price: {
     fontWeight: '700',
@@ -378,10 +374,6 @@ const TextStyles = StyleSheet.create({
   borderBottom1: {
     flexDirection: 'row',
     borderBottomWidth: 1,
-    borderBlockColor: '#dcdcdc',
-  },
-  borderBottom2: {
-    borderBottomWidth: 6,
     borderBlockColor: '#dcdcdc',
   },
   scrollToHeaderButton: {
@@ -440,7 +432,12 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     lineHeight: 24,
   },
-  marketArrow: { marginLeft: -4, transform: [{ scaleX: -1 }], color: '#000' },
+  marketArrow: {
+    paddingLeft: 9,
+    marginLeft: -4,
+    transform: [{ scaleX: -1 }],
+    color: '#000',
+  },
 });
 
 export default ServiceDetailPageScreen;
