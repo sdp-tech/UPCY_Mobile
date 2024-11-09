@@ -86,7 +86,7 @@ const EntireServiceMarket = ({
   );
 
   const serviceTitle: string = '지금 주목해야 할 업사이클링 서비스';
-  const serviceDescription: string = '안 입는 옷을 장마 기간에 필요한 물품으로';
+  const serviceDescription: string = '옷장 속 옷들의 트렌디한 재탄생';
 
   const fetchData = async () => {
     const accessToken = await getAccessToken();
@@ -167,10 +167,10 @@ const EntireServiceMarket = ({
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Title20B
-        style={{ marginTop: 15, marginHorizontal: 15, marginBottom: 4 }}>
+        style={{ marginTop: 15, marginHorizontal: 15, marginBottom: 8 }}>
         {serviceTitle}
       </Title20B>
-      <Filter11R style={{ marginBottom: 15, marginHorizontal: 15 }}>
+      <Filter11R style={{ marginHorizontal: 15 }}>
         {serviceDescription}
       </Filter11R>
       <View style={{ marginTop: 10 }} />

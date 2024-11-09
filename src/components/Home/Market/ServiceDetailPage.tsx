@@ -16,13 +16,10 @@ import {
 } from '@react-navigation/stack';
 import { HomeStackParams } from '../../../pages/Home';
 import Arrow from '../../../assets/common/Arrow.svg';
-import Review from '../../../assets/common/Review.svg';
 import { useEffect, useRef, useState } from 'react';
 import DetailBox from './DetailBox';
-import OptionBox from './OptionBox';
 import Footer from '../../../common/Footer';
 import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
-import { BLACK } from '../../../styles/GlobalColor';
 import { useBottomBar } from '../../../../contexts/BottomBarContext';
 import DetailScreenHeader from '../components/DetailScreenHeader';
 import ScrollToTopButton from '../../../common/ScrollToTopButtonFlat';
@@ -130,7 +127,6 @@ const ProfileSection = ({
         title=""
         leftButton="CustomBack"
         onPressLeft={() => {}}
-        rightButton="Search"
         onPressRight={() => {}}
       />
       <Banner backgroundImageUri={backgroundImageUri} tags={tags} />

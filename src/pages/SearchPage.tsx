@@ -44,6 +44,7 @@ const SearchInput = styled.TextInput`
 const SearchPage = () => {
   const navigation = useNavigation();
 
+  //TODO: fix
   const recommendedKeywords = [
     '하얀',
     '파우치',
