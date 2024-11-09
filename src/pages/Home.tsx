@@ -13,7 +13,9 @@ import CustomHeader from '../common/CustomHeader';
 import HomeTabView, { SelectedOptionProps } from '../components/Home/HomeMain';
 import MarketTabView from '../components/Home/Market/MarketTabView';
 import QuotationForm from '../components/Home/Quotation/QuotationForm';
-import QuotationPage, { QuotationProps } from '../components/Home/Quotation/QuotationPage';
+import QuotationPage, {
+  QuotationProps,
+} from '../components/Home/Quotation/QuotationPage';
 import SentQuotation from '../components/Home/Quotation/SentQuotation';
 import TempStorage from '../components/Home/Market/TempStorage';
 import ServiceRegistrationPage from '../components/Home/Market/ServiceRegistration';
@@ -25,7 +27,9 @@ import WriteDetailPage from '../components/Home/Market/WriteDetailPage';
 import AddPortfolio from '../components/Home/Portfolio/AddPortfolio';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
-import InputInfo, { InputInfoProps } from '../components/Home/Quotation/InputInfo';
+import InputInfo, {
+  InputInfoProps,
+} from '../components/Home/Quotation/InputInfo';
 import QuotationConfirm from '../components/Home/Quotation/QuotationConfirm';
 import Rejection from '../components/Home/Quotation/Rejection';
 import SentRejection from '../components/Home/Quotation/SentRejection';
@@ -39,6 +43,7 @@ import ReformerMarket from '../components/Home/Market/ReformerMarket';
 import Service from '../components/Home/Market/Service';
 import { PhotoType } from '../hooks/useImagePicker';
 import { Styles } from '../types/UserTypes';
+import { stylesList } from '../components/Home/HomeMain';
 
 export type HomeStackParams = {
   Home: undefined;
@@ -179,22 +184,27 @@ const HomeMainScreen = ({
     SelectedOptionProps | undefined
   >('추천순');
 
+  const [selectedStylesList, setSelectedStylesList] =
+    useState<Styles[]>(stylesList);
+
   return (
     <Fragment>
       <SafeAreaView style={{ flex: 0, backgroundColor: PURPLE }} />
       <SafeAreaView style={{ flex: 1 }}>
-        <CustomHeader onSearch={() => { }} onTabChange={handleTabChange} />
+        <CustomHeader onSearch={() => {}} onTabChange={handleTabChange} />
         <BottomSheetModalProvider>
           <View>
             <HomeTabView
-              onSearch={() => { }}
+              onSearch={() => {}}
               selectedTab={selectedTab}
               onTabChange={handleTabChange}
               setSelectedFilterOption={setSelectedFilterOption}
+              setSelectedStylesList={setSelectedStylesList}
             />
           </View>
           {selectedTab === 'Goods' && (
             <Service
+              selectedStylesList={selectedStylesList}
               selectedFilterOption={selectedFilterOption}
               navigation={navigation}
             />

@@ -5,7 +5,7 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import { getAccessToken, setNickname, setUserRole } from './storage';
+import { getAccessToken, setUserRole } from './storage';
 import Request from './requests';
 import { Alert } from 'react-native';
 import { UserType } from '../components/Auth/Login';
@@ -50,19 +50,29 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       const accessToken = await getAccessToken();
-      const headers = {
-        Authorization: `Bearer ${accessToken}`,
-      };
       try {
-        const response = await request.get(`/api/user`, {}, headers);
-        if (response && response.status === 200) {
-          console.log('유저 데이터를 저장합니다.');
-          const sanitizedUserData = sanitizeUserData(response.data);
-          setUser(sanitizedUserData); // 전역 상태에 유저 데이터를 저장
-          setUserRole(sanitizedUserData.role);
-          console.log('Saving credentials:', sanitizedUserData);
+        if (accessToken) {
+          const headers = {
+            Authorization: `Bearer ${accessToken}`,
+          };
+          const response = await request.get(`/api/user`, {}, headers);
+          if (response && response.status === 200) {
+            console.log('유저 데이터를 저장합니다.');
+            const sanitizedUserData = sanitizeUserData(response.data);
+            setUser(sanitizedUserData); // 전역 상태에 유저 데이터를 저장
+            setUserRole(sanitizedUserData.role);
+            console.log('Saving credentials:', sanitizedUserData);
+          } else if (response && response.status === 404) {
+            console.log('유저 정보가 없습니다. 로그아웃 상태로 유지합니다.');
+            setUser(null);
+          } else {
+            setError('유저 정보를 불러오는 중 문제가 발생했습니다.');
+          }
         } else {
-          setError('유저 정보를 불러오는 중 문제가 발생했습니다.');
+          console.log(
+            'access token 정보가 없습니다. 로그아웃 상태로 유지합니다.',
+          );
+          setUser(null);
         }
       } catch (err) {
         console.error(err);
