@@ -39,7 +39,7 @@ type ServiceDetailPageProps = {
   backgroundImageUri: string;
   profileImageUri?: string;
   servicePeriod: number;
-  serviceContent: string;
+  // serviceContent: string;
 };
 
 export type DetailPageStackParams = {
@@ -73,7 +73,7 @@ const ServiceDetailPageScreen = ({
     backgroundImageUri,
     profileImageUri,
     servicePeriod,
-    serviceContent,
+    // serviceContent,
   }: ServiceDetailPageProps = route.params;
   return (
     <DetailPageStack.Navigator
@@ -93,7 +93,7 @@ const ServiceDetailPageScreen = ({
           backgroundImageUri,
           profileImageUri,
           servicePeriod,
-          serviceContent,
+          // serviceContent,
         }}
       />
     </DetailPageStack.Navigator>
@@ -275,7 +275,7 @@ const ServiceDetailPageMainScreen = ({
     backgroundImageUri,
     profileImageUri,
     servicePeriod,
-    serviceContent,
+    // serviceContent,
   } = route.params;
 
   const [index, setIndex] = useState<number>(0);
