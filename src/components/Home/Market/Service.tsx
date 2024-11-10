@@ -97,7 +97,7 @@ const EntireServiceMarket = ({
     } else {
       try {
         // API 호출
-        const response = await request.get(`/api/market/service`, headers);
+        const response = await request.get(`/api/market/services`, headers);
         if (response && response.status === 200) {
           const serviceListResults: ServiceResponseType[] =
             response.data.results;
