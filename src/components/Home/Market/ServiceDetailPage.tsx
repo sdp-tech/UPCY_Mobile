@@ -24,6 +24,7 @@ import DetailScreenHeader from '../components/DetailScreenHeader';
 // import HeartButton from '../../../common/HeartButton';
 // import ReviewPage from './ReviewPage';
 import DetailBox2 from './DetailBox2';
+import { ServiceDetailOption } from './Service';
 
 const { width, height } = Dimensions.get('window');
 
@@ -39,6 +40,7 @@ type ServiceDetailPageProps = {
   servicePeriod: number;
   serviceMaterials: string[];
   serviceContent: string;
+  serviceOptions: ServiceDetailOption[];
 };
 
 export type DetailPageStackParams = {
@@ -54,6 +56,7 @@ export type DetailPageStackParams = {
     servicePeriod: number;
     serviceContent: string;
     serviceMaterials: string[];
+    serviceOptions: ServiceDetailOption[];
   };
 };
 
@@ -75,6 +78,7 @@ const ServiceDetailPageScreen = ({
     servicePeriod,
     serviceMaterials,
     serviceContent,
+    serviceOptions,
   }: ServiceDetailPageProps = route.params;
   return (
     <DetailPageStack.Navigator
@@ -96,6 +100,7 @@ const ServiceDetailPageScreen = ({
           servicePeriod,
           serviceMaterials,
           serviceContent,
+          serviceOptions,
         }}
       />
     </DetailPageStack.Navigator>
@@ -280,6 +285,7 @@ const ServiceDetailPageMainScreen = ({
     servicePeriod,
     serviceMaterials,
     serviceContent,
+    serviceOptions,
   } = route.params;
 
   const [index, setIndex] = useState<number>(0);
@@ -338,6 +344,7 @@ const ServiceDetailPageMainScreen = ({
         servicePeriod={servicePeriod}
         serviceMaterials={serviceMaterials}
         serviceContent={serviceContent}
+        serviceOptions={serviceOptions}
       />
       <View style={{ marginBottom: 400 }} />
       <Footer />

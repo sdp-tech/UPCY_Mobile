@@ -24,6 +24,13 @@ import Request from '../../../common/requests.js';
 import RenderHTML from 'react-native-render-html';
 
 // 홈화면에 있는, 서비스 전체 리스트!
+
+export type ServiceDetailOption = {
+  optionName: string;
+  optionContent: string;
+  optionPrice: number;
+};
+
 interface ServiceCardProps {
   name: string; // 리폼러 이름
   basic_price: number;
@@ -36,6 +43,7 @@ interface ServiceCardProps {
   service_uuid: string;
   service_period: number;
   service_materials?: string[];
+  service_options?: ServiceDetailOption[];
 }
 
 export type ServiceResponseType = {
@@ -134,6 +142,11 @@ const EntireServiceMarket = ({
       service_materials: service.service_material.map(
         material => material.material_name,
       ) as string[],
+      service_options: service.service_option.map(option => ({
+        optionName: option.option_name,
+        optionContent: option.option_content,
+        optionPrice: option.option_price,
+      })) as ServiceDetailOption[],
     })) as ServiceCardProps[];
   };
 
@@ -226,6 +239,7 @@ export const ServiceCard = ({
   service_uuid,
   service_period,
   service_materials,
+  service_options,
 }: ServiceCardComponentProps) => {
   const [like, setLike] = useState(false);
 
@@ -249,6 +263,7 @@ export const ServiceCard = ({
           servicePeriod: service_period,
           serviceMaterials: service_materials,
           serviceContent: service_content,
+          serviceOptions: service_options,
         });
       }}>
       <ImageBackground

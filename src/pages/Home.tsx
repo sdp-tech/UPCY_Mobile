@@ -40,6 +40,7 @@ import Service from '../components/Home/Market/Service';
 import { PhotoType } from '../hooks/useImagePicker';
 import { stylesList } from '../components/Home/HomeMain';
 import SearchPage from './SearchPage';
+import { ServiceDetailOption } from '../components/Home/Market/Service';
 
 export type HomeStackParams = {
   Home: undefined;
@@ -59,6 +60,7 @@ export type HomeStackParams = {
     servicePeriod: number;
     serviceMaterials: string[];
     serviceContent: string;
+    serviceOptions: ServiceDetailOption[];
   };
   GoodsDetailPage: undefined;
   QuotationForm: undefined;
