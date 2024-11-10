@@ -40,6 +40,7 @@ import Service from '../components/Home/Market/Service';
 import { PhotoType } from '../hooks/useImagePicker';
 import { stylesList } from '../components/Home/HomeMain';
 import SearchPage from './SearchPage';
+import { ServiceDetailOption } from '../components/Home/Market/Service';
 
 export type HomeStackParams = {
   Home: undefined;
@@ -56,6 +57,10 @@ export type HomeStackParams = {
     reviewNum: number;
     backgroundImageUri: string;
     profileImageUri?: string;
+    servicePeriod: number;
+    serviceMaterials: string[];
+    serviceContent: string;
+    serviceOptions: ServiceDetailOption[];
   };
   GoodsDetailPage: undefined;
   QuotationForm: undefined;
@@ -226,10 +231,6 @@ const HomeMainScreen = ({
               </Button>
               <Button onPress={() => navigation.navigate('QuotationPage')}>
                 <Text>주문서 확인</Text>
-              </Button>
-              <Button
-                onPress={() => navigation.navigate('ServiceDetailPage', {})}>
-                <Text>서비스 디테일</Text>
               </Button>
               <Button onPress={() => navigation.navigate('GoodsDetailPage')}>
                 <Text>상품 디테일</Text>
