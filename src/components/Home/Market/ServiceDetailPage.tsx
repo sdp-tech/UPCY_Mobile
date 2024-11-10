@@ -15,7 +15,7 @@ import {
 import { HomeStackParams } from '../../../pages/Home';
 import Arrow from '../../../assets/common/Arrow.svg';
 import { useEffect, useRef, useState } from 'react';
-import DetailBox from './DetailBox';
+// import DetailBox from './DetailBox';
 import Footer from '../../../common/Footer';
 // import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
 import { useBottomBar } from '../../../../contexts/BottomBarContext';
@@ -37,7 +37,8 @@ type ServiceDetailPageProps = {
   backgroundImageUri: string;
   profileImageUri?: string;
   servicePeriod: number;
-  // serviceContent: string;
+  serviceMaterials: string[];
+  serviceContent: string;
 };
 
 export type DetailPageStackParams = {
@@ -52,6 +53,7 @@ export type DetailPageStackParams = {
     profileImageUri?: string;
     servicePeriod: number;
     serviceContent: string;
+    serviceMaterials: string[];
   };
 };
 
@@ -71,7 +73,8 @@ const ServiceDetailPageScreen = ({
     backgroundImageUri,
     profileImageUri,
     servicePeriod,
-    // serviceContent,
+    serviceMaterials,
+    serviceContent,
   }: ServiceDetailPageProps = route.params;
   return (
     <DetailPageStack.Navigator
@@ -91,7 +94,8 @@ const ServiceDetailPageScreen = ({
           backgroundImageUri,
           profileImageUri,
           servicePeriod,
-          // serviceContent,
+          serviceMaterials,
+          serviceContent,
         }}
       />
     </DetailPageStack.Navigator>
@@ -274,7 +278,8 @@ const ServiceDetailPageMainScreen = ({
     backgroundImageUri,
     profileImageUri,
     servicePeriod,
-    // serviceContent,
+    serviceMaterials,
+    serviceContent,
   } = route.params;
 
   const [index, setIndex] = useState<number>(0);
@@ -331,7 +336,8 @@ const ServiceDetailPageMainScreen = ({
       />
       <DetailBox2
         servicePeriod={servicePeriod}
-        // serviceContent={serviceContent}
+        serviceMaterials={serviceMaterials}
+        serviceContent={serviceContent}
       />
       <View style={{ marginBottom: 400 }} />
       <Footer />

@@ -1,5 +1,6 @@
 // DetailBox component without the tab
 import { View, Text, StyleSheet } from 'react-native';
+import RenderHTML from 'react-native-render-html';
 
 const PeriodBox = ({ period }: { period: number }) => {
   return (
@@ -12,22 +13,37 @@ const PeriodBox = ({ period }: { period: number }) => {
   );
 };
 
-const ContentBox = (/*{ content }: { content: string }*/) => {
+const ContentBox = ({ content }: { content: string }) => {
   return (
     <View style={styles.eachBox}>
       <View style={styles.contentLine}>
         <Text style={TextStyles.eachlabel}>서비스 상세</Text>
-        {/* <Text style={TextStyles.eachData}> {content} </Text> */}
+        <View style={{ paddingHorizontal: 16, paddingBottom: 8 }}>
+          <RenderHTML contentWidth={350} source={{ html: content }} />
+        </View>
       </View>
     </View>
   );
 };
 
-const MaterialBox = () => {
+const MaterialBox = ({ list }: { list: string[] }) => {
+  function materialList({ data }: { data: string[] }) {
+    return data?.map((item, index) => (
+      <View key={index}>
+        <Text style={TextStyles.eachMaterialData}>{item} | </Text>
+      </View>
+    ));
+  }
+
   return (
-    <View style={styles.eachBox}>
-      <Text style={TextStyles.eachlabel}>작업 가능한 소재</Text>
-    </View>
+    <>
+      <View style={styles.eachBox}>
+        <Text style={TextStyles.eachlabel}>작업 가능한 소재</Text>
+        <View style={styles.materialListLine}>
+          {materialList({ data: list })}
+        </View>
+      </View>
+    </>
   );
 };
 
@@ -42,15 +58,20 @@ const OptionBox = () => {
 
 type DetailBox2Props = {
   servicePeriod: number;
-  //   serviceContent: string;
+  serviceMaterials?: string[];
+  serviceContent: string;
 };
 
-const DetailBox2 = ({ servicePeriod /*serviceContent*/ }: DetailBox2Props) => {
+const DetailBox2 = ({
+  servicePeriod,
+  serviceMaterials,
+  serviceContent,
+}: DetailBox2Props) => {
   return (
     <>
       <PeriodBox period={servicePeriod} />
-      <ContentBox /*content={serviceContent}*/ />
-      <MaterialBox />
+      <ContentBox content={serviceContent} />
+      <MaterialBox list={serviceMaterials ?? []} />
       <OptionBox />
     </>
   );
@@ -73,6 +94,11 @@ const styles = StyleSheet.create({
     gap: 29,
     alignContent: 'center',
   },
+  materialListLine: {
+    flexDirection: 'row',
+    flex: 0.7,
+    flexWrap: 'wrap',
+  },
 });
 
 const TextStyles = StyleSheet.create({
@@ -91,6 +117,13 @@ const TextStyles = StyleSheet.create({
     lineHeight: 24,
     paddingHorizontal: 16,
     paddingVertical: 8,
+  },
+  eachMaterialData: {
+    fontSize: 14,
+    lineHeight: 26,
+    color: '#222222',
+    fontFamily: 'Pretendard Variable',
+    fontWeight: '400',
   },
 });
 

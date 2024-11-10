@@ -57,6 +57,8 @@ export type HomeStackParams = {
     backgroundImageUri: string;
     profileImageUri?: string;
     servicePeriod: number;
+    serviceMaterials: string[];
+    serviceContent: string;
   };
   GoodsDetailPage: undefined;
   QuotationForm: undefined;

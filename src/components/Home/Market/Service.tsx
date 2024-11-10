@@ -35,6 +35,7 @@ interface ServiceCardProps {
   market_uuid: string;
   service_uuid: string;
   service_period: number;
+  service_materials?: string[];
 }
 
 export type ServiceResponseType = {
@@ -130,6 +131,9 @@ const EntireServiceMarket = ({
       market_uuid: service.market_uuid,
       service_uuid: service.service_uuid,
       service_period: service.service_period,
+      service_materials: service.service_material.map(
+        material => material.material_name,
+      ) as string[],
     })) as ServiceCardProps[];
   };
 
@@ -221,6 +225,7 @@ export const ServiceCard = ({
   market_uuid,
   service_uuid,
   service_period,
+  service_materials,
 }: ServiceCardComponentProps) => {
   const [like, setLike] = useState(false);
 
@@ -242,6 +247,8 @@ export const ServiceCard = ({
           backgroundImageUri: imageUri,
           profileImageUri: imageUri,
           servicePeriod: service_period,
+          serviceMaterials: service_materials,
+          serviceContent: service_content,
         });
       }}>
       <ImageBackground
@@ -268,7 +275,7 @@ export const ServiceCard = ({
         {/* <HeartButton like={like} onPress={() => setLike(!like)} /> */}
       </View>
       <Body14R>
-        <RenderHTML contentWidth={300} source={{ html: service_content }} />
+        <RenderHTML contentWidth={350} source={{ html: service_content }} />
       </Body14R>
     </TouchableOpacity>
   );
