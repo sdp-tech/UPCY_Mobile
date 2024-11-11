@@ -220,7 +220,7 @@ const MarketTabView = ({
           </Tabs.Tab>
         ))}
       </Tabs.Container>
-      <Footer />
+      {/* <Footer /> */}
     </SafeAreaView>
   );
 };
