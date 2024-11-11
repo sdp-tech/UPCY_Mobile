@@ -16,10 +16,10 @@ const CheckBox = ({ pressed, onPress, text, style }: CheckBoxProps) => {
       <TouchableOpacity
         onPress={onPress}
         style={{
-          width: 20, 
-          height: 20, 
-          borderWidth: 1, 
-          borderColor: PURPLE, 
+          width: 20,
+          height: 20,
+          borderWidth: 1,
+          borderColor: PURPLE,
           backgroundColor: pressed ? PURPLE : 'white',
           alignItems: 'center',
           justifyContent: 'center'

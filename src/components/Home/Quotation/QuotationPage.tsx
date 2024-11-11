@@ -117,7 +117,7 @@ const QuotationPage = ({ navigation, route }: StackScreenProps<HomeStackParams, 
                           {item.map((subItem: any) => (
                             <View key={subItem.id} style={{ width: '50%', paddingHorizontal: 20 }}>
                               <ImageBackground
-                                source={{ uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp' }}
+                                source={{ uri: ' line-height: 24px;' }}
                                 style={{ width: '90%', height: 150, marginLeft: 13 }}
                                 alt={subItem.fileName}
                               />

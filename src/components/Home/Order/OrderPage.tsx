@@ -256,7 +256,7 @@ const OrderPage: React.FC<OrderPageProps> = ({ flatListRef, navigation, route })
 // 스타일 정의
 const OrderInfoBox = styled.View`
   flex-direction: column;
-  border-radius: 14px;
+  border-radius: 12px;
   border-color: ${PURPLE};
   border-width: 1px;
   padding: 19px;
