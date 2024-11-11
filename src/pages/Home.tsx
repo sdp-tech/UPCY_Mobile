@@ -43,7 +43,7 @@ import SearchPage from './SearchPage';
 import { ServiceDetailOption } from '../components/Home/Market/Service';
 
 export type HomeStackParams = {
-  Home: undefined;
+  Home: { searchTerm?: string };
   // 혼란 방지를 위해 Market -> MarketTabView로 수정하였습니다.
   // Market: undefined;
   ServiceDetailPage: {
@@ -82,7 +82,9 @@ export type HomeStackParams = {
     reformerName: string;
     marketUuid: string;
   };
-  SearchPage: undefined;
+  SearchPage: {
+    navigation: any;
+  };
 };
 
 const HomeStack = createStackNavigator<HomeStackParams>();
@@ -142,6 +144,7 @@ const HomeScreen = ({
 
 const HomeMainScreen = ({
   navigation,
+  route,
 }: StackScreenProps<HomeStackParams, 'Home'>) => {
   const [selectedTab, setSelectedTab] = useState<'Goods' | 'Market' | 'temp'>(
     'Goods',
