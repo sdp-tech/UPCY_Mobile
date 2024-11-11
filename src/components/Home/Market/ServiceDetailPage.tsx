@@ -41,6 +41,7 @@ type ServiceDetailPageProps = {
   serviceMaterials: string[];
   serviceContent: string;
   serviceOptions: ServiceDetailOption[];
+  marketUuid: string;
 };
 
 export type DetailPageStackParams = {
@@ -57,6 +58,7 @@ export type DetailPageStackParams = {
     serviceContent: string;
     serviceMaterials: string[];
     serviceOptions: ServiceDetailOption[];
+    marketUuid: string;
   };
 };
 
@@ -79,6 +81,7 @@ const ServiceDetailPageScreen = ({
     serviceMaterials,
     serviceContent,
     serviceOptions,
+    marketUuid,
   }: ServiceDetailPageProps = route.params;
   return (
     <DetailPageStack.Navigator
@@ -101,6 +104,7 @@ const ServiceDetailPageScreen = ({
           serviceMaterials,
           serviceContent,
           serviceOptions,
+          marketUuid,
         }}
       />
     </DetailPageStack.Navigator>
@@ -117,6 +121,7 @@ type ProfileSectionProps = {
   tags: string[];
   backgroundImageUri: string;
   profileImageUri?: string;
+  marketUuid: string;
 };
 
 const ProfileSection = ({
@@ -129,6 +134,7 @@ const ProfileSection = ({
   tags,
   backgroundImageUri,
   profileImageUri,
+  marketUuid,
 }: ProfileSectionProps) => {
   const [like, setLike] = useState<boolean>(false);
   const { hideBottomBar, showBottomBar } = useBottomBar();
@@ -151,6 +157,7 @@ const ProfileSection = ({
         reformerName={reformerName}
         reviewNum={reviewNum}
         navigation={navigation}
+        marketUuid={marketUuid}
       />
       <Header
         like={like}
@@ -233,6 +240,7 @@ type ProfileProps = {
   reformerName: string;
   reviewNum: number;
   navigation: any;
+  marketUuid: string;
 };
 
 const Profile = ({
@@ -240,6 +248,7 @@ const Profile = ({
   reformerName,
   reviewNum,
   navigation,
+  marketUuid,
 }: ProfileProps) => {
   return (
     <View style={{ justifyContent: 'space-between' }}>
@@ -258,6 +267,7 @@ const Profile = ({
             onPress={() =>
               navigation.navigate('MarketTabView', {
                 reformerName: reformerName,
+                marketUuid: marketUuid,
               })
             }>
             <Text style={TextStyles.reformerName}>{reformerName}</Text>
@@ -286,6 +296,7 @@ const ServiceDetailPageMainScreen = ({
     serviceMaterials,
     serviceContent,
     serviceOptions,
+    marketUuid,
   } = route.params;
 
   const [index, setIndex] = useState<number>(0);
@@ -339,12 +350,14 @@ const ServiceDetailPageMainScreen = ({
         tags={tags}
         backgroundImageUri={backgroundImageUri}
         profileImageUri={profileImageUri}
+        marketUuid={marketUuid}
       />
       <DetailBox2
         servicePeriod={servicePeriod}
         serviceMaterials={serviceMaterials}
         serviceContent={serviceContent}
         serviceOptions={serviceOptions}
+        marketUuid={marketUuid}
       />
       <View style={{ marginBottom: 400 }} />
       <Footer />

@@ -116,13 +116,14 @@ const ProfileHeader = ({
 
 type MarketTabViewProps = {
   reformerName: string;
+  marketUuid: string;
 };
 
 const MarketTabView = ({
   navigation,
   route,
 }: StackScreenProps<HomeStackParams, 'MarketTabView'>) => {
-  const { reformerName }: MarketTabViewProps = route.params || '정보 없음';
+  const { reformerName, marketUuid }: MarketTabViewProps = route.params || null;
   const [routes] = useState([
     { key: 'profile', title: '프로필' },
     { key: 'service', title: '서비스' },
