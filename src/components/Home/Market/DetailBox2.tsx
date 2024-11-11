@@ -131,8 +131,12 @@ const DetailBox2 = ({
     <>
       <PeriodBox period={servicePeriod} />
       <ContentBox content={serviceContent} />
-      <MaterialBox list={serviceMaterials ?? []} />
-      <OptionBox list={serviceOptions ?? []} />
+      {serviceMaterials && serviceMaterials.length > 0 && (
+        <MaterialBox list={serviceMaterials ?? []} />
+      )}
+      {serviceOptions && serviceOptions.length > 0 && (
+        <OptionBox list={serviceOptions ?? []} />
+      )}
     </>
   );
 };
