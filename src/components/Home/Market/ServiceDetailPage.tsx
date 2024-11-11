@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ImageBackground,
   FlatList,
+  ScrollView,
 } from 'react-native';
 import {
   StackScreenProps,
@@ -319,7 +320,7 @@ const ServiceDetailPageMainScreen = ({
   // );
 
   return (
-    <SafeAreaView style={{ flex: 1, position: 'relative' }}>
+    <ScrollView style={{ flex: 1, position: 'relative' }}>
       {/* <Tabs.Container
         renderHeader={renderHeader}
         allowHeaderOverscroll={false}
@@ -359,9 +360,9 @@ const ServiceDetailPageMainScreen = ({
         serviceOptions={serviceOptions}
         marketUuid={marketUuid}
       />
-      <View style={{ marginBottom: 400 }} />
+      <View style={{ marginBottom: 100 }} />
       <Footer />
-    </SafeAreaView>
+    </ScrollView>
   );
 };
 
