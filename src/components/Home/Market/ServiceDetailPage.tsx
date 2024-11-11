@@ -320,8 +320,9 @@ const ServiceDetailPageMainScreen = ({
   // );
 
   return (
-    <ScrollView style={{ flex: 1, position: 'relative' }}>
-      {/* <Tabs.Container
+    <View style={{ flex: 1, position: 'relative' }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+        {/* <Tabs.Container
         renderHeader={renderHeader}
         allowHeaderOverscroll={false}
         onIndexChange={setIndex}
@@ -341,28 +342,30 @@ const ServiceDetailPageMainScreen = ({
           <ReviewPage flatListRef={optionPageRef} />
         </Tabs.Tab>
       </Tabs.Container> */}
-      <ProfileSection
-        navigation={navigation}
-        reformerName={reformerName}
-        serviceName={serviceName}
-        basicPrice={basicPrice}
-        maxPrice={maxPrice}
-        reviewNum={reviewNum}
-        tags={tags}
-        backgroundImageUri={backgroundImageUri}
-        profileImageUri={profileImageUri}
-        marketUuid={marketUuid}
-      />
-      <DetailBox2
-        servicePeriod={servicePeriod}
-        serviceMaterials={serviceMaterials}
-        serviceContent={serviceContent}
-        serviceOptions={serviceOptions}
-        marketUuid={marketUuid}
-      />
-      <View style={{ marginBottom: 100 }} />
-      <Footer />
-    </ScrollView>
+        <ProfileSection
+          navigation={navigation}
+          reformerName={reformerName}
+          serviceName={serviceName}
+          basicPrice={basicPrice}
+          maxPrice={maxPrice}
+          reviewNum={reviewNum}
+          tags={tags}
+          backgroundImageUri={backgroundImageUri}
+          profileImageUri={profileImageUri}
+          marketUuid={marketUuid}
+        />
+        <DetailBox2
+          servicePeriod={servicePeriod}
+          serviceMaterials={serviceMaterials}
+          serviceContent={serviceContent}
+          serviceOptions={serviceOptions}
+          marketUuid={marketUuid}
+        />
+      </ScrollView>
+      <View style={styles.footerContainer}>
+        <Footer />
+      </View>
+    </View>
   );
 };
 
@@ -481,6 +484,14 @@ const styles = StyleSheet.create({
     marginLeft: -4,
     transform: [{ scaleX: -1 }],
     color: '#000',
+  },
+  footerContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 60,
+    backgroundColor: '#fff',
   },
 });
 
