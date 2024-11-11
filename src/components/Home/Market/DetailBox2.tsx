@@ -94,6 +94,7 @@ type DetailBox2Props = {
   serviceMaterials?: string[];
   serviceContent: string;
   serviceOptions?: ServiceDetailOption[];
+  marketUuid: string;
 };
 
 const DetailBox2 = ({
@@ -101,6 +102,7 @@ const DetailBox2 = ({
   serviceMaterials,
   serviceContent,
   serviceOptions,
+  marketUuid,
 }: DetailBox2Props) => {
   const testOptionList = [
     {

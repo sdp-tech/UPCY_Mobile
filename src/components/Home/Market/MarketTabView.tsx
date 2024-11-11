@@ -1,27 +1,24 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import {
   SafeAreaView,
   ScrollView,
   View,
-  FlatList,
   Text,
   TouchableOpacity,
   Image,
   ImageBackground,
   StyleSheet,
+  Alert,
 } from 'react-native';
 import { Tabs, MaterialTabBar } from 'react-native-collapsible-tab-view';
 import { Caption11M } from '../../../styles/GlobalText.tsx';
 import { BLACK, BLACK2, PURPLE } from '../../../styles/GlobalColor.tsx';
 // import StarIcon from '../../../assets/common/Star.svg';
-
 import { StackScreenProps } from '@react-navigation/stack';
 import { HomeStackParams } from '../../../pages/Home';
-
 import InfoPage from './InfoPage.tsx';
-
 import Footer from '../../../common/Footer.tsx';
-
+import Request from '../../../common/requests.js';
 // import Arrow from '../../../assets/common/Arrow.svg';
 import ServicePage from './ServicePage.tsx';
 import DetailScreenHeader from '../components/DetailScreenHeader.tsx';
@@ -116,19 +113,68 @@ const ProfileHeader = ({
 
 type MarketTabViewProps = {
   reformerName: string;
+  marketUuid: string;
+};
+
+export type MarketResponseType = {
+  market_address: string;
+  market_introduce: string;
+  market_name: string;
+  market_thumbnail: string;
+  market_uuid: string;
 };
 
 const MarketTabView = ({
   navigation,
   route,
 }: StackScreenProps<HomeStackParams, 'MarketTabView'>) => {
-  const { reformerName }: MarketTabViewProps = route.params || '정보 없음';
+  const defaultMarketData = {
+    reformerName: '정보 없음',
+    marketUuid: '',
+  } as MarketTabViewProps;
+  const { reformerName, marketUuid }: MarketTabViewProps =
+    route.params || defaultMarketData;
   const [routes] = useState([
     { key: 'profile', title: '프로필' },
     { key: 'service', title: '서비스' },
   ]);
-  const flatListRef = useRef<FlatList>(null);
   const scrollRef = useRef<ScrollView | null>(null);
+  const request = Request();
+
+  const defaultMarketResponseData: MarketResponseType = {
+    market_address: '',
+    market_introduce: '정보 없음',
+    market_name: '정보 없음',
+    market_thumbnail: '',
+    market_uuid: '',
+  };
+
+  const [marketData, setMarketData] = useState<MarketResponseType>(
+    defaultMarketResponseData,
+  );
+
+  const fetchData = async () => {
+    try {
+      // API 호출
+      const response = await request.get(`/api/market/${marketUuid}`, {});
+      if (response && response.status === 200) {
+        const marketResult: MarketResponseType = response.data;
+        setMarketData(marketResult);
+      } else {
+        Alert.alert('오류가 발생했습니다.');
+        console.log(response);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      // TODO: 로딩 상태 추가하기
+    }
+  };
+
+  // 컴포넌트가 처음 렌더링될 때 API 호출
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -160,7 +206,7 @@ const MarketTabView = ({
         )}>
         {routes.map(route => (
           <Tabs.Tab key={route.key} name={route.title}>
-            {route.key === 'profile' && <InfoPage />}
+            {route.key === 'profile' && <InfoPage marketData={marketData} />}
             {route.key === 'service' && (
               <View>
                 <ServicePage
