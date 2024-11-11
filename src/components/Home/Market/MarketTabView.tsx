@@ -123,7 +123,12 @@ const MarketTabView = ({
   navigation,
   route,
 }: StackScreenProps<HomeStackParams, 'MarketTabView'>) => {
-  const { reformerName, marketUuid }: MarketTabViewProps = route.params || null;
+  const defaultMarketData = {
+    reformerName: '정보 없음',
+    marketUuid: '',
+  } as MarketTabViewProps;
+  const { reformerName, marketUuid }: MarketTabViewProps =
+    route.params || defaultMarketData;
   const [routes] = useState([
     { key: 'profile', title: '프로필' },
     { key: 'service', title: '서비스' },
