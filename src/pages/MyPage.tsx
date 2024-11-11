@@ -1,14 +1,14 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { useUser, LoginContext } from '../common/Context';
-import Lock from "../assets/common/Lock.svg";
+import { View, Text, StyleSheet } from 'react-native';
+import { LoginContext } from '../common/Context';
+import Lock from '../assets/common/Lock.svg';
 import { ReformerMyPageScreen } from '../components/Auth/Reformer/ReformerMyPage.tsx';
 import { UpcyerMyPageMainScreen } from '../components/Auth/Upcyer/UpcyerMyPage.tsx';
 import Login from '../components/Auth/Login';
-import { createStackNavigator, StackScreenProps } from '@react-navigation/stack';
+import { createStackNavigator } from '@react-navigation/stack';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { TabProps } from '../../App.tsx';
-import { getAccessToken, getUserRole } from '../common/storage.js';
+import { getAccessToken } from '../common/storage.js';
 import TempStorage from '../components/Home/Market/TempStorage.tsx';
 import ServiceRegistrationPage from '../components/Home/Market/ServiceRegistration.tsx';
 import WriteDetailPage from '../components/Home/Market/WriteDetailPage.tsx';
@@ -19,54 +19,12 @@ import { useFocusEffect } from '@react-navigation/native';
 import { Body16B } from '../styles/GlobalText.tsx';
 import BottomButton from '../common/BottomButton.tsx';
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#EEF1FA',
-    paddingHorizontal: 20,
-    paddingBottom: 48,
-  },
-  centerContent: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    flex: 1,
-  },
-  icon: {
-    marginBottom: 16,
-  },
-  message: {
-    color: '#612FEF',
-    textAlign: 'center',
-    fontFamily: "Pretendard Variable",
-    fontSize: 16,
-    fontWeight: '600',
-    lineHeight: 24,
-  },
-  button: {
-    position: 'absolute',
-    bottom: 16,
-    width: 358,
-    height: 48,
-    backgroundColor: '#612FEF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 8,
-  },
-  buttonText: {
-    color: '#FFF',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-});
-
 export type MyPageStackParams = {
   MyPage: { userInfo?: any | undefined };
   FixMyPage: { userInfo: any };
   Login: undefined;
-  ReformerMyPageScreen: { navigation: any, route: any };
-  UpcyerMyPageMainScreen: { navigation: any, route: any };
+  ReformerMyPageScreen: { navigation: any; route: any };
+  UpcyerMyPageMainScreen: { navigation: any; route: any };
   TempStorage: undefined;
   ServiceRegistrationPage: { inputText?: string; detailphoto?: PhotoType[] };
   WriteDetailPage: { inputText: string; detailphoto?: PhotoType[] };
@@ -81,17 +39,49 @@ const MyPageStack = createStackNavigator<MyPageStackParams>();
 const MyPageScreen = ({
   navigation,
   route,
-}: BottomTabScreenProps<TabProps, '마이페이지'>) => {
+}: BottomTabScreenProps<TabProps, 'MY'>) => {
   return (
     <MyPageStack.Navigator initialRouteName="MyPage">
-      <MyPageStack.Screen name="MyPage" component={MyPageMainScreen} options={{ headerShown: false }} />
-      <MyPageStack.Screen name="ReformerMyPageScreen" component={ReformerMyPageScreen} options={{ headerShown: false }} />
-      <MyPageStack.Screen name="UpcyerMyPageMainScreen" component={UpcyerMyPageMainScreen} options={{ headerShown: false }} />
-      <MyPageStack.Screen name="TempStorage" component={TempStorage} options={{ headerShown: false }} />
-      <MyPageStack.Screen name="ServiceRegistrationPage" component={ServiceRegistrationPage} options={{ headerShown: false }} />
-      <MyPageStack.Screen name="WriteDetailPage" component={WriteDetailPage} options={{ headerShown: false }} />
-      <MyPageStack.Screen name="FixMyPage" component={FixMyPage} options={{ headerShown: false }} />
-      <MyPageStack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+      <MyPageStack.Screen
+        name="MyPage"
+        component={MyPageMainScreen}
+        options={{ headerShown: false }}
+      />
+      <MyPageStack.Screen
+        name="ReformerMyPageScreen"
+        component={ReformerMyPageScreen}
+        options={{ headerShown: false }}
+      />
+      <MyPageStack.Screen
+        name="UpcyerMyPageMainScreen"
+        component={UpcyerMyPageMainScreen}
+        options={{ headerShown: false }}
+      />
+      <MyPageStack.Screen
+        name="TempStorage"
+        component={TempStorage}
+        options={{ headerShown: false }}
+      />
+      <MyPageStack.Screen
+        name="ServiceRegistrationPage"
+        component={ServiceRegistrationPage}
+        options={{ headerShown: false }}
+      />
+      <MyPageStack.Screen
+        name="WriteDetailPage"
+        component={WriteDetailPage}
+        options={{ headerShown: false }}
+      />
+      <MyPageStack.Screen
+        name="FixMyPage"
+        component={FixMyPage}
+        options={{ headerShown: false }}
+      />
+      <MyPageStack.Screen
+        name="Login"
+        component={Login}
+        options={{ headerShown: false }}
+      />
     </MyPageStack.Navigator>
   );
 };
@@ -110,8 +100,6 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
       'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
     introduce: route.params?.userInfo?.introduce || '',
   });
-
-
 
   useEffect(() => {
     if (route.params?.userInfo) {
@@ -172,11 +160,22 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
 
   if (userInfo.nickname === '' || userInfo.nickname === null) {
     return (
-      <View style={{ flexDirection: 'column', alignItems: "center", flex: 1, justifyContent: 'center', alignSelf: "center" }}>
+      <View
+        style={{
+          flexDirection: 'column',
+          alignItems: 'center',
+          flex: 1,
+          justifyContent: 'center',
+          alignSelf: 'center',
+        }}>
         <Lock />
         <Body16B>{''}</Body16B>
-        <Body16B style={{ color: "#612FEF", }}>리폼러 프로필 등록을 완료해야</Body16B>
-        <Body16B style={{ color: "#612FEF", }}>나의 서비스를 제공할 수 있습니다.</Body16B>
+        <Body16B style={{ color: '#612FEF' }}>
+          리폼러 프로필 등록을 완료해야
+        </Body16B>
+        <Body16B style={{ color: '#612FEF' }}>
+          나의 서비스를 제공할 수 있습니다.
+        </Body16B>
         <BottomButton
           disable={false}
           value="리폼러 프로필 등록하기"
@@ -189,7 +188,7 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
             alignSelf: 'center',
             marginTop: 'auto',
             marginBottom: 20,
-            position: "absolute",
+            position: 'absolute',
             bottom: 0,
           }}
         />
@@ -202,14 +201,13 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
       return <UpcyerMyPageMainScreen navigation={navigation} route={route} />;
     } else {
       return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <View
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <Text>Role not assigned or data missing</Text>
         </View>
       );
     }
   }
 };
-
-
 
 export default MyPageScreen;
