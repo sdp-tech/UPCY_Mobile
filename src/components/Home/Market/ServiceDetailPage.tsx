@@ -1,12 +1,10 @@
 import {
   Dimensions,
   SafeAreaView,
-  ScrollView,
   Text,
   TouchableOpacity,
   View,
   StyleSheet,
-  useWindowDimensions,
   ImageBackground,
   FlatList,
 } from 'react-native';
@@ -17,14 +15,16 @@ import {
 import { HomeStackParams } from '../../../pages/Home';
 import Arrow from '../../../assets/common/Arrow.svg';
 import { useEffect, useRef, useState } from 'react';
-import DetailBox from './DetailBox';
+// import DetailBox from './DetailBox';
 import Footer from '../../../common/Footer';
-import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
+// import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
 import { useBottomBar } from '../../../../contexts/BottomBarContext';
 import DetailScreenHeader from '../components/DetailScreenHeader';
-import ScrollToTopButton from '../../../common/ScrollToTopButtonFlat';
+// import ScrollToTopButton from '../../../common/ScrollToTopButtonFlat';
 // import HeartButton from '../../../common/HeartButton';
-import ReviewPage from './ReviewPage';
+// import ReviewPage from './ReviewPage';
+import DetailBox2 from './DetailBox2';
+import { ServiceDetailOption } from './Service';
 
 const { width, height } = Dimensions.get('window');
 
@@ -37,6 +37,10 @@ type ServiceDetailPageProps = {
   tags: string[];
   backgroundImageUri: string;
   profileImageUri?: string;
+  servicePeriod: number;
+  serviceMaterials: string[];
+  serviceContent: string;
+  serviceOptions: ServiceDetailOption[];
 };
 
 export type DetailPageStackParams = {
@@ -49,6 +53,10 @@ export type DetailPageStackParams = {
     tags: string[];
     backgroundImageUri: string;
     profileImageUri?: string;
+    servicePeriod: number;
+    serviceContent: string;
+    serviceMaterials: string[];
+    serviceOptions: ServiceDetailOption[];
   };
 };
 
@@ -67,6 +75,10 @@ const ServiceDetailPageScreen = ({
     tags,
     backgroundImageUri,
     profileImageUri,
+    servicePeriod,
+    serviceMaterials,
+    serviceContent,
+    serviceOptions,
   }: ServiceDetailPageProps = route.params;
   return (
     <DetailPageStack.Navigator
@@ -85,6 +97,10 @@ const ServiceDetailPageScreen = ({
           tags,
           backgroundImageUri,
           profileImageUri,
+          servicePeriod,
+          serviceMaterials,
+          serviceContent,
+          serviceOptions,
         }}
       />
     </DetailPageStack.Navigator>
@@ -126,6 +142,7 @@ const ProfileSection = ({
       <DetailScreenHeader
         title=""
         leftButton="CustomBack"
+        rightButton="Report"
         onPressLeft={() => {}}
         onPressRight={() => {}}
       />
@@ -265,40 +282,34 @@ const ServiceDetailPageMainScreen = ({
     tags,
     backgroundImageUri,
     profileImageUri,
+    servicePeriod,
+    serviceMaterials,
+    serviceContent,
+    serviceOptions,
   } = route.params;
 
-  const layout = useWindowDimensions();
   const [index, setIndex] = useState<number>(0);
   const optionPageRef = useRef<FlatList<any>>(null);
 
-  const handleScrollToHeader = () => {
-    const currentFlatListRef = index === 0 ? flatListRef : optionPageRef;
-    flatListRef.current?.scrollToOffset({ offset: -height, animated: true });
-  };
-  const [routes] = useState([
-    { key: 'detail', title: '상세설명' },
-    { key: 'option', title: '후기' },
-  ]);
-  const scrollRef = useRef<ScrollView>(null);
-  const flatListRef = useRef<FlatList>(null);
+  // const flatListRef = useRef<FlatList>(null);
 
-  const renderHeader = () => (
-    <ProfileSection
-      navigation={navigation}
-      reformerName={reformerName}
-      serviceName={serviceName}
-      basicPrice={basicPrice}
-      maxPrice={maxPrice}
-      reviewNum={reviewNum}
-      tags={tags}
-      backgroundImageUri={backgroundImageUri}
-      profileImageUri={profileImageUri}
-    />
-  );
+  // const renderHeader = () => (
+  //   <ProfileSection
+  //     navigation={navigation}
+  //     reformerName={reformerName}
+  //     serviceName={serviceName}
+  //     basicPrice={basicPrice}
+  //     maxPrice={maxPrice}
+  //     reviewNum={reviewNum}
+  //     tags={tags}
+  //     backgroundImageUri={backgroundImageUri}
+  //     profileImageUri={profileImageUri}
+  //   />
+  // );
 
   return (
     <SafeAreaView style={{ flex: 1, position: 'relative' }}>
-      <Tabs.Container
+      {/* <Tabs.Container
         renderHeader={renderHeader}
         allowHeaderOverscroll={false}
         onIndexChange={setIndex}
@@ -317,7 +328,25 @@ const ServiceDetailPageMainScreen = ({
         <Tabs.Tab name={`후기(${reviewNum})`}>
           <ReviewPage flatListRef={optionPageRef} />
         </Tabs.Tab>
-      </Tabs.Container>
+      </Tabs.Container> */}
+      <ProfileSection
+        navigation={navigation}
+        reformerName={reformerName}
+        serviceName={serviceName}
+        basicPrice={basicPrice}
+        maxPrice={maxPrice}
+        reviewNum={reviewNum}
+        tags={tags}
+        backgroundImageUri={backgroundImageUri}
+        profileImageUri={profileImageUri}
+      />
+      <DetailBox2
+        servicePeriod={servicePeriod}
+        serviceMaterials={serviceMaterials}
+        serviceContent={serviceContent}
+        serviceOptions={serviceOptions}
+      />
+      <View style={{ marginBottom: 400 }} />
       <Footer />
     </SafeAreaView>
   );
@@ -375,6 +404,7 @@ const TextStyles = StyleSheet.create({
     flexDirection: 'row',
     borderBottomWidth: 1,
     borderBlockColor: '#dcdcdc',
+    paddingBottom: 20,
   },
   scrollToHeaderButton: {
     position: 'absolute',
