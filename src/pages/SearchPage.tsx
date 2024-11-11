@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
-import { useNavigation } from '@react-navigation/native';
 import Search from '../assets/common/Search.svg';
 import ArrowIcon from '../assets/common/Arrow.svg';
 import { BLACK2 } from '../styles/GlobalColor';

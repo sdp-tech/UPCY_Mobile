@@ -34,14 +34,14 @@ export type ServiceDetailOption = {
 interface ServiceCardProps {
   name: string; // 리폼러 이름
   basic_price: number;
-  max_price: number;
+  max_price?: number;
   service_styles?: string[];
   imageUri?: string;
   service_title: string;
   service_content: string;
   market_uuid: string;
   service_uuid: string;
-  service_period: number;
+  service_period?: number;
   service_materials?: string[];
   service_options?: ServiceDetailOption[];
 }
