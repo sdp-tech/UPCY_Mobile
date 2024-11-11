@@ -226,7 +226,7 @@ const HomeMainScreen = ({
               <Button onPress={() => navigation.navigate('QuotationForm')}>
                 <Text>주문서</Text>
               </Button>
-              <Button onPress={() => navigation.navigate('QuotationPage')}>
+              <Button onPress={() => navigation.navigate('QuotationPage', {})}>
                 <Text>주문서 확인</Text>
               </Button>
               <Button onPress={() => navigation.navigate('GoodsDetailPage')}>
