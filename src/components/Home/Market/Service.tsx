@@ -290,9 +290,17 @@ export const ServiceCard = ({
         <Subtitle18B>{service_title}</Subtitle18B>
         {/* <HeartButton like={like} onPress={() => setLike(!like)} /> */}
       </View>
-      <Body14R>
-        <RenderHTML contentWidth={350} source={{ html: service_content }} />
-      </Body14R>
+      <RenderHTML
+        contentWidth={350}
+        source={{ html: service_content }}
+        tagsStyles={{
+          img: { maxWidth: '100%' },
+          p: { overflow: 'hidden' },
+        }}
+        baseStyle={{
+          maxWidth: 370,
+        }}
+      />
     </TouchableOpacity>
   );
 };
