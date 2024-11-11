@@ -61,6 +61,7 @@ export type HomeStackParams = {
     serviceMaterials: string[];
     serviceContent: string;
     serviceOptions: ServiceDetailOption[];
+    marketUuid: string;
   };
   GoodsDetailPage: undefined;
   QuotationForm: undefined;
@@ -78,9 +79,8 @@ export type HomeStackParams = {
   ReformerMarket: undefined;
   TestComponents: undefined;
   MarketTabView: {
-    // TODO: add later
-    // id: string;
     reformerName: string;
+    marketUuid: string;
   };
   SearchPage: undefined;
 };
@@ -219,12 +219,6 @@ const HomeMainScreen = ({
             <ScrollView>
               <Button onPress={handlePopupButtonPress}>
                 <ButtonText>팝업 표시</ButtonText>
-              </Button>
-              <Button
-                onPress={() =>
-                  navigation.navigate('MarketTabView', { reformerName: '예시' })
-                }>
-                <Text>마켓</Text>
               </Button>
               <Button onPress={() => navigation.navigate('QuotationForm')}>
                 <Text>주문서</Text>

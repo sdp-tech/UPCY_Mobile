@@ -265,6 +265,7 @@ export const ServiceCard = ({
           serviceMaterials: service_materials,
           serviceContent: service_content,
           serviceOptions: service_options,
+          marketUuid: market_uuid,
         });
       }}>
       <ImageBackground
