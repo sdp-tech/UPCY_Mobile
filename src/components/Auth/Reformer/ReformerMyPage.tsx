@@ -1,4 +1,10 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -6,36 +12,22 @@ import {
   Text,
   TouchableOpacity,
   Image,
-  ImageBackground,
   StyleSheet,
   Dimensions,
 } from 'react-native';
 import { Tabs, MaterialTabBar } from 'react-native-collapsible-tab-view';
-import { BLACK, PURPLE } from '../../../styles/GlobalColor.tsx';
-import StarIcon from '../../../assets/common/Star.svg';
-import Arrow from '../../../assets/common/Arrow.svg';
+import { BLACK } from '../../../styles/GlobalColor.tsx';
 import ServicePage from '../../../components/Home/Market/ServicePage';
 import InfoPage from '../../../components/Home/Market/InfoPage.tsx';
-import TempStorage from '../../../components/Home/Market/TempStorage.tsx';
-import FixMyPage from '../../../pages/FixMyPage.tsx';
 import ScrollTopButton from '../../../common/ScrollTopButton.tsx';
 import { LoginContext } from '../../../common/Context';
-import {
-  StackScreenProps,
-  createStackNavigator,
-} from '@react-navigation/stack';
-import styled from 'styled-components/native';
 import DetailScreenHeader from '../../../components/Home/components/DetailScreenHeader.tsx';
-import { HomeStackParams } from '../../../pages/Home.tsx';
 import { PhotoType } from '../../../hooks/useImagePicker.ts';
-import ServiceRegistrationPage from '../../../components/Home/Market/ServiceRegistration.tsx';
-import WriteDetailPage from '../../Home/Market/WriteDetailPage.tsx';
 import Request from '../../../common/requests.js';
 import { MypageStackProps } from '../../../pages/MyPage.tsx';
 import { getAccessToken } from '../../../common/storage.js';
 import { useFocusEffect } from '@react-navigation/native';
 import { Title20B } from '../../../styles/GlobalText.tsx';
-
 
 const ProfileSection = ({
   nickname,
@@ -56,12 +48,18 @@ const ProfileSection = ({
       <DetailScreenHeader
         title=""
         leftButton="CustomBack"
-        onPressLeft={() => { }}
+        onPressLeft={() => {}}
         rightButton="Fix"
         onPressRight={editProfile}
       />
       <View>
-        <View style={{ width: width, height: height * 0.11, backgroundColor: '#E9EBF8' }} />
+        <View
+          style={{
+            width: width,
+            height: height * 0.11,
+            backgroundColor: '#E9EBF8',
+          }}
+        />
         {profile_image === undefined || profile_image.uri === undefined ? ( // 전자는 편집페이지에서 사진 삭제했을 경우, 후자는 가장 처음에 로딩될 경우
           <Image
             style={{
@@ -90,21 +88,38 @@ const ProfileSection = ({
               profile_image
                 ? { uri: profile_image.uri } // 유효한 URL이면 그대로 사용
                 : {
-                  uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
-                } // 기본 이미지 URL 사용
+                    uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
+                  } // 기본 이미지 URL 사용
             }
           />
         )}
       </View>
       <Title20B style={{ marginTop: height * 0.06 }}>{nickname}</Title20B>
-      <View style={{ backgroundColor: "#E9EBF8", borderRadius: 20, paddingVertical: height * 0.005, paddingHorizontal: height * 0.012, marginTop: height * 0.02 }}>
-        <Text style={{ color: "#612FEF", fontSize: width * 0.03, fontWeight: "600" }}>리폼러</Text>
+      <View
+        style={{
+          backgroundColor: '#E9EBF8',
+          borderRadius: 20,
+          paddingVertical: height * 0.005,
+          paddingHorizontal: height * 0.012,
+          marginTop: height * 0.02,
+        }}>
+        <Text
+          style={{
+            color: '#612FEF',
+            fontSize: width * 0.03,
+            fontWeight: '600',
+          }}>
+          리폼러
+        </Text>
       </View>
     </View>
   );
 };
 
-export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) => {
+export const ReformerMyPageScreen = ({
+  navigation,
+  route,
+}: MypageStackProps) => {
   const [activeTab, setActiveTab] = useState('profile');
   const scrollRef = useRef<ScrollView | null>(null);
 
@@ -216,7 +231,16 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
           />
         )}>
         <Tabs.Tab name="프로필" key="profile">
-          <InfoPage />
+          {/* FIXME */}
+          <InfoPage
+            marketData={{
+              market_address: '',
+              market_introduce: '정보 없음',
+              market_name: '정보 없음',
+              market_thumbnail: '',
+              market_uuid: '',
+            }}
+          />
         </Tabs.Tab>
         <Tabs.Tab name="서비스" key="service">
           <View>
@@ -236,15 +260,16 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
         <TouchableOpacity
           style={styles.fixedButton}
           onPress={() => {
-            navigation.navigate(
-              'ServiceRegistrationPage')
+            navigation.navigate('ServiceRegistrationPage');
           }}>
           <Text style={styles.fixedButtonText}>서비스 추가</Text>
         </TouchableOpacity>
       ) : (
         <TouchableOpacity
           style={styles.fixedButton}
-          onPress={() => { navigation.navigate('FixMyPage', { userInfo }) }}>
+          onPress={() => {
+            navigation.navigate('FixMyPage', { userInfo });
+          }}>
           <Text style={styles.fixedButtonText}>프로필 수정하기</Text>
         </TouchableOpacity>
       )}

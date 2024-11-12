@@ -74,8 +74,8 @@ function App(): React.JSX.Element {
 }
 
 export type TabProps = {
-  홈: undefined;
-  마이페이지: undefined;
+  UPCY: undefined;
+  MY: undefined;
   주문관리: undefined;
 };
 
@@ -111,9 +111,7 @@ const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
         return (
           <TouchableOpacity
             key={index}
-            onPress={
-              route.name === '마이페이지' ? loginGuard(onPress) : onPress
-            }
+            onPress={route.name === 'MY' ? loginGuard(onPress) : onPress}
             style={{
               width: '20%',
               alignItems: 'center',
@@ -121,14 +119,16 @@ const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
             }}>
             {
               {
-                홈: <HomeIcon color="#000000" opacity={isFocused ? 1 : 0.4} />,
+                UPCY: (
+                  <HomeIcon color="#000000" opacity={isFocused ? 1 : 0.4} />
+                ),
                 주문관리: (
                   <OrderManagementIcon
                     color="#000000"
                     opacity={isFocused ? 1 : 0.4}
                   />
                 ),
-                마이페이지: (
+                MY: (
                   <MyPageIcon color="#000000" opacity={isFocused ? 1 : 0.4} />
                 ),
               }[route.name]
@@ -157,11 +157,11 @@ const MainTabNavigator = () => {
   return (
     <Tab.Navigator
       tabBar={props => <CustomTab {...props} />}
-      initialRouteName="홈"
+      initialRouteName="UPCY"
       screenOptions={{ headerShown: false }}>
-      <Tab.Screen name="홈" component={HomeScreen} />
+      <Tab.Screen name="UPCY" component={HomeScreen} />
       <Tab.Screen name="주문관리" component={OrderManagement} />
-      <Tab.Screen name="마이페이지" component={MyPageScreen} />
+      <Tab.Screen name="MY" component={MyPageScreen} />
     </Tab.Navigator>
   );
 };

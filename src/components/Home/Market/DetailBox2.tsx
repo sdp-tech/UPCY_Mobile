@@ -20,7 +20,17 @@ const ContentBox = ({ content }: { content: string }) => {
       <View style={styles.contentLine}>
         <Text style={TextStyles.eachLabel}>서비스 상세</Text>
         <View style={{ paddingHorizontal: 16, paddingBottom: 8 }}>
-          <RenderHTML contentWidth={350} source={{ html: content }} />
+          <RenderHTML
+            contentWidth={350}
+            source={{ html: content }}
+            tagsStyles={{
+              img: { maxWidth: '100%' },
+              p: { overflow: 'hidden' },
+            }}
+            baseStyle={{
+              maxWidth: 370,
+            }}
+          />
         </View>
       </View>
     </View>
@@ -121,8 +131,12 @@ const DetailBox2 = ({
     <>
       <PeriodBox period={servicePeriod} />
       <ContentBox content={serviceContent} />
-      <MaterialBox list={serviceMaterials ?? []} />
-      <OptionBox list={serviceOptions ?? []} />
+      {serviceMaterials && serviceMaterials.length > 0 && (
+        <MaterialBox list={serviceMaterials ?? []} />
+      )}
+      {serviceOptions && serviceOptions.length > 0 && (
+        <OptionBox list={serviceOptions ?? []} />
+      )}
     </>
   );
 };

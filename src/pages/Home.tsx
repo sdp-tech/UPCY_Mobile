@@ -43,7 +43,7 @@ import SearchPage from './SearchPage';
 import { ServiceDetailOption } from '../components/Home/Market/Service';
 
 export type HomeStackParams = {
-  Home: undefined;
+  Home: { searchTerm?: string };
   // 혼란 방지를 위해 Market -> MarketTabView로 수정하였습니다.
   // Market: undefined;
   ServiceDetailPage: {
@@ -82,7 +82,9 @@ export type HomeStackParams = {
     reformerName: string;
     marketUuid: string;
   };
-  SearchPage: undefined;
+  SearchPage: {
+    navigation: any;
+  };
 };
 
 const HomeStack = createStackNavigator<HomeStackParams>();
@@ -90,7 +92,7 @@ const HomeStack = createStackNavigator<HomeStackParams>();
 const HomeScreen = ({
   navigation,
   route,
-}: BottomTabScreenProps<TabProps, '홈'>) => {
+}: BottomTabScreenProps<TabProps, 'UPCY'>) => {
   React.useLayoutEffect(() => {
     const routeName = getFocusedRouteNameFromRoute(route);
     if (routeName === 'AddPortfolio') {
@@ -142,6 +144,7 @@ const HomeScreen = ({
 
 const HomeMainScreen = ({
   navigation,
+  route,
 }: StackScreenProps<HomeStackParams, 'Home'>) => {
   const [selectedTab, setSelectedTab] = useState<'Goods' | 'Market' | 'temp'>(
     'Goods',
@@ -195,8 +198,8 @@ const HomeMainScreen = ({
       <SafeAreaView style={{ flex: 0, backgroundColor: PURPLE }} />
       <SafeAreaView style={{ flex: 1 }}>
         {/* TODO: 나중에 CustomHeader2 사용 */}
-        <CustomHeader onSearch={() => {}} onTabChange={handleTabChange} />
-        {/* <CustomHeader2 navigation={navigation} /> */}
+        {/* <CustomHeader onSearch={() => {}} onTabChange={handleTabChange} /> */}
+        <CustomHeader2 navigation={navigation} />
         <BottomSheetModalProvider>
           <View>
             <HomeTabView
@@ -223,7 +226,7 @@ const HomeMainScreen = ({
               <Button onPress={() => navigation.navigate('QuotationForm')}>
                 <Text>주문서</Text>
               </Button>
-              <Button onPress={() => navigation.navigate('QuotationPage')}>
+              <Button onPress={() => navigation.navigate('QuotationPage', {})}>
                 <Text>주문서 확인</Text>
               </Button>
               <Button onPress={() => navigation.navigate('GoodsDetailPage')}>
