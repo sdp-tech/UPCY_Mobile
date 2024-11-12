@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
-import { useNavigation } from '@react-navigation/native';
 import Search from '../assets/common/Search.svg';
 import ArrowIcon from '../assets/common/Arrow.svg';
 import { BLACK2 } from '../styles/GlobalColor';
+import { StackScreenProps } from '@react-navigation/stack';
+import { HomeStackParams } from './Home';
 
 const Container = styled.View`
   padding: 16px;
@@ -41,8 +42,10 @@ const SearchInput = styled.TextInput`
   color: #a1a1a1;
 `;
 
-const SearchPage = () => {
-  const navigation = useNavigation();
+const SearchPage = ({
+  route,
+}: StackScreenProps<HomeStackParams, 'SearchPage'>) => {
+  const { navigation } = route.params;
 
   //TODO: fix
   const recommendedKeywords = [
@@ -56,19 +59,30 @@ const SearchPage = () => {
     '리본 옵션',
   ];
 
+  const [searchTerm, setSearchTerm] = useState<string>('');
+
+  const handleSearch = () => {
+    navigation.navigate('Home', { searchTerm: searchTerm ?? '' });
+  };
+
   return (
     <Container>
       <Header>
         <BackButton onPress={() => navigation.goBack()}>
           <ArrowIcon color={BLACK2} />
         </BackButton>
+
         <SearchContainer>
           <SearchInput
             placeholder="검색어를 입력해보세요"
             placeholderTextColor="#929292"
             editable={true}
+            value={searchTerm}
+            onChangeText={setSearchTerm}
           />
-          <Search stroke={'#000'} />
+          <TouchableOpacity onPress={handleSearch}>
+            <Search stroke={'#000'} />
+          </TouchableOpacity>
         </SearchContainer>
       </Header>
       <View style={styles.container}>

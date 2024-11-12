@@ -39,7 +39,7 @@ interface CustomHeader2Props {
 
 const CustomHeader2 = ({ navigation }: CustomHeader2Props) => {
   const handleOnPress = () => {
-    navigation.navigate('SearchPage');
+    navigation.navigate('SearchPage', { navigation: navigation });
   };
   return (
     <FrameBox>
