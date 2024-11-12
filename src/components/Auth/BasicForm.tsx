@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   TextInput,
   Alert,
+  Text,
 } from 'react-native';
 import { Body16B, Body16M, Caption11M, Caption14M } from '../../styles/GlobalText';
 import styled from 'styled-components/native';
@@ -254,7 +255,7 @@ export default function BasicForm({ navigation, route }: FormProps) {
                 flex: 1,
               }}>
               <InputView
-                title="이름"
+                title="이름 *"
                 value={form.full_name}
                 setValue={text =>
                   setForm(prev => {
@@ -267,7 +268,7 @@ export default function BasicForm({ navigation, route }: FormProps) {
               <View style={{ flexDirection: "row", justifyContent: "center", zIndex: 1 }}>
                 <View style={{ flex: 1, alignContent: "flex-start", flexDirection: "column" }}>
                   <InputView
-                    title="이메일"
+                    title="이메일 *"
                     value={form.mail}
                     setValue={text =>
                       setForm(prev => {
@@ -297,7 +298,7 @@ export default function BasicForm({ navigation, route }: FormProps) {
                 </View>
               </View>
               <InputView
-                title="비밀번호"
+                title="비밀번호 *"
                 value={form.password}
                 setValue={text =>
                   setForm(prev => {
@@ -314,7 +315,7 @@ export default function BasicForm({ navigation, route }: FormProps) {
               />
 
               <InputView
-                title="비밀번호 확인"
+                title="비밀번호 확인 *"
                 value={checkPw}
                 setValue={text => setCheckPw(text)}
                 placeholder="입력해 주세요"
@@ -328,7 +329,7 @@ export default function BasicForm({ navigation, route }: FormProps) {
                 }}
               />
               <TermsView>
-                <Caption11M style={{ color: PURPLE }}>(필수)</Caption11M>
+                <Caption11M style={{ color: PURPLE }}>(필수){' '}</Caption11M>
                 <Caption11M>만 14세 이상입니다. </Caption11M>
                 <CheckButton
                   checked={form.agreement?.a ?? false}
@@ -344,8 +345,8 @@ export default function BasicForm({ navigation, route }: FormProps) {
                 />
               </TermsView>
               <TermsView>
+                <Caption11M style={{ color: PURPLE }}>(필수){' '}</Caption11M>
                 <Caption11M>서비스 이용약관에 동의합니다.</Caption11M>
-                <Caption11M style={{ color: PURPLE }}>(필수)</Caption11M>
                 <CheckButton
                   checked={form.agreement?.b ?? false}
                   onPress={() =>
@@ -360,8 +361,8 @@ export default function BasicForm({ navigation, route }: FormProps) {
                 />
               </TermsView>
               <TermsView>
+                <Caption11M style={{ color: PURPLE }}>(필수){' '}</Caption11M>
                 <Caption11M>개인정보 수집 이용에 동의합니다. </Caption11M>
-                <Caption11M style={{ color: PURPLE }}>(필수)</Caption11M>
                 <CheckButton
                   checked={form.agreement?.c ?? false}
                   onPress={() =>
@@ -377,8 +378,8 @@ export default function BasicForm({ navigation, route }: FormProps) {
               </TermsView>
               <TermsView>
                 <Caption11M>
-                  마케팅 수신 홍보 목적의 개인정보 수집 및 이용에 동의합니다.
                   (선택){' '}
+                  마케팅 수신 홍보 목적의 개인정보 수집 및 이용에 동의합니다.
                 </Caption11M>
                 <CheckButton
                   checked={form.agreement?.d ?? false}
@@ -414,6 +415,11 @@ export default function BasicForm({ navigation, route }: FormProps) {
                   onPress={setAllAgreementsTrue}
                 />
               </TouchableOpacity>
+              <View style={{ alignItems: "center", padding: 20 }}>
+                <Caption11M style={{ color: '#BDBDBD' }}>업시는 회원님의 원활한 서비스 이용에 필요한 정보를
+                </Caption11M>
+                <Caption11M style={{ color: '#BDBDBD' }}>적절한 전자적 수단을 통해 제공하고 있습니다.</Caption11M>
+              </View>
             </View>
           </View>
         </CustomScrollView>

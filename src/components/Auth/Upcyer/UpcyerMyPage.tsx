@@ -1,6 +1,5 @@
 import {
   Alert,
-  // Alert,
   Dimensions,
   FlatList,
   Image,
@@ -42,7 +41,6 @@ import { MyPageStackParams, MypageStackProps } from '../../../pages/MyPage';
 import DeleteModal from '../DeleteModal';
 
 export const UpcyerMyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
-  const { width, height } = Dimensions.get('screen');
   const ProfileSection = ({
     nickname,
     backgroundphoto,
@@ -99,6 +97,7 @@ export const UpcyerMyPageMainScreen = ({ navigation, route }: MypageStackProps) 
                     uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
                   } // 기본 이미지 URL 사용
               }
+              alt={profile_image.fileName}
             />
           )}
         </View>
@@ -260,25 +259,22 @@ export const UpcyerMyPageMainScreen = ({ navigation, route }: MypageStackProps) 
   // 비동기 작업을 수행하는 함수
   const handleDeleteAccountConfirm = async (password: string) => {
     try {
-      await DeleteAccout(password);
+      await DeleteAccount(password);
     } catch (error) {
       console.error('계정 삭제 실패:', error);
     }
   };
 
-  const DeleteAccout = async (password: string) => { // 수정 필요
+  const DeleteAccount = async (password: string) => {
     const accessToken = await getAccessToken();
     const refreshToken = await getRefreshToken();
-    const params = {
-      refresh: refreshToken,
-      password: password,
-    }
-    console.log(params);
     const headers = {
-      Authorization: `Bearer ${accessToken}`
-    }
+      Authorization: `Bearer ${accessToken}`,
+      RefreshToken: refreshToken,
+    };
+    console.log(password);
     try {
-      const response = await request.del(`/api/user`, params, headers);
+      const response = await request.del(`/api/user`, { password: password }, headers);
       if (response && response.status === 200) {
         removeAccessToken();
         removeRefreshToken();
@@ -286,7 +282,7 @@ export const UpcyerMyPageMainScreen = ({ navigation, route }: MypageStackProps) 
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
-            routes: [{ name: 'Main', params: { screen: '홈' } }],
+            routes: [{ name: 'Main', params: { screen: 'UPCY' } }],
           })
         );
         console.log('계정 삭제 성공');
@@ -298,11 +294,10 @@ export const UpcyerMyPageMainScreen = ({ navigation, route }: MypageStackProps) 
       console.error('Error deleting account:', error);
       Alert.alert('오류', '계정 삭제에 실패했습니다.');
     }
-  }
+  };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      {/* 탭은 수정 필요 */}
       <Tabs.Container
         renderHeader={props => (
           <View>

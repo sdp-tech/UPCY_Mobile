@@ -43,6 +43,7 @@ export default function Request() {
         console.warn(url);
         throw err;
       } else if (err.response.status === 401) {
+        console.log('Access Token is not valid')
         // access 토큰이 만료된 경우 또는 로그인이 필요한 기능의 경우
         // 만료된 토큰 : "Given token not valid for any token type"
         // 없는 토큰 : "자격 인증데이터(authentication credentials)가 제공되지 않았습니다."
@@ -50,7 +51,7 @@ export default function Request() {
         // refresh 토큰을 통해 access 토큰 재발급
         try {
           const response = await axios.post(
-            url + '/api/user/token/refresh',
+            'https://upcy.co.kr/api/user/token/refresh',
             {
               refresh: refreshToken,
             },
@@ -127,16 +128,16 @@ export default function Request() {
     });
   };
 
-  const del = async (path, params, headers) => {
+  const del = async (path, data, headers) => {
     return await defaultRequest(path, async (url, headerValue) => {
       const response = await axios.delete(url, {
+        data: data,
         headers: {
           Authorization: headerValue,
           ...headers,
         },
-        params: params, // URL의 쿼리 파라미터로 전달
       });
-      console.log('request test => ', response);
+      //console.log('request test => ', response);
       return response;
     });
   };
@@ -146,7 +147,9 @@ export default function Request() {
       const response = await axios.patch(url, data, {
         headers: {
           Authorization: headerValue,
+          params:params,
           ...headers,
+          
         },
       });
       // console.log('request test => ', response);

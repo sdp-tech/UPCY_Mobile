@@ -21,7 +21,7 @@ import BottomButton from '../common/BottomButton.tsx';
 
 export type MyPageStackParams = {
   MyPage: { userInfo?: any | undefined };
-  FixMyPage: { userInfo: any };
+  FixMyPage: { userInfo?: any, reformerInfo?: any };
   Login: undefined;
   ReformerMyPageScreen: { navigation: any; route: any };
   UpcyerMyPageMainScreen: { navigation: any; route: any };
@@ -126,7 +126,6 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
           'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
       };
       if (response.status === 200) {
-        console.log('User data fetched successfully:', response.data);
         setUserInfo({
           nickname: response.data.nickname,
           // 우선 기본이미지

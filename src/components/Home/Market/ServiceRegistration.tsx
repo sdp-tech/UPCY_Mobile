@@ -135,7 +135,6 @@ const ServiceRegistrationPage = ({
   navigation,
   route,
 }: StackScreenProps<MyPageStackParams, 'ServiceRegistrationPage'>) => {
-  // 마켓 페이지도 그냥 홈스택에 놔두면, 얘도 냅둬야 하나?
   const { hideBottomBar, showBottomBar } = useBottomBar();
 
   useEffect(() => {

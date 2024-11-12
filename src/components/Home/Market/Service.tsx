@@ -97,33 +97,27 @@ const EntireServiceMarket = ({
   const serviceDescription: string = '옷장 속 옷들의 트렌디한 재탄생';
 
   const fetchData = async () => {
-    const accessToken = await getAccessToken();
-    const headers = {
-      Authorization: `Bearer ${accessToken}`,
-    };
-    if (accessToken === undefined) {
-      console.log('이 경우에는 어떻게 할까요..?');
-    } else {
-      try {
-        // API 호출
-        const response = await request.get(`/api/market/services`, headers);
-        if (response && response.status === 200) {
-          const serviceListResults: ServiceResponseType[] =
-            response.data.results;
-          const extractedServiceCardData = extractData(serviceListResults);
-          setServiceCardData(extractedServiceCardData);
-          console.log('서비스 목록 로드 완료');
-        } else {
-          Alert.alert('오류가 발생했습니다.');
-          console.log(response);
-        }
-      } catch (error) {
-        console.error(error);
-      } finally {
-        // 로딩 상태 false로 변경
-        setLoading(false);
+
+    try {
+      // API 호출
+      const response = await request.get(`/api/market/services`, {}, {});
+      if (response && response.status === 200) {
+        const serviceListResults: ServiceResponseType[] =
+          response.data.results;
+        const extractedServiceCardData = extractData(serviceListResults);
+        setServiceCardData(extractedServiceCardData);
+        console.log('서비스 목록 로드 완료');
+      } else {
+        Alert.alert('오류가 발생했습니다.');
+        console.log(response);
       }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      // 로딩 상태 false로 변경
+      setLoading(false);
     }
+
   };
 
   const extractData = (rawData: ServiceResponseType[]) => {
