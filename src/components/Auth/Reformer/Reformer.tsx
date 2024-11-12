@@ -5,7 +5,15 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import ReformFormProfile from './ReformFormProfile';
 import BackArrow from '../../../assets/common/Arrow.svg'; // Import the back arrow icon
 import { PhotoType } from '../../../hooks/useImagePicker';
-import { RegionType, EducType, CareerType, AwardsType, CertifiType, FreeType, FieldType } from '../../../types/UserTypes';
+import {
+  RegionType,
+  EducType,
+  CareerType,
+  AwardsType,
+  CertifiType,
+  FreeType,
+  FieldType,
+} from '../../../types/UserTypes';
 import { useNavigation } from '@react-navigation/native';
 
 export interface ReformProps {
@@ -51,21 +59,22 @@ export default function Reformer() {
   const [profileForm, setProfileForm] = useState(defaultProfile);
 
   return (
-    <SafeAreaView style={{ flex: 1, flexDirection: "column" }}>
+    <SafeAreaView style={{ flex: 1, flexDirection: 'column' }}>
       <BottomSheetModalProvider>
         {/* Custom Header */}
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => { navigation.getParent()?.navigate('홈'); }} style={styles.backButton}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.getParent()?.navigate('UPCY');
+            }}
+            style={styles.backButton}>
             <BackArrow width={24} height={24} color="#222" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>프로필 등록</Text>
         </View>
 
         <View style={{ flex: 1 }}>
-          <ReformFormProfile
-            form={profileForm}
-            setForm={setProfileForm}
-          />
+          <ReformFormProfile form={profileForm} setForm={setProfileForm} />
         </View>
       </BottomSheetModalProvider>
     </SafeAreaView>
@@ -90,7 +99,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontStyle: 'normal',
-    fontFamily: "Pretendard Variable",
+    fontFamily: 'Pretendard Variable',
     fontWeight: '700', // Make the title bold
     color: '#222',
     textAlign: 'center',
