@@ -92,7 +92,7 @@ const HomeStack = createStackNavigator<HomeStackParams>();
 const HomeScreen = ({
   navigation,
   route,
-}: BottomTabScreenProps<TabProps, '홈'>) => {
+}: BottomTabScreenProps<TabProps, 'UPCY'>) => {
   React.useLayoutEffect(() => {
     const routeName = getFocusedRouteNameFromRoute(route);
     if (routeName === 'AddPortfolio') {
@@ -198,8 +198,8 @@ const HomeMainScreen = ({
       <SafeAreaView style={{ flex: 0, backgroundColor: PURPLE }} />
       <SafeAreaView style={{ flex: 1 }}>
         {/* TODO: 나중에 CustomHeader2 사용 */}
-        <CustomHeader onSearch={() => {}} onTabChange={handleTabChange} />
-        {/* <CustomHeader2 navigation={navigation} /> */}
+        {/* <CustomHeader onSearch={() => {}} onTabChange={handleTabChange} /> */}
+        <CustomHeader2 navigation={navigation} />
         <BottomSheetModalProvider>
           <View>
             <HomeTabView
