@@ -33,6 +33,7 @@ import { useBottomBar } from '../../../../contexts/BottomBarContext';
 import { handleBackPress } from '../../../common/navigationUtils';
 import { useNavigation } from '@react-navigation/native';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
+import { OrderProps } from '../Order/OrderManagement';
 
 const statusBarHeight = getStatusBarHeight(true);
 const { width, height } = Dimensions.get('window');
@@ -62,8 +63,7 @@ const ReviewComponent = ({ feedBack }: any) => {
   );
 };
 
-const WriteReviewPage = ({ scrollViewRef }: WriteReviewPageProps) => {
-  const navigation = useNavigation();
+const WriteReviewPage = ({ navigation, route }: OrderProps) => {
   const [detail, setDetail] = useState('');
   const [marketName] = useState('마켓명');
   const [serviceName] = useState('서비스 이름 어쩌구저쩌구');

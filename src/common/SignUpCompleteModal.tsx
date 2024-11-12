@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'react';
 import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { CommonActions, useNavigation, useRoute } from '@react-navigation/native';
 import Check from '../assets/common/CheckIcon.svg'
 import { StackNavigationProp } from '@react-navigation/stack';
 import { SignInParams } from '../components/Auth/SignIn';
@@ -13,16 +13,23 @@ const SignupCompleteModal = ({ visible, onClose }: SignupModalProps) => {
     const handleGoToReformer = async () => {
         onClose(); // 모달을 닫고
         await new Promise(resolve => setTimeout(resolve, 100)); // 딜레이 추가
+        console.log('BasicForm에서 Reformer로 이동합니다.');
         navigation.navigate('Reformer'); // 네비게이션 수행
     };
 
     const handleSkip = async () => {
         onClose(); // 모달을 닫고
         await new Promise(resolve => setTimeout(resolve, 100)); // 딜레이 추가
-        navigation.getParent()?.reset({
-            index: 0, // 첫 번째 화면부터 시작
-            routes: [{ name: 'Home' }], // 새로운 스택에 홈 화면만 남김
-        });
+        navigation.dispatch(
+            CommonActions.navigate({
+                name: "Main",
+                params: {
+                    screen: "홈", // MainTabNavigator의 홈 화면으로 이동
+                },
+            })
+        );
+        console.log('홈으로 이동합니다.');
+
     };
 
     return (

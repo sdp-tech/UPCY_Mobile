@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { StyleFilterButton } from './components/StyleFilterButton';
 import styled from 'styled-components/native';
 import DetailModal from './Market/GoodsDetailOptionsModal';
 import DropDown from '../../assets/common/DropDown.svg';
-import FilterElement from './Market/FilterElement';
-import { Styles } from '../../types/UserTypes';
+import HomeStyleFilterElement from './components/HomeStyleFilterElement';
 
 const CategoryBox = styled.View`
   z-index: 1000;
@@ -40,7 +40,7 @@ const selectOptionDropdown: SelectedOptionProps[] = [
   '판매순',
 ] as SelectedOptionProps[];
 
-const stylesList: Styles[] = [
+export const stylesList: string[] = [
   '빈티지',
   '미니멀',
   '캐주얼',
@@ -49,8 +49,9 @@ const stylesList: Styles[] = [
   '스트릿',
   '키치',
   '스포티',
+  '홈웨어',
   '걸리시',
-] as Styles[];
+] as string[];
 
 interface HomeTabViewProps {
   onSearch: () => void;
@@ -59,13 +60,15 @@ interface HomeTabViewProps {
   setSelectedFilterOption?: (
     selectedFilterOption: SelectedOptionProps | undefined,
   ) => void;
+  setSelectedStylesList: (selectedStylesList: string[]) => void;
 }
 
 const HomeTabView = ({
   onSearch,
   onTabChange,
   selectedTab,
-  setSelectedFilterOption, // selected filter option
+  setSelectedFilterOption, // selected filter (right button) option
+  setSelectedStylesList, // selected styles (left button)
 }: HomeTabViewProps) => {
   const [form, setForm] = useState<SignupProps>({
     mail: '',
@@ -76,6 +79,7 @@ const HomeTabView = ({
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [styleFilterOpen, setStyleFilterOpen] = useState<boolean>(false);
   const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
+  const [pressedStyles, setPressedStyles] = useState<string[]>(stylesList);
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
   const [selectedOption, setSelectedOption] = useState<SelectedOptionProps>(
     selectOptionDropdown[0],
@@ -90,9 +94,17 @@ const HomeTabView = ({
     setDropdownOpen(false);
   };
 
-  const onPressStyleFilterList = (/*selectedStyles: Styles[]*/) => {
-    // TODO: set selectedStyles here
-  };
+  useFocusEffect(
+    useCallback(() => {
+      setStyleFilterOpen(false);
+    }, []),
+  );
+
+  useEffect(() => {
+    if (selectedOption) {
+      setSelectedFilterOption?.(selectedOption);
+    }
+  }, [selectedOption, setSelectedFilterOption]);
 
   return (
     <>
@@ -104,15 +116,19 @@ const HomeTabView = ({
               flexDirection: 'row',
               justifyContent: 'space-between',
             }}>
-            <StyleFilterButton onPressStyleFilterButton={setStyleFilterOpen} />
-            {/* FIXME */}
-            {/* {styleFilterOpen && (
-            <FilterElement
-              list={stylesList}
-              onPress={onPressStyleFilterList}
-              type="style"
-            />
-          )} */}
+            <View style={{ flex: 1, flexDirection: 'column' }}>
+              <StyleFilterButton
+                onPressStyleFilterButton={setStyleFilterOpen}
+              />
+              {/* {styleFilterOpen && (
+                <HomeStyleFilterElement
+                  list={pressedStyles}
+                  setStyleFilterOpen={setStyleFilterOpen}
+                  setPressedStyles={setPressedStyles}
+                  setFinalPressedStyles={setSelectedStylesList}
+                />
+              )} */}
+            </View>
             <View style={styles.dropdownContainer}>
               <TouchableOpacity
                 onPress={toggleDropdown}

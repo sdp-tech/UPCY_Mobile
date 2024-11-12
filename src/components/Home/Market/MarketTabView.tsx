@@ -1,31 +1,29 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import {
   SafeAreaView,
   ScrollView,
   View,
-  FlatList,
   Text,
   TouchableOpacity,
   Image,
   ImageBackground,
   StyleSheet,
+  Alert,
 } from 'react-native';
 import { Tabs, MaterialTabBar } from 'react-native-collapsible-tab-view';
 import { Caption11M } from '../../../styles/GlobalText.tsx';
 import { BLACK, BLACK2, PURPLE } from '../../../styles/GlobalColor.tsx';
-import StarIcon from '../../../assets/common/Star.svg';
-
+// import StarIcon from '../../../assets/common/Star.svg';
 import { StackScreenProps } from '@react-navigation/stack';
 import { HomeStackParams } from '../../../pages/Home';
-
 import InfoPage from './InfoPage.tsx';
-
 import Footer from '../../../common/Footer.tsx';
-
-import Arrow from '../../../assets/common/Arrow.svg';
+import Request from '../../../common/requests.js';
+// import Arrow from '../../../assets/common/Arrow.svg';
 import ServicePage from './ServicePage.tsx';
 import DetailScreenHeader from '../components/DetailScreenHeader.tsx';
 import ScrollTopButton from '../../../common/ScrollTopButton.tsx';
+import ReformerTag from '../components/ReformerTag.tsx';
 
 export const ProfileSection = ({
   navigation,
@@ -34,7 +32,7 @@ export const ProfileSection = ({
   navigation: any;
   reformerName: string;
 }) => {
-  const marketName: string = reformerName + '의 마켓';
+  const marketName: string = reformerName;
   const selfIntroduce: string =
     '안녕하세요 리폼러 이하늘입니다! 저는 업씨대학교 패션디자인학과에 수석입학했고요 짱짱 천재에요';
   const rate: number = 4.5; // 평점
@@ -44,8 +42,8 @@ export const ProfileSection = ({
     <View style={{ alignItems: 'center' }}>
       <ProfileHeader
         marketName={marketName}
-        rate={rate}
-        reviewNumber={reviewNumber}
+        // rate={rate}
+        // reviewNumber={reviewNumber}
       />
       <View style={{ padding: 20, paddingTop: 0, paddingBottom: 0 }}>
         {/* 이 밑에거 지우면 이상하게 에러남... 그냥 냅둬도 되는 거라 무시하셔도 됩니다.  */}
@@ -59,12 +57,12 @@ export const ProfileSection = ({
 
 const ProfileHeader = ({
   marketName,
-  rate,
-  reviewNumber,
+  // rate,
+  // reviewNumber,
 }: {
   marketName: string;
-  rate: number;
-  reviewNumber: number;
+  // rate: number;
+  // reviewNumber: number;
 }) => {
   return (
     <>
@@ -103,33 +101,84 @@ const ProfileHeader = ({
           }}
         />
       </ImageBackground>
-      <Text style={TextStyles.marketName}>{marketName}</Text>
-      <View style={styles.profileHeaderRateBox}>
+      <View style={{ gap: 12 }}>
+        <Text style={TextStyles.marketName}>{marketName}</Text>
+        <ReformerTag />
+      </View>
+      {/* <View style={styles.profileHeaderRateBox}>
         <StarIcon color={PURPLE} />
         <Text style={TextStyles.rate}>{rate}</Text>
         <Text style={TextStyles.reviewNumber}>({reviewNumber})</Text>
         <Arrow color={BLACK} style={styles.arrow} />
-        {/* TODO: click event 걸기 */}
-      </View>
+      </View> */}
     </>
   );
 };
 
 type MarketTabViewProps = {
   reformerName: string;
+  marketUuid: string;
+};
+
+export type MarketResponseType = {
+  market_address: string;
+  market_introduce: string;
+  market_name: string;
+  market_thumbnail: string;
+  market_uuid: string;
 };
 
 const MarketTabView = ({
   navigation,
   route,
 }: StackScreenProps<HomeStackParams, 'MarketTabView'>) => {
-  const { reformerName }: MarketTabViewProps = route.params || '정보 없음';
+  const defaultMarketData = {
+    reformerName: '정보 없음',
+    marketUuid: '',
+  } as MarketTabViewProps;
+  const { reformerName, marketUuid }: MarketTabViewProps =
+    route.params || defaultMarketData;
   const [routes] = useState([
     { key: 'profile', title: '프로필' },
     { key: 'service', title: '서비스' },
   ]);
-  const flatListRef = useRef<FlatList>(null);
   const scrollRef = useRef<ScrollView | null>(null);
+  const request = Request();
+
+  const defaultMarketResponseData: MarketResponseType = {
+    market_address: '',
+    market_introduce: '정보 없음',
+    market_name: '정보 없음',
+    market_thumbnail: '',
+    market_uuid: '',
+  };
+
+  const [marketData, setMarketData] = useState<MarketResponseType>(
+    defaultMarketResponseData,
+  );
+
+  const fetchData = async () => {
+    try {
+      // API 호출
+      const response = await request.get(`/api/market/${marketUuid}`, {});
+      if (response && response.status === 200) {
+        const marketResult: MarketResponseType = response.data;
+        setMarketData(marketResult);
+      } else {
+        Alert.alert('오류가 발생했습니다.');
+        console.log(response);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      // TODO: 로딩 상태 추가하기
+    }
+  };
+
+  // 컴포넌트가 처음 렌더링될 때 API 호출
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -161,7 +210,7 @@ const MarketTabView = ({
         )}>
         {routes.map(route => (
           <Tabs.Tab key={route.key} name={route.title}>
-            {route.key === 'profile' && <InfoPage />}
+            {route.key === 'profile' && <InfoPage marketData={marketData} />}
             {route.key === 'service' && (
               <View>
                 <ServicePage
@@ -175,7 +224,7 @@ const MarketTabView = ({
           </Tabs.Tab>
         ))}
       </Tabs.Container>
-      <Footer />
+      {/* <Footer /> */}
     </SafeAreaView>
   );
 };
@@ -210,7 +259,6 @@ const TextStyles = StyleSheet.create({
     lineHeight: 24,
     textAlign: 'center',
     marginTop: 8,
-    marginBottom: 4,
   },
   rate: {
     color: '#222',

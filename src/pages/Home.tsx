@@ -9,14 +9,17 @@ import {
 import { TabProps } from '../../App';
 import { ScrollView } from 'react-native-gesture-handler';
 
+// TODO: 나중에 CustomHeader2 사용
 import CustomHeader from '../common/CustomHeader';
+import CustomHeader2 from '../common/CustomHeader2';
 import HomeTabView, { SelectedOptionProps } from '../components/Home/HomeMain';
 import MarketTabView from '../components/Home/Market/MarketTabView';
 import QuotationForm from '../components/Home/Quotation/QuotationForm';
-import QuotationPage, { QuotationProps } from '../components/Home/Quotation/QuotationPage';
+import QuotationPage, {
+  QuotationProps,
+} from '../components/Home/Quotation/QuotationPage';
 import SentQuotation from '../components/Home/Quotation/SentQuotation';
-import TempStorage from '../components/Home/Market/TempStorage';
-import ServiceRegistrationPage from '../components/Home/Market/ServiceRegistration';
+// import ServiceRegistrationPage from '../components/Home/Market/ServiceRegistration';
 import ServiceDetailPageScreen from '../components/Home/Market/ServiceDetailPage';
 import GoodsDetailPageScreen from '../components/Home/Market/GoodsDetailPage';
 import GoodsRegistrationPage from '../components/Home/Market/GoodsRegistration';
@@ -25,24 +28,22 @@ import WriteDetailPage from '../components/Home/Market/WriteDetailPage';
 import AddPortfolio from '../components/Home/Portfolio/AddPortfolio';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
-import InputInfo, { InputInfoProps } from '../components/Home/Quotation/InputInfo';
+import InputInfo from '../components/Home/Quotation/InputInfo';
 import QuotationConfirm from '../components/Home/Quotation/QuotationConfirm';
 import Rejection from '../components/Home/Quotation/Rejection';
 import SentRejection from '../components/Home/Quotation/SentRejection';
-import WriteReviewPage from '../components/Home/Market/WriteReviewPage';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import ComponentsTest from './ComponentsTest';
 import { PURPLE } from '../styles/GlobalColor';
-import OrderManagement from '../components/Home/Order/OrderManagement';
-import CompletedOrder from '../components/Home/Order/CompletedOrder';
 import ReformerMarket from '../components/Home/Market/ReformerMarket';
-import ReformerProfileService from '../components/Auth/Reformer/Profile/Service';
 import Service from '../components/Home/Market/Service';
 import { PhotoType } from '../hooks/useImagePicker';
-import { Styles } from '../types/UserTypes';
+import { stylesList } from '../components/Home/HomeMain';
+import SearchPage from './SearchPage';
+import { ServiceDetailOption } from '../components/Home/Market/Service';
 
 export type HomeStackParams = {
-  Home: undefined;
+  Home: { searchTerm?: string };
   // 혼란 방지를 위해 Market -> MarketTabView로 수정하였습니다.
   // Market: undefined;
   ServiceDetailPage: {
@@ -52,20 +53,22 @@ export type HomeStackParams = {
     reformerName: string;
     basicPrice: number;
     maxPrice: number;
-    tags: Styles[];
+    tags: string[];
     reviewNum: number;
     backgroundImageUri: string;
     profileImageUri?: string;
+    servicePeriod: number;
+    serviceMaterials: string[];
+    serviceContent: string;
+    serviceOptions: ServiceDetailOption[];
+    marketUuid: string;
   };
-  OrderManagement: undefined;
-  CompletedOrder: undefined;
   GoodsDetailPage: undefined;
   QuotationForm: undefined;
   QuotationPage: QuotationProps;
   SentQuotation: undefined;
-  ServiceRegistrationPage: { inputText?: string; detailphoto?: PhotoType[] };
+  // ServiceRegistrationPage: { inputText?: string; detailphoto?: PhotoType[] };
   GoodsRegistrationPage: undefined;
-  TempStorage: undefined;
   TempStorageEdit: undefined;
   WriteDetailPage: { inputText: string; detailphoto?: PhotoType[] };
   AddPortfolio: undefined;
@@ -73,15 +76,15 @@ export type HomeStackParams = {
   QuotationConfirm: undefined;
   Rejection: undefined;
   SentRejection: undefined;
-  WriteReviewPage: undefined;
   ReformerMarket: undefined;
   TestComponents: undefined;
   MarketTabView: {
-    // TODO: add later
-    // id: string;
     reformerName: string;
+    marketUuid: string;
   };
-  ReformerProfileService: undefined;
+  SearchPage: {
+    navigation: any;
+  };
 };
 
 const HomeStack = createStackNavigator<HomeStackParams>();
@@ -89,7 +92,7 @@ const HomeStack = createStackNavigator<HomeStackParams>();
 const HomeScreen = ({
   navigation,
   route,
-}: BottomTabScreenProps<TabProps, '홈'>) => {
+}: BottomTabScreenProps<TabProps, 'UPCY'>) => {
   React.useLayoutEffect(() => {
     const routeName = getFocusedRouteNameFromRoute(route);
     if (routeName === 'AddPortfolio') {
@@ -110,15 +113,13 @@ const HomeScreen = ({
         name="ServiceDetailPage"
         component={ServiceDetailPageScreen}
       />
-      <HomeStack.Screen
+      {/* <HomeStack.Screen
         name="ServiceRegistrationPage"
         component={ServiceRegistrationPage}
-      />
+      /> */}
       <HomeStack.Screen name="QuotationForm" component={QuotationForm} />
       <HomeStack.Screen name="QuotationPage" component={QuotationPage} />
       <HomeStack.Screen name="SentQuotation" component={SentQuotation} />
-      <HomeStack.Screen name="OrderManagement" component={OrderManagement} />
-      <HomeStack.Screen name="CompletedOrder" component={CompletedOrder} />
       <HomeStack.Screen
         name="GoodsDetailPage"
         component={GoodsDetailPageScreen}
@@ -127,7 +128,6 @@ const HomeScreen = ({
         name="GoodsRegistrationPage"
         component={GoodsRegistrationPage}
       />
-      <HomeStack.Screen name="TempStorage" component={TempStorage} />
       <HomeStack.Screen name="TempStorageEdit" component={TempStorageEdit} />
       <HomeStack.Screen name="WriteDetailPage" component={WriteDetailPage} />
       <HomeStack.Screen name="AddPortfolio" component={AddPortfolio} />
@@ -135,19 +135,16 @@ const HomeScreen = ({
       <HomeStack.Screen name="QuotationConfirm" component={QuotationConfirm} />
       <HomeStack.Screen name="Rejection" component={Rejection} />
       <HomeStack.Screen name="SentRejection" component={SentRejection} />
-      <HomeStack.Screen name="WriteReviewPage" component={WriteReviewPage} />
       <HomeStack.Screen name="TestComponents" component={ComponentsTest} />
       <HomeStack.Screen name="ReformerMarket" component={ReformerMarket} />
-      <HomeStack.Screen
-        name="ReformerProfileService"
-        component={ReformerProfileService}
-      />
+      <HomeStack.Screen name="SearchPage" component={SearchPage} />
     </HomeStack.Navigator>
   );
 };
 
 const HomeMainScreen = ({
   navigation,
+  route,
 }: StackScreenProps<HomeStackParams, 'Home'>) => {
   const [selectedTab, setSelectedTab] = useState<'Goods' | 'Market' | 'temp'>(
     'Goods',
@@ -193,22 +190,29 @@ const HomeMainScreen = ({
     SelectedOptionProps | undefined
   >('추천순');
 
+  const [selectedStylesList, setSelectedStylesList] =
+    useState<string[]>(stylesList);
+
   return (
     <Fragment>
       <SafeAreaView style={{ flex: 0, backgroundColor: PURPLE }} />
       <SafeAreaView style={{ flex: 1 }}>
-        <CustomHeader onSearch={() => { }} onTabChange={handleTabChange} />
+        {/* TODO: 나중에 CustomHeader2 사용 */}
+        {/* <CustomHeader onSearch={() => {}} onTabChange={handleTabChange} /> */}
+        <CustomHeader2 navigation={navigation} />
         <BottomSheetModalProvider>
           <View>
             <HomeTabView
-              onSearch={() => { }}
+              onSearch={() => {}}
               selectedTab={selectedTab}
               onTabChange={handleTabChange}
               setSelectedFilterOption={setSelectedFilterOption}
+              setSelectedStylesList={setSelectedStylesList}
             />
           </View>
           {selectedTab === 'Goods' && (
             <Service
+              selectedStylesList={selectedStylesList}
               selectedFilterOption={selectedFilterOption}
               navigation={navigation}
             />
@@ -216,34 +220,14 @@ const HomeMainScreen = ({
           {selectedTab === 'Market' && <ReformerMarket />}
           {selectedTab === 'temp' && (
             <ScrollView>
-              <Button
-                onPress={() => navigation.navigate('ReformerProfileService')}>
-                <Text>리포머 프로필</Text>
-              </Button>
               <Button onPress={handlePopupButtonPress}>
                 <ButtonText>팝업 표시</ButtonText>
-              </Button>
-              <Button
-                onPress={() =>
-                  navigation.navigate('MarketTabView', { reformerName: '예시' })
-                }>
-                <Text>마켓</Text>
               </Button>
               <Button onPress={() => navigation.navigate('QuotationForm')}>
                 <Text>주문서</Text>
               </Button>
-              <Button onPress={() => navigation.navigate('QuotationPage')}>
+              <Button onPress={() => navigation.navigate('QuotationPage', {})}>
                 <Text>주문서 확인</Text>
-              </Button>
-              <Button
-                onPress={() => navigation.navigate('ServiceDetailPage', {})}>
-                <Text>서비스 디테일</Text>
-              </Button>
-              <Button
-                onPress={() =>
-                  navigation.navigate('ServiceRegistrationPage', {})
-                }>
-                <Text>서비스등록</Text>
               </Button>
               <Button onPress={() => navigation.navigate('GoodsDetailPage')}>
                 <Text>상품 디테일</Text>
@@ -254,12 +238,6 @@ const HomeMainScreen = ({
               </Button>
               <Button onPress={() => navigation.navigate('AddPortfolio')}>
                 <Text>포트폴리오 등록</Text>
-              </Button>
-              <Button onPress={() => navigation.navigate('OrderManagement')}>
-                <Text>주문관리</Text>
-              </Button>
-              <Button onPress={() => navigation.navigate('WriteReviewPage')}>
-                <Text>후기 작성 페이지</Text>
               </Button>
               <Button onPress={() => navigation.navigate('TestComponents')}>
                 <Text>공통 컴포넌트 테스트</Text>

@@ -6,12 +6,13 @@ import LeftArrowIcon from '../../../assets/common/Arrow.svg';
 import CloseIcon from '../../../assets/header/Close.svg';
 import SearchIcon from '../../../assets/header/Search.svg';
 import { CustomBackButton } from './CustomBackButton';
+import { CustomReportButton } from './CustomReportButton';
 
 interface HeaderProps {
   title: string;
   leftButton: 'CustomBack' | 'LeftArrow' | 'Exit' | 'None';
   onPressLeft: () => void;
-  rightButton: 'Save' | 'Search' | 'Edit' | 'Exit' | 'None' | 'Fix';
+  rightButton: 'Save' | 'Search' | 'Edit' | 'Exit' | 'None' | 'Fix' | 'Report';
   onPressRight: () => void;
   saved?: number;
   border?: boolean;
@@ -31,10 +32,15 @@ const DetailScreenHeader = ({
     Search: <SearchIcon color={BLACK} style={{ marginRight: 5 }} />,
     Edit: <Body14M style={{ color: '#929292', marginRight: 10 }}>편집</Body14M>,
     Exit: <CloseIcon color={BLACK} style={{ marginHorizontal: 5 }} />,
-    LeftArrow: <View style={{ marginLeft: 14 }}><LeftArrowIcon color={BLACK} /></View>,
+    LeftArrow: (
+      <View style={{ marginLeft: 14 }}>
+        <LeftArrowIcon color={BLACK} />
+      </View>
+    ),
     CustomBack: <CustomBackButton />,
     None: <></>,
     Fix: <Body16B style={{ color: '#929292', marginRight: 10 }}>...</Body16B>,
+    Report: <CustomReportButton />,
   };
   return (
     <SafeAreaView

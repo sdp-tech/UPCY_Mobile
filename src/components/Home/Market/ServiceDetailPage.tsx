@@ -1,14 +1,13 @@
 import {
   Dimensions,
   SafeAreaView,
-  ScrollView,
   Text,
   TouchableOpacity,
   View,
   StyleSheet,
-  useWindowDimensions,
   ImageBackground,
   FlatList,
+  ScrollView,
 } from 'react-native';
 import {
   StackScreenProps,
@@ -16,19 +15,17 @@ import {
 } from '@react-navigation/stack';
 import { HomeStackParams } from '../../../pages/Home';
 import Arrow from '../../../assets/common/Arrow.svg';
-import Review from '../../../assets/common/Review.svg';
 import { useEffect, useRef, useState } from 'react';
-import DetailBox from './DetailBox';
-import OptionBox from './OptionBox';
+// import DetailBox from './DetailBox';
 import Footer from '../../../common/Footer';
-import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
-import { BLACK } from '../../../styles/GlobalColor';
+// import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
 import { useBottomBar } from '../../../../contexts/BottomBarContext';
 import DetailScreenHeader from '../components/DetailScreenHeader';
-import ScrollToTopButton from '../../../common/ScrollToTopButtonFlat';
-import HeartButton from '../../../common/HeartButton';
-import { Styles } from '../../../types/UserTypes';
-import ReviewPage from './ReviewPage';
+// import ScrollToTopButton from '../../../common/ScrollToTopButtonFlat';
+// import HeartButton from '../../../common/HeartButton';
+// import ReviewPage from './ReviewPage';
+import DetailBox2 from './DetailBox2';
+import { ServiceDetailOption } from './Service';
 
 const { width, height } = Dimensions.get('window');
 
@@ -38,9 +35,14 @@ type ServiceDetailPageProps = {
   basicPrice: number;
   maxPrice: number;
   reviewNum: number;
-  tags: Styles[];
+  tags: string[];
   backgroundImageUri: string;
   profileImageUri?: string;
+  servicePeriod: number;
+  serviceMaterials: string[];
+  serviceContent: string;
+  serviceOptions: ServiceDetailOption[];
+  marketUuid: string;
 };
 
 export type DetailPageStackParams = {
@@ -50,9 +52,14 @@ export type DetailPageStackParams = {
     basicPrice: number;
     maxPrice: number;
     reviewNum: number;
-    tags: Styles[];
+    tags: string[];
     backgroundImageUri: string;
     profileImageUri?: string;
+    servicePeriod: number;
+    serviceContent: string;
+    serviceMaterials: string[];
+    serviceOptions: ServiceDetailOption[];
+    marketUuid: string;
   };
 };
 
@@ -71,6 +78,11 @@ const ServiceDetailPageScreen = ({
     tags,
     backgroundImageUri,
     profileImageUri,
+    servicePeriod,
+    serviceMaterials,
+    serviceContent,
+    serviceOptions,
+    marketUuid,
   }: ServiceDetailPageProps = route.params;
   return (
     <DetailPageStack.Navigator
@@ -89,6 +101,11 @@ const ServiceDetailPageScreen = ({
           tags,
           backgroundImageUri,
           profileImageUri,
+          servicePeriod,
+          serviceMaterials,
+          serviceContent,
+          serviceOptions,
+          marketUuid,
         }}
       />
     </DetailPageStack.Navigator>
@@ -102,9 +119,10 @@ type ProfileSectionProps = {
   basicPrice: number;
   maxPrice: number;
   reviewNum: number;
-  tags: Styles[];
+  tags: string[];
   backgroundImageUri: string;
   profileImageUri?: string;
+  marketUuid: string;
 };
 
 const ProfileSection = ({
@@ -117,6 +135,7 @@ const ProfileSection = ({
   tags,
   backgroundImageUri,
   profileImageUri,
+  marketUuid,
 }: ProfileSectionProps) => {
   const [like, setLike] = useState<boolean>(false);
   const { hideBottomBar, showBottomBar } = useBottomBar();
@@ -130,11 +149,17 @@ const ProfileSection = ({
       <DetailScreenHeader
         title=""
         leftButton="CustomBack"
+        rightButton="Report"
         onPressLeft={() => {}}
-        rightButton="Search"
         onPressRight={() => {}}
       />
       <Banner backgroundImageUri={backgroundImageUri} tags={tags} />
+      <Profile
+        reformerName={reformerName}
+        reviewNum={reviewNum}
+        navigation={navigation}
+        marketUuid={marketUuid}
+      />
       <Header
         like={like}
         setLike={setLike}
@@ -142,18 +167,13 @@ const ProfileSection = ({
         basicPrice={basicPrice}
         maxPrice={maxPrice}
       />
-      <Profile
-        reformerName={reformerName}
-        reviewNum={reviewNum}
-        navigation={navigation}
-      />
     </SafeAreaView>
   );
 };
 
 type BannerProps = {
   backgroundImageUri: string;
-  tags: Styles[];
+  tags: string[];
 };
 
 const Banner = ({ backgroundImageUri, tags }: BannerProps) => {
@@ -163,7 +183,10 @@ const Banner = ({ backgroundImageUri, tags }: BannerProps) => {
         style={{ width: '100%', height: width * 0.5 }}
         imageStyle={{ height: width * 0.5 }}
         source={{
-          uri: backgroundImageUri,
+          uri:
+            backgroundImageUri ||
+            'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
+          // backgroundImageUri가 없는 경우 기본 이미지
         }}
       />
       <View style={styles.tagContainer}>
@@ -206,9 +229,9 @@ const Header = ({
           최대 <Text style={TextStyles.Price}> {maxPrice} 원</Text>
         </Text>
       </View>
-      <View style={{ margin: 15 }}>
+      {/* <View style={{ margin: 15 }}>
         <HeartButton like={like} onPress={() => setLike(!like)} />
-      </View>
+      </View> */}
     </View>
   );
 };
@@ -218,6 +241,7 @@ type ProfileProps = {
   reformerName: string;
   reviewNum: number;
   navigation: any;
+  marketUuid: string;
 };
 
 const Profile = ({
@@ -225,13 +249,10 @@ const Profile = ({
   reformerName,
   reviewNum,
   navigation,
+  marketUuid,
 }: ProfileProps) => {
   return (
-    <View
-      style={{
-        ...TextStyles.borderBottom2,
-        justifyContent: 'space-between',
-      }}>
+    <View style={{ justifyContent: 'space-between' }}>
       <View style={{ padding: 15, flexDirection: 'row' }}>
         {/* TODO: add profile picture here */}
         <View
@@ -247,12 +268,12 @@ const Profile = ({
             onPress={() =>
               navigation.navigate('MarketTabView', {
                 reformerName: reformerName,
+                marketUuid: marketUuid,
               })
             }>
-            <Text style={TextStyles.marketName}>{reformerName}의 마켓</Text>
+            <Text style={TextStyles.reformerName}>{reformerName}</Text>
             <Arrow style={styles.marketArrow} />
           </TouchableOpacity>
-          <Text style={TextStyles.reformerName}>{reformerName}</Text>
         </View>
       </View>
     </View>
@@ -262,7 +283,6 @@ const Profile = ({
 const ServiceDetailPageMainScreen = ({
   navigation,
   route,
-  // fix here
 }: StackScreenProps<DetailPageStackParams, 'DetailPage'>) => {
   const {
     reformerName,
@@ -273,40 +293,36 @@ const ServiceDetailPageMainScreen = ({
     tags,
     backgroundImageUri,
     profileImageUri,
+    servicePeriod,
+    serviceMaterials,
+    serviceContent,
+    serviceOptions,
+    marketUuid,
   } = route.params;
 
-  const layout = useWindowDimensions();
   const [index, setIndex] = useState<number>(0);
   const optionPageRef = useRef<FlatList<any>>(null);
 
-  const handleScrollToHeader = () => {
-    const currentFlatListRef = index === 0 ? flatListRef : optionPageRef;
-    flatListRef.current?.scrollToOffset({ offset: -height, animated: true });
-  };
-  const [routes] = useState([
-    { key: 'detail', title: '상세설명' },
-    { key: 'option', title: '후기' },
-  ]);
-  const scrollRef = useRef<ScrollView>(null);
-  const flatListRef = useRef<FlatList>(null);
+  // const flatListRef = useRef<FlatList>(null);
 
-  const renderHeader = () => (
-    <ProfileSection
-      navigation={navigation}
-      reformerName={reformerName}
-      serviceName={serviceName}
-      basicPrice={basicPrice}
-      maxPrice={maxPrice}
-      reviewNum={reviewNum}
-      tags={tags}
-      backgroundImageUri={backgroundImageUri}
-      profileImageUri={profileImageUri}
-    />
-  );
+  // const renderHeader = () => (
+  //   <ProfileSection
+  //     navigation={navigation}
+  //     reformerName={reformerName}
+  //     serviceName={serviceName}
+  //     basicPrice={basicPrice}
+  //     maxPrice={maxPrice}
+  //     reviewNum={reviewNum}
+  //     tags={tags}
+  //     backgroundImageUri={backgroundImageUri}
+  //     profileImageUri={profileImageUri}
+  //   />
+  // );
 
   return (
-    <SafeAreaView style={{ flex: 1, position: 'relative' }}>
-      <Tabs.Container
+    <View style={{ flex: 1, position: 'relative' }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+        {/* <Tabs.Container
         renderHeader={renderHeader}
         allowHeaderOverscroll={false}
         onIndexChange={setIndex}
@@ -325,15 +341,38 @@ const ServiceDetailPageMainScreen = ({
         <Tabs.Tab name={`후기(${reviewNum})`}>
           <ReviewPage flatListRef={optionPageRef} />
         </Tabs.Tab>
-      </Tabs.Container>
-      <Footer />
-    </SafeAreaView>
+      </Tabs.Container> */}
+        <ProfileSection
+          navigation={navigation}
+          reformerName={reformerName}
+          serviceName={serviceName}
+          basicPrice={basicPrice}
+          maxPrice={maxPrice}
+          reviewNum={reviewNum}
+          tags={tags}
+          backgroundImageUri={backgroundImageUri}
+          profileImageUri={profileImageUri}
+          marketUuid={marketUuid}
+        />
+        <DetailBox2
+          servicePeriod={servicePeriod}
+          serviceMaterials={serviceMaterials}
+          serviceContent={serviceContent}
+          serviceOptions={serviceOptions}
+          marketUuid={marketUuid}
+        />
+      </ScrollView>
+      <View style={styles.footerContainer}>
+        <Footer />
+      </View>
+    </View>
   );
 };
 
 const TextStyles = StyleSheet.create({
   Title: {
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingBottom: 12,
     color: '#222222',
     fontWeight: '700',
     fontSize: 18,
@@ -351,12 +390,13 @@ const TextStyles = StyleSheet.create({
     color: '#612EFE',
   },
   PriceInfo: {
-    fontWeight: '600',
+    fontWeight: '700',
     fontSize: 14,
     paddingLeft: 16,
     paddingRight: 16,
     paddingBottom: 8,
     color: 'rgba(34, 34, 34, 0.50)',
+    lineHeight: 24,
   },
   Price: {
     fontWeight: '700',
@@ -381,10 +421,7 @@ const TextStyles = StyleSheet.create({
     flexDirection: 'row',
     borderBottomWidth: 1,
     borderBlockColor: '#dcdcdc',
-  },
-  borderBottom2: {
-    borderBottomWidth: 6,
-    borderBlockColor: '#dcdcdc',
+    paddingBottom: 20,
   },
   scrollToHeaderButton: {
     position: 'absolute',
@@ -442,7 +479,20 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     lineHeight: 24,
   },
-  marketArrow: { marginLeft: -4, transform: [{ scaleX: -1 }], color: '#000' },
+  marketArrow: {
+    paddingLeft: 9,
+    marginLeft: -4,
+    transform: [{ scaleX: -1 }],
+    color: '#000',
+  },
+  footerContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 15,
+    backgroundColor: '#fff',
+  },
 });
 
 export default ServiceDetailPageScreen;

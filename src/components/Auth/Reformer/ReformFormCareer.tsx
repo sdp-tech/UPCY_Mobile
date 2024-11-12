@@ -357,7 +357,7 @@ export default function ReformCareer({ form, setForm }: ReformProps) {
           value="다음"
           pressed={false}
           onPress={handleSubmit}
-          style={{ width: '75%', alignSelf: 'center', marginBottom: 10 }}
+          style={{ width: '90%', alignSelf: 'center', marginBottom: 10 }}
         />
       </View>
       {careerIndex >= 0 && (

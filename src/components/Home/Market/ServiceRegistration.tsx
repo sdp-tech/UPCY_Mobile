@@ -48,6 +48,7 @@ import Help from '../../../assets/common/Help.svg';
 import { Modal } from 'react-native';
 import { getAccessToken, getMarketUUID } from '../../../common/storage';
 import Request from '../../../common/requests';
+import { MyPageStackParams } from '../../../pages/MyPage';
 
 const { width } = Dimensions.get('window');
 
@@ -133,7 +134,7 @@ interface Material {
 const ServiceRegistrationPage = ({
   navigation,
   route,
-}: StackScreenProps<HomeStackParams, 'ServiceRegistrationPage'>) => {
+}: StackScreenProps<MyPageStackParams, 'ServiceRegistrationPage'>) => {
   // 마켓 페이지도 그냥 홈스택에 놔두면, 얘도 냅둬야 하나?
   const { hideBottomBar, showBottomBar } = useBottomBar();
 

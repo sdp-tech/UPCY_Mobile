@@ -30,16 +30,16 @@ export type SignInParams = {
 };
 
 export default function SignIn() { // 스택 네비게이터 설정 
-  const Stack = createNativeStackNavigator<SignInParams>();
+  const SignInStack = createNativeStackNavigator<SignInParams>();
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Login" component={Login} />
-      <Stack.Screen name="Signup" component={Signup} />
-      <Stack.Screen name="Reformer" component={Reformer} />
-      <Stack.Screen name="Basic" component={BasicForm} />
-      <Stack.Screen name="ReformSubmit" component={ReformFormSubmit} />
-      <Stack.Screen name="Upcyer" component={UpcyFormProfile} />
-    </Stack.Navigator>
+    <SignInStack.Navigator screenOptions={{ headerShown: false }}>
+      <SignInStack.Screen name="Login" component={Login} />
+      <SignInStack.Screen name="Signup" component={Signup} />
+      <SignInStack.Screen name="Reformer" component={Reformer} />
+      <SignInStack.Screen name="Basic" component={BasicForm} />
+      <SignInStack.Screen name="ReformSubmit" component={ReformFormSubmit} />
+      <SignInStack.Screen name="Upcyer" component={UpcyFormProfile} />
+    </SignInStack.Navigator>
   );
 }
