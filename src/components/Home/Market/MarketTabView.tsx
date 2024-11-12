@@ -23,6 +23,7 @@ import Request from '../../../common/requests.js';
 import ServicePage from './ServicePage.tsx';
 import DetailScreenHeader from '../components/DetailScreenHeader.tsx';
 import ScrollTopButton from '../../../common/ScrollTopButton.tsx';
+import ReformerTag from '../components/ReformerTag.tsx';
 
 export const ProfileSection = ({
   navigation,
@@ -100,7 +101,10 @@ const ProfileHeader = ({
           }}
         />
       </ImageBackground>
-      <Text style={TextStyles.marketName}>{marketName}</Text>
+      <View style={{ gap: 12 }}>
+        <Text style={TextStyles.marketName}>{marketName}</Text>
+        <ReformerTag />
+      </View>
       {/* <View style={styles.profileHeaderRateBox}>
         <StarIcon color={PURPLE} />
         <Text style={TextStyles.rate}>{rate}</Text>
@@ -255,7 +259,6 @@ const TextStyles = StyleSheet.create({
     lineHeight: 24,
     textAlign: 'center',
     marginTop: 8,
-    marginBottom: 4,
   },
   rate: {
     color: '#222',
