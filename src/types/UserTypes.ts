@@ -87,10 +87,7 @@ export type Field = {
   status?: string | undefined;
   team?: string | undefined;
   period?: string | undefined;
-  // start?: Date;
-  // end?: Date;
   host?: string | undefined;
-  //client?: string;
   content?: string | undefined;
 };
 type InternType = Field & {

@@ -17,6 +17,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 
 export interface ReformProps {
+  fix?: boolean;
   form: ReformProfileType;
   setForm: Dispatch<SetStateAction<ReformProfileType>>;
 }
@@ -27,6 +28,7 @@ export interface ModalProps extends ReformProps {
 }
 
 export type ReformProfileType = {
+  role?: string;
   picture?: undefined | PhotoType;
   nickname: string;
   introduce?: string | undefined;
@@ -40,7 +42,13 @@ export type ReformProfileType = {
   field: FieldType;
 };
 
-export default function Reformer() {
+type FixType = {
+  fix: any;
+  // navigation: any;
+  // route: any;
+}
+
+export default function Reformer({ fix }: FixType) {
   const navigation = useNavigation();
   const defaultProfile: ReformProfileType = {
     picture: undefined,
@@ -59,25 +67,39 @@ export default function Reformer() {
   const [profileForm, setProfileForm] = useState(defaultProfile);
 
   return (
-    <SafeAreaView style={{ flex: 1, flexDirection: 'column' }}>
-      <BottomSheetModalProvider>
-        {/* Custom Header */}
-        <View style={styles.header}>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.getParent()?.navigate('UPCY');
-            }}
-            style={styles.backButton}>
-            <BackArrow width={24} height={24} color="#222" />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>프로필 등록</Text>
-        </View>
-
-        <View style={{ flex: 1 }}>
-          <ReformFormProfile form={profileForm} setForm={setProfileForm} />
-        </View>
-      </BottomSheetModalProvider>
-    </SafeAreaView>
+    <View style={{ flexGrow: 1 }}>
+      {!fix &&
+        <SafeAreaView style={{ flex: 1, flexDirection: "column" }}>
+          <BottomSheetModalProvider>
+            {/* Custom Header */}
+            {fix === false &&
+              <View style={styles.header}>
+                <TouchableOpacity onPress={() => { navigation.getParent()?.navigate('UPCY'); }} style={styles.backButton}>
+                  <BackArrow width={24} height={24} color="#222" />
+                </TouchableOpacity>
+                <Text style={styles.headerTitle}>프로필 등록</Text>
+              </View>
+            }
+            <View style={{ flex: 1 }}>
+              <ReformFormProfile
+                fix={fix} // 수정하는지 여부 
+                form={profileForm}
+                setForm={setProfileForm}
+              />
+            </View>
+          </BottomSheetModalProvider>
+        </SafeAreaView>
+      }
+      {fix &&
+        <BottomSheetModalProvider>
+          <ReformFormProfile
+            fix={fix} // 수정하는지 여부 
+            form={profileForm}
+            setForm={setProfileForm}
+          />
+        </BottomSheetModalProvider>
+      }
+    </View>
   );
 }
 
