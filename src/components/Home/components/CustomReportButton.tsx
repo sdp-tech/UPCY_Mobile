@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Dot from '../../../assets/common/Dot.svg';
+import DotBlack from '../../../assets/common/DotBlack.svg';
 import { TouchableOpacity } from 'react-native';
 
 export const CustomReportButton: React.FC = () => {
@@ -13,10 +13,10 @@ export const CustomReportButton: React.FC = () => {
 
   return (
     <TouchableOpacity
-      style={{ display: 'flex', flexDirection: 'row', gap: 2 }}
+      style={{ display: 'flex', flexDirection: 'row', gap: 3 }}
       onPress={handleOnPress}>
       {dots.map((_, index) => (
-        <Dot key={index} width={5} />
+        <DotBlack key={index} />
       ))}
     </TouchableOpacity>
   );
