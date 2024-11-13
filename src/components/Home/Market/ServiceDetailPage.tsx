@@ -27,6 +27,7 @@ import DetailScreenHeader from '../components/DetailScreenHeader';
 import DetailBox2 from './DetailBox2';
 import { ServiceDetailOption } from './Service';
 import Flag from '../../../assets/common/Flag.svg';
+import { getUserRole } from '../../../common/storage';
 
 const { width, height } = Dimensions.get('window');
 
@@ -350,6 +351,16 @@ const ServiceDetailPageMainScreen = ({
   //   />
   // );
 
+  const [userRole, setUserRole] = useState<string>('customer');
+
+  useEffect(() => {
+    const getUserRoleInfo = async () => {
+      const userRole = await getUserRole();
+      setUserRole(userRole ? userRole : '');
+    };
+    getUserRoleInfo();
+  }, []);
+
   return (
     <View style={{ flex: 1, position: 'relative' }}>
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
@@ -393,9 +404,11 @@ const ServiceDetailPageMainScreen = ({
           marketUuid={marketUuid}
         />
       </ScrollView>
-      <View style={styles.footerContainer}>
-        <Footer />
-      </View>
+      {userRole === 'customer' && (
+        <View style={styles.footerContainer}>
+          <Footer />
+        </View>
+      )}
     </View>
   );
 };
