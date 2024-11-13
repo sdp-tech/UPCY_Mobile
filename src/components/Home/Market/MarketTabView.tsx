@@ -101,7 +101,7 @@ const ProfileHeader = ({
           }}
         />
       </ImageBackground>
-      <View style={{ gap: 12 }}>
+      <View style={{ gap: 12, alignItems: 'center' }}>
         <Text style={TextStyles.marketName}>{marketName}</Text>
         <ReformerTag />
       </View>
