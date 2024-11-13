@@ -151,6 +151,7 @@ const HomeMainScreen = ({
   navigation,
   route,
 }: StackScreenProps<HomeStackParams, 'Home'>) => {
+  const { searchTerm } = route.params || {};
   const [selectedTab, setSelectedTab] = useState<'Goods' | 'Market' | 'temp'>(
     'Goods',
   );
@@ -219,6 +220,7 @@ const HomeMainScreen = ({
             <Service
               selectedStylesList={selectedStylesList}
               selectedFilterOption={selectedFilterOption}
+              searchTerm={searchTerm}
               navigation={navigation}
             />
           )}

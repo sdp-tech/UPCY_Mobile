@@ -9,17 +9,11 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
-import {
-  Title20B,
-  Filter11R,
-  Subtitle18B,
-  Body14R,
-} from '../../../styles/GlobalText';
+import { Title20B, Filter11R, Subtitle18B } from '../../../styles/GlobalText';
 import { LIGHTGRAY } from '../../../styles/GlobalColor';
 // import HeartButton from '../../../common/HeartButton';
 import DetailModal from '../Market/GoodsDetailOptionsModal';
 import { SelectedOptionProps } from '../HomeMain.tsx';
-import { getAccessToken } from '../../../common/storage.js';
 import Request from '../../../common/requests.js';
 import RenderHTML from 'react-native-render-html';
 
@@ -71,12 +65,14 @@ interface ServiceCardComponentProps extends ServiceCardProps {
 type ServiceMarketProps = {
   selectedStylesList: string[];
   selectedFilterOption?: SelectedOptionProps;
+  searchTerm?: string;
   navigation: any;
 };
 
 const EntireServiceMarket = ({
   selectedStylesList,
   selectedFilterOption,
+  searchTerm = '',
   navigation,
 }: ServiceMarketProps) => {
   const [form, setForm] = useState({
@@ -98,13 +94,11 @@ const EntireServiceMarket = ({
   const serviceDescription: string = '옷장 속 옷들의 트렌디한 재탄생';
 
   const fetchData = async () => {
-
     try {
       // API 호출
       const response = await request.get(`/api/market/services`, {}, {});
       if (response && response.status === 200) {
-        const serviceListResults: ServiceResponseType[] =
-          response.data.results;
+        const serviceListResults: ServiceResponseType[] = response.data.results;
         const extractedServiceCardData = extractData(serviceListResults);
         setServiceCardData(extractedServiceCardData);
         console.log('서비스 목록 로드 완료');
@@ -118,7 +112,6 @@ const EntireServiceMarket = ({
       // 로딩 상태 false로 변경
       setLoading(false);
     }
-
   };
 
   const extractData = (rawData: ServiceResponseType[]) => {
@@ -154,6 +147,38 @@ const EntireServiceMarket = ({
 
   useEffect(() => {
     if (serviceCardData) {
+      // filter by search term
+      if (searchTerm && searchTerm.length > 0) {
+        const filteredData = serviceCardData.filter(card => {
+          const {
+            name,
+            basic_price,
+            max_price,
+            service_styles,
+            service_title,
+            service_content,
+          } = card;
+
+          const searchLower = searchTerm.toLowerCase();
+
+          // Check if any field matches the search term
+          return (
+            (name && name.toLowerCase().includes(searchLower)) ||
+            (basic_price && basic_price.toString().includes(searchLower)) ||
+            (max_price && max_price.toString().includes(searchLower)) ||
+            (service_styles &&
+              service_styles.some(style =>
+                style.toLowerCase().includes(searchLower),
+              )) ||
+            (service_title &&
+              service_title.toLowerCase().includes(searchLower)) ||
+            (service_content &&
+              service_content.toLowerCase().includes(searchLower))
+          );
+        });
+        setServiceCardData(filteredData);
+      }
+      // FIXME
       // filter by selected styles
       // const styleFilteredData = serviceCardData.filter(card => {
       //   card.service_styles?.some(style => selectedStylesList.includes(style));
@@ -168,7 +193,7 @@ const EntireServiceMarket = ({
       }
       // TODO: add more filtering logic here
     }
-  }, [selectedFilterOption, selectedStylesList]);
+  }, [selectedFilterOption, selectedStylesList, searchTerm]);
 
   // 로딩 중일 때 로딩 스피너 표시
   if (loading) {
