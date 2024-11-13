@@ -227,15 +227,15 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
         removeAccessToken();
         removeRefreshToken();
         setLogin(false);
-        console.log('AccessToken: ', { accessToken }, '| RefreshToken: ', { refreshToken });
         navigation.dispatch(
           CommonActions.navigate({
             name: "Main",
             params: {
-              screen: "홈", // MainTabNavigator의 홈 화면으로 이동
+              screen: "UPCY", // MainTabNavigator의 홈 화면으로 이동
             },
           })
         );
+        console.log('AccessToken: ', { accessToken }, '| RefreshToken: ', { refreshToken });
       } else {
         console.log(response);
       }

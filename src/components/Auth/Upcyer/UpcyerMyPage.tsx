@@ -230,7 +230,7 @@ export const UpcyerMyPageMainScreen = ({ navigation, route }: MypageStackProps) 
           CommonActions.navigate({
             name: "Main",
             params: {
-              screen: "홈", // MainTabNavigator의 홈 화면으로 이동
+              screen: "UPCY", // MainTabNavigator의 홈 화면으로 이동
             },
           })
         );
