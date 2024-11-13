@@ -160,13 +160,13 @@ const MarketTabView = ({
   const fetchData = async () => {
     try {
       // API 호출
-      const response = await request.get(`/api/market/${marketUuid}`, {});
+      const response = await request.get(`/api/market/${marketUuid}`, {}, {});
       if (response && response.status === 200) {
         const marketResult: MarketResponseType = response.data;
         setMarketData(marketResult);
       } else {
         Alert.alert('오류가 발생했습니다.');
-        console.log(response);
+        console.log('response: ', response);
       }
     } catch (error) {
       console.error(error);
