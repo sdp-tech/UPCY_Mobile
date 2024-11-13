@@ -165,6 +165,7 @@ const ProfileSection = ({
         tags={tags}
         reportButtonPressed={reportButtonPressed}
         setReportButtonPressed={setReportButtonPressed}
+        navigation={navigation}
       />
       <Profile
         reformerName={reformerName}
@@ -188,6 +189,7 @@ type BannerProps = {
   tags: string[];
   reportButtonPressed: boolean;
   setReportButtonPressed: (reportButtonPressed: boolean) => void;
+  navigation: any;
 };
 
 const Banner = ({
@@ -195,10 +197,11 @@ const Banner = ({
   tags,
   reportButtonPressed,
   setReportButtonPressed,
+  navigation,
 }: BannerProps) => {
   const onPressReport = () => {
     setReportButtonPressed(false);
-    // TODO: connect with report relevant api here
+    navigation.navigate('ReportPage');
   };
 
   return (

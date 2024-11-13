@@ -41,6 +41,7 @@ import { PhotoType } from '../hooks/useImagePicker';
 import { stylesList } from '../components/Home/HomeMain';
 import SearchPage from './SearchPage';
 import { ServiceDetailOption } from '../components/Home/Market/Service';
+import ReportPage from './ReportPage';
 
 export type HomeStackParams = {
   Home: { searchTerm?: string };
@@ -90,6 +91,7 @@ export type HomeStackParams = {
   SearchPage: {
     navigation: any;
   };
+  ReportPage: undefined;
 };
 
 const HomeStack = createStackNavigator<HomeStackParams>();
@@ -143,6 +145,7 @@ const HomeScreen = ({
       <HomeStack.Screen name="TestComponents" component={ComponentsTest} />
       <HomeStack.Screen name="ReformerMarket" component={ReformerMarket} />
       <HomeStack.Screen name="SearchPage" component={SearchPage} />
+      <HomeStack.Screen name="ReportPage" component={ReportPage} />
     </HomeStack.Navigator>
   );
 };
