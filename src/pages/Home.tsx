@@ -72,7 +72,12 @@ export type HomeStackParams = {
   TempStorageEdit: undefined;
   WriteDetailPage: { inputText: string; detailphoto?: PhotoType[] };
   AddPortfolio: undefined;
-  InputInfo: undefined;
+  InputInfo: {
+    materials: string[];
+    transactionMethod: string;
+    options: any[]; // TODO: fix
+    additionalRequest: string;
+  };
   QuotationConfirm: undefined;
   Rejection: undefined;
   SentRejection: undefined;
