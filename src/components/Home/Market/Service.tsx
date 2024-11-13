@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   View,
   Text,
@@ -244,7 +245,11 @@ const EntireServiceMarket = ({
               ),
           )
         ) : (
-          <Text>선택된 스타일의 서비스가 없습니다.</Text>
+          <View style={styles.centeredContainer}>
+            <Text style={TextStyles.noServiceText}>
+              해당하는 서비스가 없습니다.
+            </Text>
+          </View>
         )}
       </View>
     </ScrollView>
@@ -358,6 +363,11 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     borderRadius: 4,
   },
+  centeredContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 const TextStyles = StyleSheet.create({
@@ -394,6 +404,11 @@ const TextStyles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '400',
     lineHeight: 24,
+  },
+  noServiceText: {
+    fontSize: 16,
+    color: '#000',
+    padding: 10,
   },
 });
 

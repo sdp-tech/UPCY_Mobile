@@ -60,7 +60,13 @@ const SearchPage = ({
   const [searchTerm, setSearchTerm] = useState<string>('');
 
   const handleSearch = () => {
-    navigation.navigate('Home', { searchTerm: searchTerm ?? '' });
+    if (searchTerm && searchTerm.length > 0)
+      navigation.navigate('Home', { searchTerm: searchTerm ?? '' });
+  };
+
+  const onPressRecommendedKeyword = (keyword: string) => {
+    setSearchTerm(keyword);
+    navigation.navigate('Home', { searchTerm: keyword ?? '' });
   };
 
   return (
@@ -72,7 +78,8 @@ const SearchPage = ({
         <SearchContainer>
           <SearchInput
             placeholder="검색어를 입력해보세요"
-            placeholderTextColor="#929292"
+            placeholderText
+            Color="#929292"
             editable={true}
             value={searchTerm}
             onChangeText={setSearchTerm}
@@ -86,7 +93,10 @@ const SearchPage = ({
         <Text style={styles.title}>추천 검색어</Text>
         <View style={styles.keywordContainer}>
           {recommendedKeywords.map((keyword, index) => (
-            <TouchableOpacity key={index} style={styles.keywordButton}>
+            <TouchableOpacity
+              key={index}
+              style={styles.keywordButton}
+              onPress={() => onPressRecommendedKeyword(keyword)}>
               <Text style={styles.keywordText}>{keyword}</Text>
             </TouchableOpacity>
           ))}
