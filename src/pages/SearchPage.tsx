@@ -43,10 +43,8 @@ const SearchInput = styled.TextInput`
 `;
 
 const SearchPage = ({
-  route,
+  navigation,
 }: StackScreenProps<HomeStackParams, 'SearchPage'>) => {
-  const { navigation } = route.params;
-
   //TODO: fix
   const recommendedKeywords = [
     '하얀',
@@ -71,7 +69,6 @@ const SearchPage = ({
         <BackButton onPress={() => navigation.goBack()}>
           <ArrowIcon color={BLACK2} />
         </BackButton>
-
         <SearchContainer>
           <SearchInput
             placeholder="검색어를 입력해보세요"
