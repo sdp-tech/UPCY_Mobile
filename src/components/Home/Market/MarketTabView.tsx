@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -180,34 +180,44 @@ const MarketTabView = ({
     fetchData();
   }, []);
 
+  const renderHeader = useCallback(
+    () => (
+      <ProfileSection navigation={navigation} reformerName={reformerName} />
+    ),
+    [navigation, reformerName],
+  );
+
+  const renderTabBar = useCallback(
+    (props: any) => (
+      <MaterialTabBar
+        {...props}
+        indicatorStyle={{
+          backgroundColor: '#BDBDBD',
+          height: 2,
+        }}
+        style={{
+          backgroundColor: 'white',
+        }}
+        labelStyle={{
+          color: BLACK,
+          fontWeight: '700',
+          fontSize: 16,
+        }}
+      />
+    ),
+    [],
+  );
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Tabs.Container
-        renderHeader={props => (
-          <ProfileSection navigation={navigation} reformerName={reformerName} />
-        )}
+        renderHeader={renderHeader}
         headerContainerStyle={{
           shadowOpacity: 0,
           borderBottomWidth: 1,
           borderColor: '#D9D9D9',
         }}
-        renderTabBar={props => (
-          <MaterialTabBar
-            {...props}
-            indicatorStyle={{
-              backgroundColor: '#BDBDBD',
-              height: 2,
-            }}
-            style={{
-              backgroundColor: 'white',
-            }}
-            labelStyle={{
-              color: BLACK,
-              fontWeight: '700',
-              fontSize: 16,
-            }}
-          />
-        )}>
+        renderTabBar={renderTabBar}>
         {routes.map(route => (
           <Tabs.Tab key={route.key} name={route.title}>
             {route.key === 'profile' && <InfoPage marketData={marketData} />}
