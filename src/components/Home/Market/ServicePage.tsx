@@ -5,6 +5,8 @@ import Carousel from '../../../common/Carousel';
 
 import ServiceItem from '../components/ServiceItem';
 
+// 이거는 리폼러마이페이지에 있는 서비스 탭!
+
 interface ServicePageProps {
   scrollViewRef: React.RefObject<ScrollView>;
   navigation: any;

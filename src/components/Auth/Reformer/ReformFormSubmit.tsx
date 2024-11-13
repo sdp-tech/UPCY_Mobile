@@ -7,6 +7,11 @@ import { CommonActions, useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { SignInParams } from '../SignIn';
 
+// 2차버전에서 수정해야 할 사항들
+// - 리폼러 프로필 등록 신청이 완료되었어요!
+// - <View style={{ flex: 0.5, alignItems: 'center' }}>
+// <Text>리폼러 등록 승인까지 평균 24시간 정도 소요됩니다</Text>
+// </View>
 
 export default function ReformFormSubmit() {
   const navigation = useNavigation<StackNavigationProp<SignInParams>>();
@@ -21,9 +26,9 @@ export default function ReformFormSubmit() {
       <View style={{ flex: 1, alignItems: 'center' }}>
         <Hand />
       </View>
-      <View style={{ flex: 0.5, alignItems: 'center' }}>
+      {/* <View style={{ flex: 0.5, alignItems: 'center' }}>
         <Text>리폼러 등록 승인까지 평균 24시간 정도 소요됩니다</Text>
-      </View>
+      </View> */}
       <BottomButton
         value="홈으로 가기"
         onPress={() => {
