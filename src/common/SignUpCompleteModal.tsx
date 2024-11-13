@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { CommonActions, useNavigation, useRoute } from '@react-navigation/native';
-import Check from '../assets/common/CheckIcon.svg'
+import Check from '../assets/common/Check2.svg'
 import { StackNavigationProp } from '@react-navigation/stack';
 import { SignInParams } from '../components/Auth/SignIn';
 import { SignupModalProps } from '../components/Auth/Signup';
@@ -37,10 +37,10 @@ const SignupCompleteModal = ({ visible, onClose }: SignupModalProps) => {
             onClose();  // 백 버튼 등으로 모달을 닫을 때 처리
         }}>
             <View style={styles.modalContainer}>
-                <Check></Check>
+                <Check />
                 <Text style={[styles.text, styles.textClr]}>{` `}</Text>
                 <Text style={[styles.text, styles.textClr]}>{`가입이 완료되었습니다. `}</Text>
-                <Text style={[styles.upcy, styles.textClr]}>UPCY와 함께 지속가능한 옷장을 만들어봐요!</Text>
+                <Text style={[styles.upcy, styles.textClr]}>업씨와 함께 지속가능한 옷장을 만들어봐요!</Text>
                 <TouchableOpacity style={{ position: 'absolute', bottom: 150, flexGrow: 1 }} onPress={handleGoToReformer}>
                     <View style={styles.rectangleView}>
                         <Text style={{ fontSize: 16, lineHeight: 24, fontWeight: "600", fontFamily: "Pretendard Variable" }}>리폼러 프로필 등록하기</Text>

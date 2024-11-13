@@ -26,73 +26,65 @@ import { Body16B } from '../../../styles/GlobalText';
 import SelectBox from '../../../common/SelectBox';
 import { PURPLE, PURPLE2 } from '../../../styles/GlobalColor';
 
-function ProfilePic({ form, setForm }: ReformProps) {
-  const [photo, setPhoto] = useState(form.picture);
-  const [handleAddButtonPress, handleImagePress] = useImagePicker(setPhoto);
+export default function ReformFormProfile({ fix, form, setForm }: ReformProps) {
 
-  useEffect(() => {
-    setForm(prev => {
-      return { ...prev, picture: photo };
-    });
-  }, [photo]);
+  function ReformProfilePic({ form, setForm }: ReformProps) {
+    const [photo, setPhoto] = useState(form.picture);
+    const [handleAddButtonPress, handleImagePress] = useImagePicker(setPhoto);
 
-  return (
-    <View
-      style={{
-        marginTop: 30,
-        alignSelf: 'center',
-        position: 'relative',
-      }}>
-      <TouchableOpacity
-        onPress={photo === undefined ? handleAddButtonPress : handleImagePress}>
+    useEffect(() => {
+      if (photo && photo.uri !== form.picture?.uri) {
+        setForm(prev => {
+          return { ...prev, picture: photo };
+        });
+      }
+    }, [photo]);
+
+    return (
+      <View style={{ marginTop: 30, alignSelf: 'center', position: 'relative' }}>
+        <TouchableOpacity
+          onPress={photo === undefined ? handleAddButtonPress : handleImagePress}>
+          <View
+            style={{
+              position: 'relative',
+              width: 82,
+              height: 82,
+              borderRadius: 100,
+              backgroundColor: '#D9D9D9',
+              paddingVertical: 0,
+              paddingHorizontal: 0,
+              marginBottom: 0,
+            }}>
+            {photo !== undefined && (
+              <Image
+                source={{ uri: photo.uri }}
+                style={{ width: 'auto', height: '100%', borderRadius: 100 }}
+                alt={photo.fileName}
+              />
+            )}
+          </View>
+        </TouchableOpacity>
         <View
-          // buttonLabel=""
-          // photo={form.picture}
-          // setPhoto={p => {
-          //   setForm(prev => {
-          //     return { ...prev, picture: p[0] };
-          //   });
-          // }}
-          // max={1}
           style={{
-            position: 'relative',
-            width: 82,
-            height: 82,
+            position: 'absolute',
+            backgroundColor: '#303441',
+            width: 32,
+            height: 32,
             borderRadius: 100,
-            backgroundColor: '#D9D9D9',
-            paddingVertical: 0,
-            paddingHorizontal: 0,
-            marginBottom: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            bottom: 0,
+            right: 0,
           }}>
-          {photo !== undefined && (
-            <Image
-              source={{ uri: photo.uri }}
-              style={{ width: 'auto', height: '100%', borderRadius: 100 }}
-              alt={photo.fileName}
-            />
-          )}
+          <TouchableOpacity onPress={photo === undefined ? handleAddButtonPress : handleImagePress}>
+            <PencilIcon strokeWidth={1} />
+          </TouchableOpacity>
         </View>
-      </TouchableOpacity>
-      <View
-        style={{
-          position: 'absolute',
-          backgroundColor: '#303441',
-          width: 32,
-          height: 32,
-          borderRadius: 100,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          bottom: 0,
-          right: 0,
-        }}>
-        <PencilIcon strokeWidth={1} />
       </View>
-    </View>
-  );
-}
+    );
+  }
 
-export default function ReformFormProfile({ form, setForm }: ReformProps) {
   const { width } = Dimensions.get('screen');
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -103,7 +95,7 @@ export default function ReformFormProfile({ form, setForm }: ReformProps) {
           marginHorizontal: width * 0.04,
         }}>
         <View style={{ flexGrow: 1 }}>
-          <ProfilePic form={form} setForm={setForm} />
+          <ReformProfilePic form={form} setForm={setForm} />
           <InputView
             title={
               <View style={{ flexDirection: "row" }}>
@@ -170,6 +162,7 @@ export default function ReformFormProfile({ form, setForm }: ReformProps) {
             }
           />
           <ReformCareer
+            fix={fix}
             form={form}
             setForm={setForm} />
         </View>

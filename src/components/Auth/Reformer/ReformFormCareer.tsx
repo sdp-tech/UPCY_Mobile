@@ -15,7 +15,7 @@ import RightArrow from '../../../assets/common/RightArrow.svg';
 import PlusIcon from '../../../assets/common/Plus.svg';
 import PencilIcon from '../../../assets/common/Pencil.svg';
 import CloseIcon from '../../../assets/header/Close.svg';
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { BLACK, BLACK2, GRAY, PURPLE } from '../../../styles/GlobalColor';
 import SelectBox from '../../../common/SelectBox';
 import CareerModal from './CareerModal';
@@ -26,6 +26,7 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { SignInParams } from '../SignIn';
 import { getAccessToken, getMarketUUID, setMarketUUID } from '../../../common/storage';
+import { PhotoType } from '../../../hooks/useImagePicker';
 
 const SelectView = styled.View`
   display: flex;
@@ -100,14 +101,27 @@ const FixSection: React.FC<FixSectionProps> = ({ index, type, _1st, edit, onDele
   )
 }
 
-export default function ReformCareer({ form, setForm }: ReformProps) {
+export default function ReformCareer({ fix, form, setForm }: ReformProps) {
   const { width } = Dimensions.get('screen');
   const [careerModal, setCareerModal] = useState(false);
   const [careerIndex, setCareerIndex] = useState(-1);
   const navigation = useNavigation<StackNavigationProp<SignInParams>>();
   const request = Request();
+  // `form`의 초기 상태를 저장
+  const memorizedForm = useRef<ReformProfileType | null>(null);
+  const [isFormInitialized, setIsFormInitialized] = useState(false);
 
-  const handleAddCareer = () => {
+  // `form`이 초기화되었는지 확인하는 useEffect
+  useEffect(() => {
+    // form이 완전히 초기화되었는지 확인
+    if (!isFormInitialized && form.link && form.region) {
+      memorizedForm.current = { ...form }; // 초기 form 상태 저장
+      setIsFormInitialized(true); // 초기화 완료 표시
+      console.log("Initial form state saved in memorizedForm:", memorizedForm.current);
+    }
+  }, [form, isFormInitialized]);
+
+  const handleAddCareer = () => { // 빈 필드 생성
     const newIndex = form.field.length;
     setForm(prev => {
       return {
@@ -115,11 +129,11 @@ export default function ReformCareer({ form, setForm }: ReformProps) {
         field: [...prev.field, { name: '', file: [], type: undefined }],
       };
     });
-    setCareerIndex(newIndex);
+    setCareerIndex(newIndex); // 인덱스값 추가해서 모달 열기 
   };
 
   const handleEditCareer = (index: number) => {
-    setCareerIndex(index);
+    setCareerIndex(index); // 특정 인덱스값으로 변경해서 모달 열기 
   };
 
   const handleDeleteCareer = (delIndex: number) => {
@@ -129,14 +143,7 @@ export default function ReformCareer({ form, setForm }: ReformProps) {
     });
   };
 
-  const handlePressCareer = (index: number) => {
-    Alert.alert('경력을 수정하시겠습니까?', undefined, [
-      { text: '수정하기', onPress: () => handleEditCareer(index) },
-      { text: '삭제하기', onPress: () => handleDeleteCareer(index) },
-    ]);
-  };
-
-  useEffect(() => {
+  useEffect(() => { // 인덱스 변경될 때마다 추가용 모달 열기 
     if (careerIndex >= 0) setCareerModal(true);
   }, [careerIndex]);
 
@@ -166,10 +173,444 @@ export default function ReformCareer({ form, setForm }: ReformProps) {
     }
   }
 
+  const putUserData = async () => {
+    const updatedForm = { ...form };
+    const accessToken = await getAccessToken();
+    const headers = {
+      Authorization: `Bearer ${accessToken}`
+    };
+    const params = {
+      nickname: updatedForm.nickname,
+      introduce: updatedForm.introduce,
+    }
+    try {
+      const response = await request.put(`/api/user`, params, headers);
+      if (response && response.status === 200) {
+        console.log('닉네임, 소개글 업데이트 완료!');
+      } else {
+        console.log('닉네임, 소개글 업데이트 실패:', response)
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const handleEducationUpdate = async () => {
+    const updatedForm = { ...form };
+    const accessToken = await getAccessToken();
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    };
+    // updatedForm에서 type이 '학력'인 요소들만 추출
+    const updatedEducationFields = updatedForm.field.filter(
+      (item) => item.type === '학력'
+    );
+    // 초기 데이터와 비교하여 변경사항 확인 (예시로 memorizedForm 사용)
+    const initialEducationFields = memorizedForm.current?.field.filter(
+      (item) => item.type === '학력'
+    );
+    const hasChanges = JSON.stringify(updatedEducationFields) !== JSON.stringify(initialEducationFields);
+    const hasAdded = !initialEducationFields || initialEducationFields.length === 0; // 이전에 없었을 때 
+
+    if (hasAdded && hasChanges) { // 새롭게 추가됐을 때 
+      for (const edu of updatedEducationFields) {
+        const response3 = await request.post(
+          `/api/user/reformer/education`,
+          {
+            school: edu.name, // 학교 이름
+            major: edu.major, // 전공
+            academic_status: edu.status, // 학업 상태
+          },
+          headers
+        );
+        if (response3.status === 201) {
+          console.log("학력 데이터 추가 성공:", response3.data);
+        } else {
+          console.log("학력 데이터 추가 실패:", response3.status, response3.data);
+        }
+      }
+      console.log("새 학력 데이터 등록 완료");
+    } else if (hasChanges && !hasAdded) { // 새롭게 추가된 건 아니지만 변경되었을 경우 
+      try {
+        // Step 1: 기존 학력 데이터의 UUID를 가져오기 위해 GET 요청
+        const response = await request.get(`/api/user/reformer/education`, headers);
+        console.log(response);
+        const existingEducationUUIDs = response.data.map((edu: any) => edu.education_uuid);
+        // Step 2: 학력 데이터 삭제 요청
+        for (const uuid of existingEducationUUIDs) {
+          const response2 = await request.del(`/api/user/reformer/education/${uuid}`, {}, headers);
+          if (response2.status === 200) {
+            console.log(`학력 데이터 삭제 성공 (UUID: ${uuid})`);
+          } else {
+            console.log(`학력 데이터 삭제 실패 (UUID: ${uuid}):`, response2.status);
+          }
+        }
+        console.log("기존 학력 데이터 삭제 완료");
+        // Step 3: 새 학력 데이터를 추가하기 위해 POST 요청
+        for (const edu of updatedEducationFields) {
+          const response3 = await request.post(
+            `/api/user/reformer/education`,
+            {
+              school: edu.name, // 학교 이름
+              major: edu.major, // 전공
+              academic_status: edu.status, // 학업 상태
+            },
+            headers
+          );
+          if (response3.status === 201) {
+            console.log("학력 데이터 추가 성공:", response3.data);
+          } else {
+            console.log("학력 데이터 추가 실패:", response3.status, response3.data);
+          }
+        }
+        console.log("새 학력 데이터 등록 완료");
+      } catch (error) {
+        console.error("Error updating education data:", error);
+        Alert.alert("학력 정보 업데이트 중 오류가 발생했습니다.");
+      }
+    } else {
+      console.log("학력 정보에 변동사항 없음");
+    }
+  };
+
+  const handleCareerUpdate = async () => {
+    const updatedForm = { ...form };
+    const accessToken = await getAccessToken();
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    };
+
+    const updatedCareerFields = updatedForm.field.filter((item) => item.type === '실무 경험');
+    const initialCareerFields = memorizedForm.current?.field.filter((item) => item.type === '실무 경험');
+    const hasChanges = JSON.stringify(updatedCareerFields) !== JSON.stringify(initialCareerFields);
+    const hasAdded = !initialCareerFields || initialCareerFields.length === 0;
+
+    if (hasAdded && hasChanges) {
+      for (const career of updatedCareerFields) {
+        const response3 = await request.post(
+          `/api/user/reformer/career`,
+          {
+            company_name: career.name,
+            department: career.team,
+            period: career.period,
+          },
+          headers
+        );
+        if (response3.status === 201) {
+          console.log("실무 경험 데이터 추가 성공:", response3.data);
+        } else {
+          console.log("실무 경험 데이터 추가 실패:", response3.status, response3.data);
+        }
+      }
+      console.log("새 실무 경험 데이터 등록 완료");
+    } else if (hasChanges && !hasAdded) {
+      try {
+        const response = await request.get(`/api/user/reformer/career`, headers);
+        const existingCareerUUIDs = response.data.map((career: any) => career.career_uuid);
+
+        for (const uuid of existingCareerUUIDs) {
+          const response2 = await request.del(`/api/user/reformer/career/${uuid}`, {}, headers);
+          if (response2.status === 200) {
+            console.log(`실무 경험 데이터 삭제 성공 (UUID: ${uuid})`);
+          } else {
+            console.log(`실무 경험 데이터 삭제 실패 (UUID: ${uuid}):`, response2.status);
+          }
+        }
+        console.log("기존 실무 경험 데이터 삭제 완료");
+
+        for (const career of updatedCareerFields) {
+          const response3 = await request.post(
+            `/api/user/reformer/career`,
+            {
+              company_name: career.name,
+              department: career.team,
+              period: career.period,
+            },
+            headers
+          );
+          if (response3.status === 201) {
+            console.log("실무 경험 데이터 추가 성공:", response3.data);
+          } else {
+            console.log("실무 경험 데이터 추가 실패:", response3.status, response3.data);
+          }
+        }
+        console.log("새 실무 경험 데이터 등록 완료");
+      } catch (error) {
+        console.error("Error updating career data:", error);
+        Alert.alert("실무 경험 정보 업데이트 중 오류가 발생했습니다.");
+      }
+    } else {
+      console.log("실무 경험 정보에 변동사항 없음");
+    }
+  };
+
+  const handleAwardsUpdate = async () => {
+    const updatedForm = { ...form };
+    const accessToken = await getAccessToken();
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    };
+
+    const updatedAwardFields = updatedForm.field.filter((item) => item.type === '공모전');
+    const initialAwardFields = memorizedForm.current?.field.filter((item) => item.type === '공모전');
+    const hasChanges = JSON.stringify(updatedAwardFields) !== JSON.stringify(initialAwardFields);
+    const hasAdded = !initialAwardFields || initialAwardFields.length === 0;
+
+    if (hasAdded && hasChanges) {
+      for (const award of updatedAwardFields) {
+        const response3 = await request.post(
+          `/api/user/reformer/awards`,
+          {
+            competition: award.name,
+            prize: award.content,
+          },
+          headers
+        );
+        if (response3.status === 201) {
+          console.log("공모전 데이터 추가 성공:", response3.data);
+        } else {
+          console.log("공모전 데이터 추가 실패:", response3.status, response3.data);
+        }
+      }
+      console.log("새 공모전 데이터 등록 완료");
+    } else if (hasChanges && !hasAdded) {
+      try {
+        const response = await request.get(`/api/user/reformer/awards`, headers);
+        const existingAwardUUIDs = response.data.map((award: any) => award.award_uuid);
+
+        for (const uuid of existingAwardUUIDs) {
+          const response2 = await request.del(`/api/user/reformer/awards/${uuid}`, {}, headers);
+          if (response2.status === 200) {
+            console.log(`공모전 데이터 삭제 성공 (UUID: ${uuid})`);
+          } else {
+            console.log(`공모전 데이터 삭제 실패 (UUID: ${uuid}):`, response2.status);
+          }
+        }
+        console.log("기존 공모전 데이터 삭제 완료");
+
+        for (const award of updatedAwardFields) {
+          const response3 = await request.post(
+            `/api/user/reformer/awards`,
+            {
+              competition: award.name,
+              prize: award.content,
+            },
+            headers
+          );
+          if (response3.status === 201) {
+            console.log("공모전 데이터 추가 성공:", response3.data);
+          } else {
+            console.log("공모전 데이터 추가 실패:", response3.status, response3.data);
+          }
+        }
+        console.log("새 공모전 데이터 등록 완료");
+      } catch (error) {
+        console.error("Error updating awards data:", error);
+        Alert.alert("공모전 정보 업데이트 중 오류가 발생했습니다.");
+      }
+    } else {
+      console.log("공모전 정보에 변동사항 없음");
+    }
+  };
+
+  const handleCertificationUpdate = async () => {
+    const updatedForm = { ...form };
+    const accessToken = await getAccessToken();
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    };
+
+    const updatedCertificationFields = updatedForm.field.filter((item) => item.type === '자격증');
+    const initialCertificationFields = memorizedForm.current?.field.filter((item) => item.type === '자격증');
+    const hasChanges = JSON.stringify(updatedCertificationFields) !== JSON.stringify(initialCertificationFields);
+    const hasAdded = !initialCertificationFields || initialCertificationFields.length === 0;
+
+    if (hasAdded && hasChanges) {
+      for (const cert of updatedCertificationFields) {
+        const response3 = await request.post(
+          `/api/user/reformer/certification`,
+          {
+            name: cert.name,
+            issuing_authority: cert.host,
+          },
+          headers
+        );
+        if (response3.status === 201) {
+          console.log("자격증 데이터 추가 성공:", response3.data);
+        } else {
+          console.log("자격증 데이터 추가 실패:", response3.status, response3.data);
+        }
+      }
+      console.log("새 자격증 데이터 등록 완료");
+    } else if (hasChanges && !hasAdded) {
+      try {
+        const response = await request.get(`/api/user/reformer/certification`, headers);
+        const existingCertificationUUIDs = response.data.map((cert: any) => cert.certification_uuid);
+
+        for (const uuid of existingCertificationUUIDs) {
+          const response2 = await request.del(`/api/user/reformer/certification/${uuid}`, {}, headers);
+          if (response2.status === 200) {
+            console.log(`자격증 데이터 삭제 성공 (UUID: ${uuid})`);
+          } else {
+            console.log(`자격증 데이터 삭제 실패 (UUID: ${uuid}):`, response2.status);
+          }
+        }
+        console.log("기존 자격증 데이터 삭제 완료");
+
+        for (const cert of updatedCertificationFields) {
+          const response3 = await request.post(
+            `/api/user/reformer/certification`,
+            {
+              name: cert.name,
+              issuing_authority: cert.host,
+            },
+            headers
+          );
+          if (response3.status === 201) {
+            console.log("자격증 데이터 추가 성공:", response3.data);
+          } else {
+            console.log("자격증 데이터 추가 실패:", response3.status, response3.data);
+          }
+        }
+        console.log("새 자격증 데이터 등록 완료");
+      } catch (error) {
+        console.error("Error updating certification data:", error);
+        Alert.alert("자격증 정보 업데이트 중 오류가 발생했습니다.");
+      }
+    } else {
+      console.log("자격증 정보에 변동사항 없음");
+    }
+  };
+
+  const handleFreelancerUpdate = async () => {
+    const updatedForm = { ...form };
+    const accessToken = await getAccessToken();
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    };
+
+    const updatedFreelancerFields = updatedForm.field.filter((item) => item.type === '기타 (개인 포트폴리오, 외주 등)');
+    const initialFreelancerFields = memorizedForm.current?.field.filter((item) => item.type === '기타 (개인 포트폴리오, 외주 등)');
+    const hasChanges = JSON.stringify(updatedFreelancerFields) !== JSON.stringify(initialFreelancerFields);
+    const hasAdded = !initialFreelancerFields || initialFreelancerFields.length === 0;
+
+    if (hasAdded && hasChanges) {
+      for (const project of updatedFreelancerFields) {
+        const response3 = await request.post(
+          `/api/user/reformer/freelancer`,
+          {
+            project_name: project.name,
+            description: project.content,
+          },
+          headers
+        );
+        if (response3.status === 201) {
+          console.log("프리랜서 프로젝트 데이터 추가 성공:", response3.data);
+        } else {
+          console.log("프리랜서 프로젝트 데이터 추가 실패:", response3.status, response3.data);
+        }
+      }
+      console.log("새 프리랜서 프로젝트 데이터 등록 완료");
+    } else if (hasChanges && !hasAdded) {
+      try {
+        const response = await request.get(`/api/user/reformer/freelancer`, headers);
+        const existingFreelancerUUIDs = response.data.map((project: any) => project.freelancer_uuid);
+
+        for (const uuid of existingFreelancerUUIDs) {
+          const response2 = await request.del(`/api/user/reformer/freelancer/${uuid}`, {}, headers);
+          if (response2.status === 200) {
+            console.log(`프리랜서 프로젝트 데이터 삭제 성공 (UUID: ${uuid})`);
+          } else {
+            console.log(`프리랜서 프로젝트 데이터 삭제 실패 (UUID: ${uuid}):`, response2.status);
+          }
+        }
+        console.log("기존 프리랜서 프로젝트 데이터 삭제 완료");
+
+        for (const project of updatedFreelancerFields) {
+          const response3 = await request.post(
+            `/api/user/reformer/freelancer`,
+            {
+              project_name: project.name,
+              description: project.content,
+            },
+            headers
+          );
+          if (response3.status === 201) {
+            console.log("프리랜서 프로젝트 데이터 추가 성공:", response3.data);
+          } else {
+            console.log("프리랜서 프로젝트 데이터 추가 실패:", response3.status, response3.data);
+          }
+        }
+        console.log("새 프리랜서 프로젝트 데이터 등록 완료");
+      } catch (error) {
+        console.error("Error updating freelancer data:", error);
+        Alert.alert("프리랜서 프로젝트 정보 업데이트 중 오류가 발생했습니다.");
+      }
+    } else {
+      console.log("프리랜서 프로젝트 정보에 변동사항 없음");
+    }
+  };
+
+  // 경력 전체 업데이트 함수
+  const handleProfileUpdate = async () => {
+    await handleEducationUpdate();
+    await handleCareerUpdate();
+    await handleAwardsUpdate();
+    await handleCertificationUpdate();
+    await handleFreelancerUpdate();
+    await uploadProfileImage();
+  };
+
+  const handleFix = async () => {
+    if (!isFormInitialized) return; // 초기화 전에는 handleFix 실행 방지
+    const updatedForm = { ...form }; // form을 복사하여 사용
+    if (updatedForm.nickname === '' || updatedForm.link === '' || updatedForm.region === '') {
+      Alert.alert('필수 사항을 모두 입력해주세요')
+    } else if (updatedForm.picture === undefined) {
+      Alert.alert('프로필 사진을 등록해주세요.')
+    } else if (!updatedForm.link.startsWith('https')) {
+      Alert.alert('오픈채팅방 링크를 제대로 입력해주세요')
+    } else if (form.field.length < 1) {
+      Alert.alert('경력을 최소 1개 작성해주세요')
+    } else { // 필수 사항 모두 입력되었을 경우 
+      const accessToken = await getAccessToken();
+      const headers = {
+        Authorization: `Bearer ${accessToken}`
+      };
+      await putUserData(); // 닉네임, 소개글 업데이트
+      // 아래는 초기 값과 비교하여 변경된 값만 업데이트하기 위한 변수
+      const linkChanged = JSON.stringify(memorizedForm.current?.link) !== JSON.stringify(updatedForm.link);
+      const regionChanged = JSON.stringify(memorizedForm.current?.region) !== JSON.stringify(updatedForm.region);
+      // 변경된 항목만 포함하는 params 객체 생성
+      const params: Partial<{ reformer_link: string; reformer_area: string }> = {};
+      if (linkChanged) params.reformer_link = updatedForm.link;
+      if (regionChanged) params.reformer_area = updatedForm.region;
+      if (linkChanged || regionChanged) {
+        try {
+          const response = await request.put(`/api/user/reformer`, params, headers);
+          if (response && response.status === 200) {
+            console.log('지역, 업데이트 성공:', response.data);
+            navigation.goBack();
+          } else {
+            Alert.alert('지역, 링크 업데이트 실패');
+            console.log(response);
+          }
+        } catch (error) {
+          console.error("Error updating reformer data:", error);
+          Alert.alert('업데이트 중 오류가 발생했습니다.');
+        }
+      } else { console.log('지역, 링크 변동 없음'); }
+      // 아래는 필드 확인해서 타입에 따라 uuid 겟하고 그걸로 delete하고 POST 요청하는 코드
+      await handleProfileUpdate();
+    }
+  }
+
   const handleSubmit = async () => {
     const updatedForm = { ...form }; // form을 복사하여 사용
     if (updatedForm.nickname === '' || updatedForm.link === '' || updatedForm.region === '') {
       Alert.alert('필수 사항을 모두 입력해주세요')
+    } else if (updatedForm.picture === undefined) {
+      Alert.alert('프로필 사진을 등록해주세요.')
     } else if (!updatedForm.link.startsWith('https')) {
       Alert.alert('오픈채팅방 링크를 제대로 입력해주세요')
     } else if (form.field.length < 1) {
@@ -241,6 +682,7 @@ export default function ReformCareer({ form, setForm }: ReformProps) {
         freelancer: updatedForm.freelancer,
       };
       try {
+        // 링크, 지역, 학력 post
         console.log(params);
         const response = await request.post(`/api/user/reformer`, params, headers);
         if (response?.status === 201) {
@@ -274,30 +716,186 @@ export default function ReformCareer({ form, setForm }: ReformProps) {
         console.error(err);
       }
       // 이 아래는 프로필 이미지 등록 
-      const headers_ = {
-        Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'multipart/form-data', // multipart/form-data 설정
-      };
-      const formData = new FormData();
-      formData.append('profile_image', {
-        uri: form.picture?.uri, // 파일의 URI
-        type: 'image/jpeg', // 이미지 형식 (예: 'image/jpeg')
-        name: form.picture?.fileName || 'profile.jpg', // 파일 이름
-      });
-      try {
-        const response = await request.post(`/api/user/profile-image`, formData, headers_)
-        if (response && response.status === 201) {
-          console.log(formData, '프로필 이미지 등록 성공')
-        } else {
-          console.log('이미지 업로드 실패');
-          console.log(response);
-        }
-      }
-      catch (err) {
-        console.error(err)
-      }
+      await uploadProfileImage();
     }
   };
+
+  const uploadProfileImage = async () => { // 이미지 새롭게 등록, 수정 모두 같음 
+    const accessToken = await getAccessToken();
+    const headers_ = {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'multipart/form-data', // multipart/form-data 설정
+    };
+    const formData = new FormData();
+    formData.append('profile_image', {
+      uri: form.picture?.uri, // 파일의 URI
+      type: 'image/jpeg', // 이미지 형식 (예: 'image/jpeg')
+      name: form.picture?.fileName || 'profile.jpg', // 파일 이름
+    });
+    try {
+      const response = await request.post(`/api/user/profile-image`, formData, headers_)
+      if (response && response.status === 201) {
+        console.log(formData, '프로필 이미지 등록 성공')
+        if (fix) {
+          Alert.alert(
+            "프로필 수정이 완료되었습니다.",
+            "",
+            [
+              { text: "확인", onPress: () => { navigation.goBack(); } }
+            ]
+          );
+        }
+      } else {
+        console.log('이미지 업로드 실패');
+        console.log(response);
+      }
+    }
+    catch (err) {
+      console.error(err)
+    }
+  }
+
+  useEffect(() => { // 수정하려고 들어왔을때 패치 
+    if (fix) {
+      waitFetch()
+      console.log('리폼러 데이터 패치');
+    };
+  }, []);
+
+  const waitFetch = async () => {
+    await fetchLink();
+    await fetchIntro();
+    await fetchImage();
+  }
+
+  const fetchImage = async () => {
+    const accessToken = await getAccessToken();
+    const headers = {
+      Authorization: `Bearer ${accessToken}`
+    };
+    try { //이미지 가져오는 로직 
+      const response = await request.get(`/api/user`, {}, headers);
+      const encodedUrl = encodeURI(response.data.profile_image_url);
+      const decodedUri = decodeURIComponent(encodedUrl);
+      const profileImage: PhotoType = {
+        fileName: response.data.profile_image_url ? 'profile.jpg' : undefined,
+        width: undefined, // width는 알 수 없으므로 undefined로 설정
+        height: undefined, // height는 알 수 없으므로 undefined로 설정
+        uri:
+          decodedUri ||
+          'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
+      };
+      if (response && response.status === 200) {
+        console.log('이미지 패치:', profileImage);
+        setForm(prev => {
+          return { ...prev, picture: profileImage }
+        })
+      } else {
+        console.log('Failed to fetch user data:', response);
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  }
+
+  const fetchIntro = async () => {
+    const accessToken = await getAccessToken();
+    const headers = {
+      Authorization: `Bearer ${accessToken}`
+    };
+    try {
+      const response = await request.get(`/api/user`, {}, headers);
+      if (response && response.status === 200) {
+        setForm(prev => {
+          return { ...prev, introduce: response.data.introduce }
+        })
+        console.log('패치된 데이터:', form);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  const fetchLink = async () => {
+    const accessToken = await getAccessToken();
+    const headers = {
+      Authorization: `Bearer ${accessToken}`
+    };
+    try { // 링크, 지역
+      console.log('리폼러 데이터 가져오기');
+      const response = await request.get(`/api/user/reformer`, {}, headers);
+      if (response && response.status === 200) {
+        const data = response.data;
+        // 각 항목을 form.field 형식에 맞게 변환하여 추가
+        const newFields: any[] = [];
+        // 학력 데이터 추가
+        if (data.education) {
+          data.education.forEach((edu: any) => {
+            newFields.push({
+              name: edu.school,
+              type: "학력",
+              major: edu.major,
+              status: edu.academic_status,
+            });
+          });
+        }
+        // 자격증 데이터 추가
+        if (data.certification) {
+          data.certification.forEach((cert: any) => {
+            newFields.push({
+              name: cert.name,
+              type: "자격증",
+              host: cert.issuing_authority,
+            });
+          });
+        }
+        // 공모전 데이터 추가
+        if (data.awards) {
+          data.awards.forEach((award: any) => {
+            newFields.push({
+              name: award.competition,
+              type: "공모전",
+              content: award.prize,
+            });
+          });
+        }
+        // 실무 경험 데이터 추가
+        if (data.career) {
+          data.career.forEach((career: any) => {
+            newFields.push({
+              name: career.company_name,
+              type: "실무 경험",
+              team: career.department,
+              period: career.period,
+            });
+          });
+        }
+        // 프리랜서 프로젝트 추가
+        if (data.freelancer) {
+          data.freelancer.forEach((project: any) => {
+            newFields.push({
+              name: project.project_name,
+              type: "기타 (개인 포트폴리오, 외주 등)",
+              content: project.description,
+            });
+          });
+        }
+        // 기존 form.field에 새로운 데이터 추가
+        setForm(prevForm => ({
+          ...prevForm,
+          nickname: data.nickname || prevForm.nickname,
+          link: data.reformer_link || prevForm.link,
+          region: data.reformer_area || prevForm.region,
+          field: [...prevForm.field, ...newFields], // 기존 field에 newFields 추가
+        }));
+      } else {
+        console.log(response);
+        console.log('리폼러 데이터 패치 실패')
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -306,7 +904,7 @@ export default function ReformCareer({ form, setForm }: ReformProps) {
           <Subtitle16B>경력</Subtitle16B>
           <Subtitle16B style={{ color: PURPLE }}>{' *'}</Subtitle16B>
         </View>
-        {form.field.length < 3 && ( // 개수 3개 미만일 때만 추가버튼 노출 
+        {form.field != undefined && form.field.length < 3 && ( // 개수 3개 미만일 때만 추가버튼 노출 
           <AddTouchable onPress={handleAddCareer}>
             <PlusIcon color={GRAY} />
           </AddTouchable>
@@ -354,11 +952,20 @@ export default function ReformCareer({ form, setForm }: ReformProps) {
 
       <View style={{ marginHorizontal: width * 0.04 }}>
         <BottomButton
-          value="다음"
+          value={!fix ? '다음' : '완료'}
           pressed={false}
-          onPress={handleSubmit}
+          onPress={!fix ? handleSubmit : handleFix}
           style={{ width: '90%', alignSelf: 'center', marginBottom: 10 }}
         />
+        {fix &&
+          <BottomButton
+            value="check"
+            pressed={false}
+            onPress={() => {
+              console.log(form);
+            }}
+            style={{ width: '90%', alignSelf: 'center', marginBottom: 10 }}
+          />}
       </View>
       {careerIndex >= 0 && (
         <CareerModal

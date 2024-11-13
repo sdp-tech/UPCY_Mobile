@@ -53,13 +53,17 @@ export default function ServiceCategoryModal({
     const snapPoints = useMemo(() => ['85%'], []);
     const { width } = Dimensions.get('screen');
 
-    const regionList = [
+    const categoryList = [
+        '상의',
+        '하의',
+        '가방',
         '모자',
-        '장갑',
-        '지갑',
-        '목도리',
-        '키링',
-        '기타(외주)',
+        '아우터',
+        '잡화',
+        '쥬얼리',
+        '모바일 액세서리',
+        '반려동물 소품',
+        '기타',
     ];
 
     // callbacks
@@ -105,14 +109,14 @@ export default function ServiceCategoryModal({
                 <View style={styles.selectItem}>
                     <Title20B>카테고리를 선택해 주세요.</Title20B>
                 </View>
-                <BottomSheetFlatList data={regionList} renderItem={renderItem} />
+                <BottomSheetFlatList data={categoryList} renderItem={renderItem} />
                 <View style={{ marginHorizontal: width * 0.04 }}>
                     <BottomButton
                         value="적용"
                         pressed={false}
                         onPress={handlePresentModalClose}
                         style={{
-                            width: '75%',
+                            width: '90%',
                             alignSelf: 'center',
                             marginTop: 10,
                             marginBottom: 30,
