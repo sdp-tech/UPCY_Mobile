@@ -1,10 +1,11 @@
 import {
-  // Alert,
+  Alert,
   Dimensions,
   FlatList,
   Image,
   SafeAreaView,
   ScrollView,
+  Text,
   View,
 } from 'react-native';
 import {
@@ -13,6 +14,7 @@ import {
 } from '@react-navigation/stack';
 import {
   getAccessToken,
+  getRefreshToken,
   removeAccessToken,
   removeNickname,
   removeRefreshToken,
@@ -31,14 +33,14 @@ import Login from '../../../components/Auth/Login';
 
 import Request from '../../../common/requests';
 import OrderPage from '../../../components/Home/Order/OrderPage';
-import { useFocusEffect } from '@react-navigation/native';
+import { CommonActions, useFocusEffect } from '@react-navigation/native';
 import { print } from '@gorhom/bottom-sheet/lib/typescript/utilities/logger';
 import { TabProps } from '../../../../App';
 import { PhotoType } from '../../../hooks/useImagePicker';
 import { MyPageStackParams, MypageStackProps } from '../../../pages/MyPage';
+import DeleteModal from '../DeleteModal';
 
 export const UpcyerMyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
-  const { width, height } = Dimensions.get('screen');
   const ProfileSection = ({
     nickname,
     backgroundphoto,
@@ -60,7 +62,7 @@ export const UpcyerMyPageMainScreen = ({ navigation, route }: MypageStackProps) 
           leftButton="CustomBack"
           onPressLeft={() => { }}
           rightButton="Fix"
-          onPressRight={editProfile}
+          onPressRight={openModal}
         />
         <View>
           <View style={{ width: width, height: height * 0.11, backgroundColor: '#E9EBF8' }} />
@@ -95,11 +97,14 @@ export const UpcyerMyPageMainScreen = ({ navigation, route }: MypageStackProps) 
                     uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
                   } // 기본 이미지 URL 사용
               }
+              alt={profile_image.fileName}
             />
           )}
         </View>
         <Title20B style={{ marginTop: height * 0.06 }}>{nickname}</Title20B>
-
+        <View style={{ backgroundColor: "#EAEAEA", borderRadius: 20, paddingVertical: height * 0.005, paddingHorizontal: height * 0.012, marginTop: height * 0.02 }}>
+          <Text style={{ color: "#929292", fontSize: width * 0.03, fontWeight: "600" }}>업씨러</Text>
+        </View>
       </View>
     );
   };
@@ -114,6 +119,7 @@ export const UpcyerMyPageMainScreen = ({ navigation, route }: MypageStackProps) 
       route.params?.profile_image ||
       'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
     introduce: route.params?.introduce || '',
+    role: 'customer',
   });
 
   useEffect(() => {
@@ -151,6 +157,7 @@ export const UpcyerMyPageMainScreen = ({ navigation, route }: MypageStackProps) 
           introduce:
             response.data.introduce ||
             '나는야 업씨러 이하늘 환경을 사랑하지요 눈누난나',
+          role: 'customer',
         });
         return response.data;
       } else {
@@ -172,10 +179,6 @@ export const UpcyerMyPageMainScreen = ({ navigation, route }: MypageStackProps) 
     }, [isLogin]),
   );
 
-  // const goReformRegister = () => {
-  //   navigation.navigate('ReformProfile');
-  // };
-
   const [routes] = useState([
     { key: 'order', title: '주문내역' },
     // { key: 'like', title: '좋아요' },
@@ -183,9 +186,118 @@ export const UpcyerMyPageMainScreen = ({ navigation, route }: MypageStackProps) 
   const flatListRef = useRef<FlatList>(null);
   const scrollRef = useRef<ScrollView | null>(null);
 
+  const [modalVisible, setModalVisible] = useState(false);
+  const openModal = () => setModalVisible(true);
+  const closeModal = () => setModalVisible(false);
+
+  const handleEdit = () => {
+    closeModal();
+    navigation.navigate('FixMyPage', { userInfo })
+    console.log('수정 페이지로 이동')
+  }
+
+  const handleLogout = () => {
+    closeModal();
+    Alert.alert(
+      "로그아웃 하시겠습니까?",
+      "",
+      [
+        { text: "아니오", onPress: () => { }, style: "destructive" },
+        { text: "네", onPress: Logout }
+      ],
+      { cancelable: false }
+    );
+  };
+
+  const Logout = async () => {
+    const accessToken = await getAccessToken();
+    const refreshToken = await getRefreshToken();
+    const params = {
+      refresh: refreshToken
+    }
+    const headers = {
+      Authorization: `Bearer ${accessToken}`
+    }
+    try {
+      const response = await request.post(`/api/user/logout`, params, headers)
+      if (response && response.status === 200) {
+        console.log('로그아웃 합니다.')
+        removeAccessToken();
+        removeRefreshToken();
+        setLogin(false);
+        console.log('AccessToken: ', { accessToken }, '| RefreshToken: ', { refreshToken });
+        navigation.dispatch(
+          CommonActions.navigate({
+            name: "Main",
+            params: {
+              screen: "홈", // MainTabNavigator의 홈 화면으로 이동
+            },
+          })
+        );
+      } else {
+        console.log(response);
+      }
+    }
+    catch (err) {
+      console.error(err)
+    }
+  };
+
+  const handleDeleteAccount = (password: string) => {
+    closeModal();
+    Alert.alert(
+      "정말로 계정을 삭제 하시겠습니까? 되돌릴 수 없습니다.",
+      "",
+      [
+        { text: "아니오", onPress: () => { }, style: "destructive" },
+        { text: "네", onPress: () => handleDeleteAccountConfirm(password) } // 별도의 함수 호출
+      ],
+      { cancelable: false }
+    );
+  };
+
+  // 비동기 작업을 수행하는 함수
+  const handleDeleteAccountConfirm = async (password: string) => {
+    try {
+      await DeleteAccount(password);
+    } catch (error) {
+      console.error('계정 삭제 실패:', error);
+    }
+  };
+
+  const DeleteAccount = async (password: string) => {
+    const accessToken = await getAccessToken();
+    const refreshToken = await getRefreshToken();
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+      RefreshToken: refreshToken,
+    };
+    console.log(password);
+    try {
+      const response = await request.del(`/api/user`, { password: password }, headers);
+      if (response && response.status === 200) {
+        removeAccessToken();
+        removeRefreshToken();
+        setLogin(false);
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: 'Main', params: { screen: 'UPCY' } }],
+          })
+        );
+        console.log('계정 삭제 성공');
+      } else {
+        console.log('계정 삭제 실패:', response.data);
+        Alert.alert('계정 삭제 실패', '비밀번호를 다시 확인해주세요.');
+      }
+    } catch (error) {
+      console.error('Error deleting account:', error);
+      Alert.alert('오류', '계정 삭제에 실패했습니다.');
+    }
+  };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      {/* 탭은 수정 필요 */}
       <Tabs.Container
         renderHeader={props => (
           <View>
@@ -234,6 +346,13 @@ export const UpcyerMyPageMainScreen = ({ navigation, route }: MypageStackProps) 
           </Tabs.Tab>)
         ))}
       </Tabs.Container>
+      <DeleteModal
+        visible={modalVisible}
+        onClose={closeModal}
+        onEdit={handleEdit}
+        onLogout={handleLogout}
+        onDeleteAccount={handleDeleteAccount}
+      />
     </SafeAreaView>
   );
 };

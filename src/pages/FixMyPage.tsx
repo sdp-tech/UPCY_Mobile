@@ -2,7 +2,7 @@ import { StackScreenProps } from "@react-navigation/stack";
 import { HomeStackParams } from "./Home";
 import { PhotoType, useImagePicker } from "../hooks/useImagePicker";
 import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
-import { Alert, Button, Dimensions, Image, TouchableOpacity, View } from "react-native";
+import { Alert, Button, Dimensions, Image, Text, TouchableOpacity, View } from "react-native";
 import PencilIcon from "../assets/common/Pencil.svg"
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomScrollView from "../common/CustomScrollView";
@@ -12,6 +12,14 @@ import { LoginContext } from "../common/Context";
 import { MyPageStackParams } from "./MyPage";
 import DetailScreenHeader from "../components/Home/components/DetailScreenHeader";
 import Request from "../common/requests";
+import BottomButton from "../common/BottomButton";
+import { Body16B } from "../styles/GlobalText";
+import { PURPLE } from "../styles/GlobalColor";
+import SelectBox from "../common/SelectBox";
+import { RegionType } from "../types/UserTypes";
+import RegionModal from "../components/Auth/RegionModal";
+import Reformer, { ReformProfileType } from "../components/Auth/Reformer/Reformer";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 export interface MypageProps extends ProfileProps {
     route: any;
     navigation: any;
@@ -28,6 +36,7 @@ type ProfileType = {
     profile_image: undefined | PhotoType;
     nickname: string;
     introduce: string;
+    role: string;
 };
 
 function ProfilePic({ form, setForm }: ProfileProps) {
@@ -103,9 +112,26 @@ const FixMyPage = ({ navigation, route }: FixMyPageProps) => {
     const request = Request();
     const userInfo = route.params.userInfo;
     const [form, setForm] = useState<ProfileType>({
-        profile_image: userInfo.profile_image,
-        nickname: userInfo.nickname,
-        introduce: userInfo.introduce,
+        profile_image: userInfo?.profile_image,
+        nickname: userInfo?.nickname,
+        introduce: userInfo?.introduce,
+        role: 'customer',
+    });
+
+    const reformerInfo = route.params.reformerInfo;
+    const [reformerForm, setReformerForm] = useState<ReformProfileType>({
+        role: 'reformer',
+        picture: reformerInfo?.picture,
+        nickname: reformerInfo?.nickname,
+        introduce: reformerInfo?.introduce,
+        link: reformerInfo?.link,
+        region: reformerInfo?.region,
+        education: reformerInfo?.education,
+        career: reformerInfo?.career,
+        awards: reformerInfo?.awards,
+        certification: reformerInfo?.certification,
+        freelancer: reformerInfo?.freelancer,
+        field: reformerInfo?.field,
     });
 
     const UpdateImage = async () => {
@@ -132,7 +158,7 @@ const FixMyPage = ({ navigation, route }: FixMyPageProps) => {
         catch (err) {
             console.error(err)
         }
-    }
+    };
 
     const UpdateUser = async () => { // 유저 프로필 업데이트 
         const accessToken = await getAccessToken();
@@ -143,12 +169,18 @@ const FixMyPage = ({ navigation, route }: FixMyPageProps) => {
             nickname: form.nickname,
             introduce: form.introduce,
         }
-        try {
+        try { // 닉네임, 이미지 업데이트 로직 
             const response = await request.put(`/api/user`, data, headers);
             if (response && response.status === 200) {
-                await UpdateImage(); // 유저 프로필 이미지 업데이트 
-                console.log('유저 데이터 업데이트 성공', response.data);
-                navigation.navigate({ name: 'MyPage', params: { userInfo: userInfo }, merge: true });
+                await UpdateImage(); // 업씨러 프로필 이미지 업데이트 
+                console.log('업씨러 데이터 업데이트 성공', response.data);
+                Alert.alert(
+                    "프로필 수정이 완료되었습니다.",
+                    "",
+                    [
+                        { text: "확인", onPress: () => { navigation.navigate({ name: 'MyPage', params: { userInfo: userInfo }, merge: true }); } }
+                    ]
+                );
             }
             else {
                 console.log(response);
@@ -156,57 +188,34 @@ const FixMyPage = ({ navigation, route }: FixMyPageProps) => {
         } catch (err) {
             console.error(err);
         }
-    }
+        if (reformerInfo?.role === 'reformer') {
+            const params = {
+                reformer_link: reformerForm.link,
+                reformer_area: reformerForm.region,
+            }
+            try { // 카톡 링크, 지역 업데이트 로직 
+                const response = await request.put(`/api/user/reformer`, params, headers);
+                if (response && response.status === 200) {
+                    console.log('링크, 지역 업데이트 성공');
+                    console.log(params);
 
-    const Logout = async () => {
-        const accessToken = await getAccessToken();
-        const refreshToken = await getRefreshToken();
-        const params = {
-            refresh: refreshToken
-        }
-        const headers = {
-            Authorization: `Bearer ${accessToken}`
-        }
-        try {
-            const response = await request.post(`/api/user/logout`, params, headers)
-            if (response && response.status === 200) {
-                console.log('로그아웃 합니다.')
-                removeAccessToken();
-                removeRefreshToken();
-                setLogin(false);
-                console.log('AccessToken: ', { accessToken }, '| RefreshToken: ', { refreshToken });
-                navigation.getParent()?.reset({
-                    index: 0, // 스택 초기화 
-                    routes: [{ name: 'Home' }],
-                });
-            } else {
-                console.log(response);
+                } else {
+                    console.log(response);
+                }
+            } catch (err) {
+                console.error(err);
+
             }
         }
-        catch (err) {
-            console.error(err)
-        }
-    };
-
-    function handleLogout(): () => void {
-        return () => {
-            Alert.alert(
-                "로그아웃 하시겠습니까?",
-                "",
-                [
-                    { text: "아니오", onPress: () => { }, style: "destructive" },
-                    { text: "네", onPress: Logout }
-                ],
-                { cancelable: false }
-            );
-        }
+    }
+    if (userInfo != null) { // 업씨러의 경우 
+        useEffect(() => {
+            userInfo.nickname = form.nickname;
+            userInfo.introduce = form.introduce;
+            userInfo.profile_image = form.profile_image;
+        }, [form]);
     }
 
-    useEffect(() => {
-        userInfo.nickname = form.nickname;
-        userInfo.introduce = form.introduce;
-        userInfo.profile_image = form.profile_image;
-    }, [form]);
 
     function handleBackPress(): () => void {
         return () => {
@@ -224,52 +233,71 @@ const FixMyPage = ({ navigation, route }: FixMyPageProps) => {
 
     const { width } = Dimensions.get('screen');
     return (
-        <SafeAreaView style={{ flex: 1 }}>
-            <DetailScreenHeader
-                title='프로필 수정'
-                leftButton="LeftArrow"
-                rightButton="None"
-                onPressLeft={handleBackPress()}
-                onPressRight={handleBackPress()}
-            />
-            <View>
-                <CustomScrollView
-                    additionalStyles={{
-                        minHeight: 650,
-                        marginHorizontal: width * 0.04,
-                    }}
-                    bounces={false} overScrollMode="never">
+
+        <View style={{ flex: 1 }}>
+
+            {userInfo?.role === 'customer' &&
+                <SafeAreaView style={{ flex: 1 }}>
+                    <DetailScreenHeader
+                        title='프로필 수정'
+                        leftButton="LeftArrow"
+                        rightButton="None"
+                        onPressLeft={handleBackPress()}
+                        onPressRight={() => { }}
+                    />
+                    <CustomScrollView
+                        additionalStyles={{
+                            minHeight: 650,
+                            marginHorizontal: width * 0.04,
+                        }}
+                        bounces={false} overScrollMode="never">
+                        <View style={{ flexGrow: 1 }}>
+                            <ProfilePic form={form} setForm={setForm} />
+                            <InputView
+                                title="닉네임"
+                                value={form.nickname}
+                                setValue={v => {
+                                    setForm(prev => {
+                                        return { ...prev, nickname: v };
+                                    });
+                                }}
+                                placeholder={userInfo.nickname}
+                            />
+                            {/* <InputView
+                                title="소개글"
+                                value={form.introduce}
+                                setValue={v => {
+                                    setForm(prev => {
+                                        return { ...prev, introduce: v };
+                                    });
+                                }}
+                                long={true}
+                                placeholder={userInfo.introduce}
+                            /> */}
+                        </View>
+
+                        <View style={{ alignItems: 'center' }}>
+                            <BottomButton value={"저장하기"} pressed={false} onPress={UpdateUser} style={{ width: '90%' }} />
+                        </View>
+                    </CustomScrollView>
+                </SafeAreaView>
+            }
+            {reformerInfo?.role === 'reformer' &&
+                <SafeAreaView style={{ flex: 1 }}>
+                    <DetailScreenHeader
+                        title='프로필 수정'
+                        leftButton="LeftArrow"
+                        rightButton="None"
+                        onPressLeft={handleBackPress()}
+                        onPressRight={() => { }}
+                    />
                     <View style={{ flexGrow: 1 }}>
-                        <ProfilePic form={form} setForm={setForm} />
-                        <InputView
-                            title="닉네임"
-                            value={form.nickname}
-                            setValue={v => {
-                                setForm(prev => {
-                                    return { ...prev, nickname: v };
-                                });
-                            }}
-                            placeholder={userInfo.nickname}
-                        />
-                        <InputView
-                            title="소개글"
-                            value={form.introduce}
-                            setValue={v => {
-                                setForm(prev => {
-                                    return { ...prev, introduce: v };
-                                });
-                            }}
-                            long={true}
-                            placeholder={userInfo.introduce}
-                        />
+                        <Reformer fix={true} />
                     </View>
-                    <View style={{ flexDirection: "row", flexGrow: 1, alignSelf: "center" }}>
-                        <Button title='저장하기' onPress={UpdateUser} />
-                        <Button title="로그아웃" onPress={handleLogout()} color='red' />
-                    </View>
-                </CustomScrollView>
-            </View>
-        </SafeAreaView>
+                </SafeAreaView>
+            }
+        </View>
+
     );
 }
 

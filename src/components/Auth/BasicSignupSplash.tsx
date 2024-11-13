@@ -1,6 +1,6 @@
 import { SafeAreaView, View } from 'react-native';
 import { GREEN, PURPLE } from '../../styles/GlobalColor';
-import CheckIcon from '../../assets/common/CheckIcon.svg';
+import CheckIcon from '../../assets/common/CheckIcon2.svg';
 import { Body14B, Title20B } from '../../styles/GlobalText';
 
 export default function BasicSignupSplash() {
@@ -13,7 +13,7 @@ export default function BasicSignupSplash() {
           가입이 완료되었습니다.
         </Title20B>
         <Body14B style={{ color: GREEN }}>
-          UPCY와 함께 지속가능한 옷장을 만들어봐요!
+          업씨와 함께 지속가능한 옷장을 만들어봐요!
         </Body14B>
       </View>
     </SafeAreaView>
