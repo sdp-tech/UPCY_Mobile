@@ -44,6 +44,7 @@ interface ServiceCardProps {
   service_period?: number;
   service_materials?: string[];
   service_options?: ServiceDetailOption[];
+  temporary?: boolean; //TODO: 수정 필요
 }
 
 export type ServiceResponseType = {
@@ -147,6 +148,7 @@ const EntireServiceMarket = ({
         optionContent: option.option_content,
         optionPrice: option.option_price,
       })) as ServiceDetailOption[],
+      temporary: service.temporary,
     })) as ServiceCardProps[];
   };
 
@@ -202,22 +204,25 @@ const EntireServiceMarket = ({
       />
       <View style={{ backgroundColor: LIGHTGRAY }}>
         {serviceCardData.length > 0 ? (
-          serviceCardData.map(card => (
-            <ServiceCard
-              key={card.service_uuid}
-              name={card.name}
-              basic_price={card.basic_price}
-              max_price={card.max_price}
-              service_styles={card.service_styles}
-              imageUri={card.imageUri}
-              service_title={card.service_title}
-              service_content={card.service_content}
-              market_uuid={card.market_uuid}
-              service_uuid={card.service_uuid}
-              service_period={card.service_period}
-              navigation={navigation}
-            />
-          ))
+          serviceCardData.map(
+            card =>
+              !card.temporary && (
+                <ServiceCard
+                  key={card.service_uuid}
+                  name={card.name}
+                  basic_price={card.basic_price}
+                  max_price={card.max_price}
+                  service_styles={card.service_styles}
+                  imageUri={card.imageUri}
+                  service_title={card.service_title}
+                  service_content={card.service_content}
+                  market_uuid={card.market_uuid}
+                  service_uuid={card.service_uuid}
+                  service_period={card.service_period}
+                  navigation={navigation}
+                />
+              ),
+          )
         ) : (
           <Text>선택된 스타일의 서비스가 없습니다.</Text>
         )}
