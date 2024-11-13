@@ -6,7 +6,7 @@ import {
   View,
   StyleSheet,
   ImageBackground,
-  FlatList,
+  // FlatList,
   ScrollView,
 } from 'react-native';
 import {
@@ -26,6 +26,7 @@ import DetailScreenHeader from '../components/DetailScreenHeader';
 // import ReviewPage from './ReviewPage';
 import DetailBox2 from './DetailBox2';
 import { ServiceDetailOption } from './Service';
+import Flag from '../../../assets/common/Flag.svg';
 
 const { width, height } = Dimensions.get('window');
 
@@ -84,6 +85,7 @@ const ServiceDetailPageScreen = ({
     serviceOptions,
     marketUuid,
   }: ServiceDetailPageProps = route.params;
+
   return (
     <DetailPageStack.Navigator
       screenOptions={() => ({
@@ -140,6 +142,8 @@ const ProfileSection = ({
   const [like, setLike] = useState<boolean>(false);
   const { hideBottomBar, showBottomBar } = useBottomBar();
 
+  const [reportButtonPressed, setReportButtonPressed] = useState(false);
+
   useEffect(() => {
     hideBottomBar();
     return () => showBottomBar();
@@ -152,8 +156,15 @@ const ProfileSection = ({
         rightButton="Report"
         onPressLeft={() => {}}
         onPressRight={() => {}}
+        reportButtonPressed={reportButtonPressed}
+        setReportButtonPressed={setReportButtonPressed}
       />
-      <Banner backgroundImageUri={backgroundImageUri} tags={tags} />
+      <Banner
+        backgroundImageUri={backgroundImageUri}
+        tags={tags}
+        reportButtonPressed={reportButtonPressed}
+        setReportButtonPressed={setReportButtonPressed}
+      />
       <Profile
         reformerName={reformerName}
         reviewNum={reviewNum}
@@ -174,13 +185,25 @@ const ProfileSection = ({
 type BannerProps = {
   backgroundImageUri: string;
   tags: string[];
+  reportButtonPressed: boolean;
+  setReportButtonPressed: (reportButtonPressed: boolean) => void;
 };
 
-const Banner = ({ backgroundImageUri, tags }: BannerProps) => {
+const Banner = ({
+  backgroundImageUri,
+  tags,
+  reportButtonPressed,
+  setReportButtonPressed,
+}: BannerProps) => {
+  const onPressReport = () => {
+    setReportButtonPressed(false);
+    // TODO: connect with report relevant api here
+  };
+
   return (
     <>
       <ImageBackground // 임시 이미지
-        style={{ width: '100%', height: width * 0.5 }}
+        style={{ width: '100%', height: width * 0.5, position: 'relative' }}
         imageStyle={{ height: width * 0.5 }}
         source={{
           uri:
@@ -189,6 +212,14 @@ const Banner = ({ backgroundImageUri, tags }: BannerProps) => {
           // backgroundImageUri가 없는 경우 기본 이미지
         }}
       />
+      {reportButtonPressed && (
+        <TouchableOpacity style={styles.reportWindow} onPress={onPressReport}>
+          <View style={{ justifyContent: 'center' }}>
+            <Flag />
+          </View>
+          <Text style={TextStyles.reportText}>신고</Text>
+        </TouchableOpacity>
+      )}
       <View style={styles.tagContainer}>
         {tags?.length > 0 &&
           tags.map((tag, index) => {
@@ -300,8 +331,8 @@ const ServiceDetailPageMainScreen = ({
     marketUuid,
   } = route.params;
 
-  const [index, setIndex] = useState<number>(0);
-  const optionPageRef = useRef<FlatList<any>>(null);
+  // const [index, setIndex] = useState<number>(0);
+  // const optionPageRef = useRef<FlatList<any>>(null);
 
   // const flatListRef = useRef<FlatList>(null);
 
@@ -448,6 +479,13 @@ const TextStyles = StyleSheet.create({
     fontWeight: '700',
     color: '#222222',
   },
+  reportText: {
+    color: '#000',
+    fontSize: 16,
+    fontWeight: '600',
+    lineHeight: 48,
+    marginLeft: 10,
+  },
 });
 
 const styles = StyleSheet.create({
@@ -492,6 +530,19 @@ const styles = StyleSheet.create({
     right: 0,
     height: 15,
     backgroundColor: '#fff',
+  },
+  reportWindow: {
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    width: 186,
+    height: 48,
+    borderRadius: 8,
+    zIndex: 1000,
+    position: 'absolute',
+    top: 40,
+    right: 0,
+    paddingHorizontal: 13,
+    display: 'flex',
+    flexDirection: 'row',
   },
 });
 
