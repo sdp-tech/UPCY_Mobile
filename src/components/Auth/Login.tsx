@@ -95,6 +95,7 @@ export const processLoginResponse2 = async ( // 회원가입시에 사용하는 
       }
     } catch (err) {
       console.log(err);
+      console.log('유저롤 설정 오류');
     }
   } else if (response_.status == 400) {
     Alert.alert(

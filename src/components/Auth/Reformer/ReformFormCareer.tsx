@@ -826,6 +826,7 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
       const response = await request.get(`/api/user/reformer`, {}, headers);
       if (response && response.status === 200) {
         const data = response.data;
+        console.log('테스트', data);
         // 각 항목을 form.field 형식에 맞게 변환하여 추가
         const newFields: any[] = [];
         // 학력 데이터 추가

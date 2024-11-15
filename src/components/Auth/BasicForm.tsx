@@ -32,6 +32,7 @@ import { CommonActions } from '@react-navigation/native';
 import { getAccessToken, setAccessToken, setRefreshToken } from '../../common/storage';
 import { processLoginResponse2 } from './Login';
 import { PhotoType } from '../../hooks/useImagePicker';
+import TermsofServiceModal from './TermsofServiceModal';
 
 interface Agreement {
   a: boolean;
@@ -55,6 +56,9 @@ interface CheckBtnProps {
   checked: boolean;
   onPress: () => void;
 }
+interface TermsModalProps {
+  onPress: () => void;
+}
 
 const SectionView = styled.View`
   position: relative;
@@ -68,15 +72,24 @@ const TermsView = styled(SectionView)`
   align-items: center;
 `;
 
-// 페이지 들어올 때, is_reformer인지 is_consumer인지 받아오는거 해야함.
-// 그 이후, 그에 따라서 '다음' 눌렀을 때에 이동하는 페이지가 달라져야...
-
 function CheckButton({ checked, onPress }: CheckBtnProps) {
   return (
     <View style={{ marginLeft: 'auto', marginRight: 10 }}>
       <TouchableOpacity onPress={onPress}>
         <CheckIcon color={checked ? '#612FEF' : '#BDBDBD'} />
       </TouchableOpacity>
+    </View>
+  );
+}
+
+function TermsofService({ onPress }: TermsModalProps) {
+  return (
+    <View style={{ margin: 4, alignItems: "flex-end", flex: 1, paddingRight: 8 }}>
+      <View>
+        <TouchableOpacity onPress={onPress}>
+          <Text style={{ textDecorationLine: "underline", color: "#BDBDBD", fontSize: 11, fontWeight: "bold" }}>이용약관 보기</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -101,6 +114,7 @@ export default function BasicForm({ navigation, route }: FormProps) {
   });
   const [checkPw, setCheckPw] = useState('');
   const [isModalVisible, setModalVisible] = useState(false); // 리폼러 가입 모달 
+  const [isTermsModalVisible, setTermsModalVisible] = useState(false); // 이용약관 모달 
 
   const request = Request();
   const passwordRegExp = new RegExp(
@@ -177,6 +191,7 @@ export default function BasicForm({ navigation, route }: FormProps) {
       }
     } catch (err) {
       console.log(err);
+      console.log('handleSubmit2 오류');
     }
   };
 
@@ -204,6 +219,7 @@ export default function BasicForm({ navigation, route }: FormProps) {
       }
     } catch (err) {
       console.log(err);
+      console.log('handleSubmit 오류');
     }
   };
 
@@ -347,6 +363,9 @@ export default function BasicForm({ navigation, route }: FormProps) {
               <TermsView>
                 <Caption11M style={{ color: PURPLE }}>(필수){' '}</Caption11M>
                 <Caption11M>서비스 이용약관에 동의합니다.</Caption11M>
+                <TermsofService
+                  onPress={() => setTermsModalVisible(true)}
+                />
                 <CheckButton
                   checked={form.agreement?.b ?? false}
                   onPress={() =>
@@ -438,6 +457,7 @@ export default function BasicForm({ navigation, route }: FormProps) {
           }}
         />
         <SignupCompleteModal visible={isModalVisible} onClose={handleCloseModal} />
+        <TermsofServiceModal visible={isTermsModalVisible} onClose={() => { setTermsModalVisible(false) }} />
       </SafeAreaView>
     </BottomSheetModalProvider>
   );
