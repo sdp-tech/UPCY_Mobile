@@ -1,4 +1,5 @@
 import { Text, StyleSheet, TouchableOpacity } from 'react-native';
+import FilterFunnel from '../../../assets/common/FilterFunnel.svg';
 
 type StyleFilterButtonProps = {
   onPressStyleFilterButton: (isFilterElementOpen: boolean) => void;
@@ -14,6 +15,7 @@ export const StyleFilterButton = ({
         onPressStyleFilterButton(true);
       }}>
       <Text style={TextStyles.text}>스타일</Text>
+      <FilterFunnel width={13} height={13} />
     </TouchableOpacity>
   );
 };
@@ -21,6 +23,7 @@ export const StyleFilterButton = ({
 const styles = StyleSheet.create({
   button: {
     display: 'flex',
+    flexDirection: 'row',
     backgroundColor: '#E9EBF8',
     height: 32,
     paddingHorizontal: 14,
@@ -39,6 +42,6 @@ const TextStyles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '400',
     lineHeight: 15,
-    padding: 10,
+    paddingVertical: 10,
   },
 });

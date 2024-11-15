@@ -1,4 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+// FIXME: 이거 사용
 import {
   View,
   Text,
@@ -9,17 +11,11 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
-import {
-  Title20B,
-  Filter11R,
-  Subtitle18B,
-  Body14R,
-} from '../../../styles/GlobalText';
+import { Title20B, Filter11R, Subtitle18B } from '../../../styles/GlobalText';
 import { LIGHTGRAY } from '../../../styles/GlobalColor';
 // import HeartButton from '../../../common/HeartButton';
 import DetailModal from '../Market/GoodsDetailOptionsModal';
 import { SelectedOptionProps } from '../HomeMain.tsx';
-import { getAccessToken } from '../../../common/storage.js';
 import Request from '../../../common/requests.js';
 import RenderHTML from 'react-native-render-html';
 
@@ -44,6 +40,7 @@ interface ServiceCardProps {
   service_period?: number;
   service_materials?: string[];
   service_options?: ServiceDetailOption[];
+  temporary?: boolean; //TODO: 수정 필요
 }
 
 export type ServiceResponseType = {
@@ -70,12 +67,14 @@ interface ServiceCardComponentProps extends ServiceCardProps {
 type ServiceMarketProps = {
   selectedStylesList: string[];
   selectedFilterOption?: SelectedOptionProps;
+  searchTerm?: string;
   navigation: any;
 };
 
 const EntireServiceMarket = ({
   selectedStylesList,
   selectedFilterOption,
+  searchTerm = '',
   navigation,
 }: ServiceMarketProps) => {
   const [form, setForm] = useState({
@@ -97,13 +96,11 @@ const EntireServiceMarket = ({
   const serviceDescription: string = '옷장 속 옷들의 트렌디한 재탄생';
 
   const fetchData = async () => {
-
     try {
       // API 호출
       const response = await request.get(`/api/market/services`, {}, {});
       if (response && response.status === 200) {
-        const serviceListResults: ServiceResponseType[] =
-          response.data.results;
+        const serviceListResults: ServiceResponseType[] = response.data.results;
         const extractedServiceCardData = extractData(serviceListResults);
         setServiceCardData(extractedServiceCardData);
         console.log('서비스 목록 로드 완료');
@@ -117,7 +114,6 @@ const EntireServiceMarket = ({
       // 로딩 상태 false로 변경
       setLoading(false);
     }
-
   };
 
   const extractData = (rawData: ServiceResponseType[]) => {
@@ -142,6 +138,7 @@ const EntireServiceMarket = ({
         optionContent: option.option_content,
         optionPrice: option.option_price,
       })) as ServiceDetailOption[],
+      temporary: service.temporary,
     })) as ServiceCardProps[];
   };
 
@@ -152,6 +149,38 @@ const EntireServiceMarket = ({
 
   useEffect(() => {
     if (serviceCardData) {
+      // filter by search term
+      if (searchTerm && searchTerm.length > 0) {
+        const filteredData = serviceCardData.filter(card => {
+          const {
+            name,
+            basic_price,
+            max_price,
+            service_styles,
+            service_title,
+            service_content,
+          } = card;
+
+          const searchLower = searchTerm.toLowerCase();
+
+          // Check if any field matches the search term
+          return (
+            (name && name.toLowerCase().includes(searchLower)) ||
+            (basic_price && basic_price.toString().includes(searchLower)) ||
+            (max_price && max_price.toString().includes(searchLower)) ||
+            (service_styles &&
+              service_styles.some(style =>
+                style.toLowerCase().includes(searchLower),
+              )) ||
+            (service_title &&
+              service_title.toLowerCase().includes(searchLower)) ||
+            (service_content &&
+              service_content.toLowerCase().includes(searchLower))
+          );
+        });
+        setServiceCardData(filteredData);
+      }
+      // FIXME
       // filter by selected styles
       // const styleFilteredData = serviceCardData.filter(card => {
       //   card.service_styles?.some(style => selectedStylesList.includes(style));
@@ -166,7 +195,7 @@ const EntireServiceMarket = ({
       }
       // TODO: add more filtering logic here
     }
-  }, [selectedFilterOption, selectedStylesList]);
+  }, [selectedFilterOption, selectedStylesList, searchTerm]);
 
   // 로딩 중일 때 로딩 스피너 표시
   if (loading) {
@@ -197,24 +226,31 @@ const EntireServiceMarket = ({
       />
       <View style={{ backgroundColor: LIGHTGRAY }}>
         {serviceCardData.length > 0 ? (
-          serviceCardData.map(card => (
-            <ServiceCard
-              key={card.service_uuid}
-              name={card.name}
-              basic_price={card.basic_price}
-              max_price={card.max_price}
-              service_styles={card.service_styles}
-              imageUri={card.imageUri}
-              service_title={card.service_title}
-              service_content={card.service_content}
-              market_uuid={card.market_uuid}
-              service_uuid={card.service_uuid}
-              service_period={card.service_period}
-              navigation={navigation}
-            />
-          ))
+          serviceCardData.map(
+            card =>
+              !card.temporary && (
+                <ServiceCard
+                  key={card.service_uuid}
+                  name={card.name}
+                  basic_price={card.basic_price}
+                  max_price={card.max_price}
+                  service_styles={card.service_styles}
+                  imageUri={card.imageUri}
+                  service_title={card.service_title}
+                  service_content={card.service_content}
+                  market_uuid={card.market_uuid}
+                  service_uuid={card.service_uuid}
+                  service_period={card.service_period}
+                  navigation={navigation}
+                />
+              ),
+          )
         ) : (
-          <Text>선택된 스타일의 서비스가 없습니다.</Text>
+          <View style={styles.centeredContainer}>
+            <Text style={TextStyles.noServiceText}>
+              해당하는 서비스가 없습니다.
+            </Text>
+          </View>
         )}
       </View>
     </ScrollView>
@@ -328,6 +364,11 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     borderRadius: 4,
   },
+  centeredContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 const TextStyles = StyleSheet.create({
@@ -364,6 +405,11 @@ const TextStyles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '400',
     lineHeight: 24,
+  },
+  noServiceText: {
+    fontSize: 16,
+    color: '#000',
+    padding: 10,
   },
 });
 

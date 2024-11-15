@@ -16,6 +16,8 @@ interface HeaderProps {
   onPressRight: () => void;
   saved?: number;
   border?: boolean;
+  reportButtonPressed?: boolean;
+  setReportButtonPressed?: (reportButtonPressed: boolean) => void;
 }
 
 const DetailScreenHeader = ({
@@ -26,6 +28,8 @@ const DetailScreenHeader = ({
   onPressRight,
   saved = 0,
   border = true,
+  reportButtonPressed = false,
+  setReportButtonPressed = () => {},
 }: HeaderProps) => {
   const Buttons = {
     Save: <Body14M style={{ color: '#929292' }}>임시저장 | {saved}</Body14M>,
@@ -40,7 +44,12 @@ const DetailScreenHeader = ({
     CustomBack: <CustomBackButton />,
     None: <></>,
     Fix: <Body16B style={{ color: '#929292', marginRight: 10 }}>...</Body16B>,
-    Report: <CustomReportButton />,
+    Report: (
+      <CustomReportButton
+        reportButtonPressed={reportButtonPressed}
+        setReportButtonPressed={setReportButtonPressed}
+      />
+    ),
   };
   return (
     <SafeAreaView

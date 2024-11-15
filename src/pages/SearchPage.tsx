@@ -43,10 +43,8 @@ const SearchInput = styled.TextInput`
 `;
 
 const SearchPage = ({
-  route,
+  navigation,
 }: StackScreenProps<HomeStackParams, 'SearchPage'>) => {
-  const { navigation } = route.params;
-
   //TODO: fix
   const recommendedKeywords = [
     '하얀',
@@ -57,12 +55,19 @@ const SearchPage = ({
     '캐주얼',
     '떡볶이코트',
     '리본 옵션',
+    'test', // TODO: remove
   ];
 
   const [searchTerm, setSearchTerm] = useState<string>('');
 
   const handleSearch = () => {
-    navigation.navigate('Home', { searchTerm: searchTerm ?? '' });
+    if (searchTerm && searchTerm.length > 0)
+      navigation.navigate('Home', { searchTerm: searchTerm ?? '' });
+  };
+
+  const onPressRecommendedKeyword = (keyword: string) => {
+    setSearchTerm(keyword);
+    navigation.navigate('Home', { searchTerm: keyword });
   };
 
   return (
@@ -71,11 +76,11 @@ const SearchPage = ({
         <BackButton onPress={() => navigation.goBack()}>
           <ArrowIcon color={BLACK2} />
         </BackButton>
-
         <SearchContainer>
           <SearchInput
             placeholder="검색어를 입력해보세요"
-            placeholderTextColor="#929292"
+            placeholderText
+            Color="#929292"
             editable={true}
             value={searchTerm}
             onChangeText={setSearchTerm}
@@ -89,7 +94,10 @@ const SearchPage = ({
         <Text style={styles.title}>추천 검색어</Text>
         <View style={styles.keywordContainer}>
           {recommendedKeywords.map((keyword, index) => (
-            <TouchableOpacity key={index} style={styles.keywordButton}>
+            <TouchableOpacity
+              key={index}
+              style={styles.keywordButton}
+              onPress={() => onPressRecommendedKeyword(keyword)}>
               <Text style={styles.keywordText}>{keyword}</Text>
             </TouchableOpacity>
           ))}

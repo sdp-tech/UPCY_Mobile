@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, TouchableOpacity, Text } from 'react-native';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -18,13 +18,11 @@ import OrderManagementIcon from './src/assets/navbar/OrderManagement.svg';
 import SignIn from './src/components/Auth/SignIn';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomBarProvider, useBottomBar } from './contexts/BottomBarContext';
-import {
-  LoginContext,
-  LoginProvider,
-  UserProvider,
-} from './src/common/Context';
+import { LoginProvider, UserProvider } from './src/common/Context';
 import Reformer from './src/components/Auth/Reformer/Reformer';
 import SplashScreen from './src/common/SplashScreen';
+
+import { getUserRole } from './src/common/storage';
 
 export type StackProps = {
   Main: undefined;
@@ -154,13 +152,25 @@ const Tab = createBottomTabNavigator<TabProps>();
 
 // 하단 탭 네비게이터 정의
 const MainTabNavigator = () => {
+  const [userInfo, setUserInfo] = useState<string>();
+
+  useEffect(() => {
+    const getUserRoleInfo = async () => {
+      const userRole = await getUserRole();
+      setUserInfo(userRole ? userRole : '');
+    };
+    getUserRoleInfo();
+  }, []);
+
   return (
     <Tab.Navigator
       tabBar={props => <CustomTab {...props} />}
       initialRouteName="UPCY"
       screenOptions={{ headerShown: false }}>
       <Tab.Screen name="UPCY" component={HomeScreen} />
-      <Tab.Screen name="주문관리" component={OrderManagement} />
+      {userInfo === 'reformer' && (
+        <Tab.Screen name="주문관리" component={OrderManagement} />
+      )}
       <Tab.Screen name="MY" component={MyPageScreen} />
     </Tab.Navigator>
   );

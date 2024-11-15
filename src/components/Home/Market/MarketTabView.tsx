@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -101,7 +101,7 @@ const ProfileHeader = ({
           }}
         />
       </ImageBackground>
-      <View style={{ gap: 12 }}>
+      <View style={{ gap: 12, alignItems: 'center' }}>
         <Text style={TextStyles.marketName}>{marketName}</Text>
         <ReformerTag />
       </View>
@@ -160,13 +160,13 @@ const MarketTabView = ({
   const fetchData = async () => {
     try {
       // API 호출
-      const response = await request.get(`/api/market/${marketUuid}`, {});
+      const response = await request.get(`/api/market/${marketUuid}`, {}, {});
       if (response && response.status === 200) {
         const marketResult: MarketResponseType = response.data;
         setMarketData(marketResult);
       } else {
         Alert.alert('오류가 발생했습니다.');
-        console.log(response);
+        console.log('response: ', response);
       }
     } catch (error) {
       console.error(error);
@@ -180,34 +180,44 @@ const MarketTabView = ({
     fetchData();
   }, []);
 
+  const renderHeader = useCallback(
+    () => (
+      <ProfileSection navigation={navigation} reformerName={reformerName} />
+    ),
+    [navigation, reformerName],
+  );
+
+  const renderTabBar = useCallback(
+    (props: any) => (
+      <MaterialTabBar
+        {...props}
+        indicatorStyle={{
+          backgroundColor: '#BDBDBD',
+          height: 2,
+        }}
+        style={{
+          backgroundColor: 'white',
+        }}
+        labelStyle={{
+          color: BLACK,
+          fontWeight: '700',
+          fontSize: 16,
+        }}
+      />
+    ),
+    [],
+  );
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Tabs.Container
-        renderHeader={props => (
-          <ProfileSection navigation={navigation} reformerName={reformerName} />
-        )}
+        renderHeader={renderHeader}
         headerContainerStyle={{
           shadowOpacity: 0,
           borderBottomWidth: 1,
           borderColor: '#D9D9D9',
         }}
-        renderTabBar={props => (
-          <MaterialTabBar
-            {...props}
-            indicatorStyle={{
-              backgroundColor: '#BDBDBD',
-              height: 2,
-            }}
-            style={{
-              backgroundColor: 'white',
-            }}
-            labelStyle={{
-              color: BLACK,
-              fontWeight: '700',
-              fontSize: 16,
-            }}
-          />
-        )}>
+        renderTabBar={renderTabBar}>
         {routes.map(route => (
           <Tabs.Tab key={route.key} name={route.title}>
             {route.key === 'profile' && <InfoPage marketData={marketData} />}

@@ -56,6 +56,11 @@ const InfoPage = ({ marketData }: { marketData: MarketResponseType }) => {
                   <Body14R key={index}>{itemData}</Body14R>
                 ))}
               </View>
+            ) : item.label == '오픈채팅 링크' ? (
+              <Body14R
+                style={{ textAlign: 'right', textDecorationLine: 'underline' }}>
+                {item.data}
+              </Body14R>
             ) : (
               <Body14R style={{ textAlign: 'right' }}>{item.data}</Body14R>
             )}
