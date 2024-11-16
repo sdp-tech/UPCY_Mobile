@@ -205,17 +205,15 @@ const Banner = ({
   };
 
   return (
-    <>
-      <ImageBackground // 임시 이미지
-        style={{ width: '100%', height: width * 0.5, position: 'relative' }}
-        imageStyle={{ height: width * 0.5 }}
-        source={{
-          uri:
-            backgroundImageUri ||
-            'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
-          // backgroundImageUri가 없는 경우 기본 이미지
-        }}
-      />
+    <ImageBackground // 임시 이미지
+      style={{ width: '100%', height: width * 0.5, position: 'relative' }}
+      imageStyle={{ height: width * 0.5 }}
+      source={{
+        uri:
+          backgroundImageUri ||
+          'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
+        // backgroundImageUri가 없는 경우 기본 이미지
+      }}>
       {reportButtonPressed && (
         <TouchableOpacity style={styles.reportWindow} onPress={onPressReport}>
           <View style={{ justifyContent: 'center' }}>
@@ -234,7 +232,7 @@ const Banner = ({
             );
           })}
       </View>
-    </>
+    </ImageBackground>
   );
 };
 
@@ -507,7 +505,7 @@ const TextStyles = StyleSheet.create({
 const styles = StyleSheet.create({
   tagContainer: {
     position: 'absolute',
-    top: 50,
+    top: 10,
     right: 16,
     flexDirection: 'row',
     gap: 8,
@@ -554,7 +552,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     zIndex: 1000,
     position: 'absolute',
-    top: 40,
+    top: 0,
     right: 0,
     paddingHorizontal: 13,
     display: 'flex',
