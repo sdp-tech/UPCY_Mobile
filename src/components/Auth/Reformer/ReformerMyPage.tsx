@@ -26,7 +26,7 @@ import DetailScreenHeader from '../../../components/Home/components/DetailScreen
 import { PhotoType } from '../../../hooks/useImagePicker.ts';
 import Request from '../../../common/requests.js';
 import { MypageStackProps } from '../../../pages/MyPage.tsx';
-import { getAccessToken, getRefreshToken, removeAccessToken, removeRefreshToken } from '../../../common/storage.js';
+import { getAccessToken, getRefreshToken, getUserRole, removeAccessToken, removeRefreshToken, setUserRole } from '../../../common/storage.js';
 import { CommonActions, useFocusEffect } from '@react-navigation/native';
 import { Title20B } from '../../../styles/GlobalText.tsx';
 import DeleteModal from '../DeleteModal.tsx';
@@ -212,6 +212,7 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
   };
 
   const Logout = async () => {
+    const role = getUserRole();
     const accessToken = await getAccessToken();
     const refreshToken = await getRefreshToken();
     const params = {
@@ -227,6 +228,9 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
         removeAccessToken();
         removeRefreshToken();
         setLogin(false);
+        setUserRole('customer');
+        console.log('유저롤:', role);
+
         navigation.dispatch(
           CommonActions.navigate({
             name: "Main",

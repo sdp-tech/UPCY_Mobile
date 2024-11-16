@@ -18,6 +18,7 @@ import {
   removeAccessToken,
   removeNickname,
   removeRefreshToken,
+  setUserRole,
 } from '../../../common/storage';
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { LoginContext } from '../../../common/Context';
@@ -225,6 +226,7 @@ export const UpcyerMyPageMainScreen = ({ navigation, route }: MypageStackProps) 
         removeAccessToken();
         removeRefreshToken();
         setLogin(false);
+        setUserRole('customer');
         console.log('AccessToken: ', { accessToken }, '| RefreshToken: ', { refreshToken });
         navigation.dispatch(
           CommonActions.navigate({

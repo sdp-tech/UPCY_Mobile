@@ -42,6 +42,7 @@ import { stylesList } from '../components/Home/HomeMain';
 import SearchPage from './SearchPage';
 import { ServiceDetailOption } from '../components/Home/Market/Service';
 import ReportPage from './ReportPage';
+import { getUserRole } from '../common/storage';
 
 export type HomeStackParams = {
   Home: { searchTerm?: string };
@@ -202,6 +203,11 @@ const HomeMainScreen = ({
   const [selectedStylesList, setSelectedStylesList] =
     useState<string[]>(stylesList);
 
+  const checkRole = async () => {
+    const role = await getUserRole();
+    console.log('유저롤:', role);
+  }
+
   return (
     <Fragment>
       <SafeAreaView style={{ flex: 0, backgroundColor: PURPLE }} />
@@ -212,7 +218,7 @@ const HomeMainScreen = ({
         <BottomSheetModalProvider>
           <View>
             <HomeTabView
-              onSearch={() => {}}
+              onSearch={() => { }}
               selectedTab={selectedTab}
               onTabChange={handleTabChange}
               setSelectedFilterOption={setSelectedFilterOption}
@@ -220,12 +226,15 @@ const HomeMainScreen = ({
             />
           </View>
           {selectedTab === 'Goods' && (
-            <Service
-              selectedStylesList={selectedStylesList}
-              selectedFilterOption={selectedFilterOption}
-              searchTerm={searchTerm}
-              navigation={navigation}
-            />
+            <View>
+              <Button onPress={checkRole}></Button>
+              <Service
+                selectedStylesList={selectedStylesList}
+                selectedFilterOption={selectedFilterOption}
+                searchTerm={searchTerm}
+                navigation={navigation}
+              />
+            </View>
           )}
           {selectedTab === 'Market' && <ReformerMarket />}
           {selectedTab === 'temp' && (
