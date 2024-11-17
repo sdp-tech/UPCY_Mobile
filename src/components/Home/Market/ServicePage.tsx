@@ -56,6 +56,7 @@ const ServicePage: React.FC<ServicePageProps> = ({
     <Tabs.ScrollView
       ref={scrollViewRef}
       style={{ marginBottom: service || product ? 60 : 0 }}
+
       bounces={false}
       overScrollMode="never">
       <View style={styles.container}>

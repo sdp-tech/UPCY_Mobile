@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, TouchableOpacity, Text } from 'react-native';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -18,7 +18,7 @@ import OrderManagementIcon from './src/assets/navbar/OrderManagement.svg';
 import SignIn from './src/components/Auth/SignIn';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomBarProvider, useBottomBar } from './contexts/BottomBarContext';
-import { LoginProvider, UserProvider } from './src/common/Context';
+import { LoginContext, LoginProvider, UserProvider } from './src/common/Context';
 import Reformer from './src/components/Auth/Reformer/Reformer';
 import SplashScreen from './src/common/SplashScreen';
 
@@ -27,7 +27,6 @@ import { getUserRole } from './src/common/storage';
 export type StackProps = {
   Main: undefined;
   Signin: undefined;
-  ReformProfile: undefined;
 };
 
 const AppStack = createNativeStackNavigator<StackProps>(); // 최상위 스택. SignInStack에는 바텀바 안 뜸.
@@ -52,19 +51,18 @@ function App(): React.JSX.Element {
     <BottomBarProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <LoginProvider>
-          <UserProvider>
-            <NavigationContainer theme={GlobalTheme}>
-              {!isSplashFinished ? (
-                <SplashScreen onFinish={finishSplash} />
-              ) : (
+          <NavigationContainer theme={GlobalTheme}>
+            {!isSplashFinished ? (
+              <SplashScreen onFinish={finishSplash} />
+            ) : (
+              <UserProvider>
                 <AppStack.Navigator screenOptions={{ headerShown: false }}>
                   <AppStack.Screen name="Main" component={MainTabNavigator} />
                   <AppStack.Screen name="Signin" component={SignIn} />
-                  <AppStack.Screen name="ReformProfile" component={Reformer} />
                 </AppStack.Navigator>
-              )}
-            </NavigationContainer>
-          </UserProvider>
+              </UserProvider>
+            )}
+          </NavigationContainer>
         </LoginProvider>
       </GestureHandlerRootView>
     </BottomBarProvider>
@@ -152,15 +150,26 @@ const Tab = createBottomTabNavigator<TabProps>();
 
 // 하단 탭 네비게이터 정의
 const MainTabNavigator = () => {
-  const [userInfo, setUserInfo] = useState<string>();
-
+  const [userInfo, setUserInfo] = useState<string>('customer');
+  const { isLogin } = useContext(LoginContext);
   useEffect(() => {
     const getUserRoleInfo = async () => {
-      const userRole = await getUserRole();
-      setUserInfo(userRole ? userRole : '');
+      if (isLogin) {
+        const userRole = await getUserRole();
+        console.log('유저롤을 설정합니다:', userRole);
+        setUserInfo(userRole || 'customer');
+      } else {
+        setUserInfo('customer'); // 로그인하지 않은 경우 기본값
+      }
     };
+
     getUserRoleInfo();
-  }, []);
+  }, [isLogin]); // isLogin 변경 시 동작
+
+  // userInfo가 null인 상태에서는 로딩 UI를 표시
+  if (userInfo === null) {
+    return null; // 혹은 로딩 스피너를 렌더링
+  }
 
   return (
     <Tab.Navigator
@@ -168,7 +177,7 @@ const MainTabNavigator = () => {
       initialRouteName="UPCY"
       screenOptions={{ headerShown: false }}>
       <Tab.Screen name="UPCY" component={HomeScreen} />
-      {userInfo === 'reformer' && (
+      {isLogin && userInfo === 'reformer' && (
         <Tab.Screen name="주문관리" component={OrderManagement} />
       )}
       <Tab.Screen name="MY" component={MyPageScreen} />

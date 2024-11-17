@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import DropDown from '../common/Dropdown';
 
-const ReportPage = ({}: StackScreenProps<HomeStackParams, 'ReportPage'>) => {
+const ReportPage = ({ }: StackScreenProps<HomeStackParams, 'ReportPage'>) => {
   const [reportReason, setReportReason] = useState<string>('');
   return (
     <SafeAreaView>
@@ -20,8 +20,8 @@ const ReportPage = ({}: StackScreenProps<HomeStackParams, 'ReportPage'>) => {
         title="신고"
         leftButton="CustomBack"
         rightButton="None"
-        onPressLeft={() => {}}
-        onPressRight={() => {}}
+        onPressLeft={() => { }}
+        onPressRight={() => { }}
       />
       <View style={styles.container}>
         <Text style={TextStyles.mainTitle}>

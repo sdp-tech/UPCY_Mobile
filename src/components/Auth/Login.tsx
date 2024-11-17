@@ -114,14 +114,28 @@ export async function processLoginResponse( // 통상 로그인시 호출 함수
   setLogin: (value: boolean) => void,
   setUser: (user: UserType) => void // setUser 전달
 ) {
+  const request = Request();
   // const navigation = useNavigation<StackNavigationProp<MyPageProps>>();
   if (response?.status === 200) {
     const accessToken = await response.data.access;
     const refreshToken = await response.data.refresh;
+    const headers = {
+      Authorization: `Bearer ${accessToken}`
+    }
     setAccessToken(accessToken);
     setRefreshToken(refreshToken);
     console.log({ accessToken }, ',', { refreshToken });
     setLogin(true);
+    try { // 유저 롤 설정 // 근데 이걸 꼭 여기서 할 필요가 있나? 혹시 모르니 만들어두긴 함 
+      const response = await request.get(`/api/user`, {}, headers)
+      if (response?.status === 200) {
+        const user_role = response.data.role;
+        setUserRole(user_role);
+      }
+    } catch (err) {
+      console.log(err);
+      console.log('유저롤 설정 오류');
+    }
     navigate(); // 인자로 전달받은 네비게이팅 수행
     console.log('로그인 성공');
 

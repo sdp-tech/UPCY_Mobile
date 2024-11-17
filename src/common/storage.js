@@ -85,7 +85,16 @@ export async function getUserRole() {
 }
 
 export function setUserRole(role) {
-  setSecureValue(userRole, role);
+  const username = userRole; // key 이름
+  const password = role; // 저장할 market_uuid 값
+  
+  Keychain.setInternetCredentials(userRole, username, password)
+    .then(() => {
+      console.log("Market UUID saved successfully");
+    })
+    .catch(error => {
+      console.error("Failed to save Market UUID:", error);
+    });
 }
 
 const marketUUIDKeyName = 'marketUUID';

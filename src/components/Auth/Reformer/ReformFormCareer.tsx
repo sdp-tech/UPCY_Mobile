@@ -25,7 +25,7 @@ import { err } from 'react-native-svg';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { SignInParams } from '../SignIn';
-import { getAccessToken, getMarketUUID, setMarketUUID } from '../../../common/storage';
+import { getAccessToken, getMarketUUID, getUserRole, setMarketUUID } from '../../../common/storage';
 import { PhotoType } from '../../../hooks/useImagePicker';
 
 const SelectView = styled.View`
@@ -809,7 +809,6 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
         setForm(prev => {
           return { ...prev, introduce: response.data.introduce }
         })
-        console.log('패치된 데이터:', form);
       }
     } catch (err) {
       console.error(err);
@@ -958,7 +957,7 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
           onPress={!fix ? handleSubmit : handleFix}
           style={{ width: '90%', alignSelf: 'center', marginBottom: 10 }}
         />
-        {fix &&
+        {fix && <View>
           <BottomButton
             value="check"
             pressed={false}
@@ -966,7 +965,16 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
               console.log(form);
             }}
             style={{ width: '90%', alignSelf: 'center', marginBottom: 10 }}
-          />}
+          />
+          <BottomButton
+            value="role"
+            pressed={false}
+            onPress={() => {
+
+            }}
+            style={{ width: '90%', alignSelf: 'center', marginBottom: 10 }}
+          />
+        </View>}
       </View>
       {careerIndex >= 0 && (
         <CareerModal
