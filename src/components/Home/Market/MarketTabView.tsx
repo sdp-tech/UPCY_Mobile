@@ -227,6 +227,7 @@ const MarketTabView = ({
                   scrollViewRef={scrollRef}
                   navigation={navigation}
                   reformerName={reformerName}
+                  marketUuid={marketUuid}
                 />
                 <ScrollTopButton scrollViewRef={scrollRef} />
               </View>

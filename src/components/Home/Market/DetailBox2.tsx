@@ -3,12 +3,32 @@ import { View, Text, StyleSheet } from 'react-native';
 import RenderHTML from 'react-native-render-html';
 import { ServiceDetailOption } from './Service';
 
+function convertPeriod(period: number) {
+  let localPeriod: string = '';
+  if (period === 0) {
+    localPeriod = '3일';
+  } else if (period === 1) {
+    localPeriod = '5일';
+  } else if (period === 2) {
+    localPeriod = '7일';
+  } else if (period === 3) {
+    localPeriod = '3주';
+  } else if (period === 4) {
+    localPeriod = '5주';
+  } else if (period === 5) {
+    localPeriod = '8주';
+  } else {
+    localPeriod = '정보 없음';
+  }
+  return localPeriod;
+}
+
 const PeriodBox = ({ period }: { period: number }) => {
   return (
     <View style={styles.eachBox}>
       <View style={styles.periodLine}>
         <Text style={TextStyles.eachLabel}>예상 제작 기간</Text>
-        <Text style={TextStyles.eachData}>{period}주</Text>
+        <Text style={TextStyles.eachData}>{convertPeriod(period)}</Text>
       </View>
     </View>
   );
