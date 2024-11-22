@@ -378,10 +378,11 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
       </Tabs.Container>
 
       {activeTab === 'service' ? (
+
         <TouchableOpacity
           style={styles.fixedButton}
           onPress={() => {
-            navigation.navigate('ServiceRegistrationPage');
+            navigation.navigate('TempStorage');
           }}>
           <Text style={styles.fixedButtonText}>서비스 추가</Text>
         </TouchableOpacity>
