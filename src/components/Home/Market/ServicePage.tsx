@@ -60,26 +60,29 @@ const ServicePage: React.FC<ServicePageProps> = ({
       overScrollMode="never">
       <View style={styles.container}>
         <Text style={TextStyles.title}>{reformerName}의 서비스</Text>
-        {items.map((item, index) => (
-          <ServiceCard
-            key={index}
-            name={reformerName || ''}
-            basic_price={item.basic_price || 0}
-            max_price={item.max_price || 0}
-            service_styles={
-              Array.isArray(item.service_style)
-                ? item.service_style.map(style => style.style_name || '')
-                : []
-            }
-            imageUri={item.service_image[0]?.image || defaultImageUri}
-            service_title={item.service_title || ''}
-            service_content={item.service_content || ''}
-            market_uuid={marketUuid || ''}
-            service_uuid={item.service_uuid || ''}
-            service_period={item.service_period || undefined}
-            navigation={navigation}
-          />
-        ))}
+        {items.map(
+          (item, index) =>
+            index == 0 && ( // 원칙 상 한 마켓에 서비스 하나이므로
+              <ServiceCard
+                key={index}
+                name={reformerName || ''}
+                basic_price={item.basic_price || 0}
+                max_price={item.max_price || 0}
+                service_styles={
+                  Array.isArray(item.service_style)
+                    ? item.service_style.map(style => style.style_name || '')
+                    : []
+                }
+                imageUri={item.service_image[0]?.image || defaultImageUri}
+                service_title={item.service_title || ''}
+                service_content={item.service_content || ''}
+                market_uuid={marketUuid || ''}
+                service_uuid={item.service_uuid || ''}
+                service_period={item.service_period || undefined}
+                navigation={navigation}
+              />
+            ),
+        )}
         <View style={{ paddingBottom: 100 }} />
       </View>
     </Tabs.ScrollView>
