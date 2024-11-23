@@ -49,6 +49,7 @@ const TempStorage = ({ navigation }: StackScreenProps<any>) => {
       console.error("Error fetching data:", error);
     }
   };
+  //aa
 
   useEffect(() => {
     fetchData();
@@ -97,7 +98,7 @@ const TempStorage = ({ navigation }: StackScreenProps<any>) => {
     try {
       const marketUuid = await getMarketUUID();
       const deletePromises = selectedItems.map((serviceUuid) =>
-        request.delete(`/api/market/${marketUuid}/service/${serviceUuid}`, {})
+        request.del(`/api/market/${marketUuid}/service/${serviceUuid}`, {})
       );
 
       const responses = await Promise.all(deletePromises);
@@ -118,28 +119,35 @@ const TempStorage = ({ navigation }: StackScreenProps<any>) => {
 
   const handleLoadPress = () => {
       if (selectedItems.length > 1) {
-          //showWarningMessage();
+          showWarningMessage();
       } else if (selectedItems.length === 1) {
-          console.log("불러오기 실행: ", selectedItems[0]);
-          // 불러오기 로직 추가
+          const selectedService = storage.find(
+              (item) => item.service_uuid === selectedItems[0]
+          );
+
+          if (selectedService) {
+              navigation.navigate("ServiceRegistrationPage", {serviceData: selectedService,});
+          } else {
+                Alert.alert("선택한 서비스를 찾을 수 없습니다.");
+          }
       }
   };
 
-//   const showWarningMessage = () => {
-//       Animated.timing(warningMessageOpacity, {
-//         toValue: 1,
-//         duration: 300,
-//         useNativeDriver: true,
-//       }).start(() => {
-//         setTimeout(() => {
-//           Animated.timing(warningMessageOpacity, {
-//             toValue: 0,
-//             duration: 300,
-//             useNativeDriver: true,
-//           }).start();
-//         }, 2000); // 2초 후 메시지 사라짐
-//       });
-//   };
+  const showWarningMessage = () => {
+    Animated.timing(warningMessageOpacity, {
+      toValue: 1,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => {
+      setTimeout(() => {
+        Animated.timing(warningMessageOpacity, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }).start();
+      }, 2000); // 2초 후 메시지 사라짐
+    });
+  };
 
   return (
       <SafeAreaView style={{ flex: 1 }}>
@@ -179,17 +187,26 @@ const TempStorage = ({ navigation }: StackScreenProps<any>) => {
         />
         {/* 경고 메시지 */}
         <Animated.View
-            style={[
-              styles.warningMessage,
-              { opacity: warningMessageOpacity, transform: [{ translateY: warningMessageOpacity.interpolate({
-                inputRange: [0, 1],
-                outputRange: [50, 0], // 아래에서 위로 슬라이드
-              }) }] }
-            ]}
+          style={[
+            styles.warningMessage,
+            {
+              opacity: warningMessageOpacity,
+              transform: [
+                {
+                  translateY: warningMessageOpacity.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [5, 2], // 아래에서 위로 슬라이드
+                  }),
+                },
+              ],
+              zIndex: 100, // 다른 뷰 위에 표시되도록 설정
+            },
+          ]}
+          pointerEvents="none" // 뷰가 터치 이벤트를 차단하지 않도록 설정
         >
-            <Text style={styles.warningText}>
-                임시저장된 글은 한 개씩만 불러올 수 있습니다.
-            </Text>
+          <Text style={styles.warningText}>
+            임시저장된 글은 한 개씩만 불러올 수 있습니다.
+          </Text>
         </Animated.View>
       </SafeAreaView>
   );
@@ -578,26 +595,22 @@ const styles = StyleSheet.create({
     },
     warningMessage: {
           position: "absolute",
-          bottom: 80, // 하단 탭 위에 표시
-          left: 20,
-          right: 20,
-          backgroundColor: "#E7E0FD",
-          paddingVertical: 12,
+          bottom: 92, // 하단 탭 위에 표시
+          width: "100%",
+          height: 36,
+          backgroundColor: "#E9EBF8",
+          paddingVertical: 10,
           paddingHorizontal: 20,
-          borderRadius: 8,
           alignItems: "center",
           justifyContent: "center",
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.2,
-          shadowRadius: 4,
-          elevation: 5,
-        },
-        warningText: {
-          color: "#7B61FF",
+    },
+    warningText: {
+          color: "#929292",
           fontWeight: "bold",
           fontSize: 14,
-        },
+          textAlign: "center",
+          lineHeight: 18,
+    },
 });
 
 
