@@ -58,20 +58,22 @@ const ContentBox = ({ content }: { content: string }) => {
 };
 
 const MaterialBox = ({ list }: { list: MaterialDetail[] }) => {
-  function materialList({ data }: { data: string[] }) {
+  function materialList({ data }: { data: MaterialDetail[] }) {
     return data?.map((item, index) => (
-      <View key={index}>
-        <Text style={TextStyles.eachMaterialData}>{item} | </Text>
+      <View key={item.material_uuid}>
+        <Text style={TextStyles.eachMaterialData}>
+          {item.material_name} {index < data.length - 1 && '|'}{' '}
+        </Text>
       </View>
     ));
   }
 
   return (
     <>
-      <View style={styles.eachBox}>
+      <View style={styles.materialBox}>
         <Text style={TextStyles.eachLabel}>작업 가능한 소재</Text>
         <View style={styles.materialListLine}>
-          {materialList({ data: list.map(element => element.material_name) })}
+          {materialList({ data: list })}
         </View>
       </View>
     </>
@@ -155,6 +157,13 @@ const styles = StyleSheet.create({
     borderColor: '#dcdcdc',
     paddingVertical: 8,
   },
+  materialBox: {
+    display: 'flex',
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderColor: '#dcdcdc',
+    paddingVertical: 8,
+  },
   periodLine: {
     flexDirection: 'row',
     gap: 24,
@@ -195,10 +204,11 @@ const TextStyles = StyleSheet.create({
   },
   eachMaterialData: {
     fontSize: 14,
-    lineHeight: 26,
+    lineHeight: 24,
     color: '#222222',
     fontFamily: 'Pretendard Variable',
     fontWeight: '400',
+    paddingVertical: 8,
   },
   optionLabel: {
     color: '#612FEF',
