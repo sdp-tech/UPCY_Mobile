@@ -8,6 +8,7 @@ import {
   ImageBackground,
   // FlatList,
   ScrollView,
+  Image,
 } from 'react-native';
 import {
   StackScreenProps,
@@ -169,6 +170,7 @@ const ProfileSection = ({
       />
       <Profile
         backgroundImageUri={backgroundImageUri}
+        profilePictureUri={profileImageUri}
         reformerName={reformerName}
         reviewNum={reviewNum}
         navigation={navigation}
@@ -291,13 +293,17 @@ const Profile = ({
     <View style={{ justifyContent: 'space-between' }}>
       <View style={{ padding: 15, flexDirection: 'row' }}>
         {/* TODO: add profile picture here */}
-        <View
-          style={{
-            backgroundColor: 'gray',
-            width: 50,
-            height: 50,
-            borderRadius: 25,
-          }}></View>
+        {profilePictureUri && profilePictureUri !== '' ? (
+          <Image source={{ uri: profilePictureUri }} />
+        ) : (
+          <View
+            style={{
+              backgroundColor: 'gray',
+              width: 50,
+              height: 50,
+              borderRadius: 25,
+            }}></View>
+        )}
         <View style={{ marginLeft: 20, justifyContent: 'center' }}>
           <TouchableOpacity
             style={{ flexDirection: 'row', alignItems: 'center' }}
