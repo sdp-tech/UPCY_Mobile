@@ -90,10 +90,10 @@ export function setUserRole(role) {
   
   Keychain.setInternetCredentials(userRole, username, password)
     .then(() => {
-      console.log("Market UUID saved successfully");
+      console.log("userRole saved successfully");
     })
     .catch(error => {
-      console.error("Failed to save Market UUID:", error);
+      console.error("Failed to save userRole:", error);
     });
 }
 

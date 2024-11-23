@@ -966,14 +966,6 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
             }}
             style={{ width: '90%', alignSelf: 'center', marginBottom: 10 }}
           />
-          <BottomButton
-            value="role"
-            pressed={false}
-            onPress={() => {
-
-            }}
-            style={{ width: '90%', alignSelf: 'center', marginBottom: 10 }}
-          />
         </View>}
       </View>
       {careerIndex >= 0 && (

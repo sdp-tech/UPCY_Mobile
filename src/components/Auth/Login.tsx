@@ -16,7 +16,8 @@ import {
   setAccessToken,
   setNickname,
   setRefreshToken,
-  setUserRole
+  setUserRole,
+  getUserRole
 } from '../../common/storage';
 import { LoginContext, useUser } from '../../common/Context';
 
@@ -92,6 +93,8 @@ export const processLoginResponse2 = async ( // 회원가입시에 사용하는 
       if (response?.status === 200) {
         const user_role = response.data.role;
         setUserRole(user_role);
+        const role = await getUserRole();
+        console.log('processLogin2에서 유저롤 설정 완료', role);
       }
     } catch (err) {
       console.log(err);
@@ -125,12 +128,14 @@ export async function processLoginResponse( // 통상 로그인시 호출 함수
     setAccessToken(accessToken);
     setRefreshToken(refreshToken);
     console.log({ accessToken }, ',', { refreshToken });
-    setLogin(true);
     try { // 유저 롤 설정 // 근데 이걸 꼭 여기서 할 필요가 있나? 혹시 모르니 만들어두긴 함 
       const response = await request.get(`/api/user`, {}, headers)
       if (response?.status === 200) {
         const user_role = response.data.role;
         setUserRole(user_role);
+        const role = await getUserRole();
+        console.log('processLogin에서 유저롤 설정 완료', role);
+        setLogin(true);
       }
     } catch (err) {
       console.log(err);
