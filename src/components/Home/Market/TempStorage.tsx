@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View, Modal, Alert, StyleSheet, Animated, } from "react-native";
+import { useFocusEffect } from '@react-navigation/native';
 import Close from '../../../assets/header/Close.svg';
 import styled from "styled-components/native";
 import { getStatusBarHeight } from "react-native-safearea-height";
@@ -51,9 +52,15 @@ const TempStorage = ({ navigation }: StackScreenProps<any>) => {
   };
   //aa
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+    useFocusEffect(
+        useCallback(() => {
+            fetchData(); // 페이지가 포커스를 받을 때 fetch 실행
+        return () => {
+        // cleanup 작업 (필요시 추가)
+            console.log('Screen unfocused');
+        };
+        }, [])
+    );
 
   const handleItemPress = (service_uuid: string) => {
       setSelectedItems((prev) =>
