@@ -22,9 +22,10 @@ import RenderHTML from 'react-native-render-html';
 // 홈화면에 있는, 서비스 전체 리스트!
 
 export type ServiceDetailOption = {
-  optionName: string;
-  optionContent: string;
-  optionPrice: number;
+  option_content: string;
+  option_name: string;
+  option_price: number;
+  option_uuid: string;
 };
 
 interface ServiceCardProps {
@@ -94,6 +95,7 @@ const EntireServiceMarket = ({
   const [serviceCardData, setServiceCardData] = useState<ServiceCardProps[]>(
     [] as ServiceCardProps[],
   );
+  const [serviceCardRawData, setServiceCardRawData] = useState<any[]>([]);
 
   const serviceTitle: string = '지금 주목해야 할 업사이클링 서비스';
   const serviceDescription: string = '옷장 속 옷들의 트렌디한 재탄생';
@@ -104,6 +106,7 @@ const EntireServiceMarket = ({
       const response = await request.get(`/api/market/services`, {}, {});
       if (response && response.status === 200) {
         const serviceListResults: ServiceResponseType[] = response.data.results;
+        setServiceCardRawData(serviceListResults);
         const extractedServiceCardData = extractData(serviceListResults);
         setServiceCardData(extractedServiceCardData);
         console.log('서비스 목록 로드 완료');
@@ -136,11 +139,14 @@ const EntireServiceMarket = ({
       service_materials: service.service_material.map(
         material => material.material_name,
       ) as string[],
-      service_options: service.service_option.map(option => ({
-        optionName: option.option_name,
-        optionContent: option.option_content,
-        optionPrice: option.option_price,
-      })) as ServiceDetailOption[],
+      service_options: Array.isArray(service.service_option)
+        ? service.service_option.map(option => ({
+            option_content: option.option_content,
+            option_name: option.option_name,
+            option_price: option.option_price,
+            option_uuid: option.option_uuid,
+          }))
+        : [],
       temporary: service.temporary,
     })) as ServiceCardProps[];
   };
@@ -230,7 +236,7 @@ const EntireServiceMarket = ({
       <View style={{ backgroundColor: LIGHTGRAY }}>
         {serviceCardData.length > 0 ? (
           serviceCardData.map(
-            card =>
+            (card, index) =>
               !card.temporary && (
                 <ServiceCard
                   key={card.service_uuid}
@@ -245,6 +251,7 @@ const EntireServiceMarket = ({
                   service_uuid={card.service_uuid}
                   service_period={card.service_period}
                   navigation={navigation}
+                  service_options={serviceCardRawData[index].service_option}
                 />
               ),
           )
@@ -256,6 +263,7 @@ const EntireServiceMarket = ({
           </View>
         )}
       </View>
+      <View style={{ marginBottom: 200 }} />
     </ScrollView>
   );
 };

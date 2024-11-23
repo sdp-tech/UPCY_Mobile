@@ -85,7 +85,7 @@ const OptionBox = ({ list }: { list: ServiceDetailOption[] }) => {
       <View style={styles.optionListBox}>
         {list.map((option, index) => {
           return (
-            <View key={index} style={{ marginBottom: 16 }}>
+            <View key={option.option_uuid} style={{ marginBottom: 16 }}>
               <Text style={TextStyles.optionLabel}>option {index + 1}</Text>
               <View
                 style={{
@@ -95,10 +95,10 @@ const OptionBox = ({ list }: { list: ServiceDetailOption[] }) => {
                   marginBottom: 16,
                 }}>
                 <Text style={TextStyles.optionNameLabel}>
-                  {option.optionName}
+                  {option.option_name}
                 </Text>
                 <Text style={TextStyles.optionPriceLabel}>
-                  +{option.optionPrice}원
+                  +{option.option_price}원
                 </Text>
               </View>
               <View
@@ -108,7 +108,7 @@ const OptionBox = ({ list }: { list: ServiceDetailOption[] }) => {
                   borderRadius: 8,
                 }}>
                 <Text style={TextStyles.optionContentLabel}>
-                  {option.optionContent}
+                  {option.option_content}
                 </Text>
               </View>
             </View>
@@ -134,19 +134,6 @@ const DetailBox2 = ({
   serviceOptions,
   marketUuid,
 }: DetailBox2Props) => {
-  const testOptionList = [
-    {
-      optionName: '똑딱이 단추',
-      optionContent: '가방 입구에 똑딱이 단추를 추가합니다.',
-      optionPrice: 1000,
-    },
-    {
-      optionName: '주머니 지퍼',
-      optionContent: '주머니에 귀여운 지퍼를 달아보세요.',
-      optionPrice: 1000,
-    },
-  ] as ServiceDetailOption[];
-
   return (
     <>
       <PeriodBox period={servicePeriod} />
