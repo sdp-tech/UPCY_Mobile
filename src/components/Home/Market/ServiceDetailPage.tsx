@@ -216,9 +216,7 @@ const Banner = ({
       style={{ width: '100%', height: width * 0.5, position: 'relative' }}
       imageStyle={{ height: width * 0.5 }}
       source={{
-        uri:
-          backgroundImageUri ||
-          'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
+        uri: backgroundImageUri || defaultImageUri,
         // backgroundImageUri가 없는 경우 기본 이미지
       }}>
       {reportButtonPressed && (
@@ -298,7 +296,10 @@ const Profile = ({
       <View style={{ padding: 15, flexDirection: 'row' }}>
         {/* TODO: add profile picture here */}
         {profilePictureUri && profilePictureUri !== '' ? (
-          <Image source={{ uri: profilePictureUri }} />
+          <Image
+            style={{ width: 50, height: 50, borderRadius: 25 }}
+            source={{ uri: profilePictureUri }}
+          />
         ) : (
           <View
             style={{
@@ -308,7 +309,7 @@ const Profile = ({
               borderRadius: 25,
             }}></View>
         )}
-        <View style={{ marginLeft: 20, justifyContent: 'center' }}>
+        <View style={{ marginLeft: 10, justifyContent: 'center' }}>
           <TouchableOpacity
             style={{ flexDirection: 'row', alignItems: 'center' }}
             onPress={() =>
