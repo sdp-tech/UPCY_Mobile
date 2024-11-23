@@ -17,7 +17,8 @@ import {
   setNickname,
   setRefreshToken,
   setUserRole,
-  getUserRole
+  getUserRole,
+  setMarketUUID
 } from '../../common/storage';
 import { LoginContext, useUser } from '../../common/Context';
 
@@ -128,7 +129,7 @@ export async function processLoginResponse( // 통상 로그인시 호출 함수
     setAccessToken(accessToken);
     setRefreshToken(refreshToken);
     console.log({ accessToken }, ',', { refreshToken });
-    try { // 유저 롤 설정 // 근데 이걸 꼭 여기서 할 필요가 있나? 혹시 모르니 만들어두긴 함 
+    try { // 유저롤 설정 
       const response = await request.get(`/api/user`, {}, headers)
       if (response?.status === 200) {
         const user_role = response.data.role;
@@ -136,6 +137,19 @@ export async function processLoginResponse( // 통상 로그인시 호출 함수
         const role = await getUserRole();
         console.log('processLogin에서 유저롤 설정 완료', role);
         setLogin(true);
+        if (role === 'reformer') { // 리폼러인 경우, marketUUID 저장 
+          try {
+            const response = await request.get(`/api/market`, {}, headers)
+            if (response.status && response.status === 200) {
+              setMarketUUID(response.data[0].market_uuid);
+            } else {
+              console.log(response);
+            }
+          } catch (error) {
+            console.error(error);
+          }
+
+        }
       }
     } catch (err) {
       console.log(err);
@@ -143,7 +157,6 @@ export async function processLoginResponse( // 통상 로그인시 호출 함수
     }
     navigate(); // 인자로 전달받은 네비게이팅 수행
     console.log('로그인 성공');
-
   } else if (response.status === 400) {
     Alert.alert('비밀번호가 틀렸습니다.');
   } else if (response.status === 404) {

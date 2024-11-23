@@ -45,6 +45,7 @@ export async function getNickname() {
 export function setNickname(nickname) {
   const sanitizedNickname = nickname || ""; // 기본값 설정
   setSecureValue(nicknameKeyName, sanitizedNickname);
+  console.log('User Nickname saved successfully');
 }
 
 export function removeNickname() {
