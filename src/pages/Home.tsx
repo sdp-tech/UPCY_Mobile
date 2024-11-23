@@ -88,6 +88,7 @@ export type HomeStackParams = {
   MarketTabView: {
     reformerName: string;
     marketUuid: string;
+    backgroundImageUri?: string;
   };
   SearchPage: {
     navigation: any;
@@ -206,7 +207,7 @@ const HomeMainScreen = ({
   const checkRole = async () => {
     const role = await getUserRole();
     console.log('유저롤:', role);
-  }
+  };
 
   return (
     <Fragment>
@@ -218,7 +219,7 @@ const HomeMainScreen = ({
         <BottomSheetModalProvider>
           <View>
             <HomeTabView
-              onSearch={() => { }}
+              onSearch={() => {}}
               selectedTab={selectedTab}
               onTabChange={handleTabChange}
               setSelectedFilterOption={setSelectedFilterOption}

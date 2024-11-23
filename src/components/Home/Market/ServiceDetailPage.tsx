@@ -25,7 +25,7 @@ import DetailScreenHeader from '../components/DetailScreenHeader';
 // import HeartButton from '../../../common/HeartButton';
 // import ReviewPage from './ReviewPage';
 import DetailBox2 from './DetailBox2';
-import { ServiceDetailOption } from './Service';
+import { defaultImageUri, ServiceDetailOption } from './Service';
 import Flag from '../../../assets/common/Flag.svg';
 import { getUserRole } from '../../../common/storage';
 
@@ -168,6 +168,7 @@ const ProfileSection = ({
         navigation={navigation}
       />
       <Profile
+        backgroundImageUri={backgroundImageUri}
         reformerName={reformerName}
         reviewNum={reviewNum}
         navigation={navigation}
@@ -271,6 +272,7 @@ const Header = ({
 
 type ProfileProps = {
   profilePictureUri?: string;
+  backgroundImageUri?: string;
   reformerName: string;
   reviewNum: number;
   navigation: any;
@@ -279,6 +281,7 @@ type ProfileProps = {
 
 const Profile = ({
   profilePictureUri,
+  backgroundImageUri,
   reformerName,
   reviewNum,
   navigation,
@@ -302,6 +305,7 @@ const Profile = ({
               navigation.navigate('MarketTabView', {
                 reformerName: reformerName,
                 marketUuid: marketUuid,
+                backgroundImageUri: backgroundImageUri ?? defaultImageUri,
               })
             }>
             <Text style={TextStyles.reformerName}>{reformerName}</Text>

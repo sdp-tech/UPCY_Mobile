@@ -71,7 +71,7 @@ type ServiceMarketProps = {
   navigation: any;
 };
 
-const defaultImageUri =
+export const defaultImageUri =
   'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp';
 
 const EntireServiceMarket = ({
@@ -293,7 +293,7 @@ export const ServiceCard = ({
           reviewNum: REVIEW_NUM,
           tags: service_styles,
           backgroundImageUri: imageUri,
-          profileImageUri: imageUri,
+          profileImageUri: defaultImageUri,
           servicePeriod: service_period,
           serviceMaterials: service_materials,
           serviceContent: service_content,
