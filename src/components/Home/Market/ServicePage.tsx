@@ -3,7 +3,7 @@ import { View, ScrollView, StyleSheet, Text, Alert } from 'react-native';
 import { Tabs } from 'react-native-collapsible-tab-view';
 import Request from '../../../common/requests';
 import { ServiceCard } from './Service';
-import { ServiceResponseType } from './Service';
+import { ServiceResponseType, defaultImageUri } from './Service';
 
 // 이거는 리폼러마이페이지에 있는 서비스 탭!
 
@@ -34,7 +34,7 @@ const ServicePage: React.FC<ServicePageProps> = ({
       );
       if (response && response.status === 200) {
         const marketResult = response.data;
-        console.log('marketResult: ', marketResult.length);
+        console.log('marketResult: ', marketResult);
         setItems(marketResult);
       } else {
         Alert.alert('오류가 발생했습니다.');
@@ -56,7 +56,6 @@ const ServicePage: React.FC<ServicePageProps> = ({
     <Tabs.ScrollView
       ref={scrollViewRef}
       style={{ marginBottom: service || product ? 60 : 0 }}
-
       bounces={false}
       overScrollMode="never">
       <View style={styles.container}>
@@ -72,7 +71,7 @@ const ServicePage: React.FC<ServicePageProps> = ({
                 ? item.service_style.map(style => style.style_name || '')
                 : []
             }
-            imageUri={''}
+            imageUri={item.service_image[0]?.image || defaultImageUri}
             service_title={item.service_title || ''}
             service_content={item.service_content || ''}
             market_uuid={marketUuid || ''}
