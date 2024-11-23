@@ -174,7 +174,6 @@ const MarketTabView = ({
         setMarketData(marketResult);
       } else {
         Alert.alert('오류가 발생했습니다.');
-        console.log('response: ', response);
       }
     } catch (error) {
       console.error(error);

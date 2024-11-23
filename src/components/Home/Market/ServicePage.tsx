@@ -34,11 +34,9 @@ const ServicePage: React.FC<ServicePageProps> = ({
       );
       if (response && response.status === 200) {
         const marketResult = response.data;
-        console.log('marketResult: ', marketResult);
         setItems(marketResult);
       } else {
         Alert.alert('오류가 발생했습니다.');
-        console.log('response: ', response);
       }
     } catch (error) {
       console.error(error);
