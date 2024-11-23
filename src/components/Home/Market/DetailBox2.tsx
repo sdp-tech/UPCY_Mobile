@@ -1,7 +1,7 @@
 // DetailBox component without the tab
 import { View, Text, StyleSheet } from 'react-native';
 import RenderHTML from 'react-native-render-html';
-import { ServiceDetailOption } from './Service';
+import { MaterialDetail, ServiceDetailOption } from './Service';
 
 function convertPeriod(period: number) {
   let localPeriod: string = '';
@@ -57,7 +57,7 @@ const ContentBox = ({ content }: { content: string }) => {
   );
 };
 
-const MaterialBox = ({ list }: { list: string[] }) => {
+const MaterialBox = ({ list }: { list: MaterialDetail[] }) => {
   function materialList({ data }: { data: string[] }) {
     return data?.map((item, index) => (
       <View key={index}>
@@ -71,7 +71,7 @@ const MaterialBox = ({ list }: { list: string[] }) => {
       <View style={styles.eachBox}>
         <Text style={TextStyles.eachLabel}>작업 가능한 소재</Text>
         <View style={styles.materialListLine}>
-          {materialList({ data: list })}
+          {materialList({ data: list.map(element => element.material_name) })}
         </View>
       </View>
     </>
@@ -121,7 +121,7 @@ const OptionBox = ({ list }: { list: ServiceDetailOption[] }) => {
 
 type DetailBox2Props = {
   servicePeriod: number;
-  serviceMaterials?: string[];
+  serviceMaterials?: MaterialDetail[];
   serviceContent: string;
   serviceOptions?: ServiceDetailOption[];
   marketUuid: string;

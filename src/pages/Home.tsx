@@ -36,7 +36,7 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import ComponentsTest from './ComponentsTest';
 import { PURPLE } from '../styles/GlobalColor';
 import ReformerMarket from '../components/Home/Market/ReformerMarket';
-import Service from '../components/Home/Market/Service';
+import Service, { MaterialDetail } from '../components/Home/Market/Service';
 import { PhotoType } from '../hooks/useImagePicker';
 import { stylesList } from '../components/Home/HomeMain';
 import SearchPage from './SearchPage';
@@ -60,7 +60,7 @@ export type HomeStackParams = {
     backgroundImageUri: string;
     profileImageUri?: string;
     servicePeriod: number;
-    serviceMaterials: string[];
+    serviceMaterials: MaterialDetail[];
     serviceContent: string;
     serviceOptions: ServiceDetailOption[];
     marketUuid: string;

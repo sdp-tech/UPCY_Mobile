@@ -26,7 +26,11 @@ import DetailScreenHeader from '../components/DetailScreenHeader';
 // import HeartButton from '../../../common/HeartButton';
 // import ReviewPage from './ReviewPage';
 import DetailBox2 from './DetailBox2';
-import { defaultImageUri, ServiceDetailOption } from './Service';
+import {
+  defaultImageUri,
+  MaterialDetail,
+  ServiceDetailOption,
+} from './Service';
 import Flag from '../../../assets/common/Flag.svg';
 import { getUserRole } from '../../../common/storage';
 
@@ -42,7 +46,7 @@ type ServiceDetailPageProps = {
   backgroundImageUri: string;
   profileImageUri?: string;
   servicePeriod: number;
-  serviceMaterials: string[];
+  serviceMaterials: MaterialDetail[];
   serviceContent: string;
   serviceOptions: ServiceDetailOption[];
   marketUuid: string;
@@ -60,7 +64,7 @@ export type DetailPageStackParams = {
     profileImageUri?: string;
     servicePeriod: number;
     serviceContent: string;
-    serviceMaterials: string[];
+    serviceMaterials: MaterialDetail[];
     serviceOptions: ServiceDetailOption[];
     marketUuid: string;
   };

@@ -28,6 +28,11 @@ export type ServiceDetailOption = {
   option_uuid: string;
 };
 
+export type MaterialDetail = {
+  material_uuid: string;
+  material_name: string;
+};
+
 interface ServiceCardProps {
   name: string; // 리폼러 이름
   basic_price: number;
@@ -39,7 +44,7 @@ interface ServiceCardProps {
   market_uuid: string;
   service_uuid: string;
   service_period?: number;
-  service_materials?: string[];
+  service_materials?: MaterialDetail[];
   service_options?: ServiceDetailOption[];
   temporary?: boolean; //TODO: 수정 필요
 }
@@ -136,16 +141,17 @@ const EntireServiceMarket = ({
       market_uuid: service.market_uuid,
       service_uuid: service.service_uuid,
       service_period: service.service_period,
-      service_materials: service.service_material.map(
-        material => material.material_name,
-      ) as string[],
+      service_materials: service.service_material.map(material => ({
+        material_uuid: material.material_uuid,
+        material_name: material.material_name,
+      })) as MaterialDetail[],
       service_options: Array.isArray(service.service_option)
-        ? service.service_option.map(option => ({
+        ? (service.service_option.map(option => ({
             option_content: option.option_content,
             option_name: option.option_name,
             option_price: option.option_price,
             option_uuid: option.option_uuid,
-          }))
+          })) as ServiceDetailOption[])
         : [],
       temporary: service.temporary,
     })) as ServiceCardProps[];
@@ -252,6 +258,7 @@ const EntireServiceMarket = ({
                   service_period={card.service_period}
                   navigation={navigation}
                   service_options={serviceCardRawData[index].service_option}
+                  service_materials={serviceCardRawData[index].service_material}
                 />
               ),
           )
