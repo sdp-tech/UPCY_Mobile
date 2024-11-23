@@ -71,6 +71,9 @@ type ServiceMarketProps = {
   navigation: any;
 };
 
+const defaultImageUri =
+  'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp';
+
 const EntireServiceMarket = ({
   selectedStylesList,
   selectedFilterOption,
@@ -124,7 +127,7 @@ const EntireServiceMarket = ({
       service_styles: service.service_style.map(
         style => style.style_name,
       ) as string[],
-      imageUri: service.service_image?.[0]?.image ?? '',
+      imageUri: service.service_image?.[0]?.image ?? defaultImageUri,
       service_title: service.service_title,
       service_content: service.service_content,
       market_uuid: service.market_uuid,
@@ -302,9 +305,7 @@ export const ServiceCard = ({
         style={{ width: '100%', height: 180, position: 'relative' }}
         imageStyle={{ height: 180 }}
         source={{
-          uri:
-            imageUri ??
-            'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
+          uri: imageUri ?? defaultImageUri,
         }}>
         <Text style={TextStyles.serviceCardName}>{name}</Text>
         <Text style={TextStyles.serviceCardPrice}>{basic_price} 원 ~</Text>
