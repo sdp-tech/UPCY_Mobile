@@ -62,7 +62,7 @@ const MaterialBox = ({ list }: { list: MaterialDetail[] }) => {
     return data?.map((item, index) => (
       <View key={item.material_uuid}>
         <Text style={TextStyles.eachMaterialData}>
-          {item.material_name} {index < data.length - 1 && '|'}{' '}
+          {item.material_name} {index < data.length - 1 && '|'}
         </Text>
       </View>
     ));
