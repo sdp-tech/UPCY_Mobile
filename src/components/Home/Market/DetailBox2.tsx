@@ -1,7 +1,7 @@
 // DetailBox component without the tab
 import { View, Text, StyleSheet } from 'react-native';
 import RenderHTML from 'react-native-render-html';
-import { ServiceDetailOption } from './Service';
+import { MaterialDetail, ServiceDetailOption } from './Service';
 
 function convertPeriod(period: number) {
   let localPeriod: string = '';
@@ -57,18 +57,20 @@ const ContentBox = ({ content }: { content: string }) => {
   );
 };
 
-const MaterialBox = ({ list }: { list: string[] }) => {
-  function materialList({ data }: { data: string[] }) {
+const MaterialBox = ({ list }: { list: MaterialDetail[] }) => {
+  function materialList({ data }: { data: MaterialDetail[] }) {
     return data?.map((item, index) => (
-      <View key={index}>
-        <Text style={TextStyles.eachMaterialData}>{item} | </Text>
+      <View key={item.material_uuid}>
+        <Text style={TextStyles.eachMaterialData}>
+          {item.material_name} {index < data.length - 1 && '|'}
+        </Text>
       </View>
     ));
   }
 
   return (
     <>
-      <View style={styles.eachBox}>
+      <View style={styles.materialBox}>
         <Text style={TextStyles.eachLabel}>작업 가능한 소재</Text>
         <View style={styles.materialListLine}>
           {materialList({ data: list })}
@@ -85,7 +87,7 @@ const OptionBox = ({ list }: { list: ServiceDetailOption[] }) => {
       <View style={styles.optionListBox}>
         {list.map((option, index) => {
           return (
-            <View key={index} style={{ marginBottom: 16 }}>
+            <View key={option.option_uuid} style={{ marginBottom: 16 }}>
               <Text style={TextStyles.optionLabel}>option {index + 1}</Text>
               <View
                 style={{
@@ -95,10 +97,10 @@ const OptionBox = ({ list }: { list: ServiceDetailOption[] }) => {
                   marginBottom: 16,
                 }}>
                 <Text style={TextStyles.optionNameLabel}>
-                  {option.optionName}
+                  {option.option_name}
                 </Text>
                 <Text style={TextStyles.optionPriceLabel}>
-                  +{option.optionPrice}원
+                  +{option.option_price}원
                 </Text>
               </View>
               <View
@@ -108,7 +110,7 @@ const OptionBox = ({ list }: { list: ServiceDetailOption[] }) => {
                   borderRadius: 8,
                 }}>
                 <Text style={TextStyles.optionContentLabel}>
-                  {option.optionContent}
+                  {option.option_content}
                 </Text>
               </View>
             </View>
@@ -121,7 +123,7 @@ const OptionBox = ({ list }: { list: ServiceDetailOption[] }) => {
 
 type DetailBox2Props = {
   servicePeriod: number;
-  serviceMaterials?: string[];
+  serviceMaterials?: MaterialDetail[];
   serviceContent: string;
   serviceOptions?: ServiceDetailOption[];
   marketUuid: string;
@@ -134,19 +136,6 @@ const DetailBox2 = ({
   serviceOptions,
   marketUuid,
 }: DetailBox2Props) => {
-  const testOptionList = [
-    {
-      optionName: '똑딱이 단추',
-      optionContent: '가방 입구에 똑딱이 단추를 추가합니다.',
-      optionPrice: 1000,
-    },
-    {
-      optionName: '주머니 지퍼',
-      optionContent: '주머니에 귀여운 지퍼를 달아보세요.',
-      optionPrice: 1000,
-    },
-  ] as ServiceDetailOption[];
-
   return (
     <>
       <PeriodBox period={servicePeriod} />
@@ -164,6 +153,13 @@ const DetailBox2 = ({
 const styles = StyleSheet.create({
   eachBox: {
     flexDirection: 'column',
+    borderBottomWidth: 1,
+    borderColor: '#dcdcdc',
+    paddingVertical: 8,
+  },
+  materialBox: {
+    display: 'flex',
+    flexDirection: 'row',
     borderBottomWidth: 1,
     borderColor: '#dcdcdc',
     paddingVertical: 8,
@@ -208,10 +204,11 @@ const TextStyles = StyleSheet.create({
   },
   eachMaterialData: {
     fontSize: 14,
-    lineHeight: 26,
+    lineHeight: 24,
     color: '#222222',
     fontFamily: 'Pretendard Variable',
     fontWeight: '400',
+    paddingVertical: 8,
   },
   optionLabel: {
     color: '#612FEF',

@@ -24,13 +24,16 @@ import ServicePage from './ServicePage.tsx';
 import DetailScreenHeader from '../components/DetailScreenHeader.tsx';
 import ScrollTopButton from '../../../common/ScrollTopButton.tsx';
 import ReformerTag from '../components/ReformerTag.tsx';
+import { defaultImageUri } from './Service.tsx';
 
 export const ProfileSection = ({
   navigation,
   reformerName,
+  backgroundImageUri,
 }: {
   navigation: any;
   reformerName: string;
+  backgroundImageUri?: string;
 }) => {
   const marketName: string = reformerName;
   const selfIntroduce: string =
@@ -42,6 +45,7 @@ export const ProfileSection = ({
     <View style={{ alignItems: 'center' }}>
       <ProfileHeader
         marketName={marketName}
+        backgroundImageUri={backgroundImageUri}
         // rate={rate}
         // reviewNumber={reviewNumber}
       />
@@ -57,10 +61,12 @@ export const ProfileSection = ({
 
 const ProfileHeader = ({
   marketName,
+  backgroundImageUri,
   // rate,
   // reviewNumber,
 }: {
   marketName: string;
+  backgroundImageUri?: string;
   // rate: number;
   // reviewNumber: number;
 }) => {
@@ -77,7 +83,7 @@ const ProfileHeader = ({
         style={{ width: '100%', height: 200 }}
         imageStyle={{ height: 160 }}
         source={{
-          uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
+          uri: backgroundImageUri ?? defaultImageUri,
         }}>
         <View
           style={{
@@ -118,6 +124,7 @@ const ProfileHeader = ({
 type MarketTabViewProps = {
   reformerName: string;
   marketUuid: string;
+  backgroundImageUri?: string;
 };
 
 export type MarketResponseType = {
@@ -135,8 +142,9 @@ const MarketTabView = ({
   const defaultMarketData = {
     reformerName: '정보 없음',
     marketUuid: '',
+    backgroundImageUri: defaultImageUri,
   } as MarketTabViewProps;
-  const { reformerName, marketUuid }: MarketTabViewProps =
+  const { reformerName, marketUuid, backgroundImageUri }: MarketTabViewProps =
     route.params || defaultMarketData;
   const [routes] = useState([
     { key: 'profile', title: '프로필' },
@@ -166,7 +174,6 @@ const MarketTabView = ({
         setMarketData(marketResult);
       } else {
         Alert.alert('오류가 발생했습니다.');
-        console.log('response: ', response);
       }
     } catch (error) {
       console.error(error);
@@ -182,7 +189,11 @@ const MarketTabView = ({
 
   const renderHeader = useCallback(
     () => (
-      <ProfileSection navigation={navigation} reformerName={reformerName} />
+      <ProfileSection
+        navigation={navigation}
+        reformerName={reformerName}
+        backgroundImageUri={backgroundImageUri}
+      />
     ),
     [navigation, reformerName],
   );
