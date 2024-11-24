@@ -365,12 +365,12 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
         </Tabs.Tab>
         <Tabs.Tab name="서비스" key="service">
           <View>
-            <TouchableOpacity
+            {/*<TouchableOpacity
               style={styles.saveButton}
               onPress={() => navigation.navigate('TempStorage')}>
               <Text style={styles.saveButtonText}>임시저장 (5)</Text>
-              {/*수정 필요*/}
-            </TouchableOpacity>
+              {/*수정 필요
+            </TouchableOpacity>*/}
             <ServicePage scrollViewRef={scrollRef} navigation={navigation} />
             <ScrollTopButton scrollViewRef={scrollRef} />
           </View>
@@ -378,10 +378,11 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
       </Tabs.Container>
 
       {activeTab === 'service' ? (
+
         <TouchableOpacity
           style={styles.fixedButton}
           onPress={() => {
-            navigation.navigate('ServiceRegistrationPage');
+            navigation.navigate('TempStorage');
           }}>
           <Text style={styles.fixedButtonText}>서비스 추가</Text>
         </TouchableOpacity>
