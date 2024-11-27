@@ -8,6 +8,7 @@ import {
   ImageBackground,
   // FlatList,
   ScrollView,
+  Image,
 } from 'react-native';
 import {
   StackScreenProps,
@@ -25,7 +26,11 @@ import DetailScreenHeader from '../components/DetailScreenHeader';
 // import HeartButton from '../../../common/HeartButton';
 // import ReviewPage from './ReviewPage';
 import DetailBox2 from './DetailBox2';
-import { ServiceDetailOption } from './Service';
+import {
+  defaultImageUri,
+  MaterialDetail,
+  ServiceDetailOption,
+} from './Service';
 import Flag from '../../../assets/common/Flag.svg';
 import { getUserRole } from '../../../common/storage';
 
@@ -41,7 +46,7 @@ type ServiceDetailPageProps = {
   backgroundImageUri: string;
   profileImageUri?: string;
   servicePeriod: number;
-  serviceMaterials: string[];
+  serviceMaterials: MaterialDetail[];
   serviceContent: string;
   serviceOptions: ServiceDetailOption[];
   marketUuid: string;
@@ -59,7 +64,7 @@ export type DetailPageStackParams = {
     profileImageUri?: string;
     servicePeriod: number;
     serviceContent: string;
-    serviceMaterials: string[];
+    serviceMaterials: MaterialDetail[];
     serviceOptions: ServiceDetailOption[];
     marketUuid: string;
   };
@@ -168,6 +173,8 @@ const ProfileSection = ({
         navigation={navigation}
       />
       <Profile
+        backgroundImageUri={backgroundImageUri}
+        profilePictureUri={profileImageUri}
         reformerName={reformerName}
         reviewNum={reviewNum}
         navigation={navigation}
@@ -209,9 +216,7 @@ const Banner = ({
       style={{ width: '100%', height: width * 0.5, position: 'relative' }}
       imageStyle={{ height: width * 0.5 }}
       source={{
-        uri:
-          backgroundImageUri ||
-          'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
+        uri: backgroundImageUri || defaultImageUri,
         // backgroundImageUri가 없는 경우 기본 이미지
       }}>
       {reportButtonPressed && (
@@ -271,6 +276,7 @@ const Header = ({
 
 type ProfileProps = {
   profilePictureUri?: string;
+  backgroundImageUri?: string;
   reformerName: string;
   reviewNum: number;
   navigation: any;
@@ -279,6 +285,7 @@ type ProfileProps = {
 
 const Profile = ({
   profilePictureUri,
+  backgroundImageUri,
   reformerName,
   reviewNum,
   navigation,
@@ -288,20 +295,28 @@ const Profile = ({
     <View style={{ justifyContent: 'space-between' }}>
       <View style={{ padding: 15, flexDirection: 'row' }}>
         {/* TODO: add profile picture here */}
-        <View
-          style={{
-            backgroundColor: 'gray',
-            width: 50,
-            height: 50,
-            borderRadius: 25,
-          }}></View>
-        <View style={{ marginLeft: 20, justifyContent: 'center' }}>
+        {profilePictureUri && profilePictureUri !== '' ? (
+          <Image
+            style={{ width: 50, height: 50, borderRadius: 25 }}
+            source={{ uri: profilePictureUri }}
+          />
+        ) : (
+          <View
+            style={{
+              backgroundColor: 'gray',
+              width: 50,
+              height: 50,
+              borderRadius: 25,
+            }}></View>
+        )}
+        <View style={{ marginLeft: 10, justifyContent: 'center' }}>
           <TouchableOpacity
             style={{ flexDirection: 'row', alignItems: 'center' }}
             onPress={() =>
               navigation.navigate('MarketTabView', {
                 reformerName: reformerName,
                 marketUuid: marketUuid,
+                backgroundImageUri: backgroundImageUri ?? defaultImageUri,
               })
             }>
             <Text style={TextStyles.reformerName}>{reformerName}</Text>

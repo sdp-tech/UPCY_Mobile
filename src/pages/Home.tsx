@@ -36,7 +36,7 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import ComponentsTest from './ComponentsTest';
 import { PURPLE } from '../styles/GlobalColor';
 import ReformerMarket from '../components/Home/Market/ReformerMarket';
-import Service from '../components/Home/Market/Service';
+import Service, { MaterialDetail } from '../components/Home/Market/Service';
 import { PhotoType } from '../hooks/useImagePicker';
 import { stylesList } from '../components/Home/HomeMain';
 import SearchPage from './SearchPage';
@@ -59,7 +59,7 @@ export type HomeStackParams = {
     backgroundImageUri: string;
     profileImageUri?: string;
     servicePeriod: number;
-    serviceMaterials: string[];
+    serviceMaterials: MaterialDetail[];
     serviceContent: string;
     serviceOptions: ServiceDetailOption[];
     marketUuid: string;
@@ -87,6 +87,7 @@ export type HomeStackParams = {
   MarketTabView: {
     reformerName: string;
     marketUuid: string;
+    backgroundImageUri?: string;
   };
   SearchPage: {
     navigation: any;
@@ -202,7 +203,6 @@ const HomeMainScreen = ({
   const [selectedStylesList, setSelectedStylesList] =
     useState<string[]>(stylesList);
 
-
   return (
     <Fragment>
       <SafeAreaView style={{ flex: 0, backgroundColor: PURPLE }} />
@@ -213,7 +213,7 @@ const HomeMainScreen = ({
         <BottomSheetModalProvider>
           <View>
             <HomeTabView
-              onSearch={() => { }}
+              onSearch={() => {}}
               selectedTab={selectedTab}
               onTabChange={handleTabChange}
               setSelectedFilterOption={setSelectedFilterOption}
