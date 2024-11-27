@@ -26,7 +26,7 @@ import DetailScreenHeader from '../../../components/Home/components/DetailScreen
 import { PhotoType } from '../../../hooks/useImagePicker.ts';
 import Request from '../../../common/requests.js';
 import { MypageStackProps } from '../../../pages/MyPage.tsx';
-import { getAccessToken, getRefreshToken, getUserRole, removeAccessToken, removeRefreshToken, setUserRole } from '../../../common/storage.js';
+import { getAccessToken, getMarketUUID, getNickname, getRefreshToken, getUserRole, removeAccessToken, removeRefreshToken, setNickname, setUserRole } from '../../../common/storage.js';
 import { CommonActions, useFocusEffect } from '@react-navigation/native';
 import { Title20B } from '../../../styles/GlobalText.tsx';
 import DeleteModal from '../DeleteModal.tsx';
@@ -118,6 +118,7 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
 
   const request = Request();
   const { isLogin, setLogin } = useContext(LoginContext);
+  const [market_uuid, setMarket_uuid] = useState<any>('');
   const [reformerInfo, setReformerInfo] = useState({
     nickname: route.params?.nickname || '',
     backgroundphoto:
@@ -169,6 +170,9 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
             '나는야 업씨러 이하늘 환경을 사랑하지요 눈누난나',
           role: 'reformer',
         });
+        setNickname(response.data.nickname);
+        const UUID = await getMarketUUID();
+        setMarket_uuid(UUID);
         return response.data;
       } else {
         console.log('Failed to fetch user data:', response);
@@ -365,6 +369,7 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
         </Tabs.Tab>
         <Tabs.Tab name="서비스" key="service">
           <View>
+
             {/*<TouchableOpacity
               style={styles.saveButton}
               onPress={() => navigation.navigate('TempStorage')}>
