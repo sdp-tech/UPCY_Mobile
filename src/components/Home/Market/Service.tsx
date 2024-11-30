@@ -147,11 +147,11 @@ const EntireServiceMarket = ({
       })) as MaterialDetail[],
       service_options: Array.isArray(service.service_option)
         ? (service.service_option.map(option => ({
-            option_content: option.option_content,
-            option_name: option.option_name,
-            option_price: option.option_price,
-            option_uuid: option.option_uuid,
-          })) as ServiceDetailOption[])
+          option_content: option.option_content,
+          option_name: option.option_name,
+          option_price: option.option_price,
+          option_uuid: option.option_uuid,
+        })) as ServiceDetailOption[])
         : [],
       temporary: service.temporary,
     })) as ServiceCardProps[];
@@ -222,7 +222,7 @@ const EntireServiceMarket = ({
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={styles.container} overScrollMode='never' bounces={false}>
       <Title20B
         style={{ marginTop: 15, marginHorizontal: 15, marginBottom: 8 }}>
         {serviceTitle}
