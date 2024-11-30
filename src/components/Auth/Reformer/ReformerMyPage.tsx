@@ -384,7 +384,8 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
         <TouchableOpacity
           style={styles.fixedButton}
           onPress={() => {
-            navigation.navigate('TempStorage');
+            //navigation.navigate('TempStorage');
+            navigation.navigate('ServiceRegistrationPage')
           }}>
           <Text style={styles.fixedButtonText}>서비스 추가</Text>
         </TouchableOpacity>

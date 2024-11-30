@@ -28,7 +28,7 @@ export type MyPageStackParams = {
   UpcyerMyPageMainScreen: { navigation: any; route: any };
   TempStorage: undefined;
   TempStorageEdit: undefined;
-  ServiceRegistrationPage: { inputText?: string; detailphoto?: PhotoType[] };
+  ServiceRegistrationPage: { inputText?: string; detailphoto?: PhotoType[]; serviceData: any; };
   WriteDetailPage: { inputText: string; detailphoto?: PhotoType[] };
 };
 
