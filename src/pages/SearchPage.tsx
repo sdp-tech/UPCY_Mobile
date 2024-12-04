@@ -7,12 +7,13 @@ import { BLACK2 } from '../styles/GlobalColor';
 import { StackScreenProps } from '@react-navigation/stack';
 import { HomeStackParams } from './Home';
 
-const Container = styled.View`
+const Container = styled.SafeAreaView`
   padding: 16px;
   background-color: #fff;
 `;
 
 const Header = styled.View`
+  padding: 16px;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;

@@ -141,34 +141,36 @@ const ServiceRegistrationPage = ({
   fix
 }: ServiceRegiProps) => {
   const { hideBottomBar, showBottomBar } = useBottomBar();
-  const { serviceData } = route.params || {}; // 전달된 데이터 수신
+  const serviceData = route.params?.serviceData || {}; // 전달된 데이터 수신
   const service_uuid = serviceData.service_uuid ? serviceData.service_uuid : '';
   // 전달된 데이터로 초기 상태 설정
   useEffect(() => {
-    if (serviceData) {
-      setName(serviceData.service_title || '');
-      setInputText(serviceData.service_content || '');
-      setForm({ category: serviceData.service_category || '' });
-      setMakingTime(serviceData.service_period || 0);
-      setPrice(serviceData.basic_price ? serviceData.basic_price.toString() : '');
-      setMaxPrice(serviceData.max_price ? serviceData.max_price.toString() : '');
-      setStyles(serviceData.service_style || []);
-      setMaterials(serviceData.service_material || []);
-      setOptionList(
-        serviceData.service_option?.map((option: any) => ({
-          option: option.option_name || '',
-          optionExplain: option.option_content || '',
-          addPrice: option.option_price ? option.option_price.toString() : '',
-          optionPhotos: option.optionPhotos || [], // Assuming images are included
-          photoAdded: !!option.optionPhotos?.length,
-          isFixing: false,
-        })) || []
-      );
-    }
-  }, [serviceData]);
+    if (!serviceData) return;
+
+    setName(serviceData.service_title || '');
+    setInputText(serviceData.service_content || '');
+    setForm({ category: serviceData.service_category || '' });
+    setMakingTime(serviceData.service_period || 0);
+    setPrice(serviceData.basic_price?.toString() || '');
+    setMaxPrice(serviceData.max_price?.toString() || '');
+    setStyles(serviceData.service_style || []);
+    setMaterials(serviceData.service_material || []);
+    setOptionList(
+      serviceData.service_option?.map((option: any) => ({
+        option: option.option_name || '',
+        optionExplain: option.option_content || '',
+        addPrice: option.option_price ? option.option_price.toString() : '',
+        optionPhotos: option.optionPhotos || [],
+        photoAdded: !!option.optionPhotos?.length,
+        isFixing: false,
+      })) || []
+    );
+  }, []); // 빈 의존성 배열로 설정 -> 무한루프 문제 해결 
 
   useEffect(() => {
     hideBottomBar();
+    console.log('serviceData:', serviceData);
+    console.log('route.params:', route.params);
     return () => showBottomBar();
   }, []);
 
@@ -415,39 +417,39 @@ const ServiceRegistrationPage = ({
         temporary: temp,
       };
 
-      if(service_uuid){ // PUT 요청: 기존 임시저장 서비스 업데이트
-          try {
-              const response = await request.put(
-                  `/api/market/${market_uuid}/service/${service_uuid}`,
-                  params,
-                  headers
-              );
-              if (response?.status === 200) {
-                  console.log("임시저장 서비스 업데이트 완료:", response.data);
-              }
-          } catch (err) {
-              console.error("임시 저장 업데이트 실패:", err);
+      if (service_uuid) { // PUT 요청: 기존 임시저장 서비스 업데이트
+        try {
+          const response = await request.put(
+            `/api/market/${market_uuid}/service/${service_uuid}`,
+            params,
+            headers
+          );
+          if (response?.status === 200) {
+            console.log("임시저장 서비스 업데이트 완료:", response.data);
           }
+        } catch (err) {
+          console.error("임시 저장 업데이트 실패:", err);
+        }
       } else {            // POST 요청: 새로운 임시저장 서비스 생성
-          try {
-              const response = await request.post(`/api/market/${market_uuid}/service`, params_, headers);
-              if (response?.status === 201) {
-                console.log(response.data);
-                console.log(params_);
-                const service_uuid = await response?.data.service_uuid;
-                const option_uuidList: any[] =
-                    response.data.service_options ? response.data.service_options.map((option: any) => option.option_uuid)
-                    : []; // 없으면 빈 배열
-                    // 그리고 아래에서 그 리스트 전달, 이후 함수에서 리스트 다시 분해해서 반복문 돌려서 사진 업로드
-                await uploadImage(service_uuid, true, option_uuidList); // 옵션별 사진 등록
-                await uploadImage(service_uuid, false); // 서비스 썸네일 등록
-                console.log("TempService UUID:", service_uuid);
-                // navigation.navigate('ReformerProfilePage');
-                console.log("임시등록 성공!");
-              }
-          } catch (err) {
-              console.error(err);
+        try {
+          const response = await request.post(`/api/market/${market_uuid}/service`, params_, headers);
+          if (response?.status === 201) {
+            console.log(response.data);
+            console.log(params_);
+            const service_uuid = await response?.data.service_uuid;
+            const option_uuidList: any[] =
+              response.data.service_options ? response.data.service_options.map((option: any) => option.option_uuid)
+                : []; // 없으면 빈 배열
+            // 그리고 아래에서 그 리스트 전달, 이후 함수에서 리스트 다시 분해해서 반복문 돌려서 사진 업로드
+            await uploadImage(service_uuid, true, option_uuidList); // 옵션별 사진 등록
+            await uploadImage(service_uuid, false); // 서비스 썸네일 등록
+            console.log("TempService UUID:", service_uuid);
+            // navigation.navigate('ReformerProfilePage');
+            console.log("임시등록 성공!");
           }
+        } catch (err) {
+          console.error(err);
+        }
       }
       navigation.navigate('TempStorage'); // 차후 수정 필요
     }
@@ -495,11 +497,10 @@ const ServiceRegistrationPage = ({
 
 
   useEffect(() => {
-    if (route.params?.inputText) {
+    if (route.params?.inputText && inputText !== route.params.inputText) {
       setInputText(route.params.inputText);
     }
-    if (route.params?.detailphoto) {
-      // detailphoto가 있는 경우 처리
+    if (route.params?.detailphoto && detailphoto !== route.params.detailphoto) {
       setDetailPhoto(route.params.detailphoto);
     }
   }, [route.params?.inputText, route.params?.detailphoto]);

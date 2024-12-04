@@ -45,44 +45,46 @@ export type RegionType =
   | '중구'
   | '중랑구'
   | '';
-type Educ = {
-  school: string; // 학교명
-  major: string | undefined; // 전공
-  academic_status: string | undefined; // 상태
-  // file: Files;
-  // 파일 형식은 나중에 추가
-};
-export type EducType = Educ[];
-
-type Career = {
-  company_name: string; // 회사명
-  department: string | undefined; // 근무부서 및 직책
-  period: string | undefined; // 근무기간
-};
-export type CareerType = Career[];
-
-type Awards = {
-  competition: string; // 공모전명
-  prize: string | undefined; // 수상내역
-};
-export type AwardsType = Awards[];
-
-type Certifi = {
-  name: string; // 자격증명
-  issuing_authority: string | undefined; // 발급기관
-};
-export type CertifiType = Certifi[];
-
-type Free = {
-  project_name: string; // 프로젝트명
-  description: string | undefined; // 상세설명
-};
-export type FreeType = Free[];
+  type BaseType = {
+    file?: Files; // 공통 속성
+  };
+  
+  type Educ = BaseType & {
+    school?: string; // 학교명
+    major?: string | undefined; // 전공
+    academic_status?: string | undefined; // 상태
+  };
+  export type EducType = Educ[];
+  
+  type Career = BaseType & {
+    company_name?: string; // 회사명
+    department?: string | undefined; // 근무부서 및 직책
+    period?: string | undefined; // 근무기간
+  };
+  export type CareerType = Career[];
+  
+  type Awards = BaseType & {
+    competition?: string; // 공모전명
+    prize?: string | undefined; // 수상내역
+  };
+  export type AwardsType = Awards[];
+  
+  type Certifi = BaseType & {
+    name?: string; // 자격증명
+    issuing_authority?: string | undefined; // 발급기관
+  };
+  export type CertifiType = Certifi[];
+  
+  type Free = BaseType & {
+    project_name?: string; // 프로젝트명
+    description?: string | undefined; // 상세설명
+  };
+  export type FreeType = Free[];
 
 export type Field = {
   name: string;
   file: Files;
-  type: string | undefined;
+  type: string;
   major?: string | undefined;
   status?: string | undefined;
   team?: string | undefined;

@@ -27,6 +27,7 @@ import PeriodPicker from '../../../common/PeriodPicker';
 import FileBox from '../../../common/FileBox';
 import CustomScrollView from '../../../common/CustomScrollView';
 import DatePickerBox from '../../../common/DatePickerBox';
+import { getAccessToken } from '../../../common/storage';
 
 interface CareerModalProps extends ModalProps {
   index: number;
@@ -369,7 +370,7 @@ export default function CareerModal({
               )} */}
             </View>
             {detailSection()}
-            {/* <View style={{ marginVertical: 10 }}>
+            <View style={{ marginVertical: 10 }}>
               <View
                 style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                 <Body16B>증빙자료첨부</Body16B>
@@ -384,7 +385,7 @@ export default function CareerModal({
                 }}
                 max={1}
               />
-            </View> */}
+            </View>
             {/* 파일 업로드 로직은 백엔드 구현되고 나면 다시 적용 */}
             <View style={{ marginTop: 'auto' }}>
               <BottomButton

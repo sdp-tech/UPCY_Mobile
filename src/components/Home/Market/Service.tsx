@@ -52,6 +52,7 @@ interface ServiceCardProps {
 export type ServiceResponseType = {
   // TODO: any type 나중에 알아보고 수정
   basic_price: number;
+  created?: Date;
   market_uuid: string;
   max_price: number;
   service_category: string;
@@ -64,6 +65,7 @@ export type ServiceResponseType = {
   service_title: string;
   service_uuid: string;
   temporary: boolean;
+  updated?: Date;
 };
 
 interface ServiceCardComponentProps extends ServiceCardProps {
@@ -138,7 +140,7 @@ const EntireServiceMarket = ({
       imageUri: service.service_image?.[0]?.image ?? defaultImageUri,
       service_title: service.service_title,
       service_content: service.service_content,
-      market_uuid: service.market_uuid,
+      market_uuid: service.market_uuid || '',
       service_uuid: service.service_uuid,
       service_period: service.service_period,
       service_materials: service.service_material.map(material => ({
@@ -147,11 +149,11 @@ const EntireServiceMarket = ({
       })) as MaterialDetail[],
       service_options: Array.isArray(service.service_option)
         ? (service.service_option.map(option => ({
-            option_content: option.option_content,
-            option_name: option.option_name,
-            option_price: option.option_price,
-            option_uuid: option.option_uuid,
-          })) as ServiceDetailOption[])
+          option_content: option.option_content,
+          option_name: option.option_name,
+          option_price: option.option_price,
+          option_uuid: option.option_uuid,
+        })) as ServiceDetailOption[])
         : [],
       temporary: service.temporary,
     })) as ServiceCardProps[];
@@ -222,7 +224,7 @@ const EntireServiceMarket = ({
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={styles.container} overScrollMode='never' bounces={false}>
       <Title20B
         style={{ marginTop: 15, marginHorizontal: 15, marginBottom: 8 }}>
         {serviceTitle}

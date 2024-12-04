@@ -186,10 +186,8 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
 
   useFocusEffect(
     useCallback(() => {
-      if (isLogin) {
-        getProfile(); // 로그인 상태일 때 프로필을 가져옴
-      }
-    }, [isLogin]),
+      getProfile();
+    }, []),
   );
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -383,11 +381,11 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
       </Tabs.Container>
 
       {activeTab === 'service' ? (
-
         <TouchableOpacity
           style={styles.fixedButton}
           onPress={() => {
-            navigation.navigate('TempStorage');
+            //navigation.navigate('TempStorage');
+            navigation.navigate('ServiceRegistrationPage')
           }}>
           <Text style={styles.fixedButtonText}>서비스 추가</Text>
         </TouchableOpacity>

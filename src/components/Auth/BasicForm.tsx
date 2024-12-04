@@ -325,8 +325,23 @@ export default function BasicForm({ navigation, route }: FormProps) {
                 style={{ height: 44, marginTop: 8 }}
                 secure={true}
                 caption={{
-                  default:
-                    '숫자, 영문, 특수문자를 하나 이상 포함해 8자 이상 16자 이하로 설정해 주세요.',
+                  invalid: (() => {
+                    const password = form.password;
+                    const A = /[0-9]/.test(password); // 숫자 조건
+                    const B = /[a-zA-Z]/.test(password); // 영문 조건
+                    const C = /[\W_]/.test(password); // 특수문자 조건
+                    const D = password.length >= 8 && password.length <= 16; // 길이 조건
+
+                    // 충족되지 않은 조건 메시지 생성
+                    const invalidMessages = [];
+                    if (!A) invalidMessages.push('숫자를 포함해야 합니다.');
+                    if (!B) invalidMessages.push('영문을 포함해야 합니다.');
+                    if (!C) invalidMessages.push('특수문자를 포함해야 합니다.');
+                    if (!D) invalidMessages.push('8자 이상 16자 이하로 설정해야 합니다.');
+
+                    // 충족되지 않은 조건들을 줄바꿈으로 연결하여 출력
+                    return invalidMessages.length > 0 ? invalidMessages.join('\n') : false;
+                  })(),
                 }}
               />
 
@@ -340,7 +355,6 @@ export default function BasicForm({ navigation, route }: FormProps) {
                 caption={{
                   invalid:
                     checkPw !== form.password &&
-                    checkPw !== '' &&
                     '비밀번호가 일치하지 않습니다.',
                 }}
               />
