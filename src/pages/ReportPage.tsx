@@ -18,9 +18,11 @@ import {
   BottomSheetFlatList,
   BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet';
+import { useNavigation } from '@react-navigation/native';
 
 const ReportPage = ({}: StackScreenProps<HomeStackParams, 'ReportPage'>) => {
   const [reportReason, setReportReason] = useState<string>('');
+  const navigation = useNavigation();
   return (
     <BottomSheetModalProvider>
       <SafeAreaView>
@@ -40,7 +42,10 @@ const ReportPage = ({}: StackScreenProps<HomeStackParams, 'ReportPage'>) => {
             setReportReason={setReportReason}
           />
           <ReportContentBox />
-          <ReportConfirmButton reportReason={reportReason} />
+          <ReportConfirmButton
+            reportReason={reportReason}
+            navigation={navigation}
+          />
         </View>
       </SafeAreaView>
     </BottomSheetModalProvider>
@@ -102,19 +107,26 @@ const ReportContentBox = () => {
   );
 };
 
-const ReportConfirmButton = ({ reportReason }: { reportReason: string }) => {
+const ReportConfirmButton = ({
+  reportReason,
+  navigation,
+}: {
+  reportReason: string;
+  navigation: any;
+}) => {
   const onPressReportConfirm = () => {
-    //TODO
+    navigation.goBack();
   };
+
+  const isReasonValid = reportReason && reportReason.trim().length > 0;
+
   return (
     <View style={{ zIndex: 0 }}>
       <Button
         title="신고"
         onPress={onPressReportConfirm}
-        disabled={!(reportReason && reportReason.length > 0)}
-        color={
-          !(reportReason && reportReason.length > 0) ? '#6C4CE4' : '#D3D3D3'
-        }
+        disabled={!isReasonValid}
+        color={isReasonValid ? '#6C4CE4' : '#D3D3D3'}
       />
     </View>
   );
