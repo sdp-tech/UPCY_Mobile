@@ -1,19 +1,11 @@
-import { useEffect, useState, useRef, useCallback, useMemo } from 'react';
+import { useEffect, useRef, useCallback, useMemo } from 'react';
 import {
   BottomSheetModal,
   BottomSheetBackdrop,
   BottomSheetFlatList,
 } from '@gorhom/bottom-sheet';
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
-import { SelectedOptionProps } from '../HomeMain';
-
-const selectOptionDropdown: SelectedOptionProps[] = [
-  '추천순',
-  '인기순',
-  '가격순',
-  '최신순',
-  '판매순',
-] as SelectedOptionProps[];
+import { StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { SelectedOptionProps, selectOptionDropdown } from '../HomeMain';
 
 const FilterOptionModal = ({
   open,

@@ -33,7 +33,7 @@ export type SelectedOptionProps =
   | '최신순'
   | '판매순';
 
-const selectOptionDropdown: SelectedOptionProps[] = [
+export const selectOptionDropdown: SelectedOptionProps[] = [
   '추천순',
   '인기순',
   '가격순',
@@ -108,7 +108,7 @@ const HomeTabView = ({
   }, [selectedOption, setSelectedFilterOption]);
 
   return (
-    <>
+    <View>
       <CategoryBox>
         {selectedTab === 'Goods' && (
           <View
@@ -160,7 +160,7 @@ const HomeTabView = ({
         selectedStyles={selectedStyles}
         setSelectedStyles={setSelectedStyles}
       />
-    </>
+    </View>
   );
 };
 
