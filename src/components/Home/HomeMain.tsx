@@ -5,7 +5,7 @@ import { StyleFilterButton } from './components/StyleFilterButton';
 import styled from 'styled-components/native';
 import DetailModal from './Market/GoodsDetailOptionsModal';
 import DropDown from '../../assets/common/DropDown.svg';
-import HomeStyleFilterElement from './components/HomeStyleFilterElement';
+import HomeStyleFilterModal from './components/HomeStyleFilterModal';
 import FilterOptionModal from './components/FilterOptionModal';
 
 const CategoryBox = styled.View`
@@ -121,14 +121,15 @@ const HomeTabView = ({
               <StyleFilterButton
                 onPressStyleFilterButton={setStyleFilterOpen}
               />
-              {/* {styleFilterOpen && (
-                <HomeStyleFilterElement
+              {styleFilterOpen && (
+                <HomeStyleFilterModal
                   list={pressedStyles}
+                  styleFilterOpen={styleFilterOpen}
                   setStyleFilterOpen={setStyleFilterOpen}
                   setPressedStyles={setPressedStyles}
                   setFinalPressedStyles={setSelectedStylesList}
                 />
-              )} */}
+              )}
             </View>
             <View style={styles.dropdownContainer}>
               <TouchableOpacity
