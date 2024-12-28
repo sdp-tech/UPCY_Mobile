@@ -71,7 +71,7 @@ const HomeStyleFilterModal = ({
     [],
   );
 
-  const snapPoints = useMemo(() => ['50%'], []);
+  const snapPoints = useMemo(() => ['35%'], []);
 
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present();
@@ -102,7 +102,8 @@ const HomeStyleFilterModal = ({
       snapPoints={snapPoints}
       backdropComponent={renderBackdrop}
       onChange={handleSheetChanges}>
-      <View style={{ width: 380 }}>
+      <View
+        style={{ width: '100%', paddingHorizontal: 36, paddingVertical: 15 }}>
         <View
           style={{
             marginTop: 3,
@@ -126,7 +127,7 @@ const HomeStyleFilterModal = ({
             style={{
               flexDirection: 'row',
               flexWrap: 'wrap',
-              marginTop: 12,
+              marginTop: 20,
             }}>
             {filterList?.map((value, index) => {
               return (
@@ -143,7 +144,7 @@ const HomeStyleFilterModal = ({
             })}
           </View>
           <TouchableOpacity
-            style={{ alignItems: 'center', paddingBottom: 10 }}
+            style={{ alignItems: 'center', paddingBottom: 10, marginTop: 20 }}
             onPress={applyStyles}>
             <Text style={{ color: '#000' }}>적용하기</Text>
           </TouchableOpacity>
