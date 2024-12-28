@@ -470,57 +470,7 @@ const styles = StyleSheet.create({
     alignItems: "center", // 가로 중앙 정렬
     backgroundColor: "rgba(0, 0, 0, 0.5)", // 반투명 배경
   },
-  popupContainer: {
-    width: 300,
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 20,
-    alignItems: "center",
-    overflow: "hidden",
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#000",
-    marginBottom: 10,
-    textAlign: "center",
-  },
-  subtitle: {
-    fontSize: 14,
-    color: "#929292",
-    textAlign: "center",
-    marginBottom: 20,
-  },
-  buttonContainer: {
-    width: "100%",
-    borderTopWidth: 1,
-    borderTopColor: "#E5E5E5",
-  },
-  confirmButton: {
-    paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E5E5",
-    alignItems: "center",
-  },
-  confirmText: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#FF3B30", // 빨간색 텍스트
-  },
-  cancelButton: {
-    paddingVertical: 15,
-    alignItems: "center",
-  },
-  cancelText: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#000",
-  },overlay: {
-    flex: 1,
-    justifyContent: "center", // 화면 중앙 정렬
-    alignItems: "center", // 가로 중앙 정렬
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // 반투명 배경
-  },
+
   popupContainer: {
     width: 300,
     backgroundColor: "#fff",

@@ -4,6 +4,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Modal,
   StyleSheet,
   ImageBackground,
   // FlatList,
@@ -33,6 +34,8 @@ import {
 } from './Service';
 import Flag from '../../../assets/common/Flag.svg';
 import { getUserRole } from '../../../common/storage';
+import Request from '../../../common/requests.js';
+
 
 const { width, height } = Dimensions.get('window');
 
@@ -367,15 +370,75 @@ const ServiceDetailPageMainScreen = ({
   //   />
   // );
 
+  const [quitted, setQuitted] = useState<boolean>(false);
   const [userRole, setUserRole] = useState<string>('customer');
+  const [isServiceQuitPopupVisible, setServiceQuitPopupVisible] = useState(false);
+  const [isServiceResumePopupVisible, setServiceResumePopupVisible] = useState(false);
+
+  const request = Request();
 
   useEffect(() => {
     const getUserRoleInfo = async () => {
       const userRole = await getUserRole();
-      setUserRole(userRole ? userRole : '');
+      setUserRole(userRole ? userRole : 'customer');
     };
     getUserRoleInfo();
-  }, []);
+
+    const fetchServiceStatus = async () => {
+      try {
+        const response = await request.get(`/api/market/${marketUuid}/service/${serviceUuid}`, {})
+        if (resp && response.status === 200){
+        setQuitted(response.quitted); // 서비스 상태 (중단 여부) 받아오기
+        }
+      } catch (error) {
+        console.error('Error fetching service status:', error);
+      }
+    };
+
+    fetchServiceStatus();
+  }, [marketUuid, serviceUuid]);
+
+  const handleServiceQuit = async() => {
+      const accessToken = await getAccessToken();
+      const headers = {
+          Authorization: `Bearer ${accessToken}`,
+      };
+
+      try {
+          const response = await request.put(
+              `/api/market/${marketUuid}/service/${serviceUuid}`,
+              { quitted: true },
+              headers
+          );
+          if (response && response.status === 200) {
+              setQuitted(true);
+              setServiceQuitPopupVisible(false);
+          }
+      } catch (error) {
+          console.error('Error quitting service:', error);
+      }
+  };
+
+  const handleServiceResume = async() => {
+      const accessToken = await getAccessToken();
+      const headers = {
+          Authorization: `Bearer ${accessToken}`,
+      };
+
+      try {
+          const response = await request.put(
+              `/api/market/${marketUuid}/service/${serviceUuid}`,
+              { quitted: false },
+              headers
+          );
+          if (response && response.status === 200) {
+              setQuitted(false);
+              setServiceResumePopupVisible(false);
+          }
+      } catch (error) {
+          console.error('Error quitting service:', error);
+      }
+  };
 
   return (
     <View style={{ flex: 1, position: 'relative' }}>
@@ -420,12 +483,64 @@ const ServiceDetailPageMainScreen = ({
           marketUuid={marketUuid}
         />
       </ScrollView>
-      {userRole === 'customer' && (
-        <View style={styles.footerContainer}>
-          <Footer />
-        </View>
+      <View style={styles.footerContainer}>
+        <Footer />
+      </View>
+      {userRole === 'reformer' && (
+        <TouchableOpacity
+            style={quitted ? styles.serviceResumeButton : styles.serviceQuitButton}
+            onPress={quitted ? handleServiceResume : handleServiceQuit}>
+            <Text style={quitted ? styles.serviceResumeButtonText : styles.serviceQuitButtonText}>
+              {quitted ? '서비스 재개' : '서비스 중단'}
+            </Text>
+        </TouchableOpacity>
       )}
+
+      <CustomPopup
+        visible={isServiceQuitPopupVisible}
+        title="서비스 주문 받기를 정말 중단할까요?"
+        subtitle="서비스 재개를 통해 다시 주문을 받을 수 있습니다."
+        confirmText="중단"
+        onConfirm={handleServiceQuit}
+        onCancel={() => setServiceQuitPopupVisible(false)}
+      />
+      <CustomPopup
+        visible={isServiceResumePopupVisible}
+        title="서비스 주문 받기를 재개할까요?"
+        subtitle="서비스 중단을 통해 다시 주문을 받지 않을 수 있습니다."
+        confirmText="재개"
+        onConfirm={handleServiceResume}
+        onCancel={() => setServiceResumePopupVisible(false)}
+      />
     </View>
+  );
+};
+
+const CustomPopup = ({ visible, title, subtitle, confirmText, onConfirm, onCancel }) => {
+  return (
+    <Modal
+      visible={visible}
+      transparent={true}
+      animationType="fade"
+      onRequestClose={onCancel}
+    >
+      <View style={styles.overlay}>
+        <View style={styles.popupContainer}>
+            <View style={styles.messageContainer}>
+                <Text style={styles.title}>{title}</Text>
+                <Text style={styles.subtitle}>{subtitle}</Text>
+            </View>
+            <View style={styles.buttonContainer}>
+                <TouchableOpacity style={styles.confirmButton} onPress={onConfirm}>
+                    <Text style={styles.confirmText}>{confirmText}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
+                    <Text style={styles.cancelText}>취소</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
+      </View>
+    </Modal>
   );
 };
 
@@ -572,6 +687,103 @@ const styles = StyleSheet.create({
     paddingHorizontal: 13,
     display: 'flex',
     flexDirection: 'row',
+  },
+  serviceQuitButton: {
+    position: 'absolute',
+    bottom: 20,
+    left: 0,
+    right: 0,
+    backgroundColor: '#DBFC72',
+    padding: 15,
+    marginHorizontal: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  serviceQuitButtonText: {
+    color: '#612FEF',
+    fontWeight: '600',
+    fontSize: 16,
+    lineHeight: 24,
+  },
+  serviceResumeButton: {
+    position: 'absolute',
+    bottom: 20,
+    left: 0,
+    right: 0,
+    backgroundColor: '#612FEF',
+    padding: 15,
+    marginHorizontal: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  serviceResumeButtonText: {
+    color: '#FFFFFF',
+    fontWeight: '600',
+    fontSize: 16,
+    lineHeight: 24,
+  },
+  overlay: {
+    flex: 1,
+    justifyContent: "center", // 화면 중앙 정렬
+    alignItems: "center", // 가로 중앙 정렬
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // 반투명 배경
+  },
+  popupContainer: {
+    width: 300,
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 20,
+    alignItems: "center",
+    overflow: "hidden",
+  },
+  messageContainer: {
+    height: 154, // 메시지 영역 높이 고정
+    width: "100%", // 가로 전체 사용
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingTop: 20,
+    paddingBottom: 12,
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#000",
+    marginBottom: 10,
+    textAlign: "center",
+  },
+  subtitle: {
+    fontSize: 14,
+    color: "#929292",
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  buttonContainer: {
+    width: "100%",
+    borderTopWidth: 1,
+    borderTopColor: "#E5E5E5",
+  },
+  confirmButton: {
+     height: 60, // 버튼 높이 줄임 (62 -> 60)
+     borderBottomWidth: 1,
+     borderBottomColor: "#E5E5E5", // 회색 구분선
+     justifyContent: "center",
+     alignItems: "center",
+  },
+  confirmText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#FF3B30", // 빨간색 텍스트
+  },
+  cancelButton: {
+    height: 60, // 버튼 높이 줄임 (62 -> 60)
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  cancelText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#000",
   },
 });
 

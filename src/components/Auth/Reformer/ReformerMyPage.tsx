@@ -158,7 +158,6 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
       if (response.status === 200) {
         console.log('User data fetched successfully:', response.data);
         setReformerInfo({
-          ...reformerInfo,
           nickname: response.data.nickname,
           // 우선 기본이미지
           backgroundphoto:
@@ -168,6 +167,7 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
             response.data.introduce ||
             '나는야 업씨러 이하늘 환경을 사랑하지요 눈누난나',
           role: 'reformer',
+          link: response.data.address,
         });
         return response.data;
       } else {
@@ -187,6 +187,31 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
       }
     }, [isLogin]),
   );
+
+  const getMarketData = async () => {
+      const accessToken = await getAccessToken();
+      const headers = {
+        Authorization: `Bearer ${accessToken}`,
+      };
+
+      try {
+        const response = await request.get('/api/market', {}, headers);
+        if (response.status === 200) {
+          setMarketData(response.data);
+        } else {
+          console.log('Failed to fetch market data:', response);
+        }
+      } catch (error) {
+        console.error('Error fetching market data:', error);
+        Alert.alert('오류', '마켓 정보를 가져오는 데 실패했습니다.');
+      }
+  };
+
+  useEffect(() => {
+      if (isLogin) {
+          getMarketData();
+      }
+  }, [isLogin]);
 
   const [modalVisible, setModalVisible] = useState(false);
   const openModal = () => setModalVisible(true);
@@ -352,28 +377,25 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
           />
         )}>
         <Tabs.Tab name="프로필" key="profile">
-          {/* FIXME */}
           <InfoPage
             marketData={{
-              market_address: '',
-              market_introduce: '정보 없음',
-              market_name: '정보 없음',
-              market_thumbnail: '',
-              market_uuid: '',
+              market_address: reformerInfo.address || '정보 없음',
+              market_introduce: reformerInfo.introduce || '정보 없음',
+              market_name: reformerInfo.nickname || '정보 없음',
+              market_thumbnail: reformerInfo.picture?.uri || '',
+              market_uuid: marketData.market_uuid || '',
             }}
           />
         </Tabs.Tab>
         <Tabs.Tab name="서비스" key="service">
-          <View>
             {/*<TouchableOpacity
               style={styles.saveButton}
               onPress={() => navigation.navigate('TempStorage')}>
               <Text style={styles.saveButtonText}>임시저장 (5)</Text>
               {/*수정 필요
             </TouchableOpacity>*/}
-            <ServicePage scrollViewRef={scrollRef} navigation={navigation} />
+            <ServicePage scrollViewRef={scrollRef} navigation={navigation} reformerName = {reformerInfo.nickname} marketUuid = {marketData.market_uuid}/>
             <ScrollTopButton scrollViewRef={scrollRef} />
-          </View>
         </Tabs.Tab>
       </Tabs.Container>
 
