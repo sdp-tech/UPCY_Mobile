@@ -29,7 +29,7 @@ const FilterOptionModal = ({
     [],
   );
 
-  const snapPoints = useMemo(() => ['50%'], []);
+  const snapPoints = useMemo(() => ['40%'], []);
 
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present();
