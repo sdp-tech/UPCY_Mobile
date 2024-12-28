@@ -6,6 +6,7 @@ import styled from 'styled-components/native';
 import DetailModal from './Market/GoodsDetailOptionsModal';
 import DropDown from '../../assets/common/DropDown.svg';
 import HomeStyleFilterElement from './components/HomeStyleFilterElement';
+import FilterOptionModal from './components/FilterOptionModal';
 
 const CategoryBox = styled.View`
   z-index: 1000;
@@ -137,26 +138,11 @@ const HomeTabView = ({
                 <DropDown />
               </TouchableOpacity>
               {dropdownOpen && (
-                <View style={styles.dropdownMenu}>
-                  {selectOptionDropdown.map(option => (
-                    <TouchableOpacity
-                      key={option}
-                      onPress={() => {
-                        selectOption(option);
-                        setSelectedFilterOption?.(option);
-                      }}
-                      style={styles.dropdownOption}>
-                      <Text
-                        style={
-                          selectedOption === option
-                            ? styles.dropdownSelectedOptionText
-                            : styles.dropdownOptionText
-                        }>
-                        {option}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
+                <FilterOptionModal
+                  open={dropdownOpen}
+                  setOpen={setDropdownOpen}
+                  setSelectedOption={setSelectedOption}
+                />
               )}
             </View>
           </View>
