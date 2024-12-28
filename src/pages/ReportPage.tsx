@@ -164,6 +164,7 @@ const ReportReasonModal = ({
 
   const handlePresentModalClose = useCallback(() => {
     bottomSheetModalRef.current?.close();
+    setOpen(false);
   }, []);
 
   const handleSheetChanges = useCallback((index: number) => {
@@ -172,7 +173,7 @@ const ReportReasonModal = ({
 
   const handleSelectReason = (reason: string) => {
     setReportReason(reason);
-    setOpen(false);
+    handlePresentModalClose();
   };
 
   useEffect(() => {
