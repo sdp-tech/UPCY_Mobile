@@ -25,6 +25,7 @@ import DetailScreenHeader from '../components/DetailScreenHeader.tsx';
 import ScrollTopButton from '../../../common/ScrollTopButton.tsx';
 import ReformerTag from '../components/ReformerTag.tsx';
 import { defaultImageUri } from './Service.tsx';
+import { getUserRole } from '../../../common/storage.js';
 
 export const ProfileSection = ({
   navigation,
@@ -70,13 +71,21 @@ const ProfileHeader = ({
   // rate: number;
   // reviewNumber: number;
 }) => {
+  const [userRole, setUserRole] = useState<string>('customer');
+  useEffect(() => {
+    const getUserRoleInfo = async () => {
+      const userRole = await getUserRole();
+      setUserRole(userRole ? userRole : 'customer');
+    };
+    getUserRoleInfo();
+  }, []);
   return (
     <>
       <DetailScreenHeader
         title=""
         leftButton="CustomBack"
         onPressLeft={() => {}}
-        rightButton="Edit"
+        rightButton={userRole === 'customer' ? 'Edit' : 'Report'}
         onPressRight={() => {}}
       />
       <ImageBackground
