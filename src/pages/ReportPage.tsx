@@ -9,10 +9,11 @@ import {
   StyleSheet,
   TextInput,
   Button,
+  TouchableOpacity,
 } from 'react-native';
-import DropDown from '../common/Dropdown';
+import DownArrow from '../assets/common/DownArrow.svg';
 
-const ReportPage = ({ }: StackScreenProps<HomeStackParams, 'ReportPage'>) => {
+const ReportPage = ({}: StackScreenProps<HomeStackParams, 'ReportPage'>) => {
   const [reportReason, setReportReason] = useState<string>('');
   return (
     <SafeAreaView>
@@ -20,8 +21,8 @@ const ReportPage = ({ }: StackScreenProps<HomeStackParams, 'ReportPage'>) => {
         title="신고"
         leftButton="CustomBack"
         rightButton="None"
-        onPressLeft={() => { }}
-        onPressRight={() => { }}
+        onPressLeft={() => {}}
+        onPressRight={() => {}}
       />
       <View style={styles.container}>
         <Text style={TextStyles.mainTitle}>
@@ -62,19 +63,10 @@ const ReportReasonBox = ({
         <Text style={TextStyles.subTitles}> 신고 사유 </Text>
         <Text style={TextStyles.notice}>(필수)</Text>
       </View>
-      <DropDown
-        title="선택"
-        value={reportReason}
-        setValue={setReportReason}
-        items={reportReasonsList}
-        index={1000}
-        width={'100%'}
-        style={{
-          borderRadius: 5,
-          borderWidth: 1,
-          borderColor: '#6C4CE4',
-        }}
-      />
+      <TouchableOpacity style={styles.reasonBox}>
+        <Text> 선택 </Text>
+        <DownArrow />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -150,6 +142,18 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     gap: 8,
+  },
+  reasonBox: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingLeft: 16,
+    paddingRight: 10,
+    paddingVertical: 10,
+    marginTop: 8,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#612FEF',
   },
   textInputBox: {
     borderRadius: 5,
