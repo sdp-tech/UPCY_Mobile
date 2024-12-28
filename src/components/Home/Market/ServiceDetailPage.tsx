@@ -149,17 +149,24 @@ const ProfileSection = ({
   const { hideBottomBar, showBottomBar } = useBottomBar();
 
   const [reportButtonPressed, setReportButtonPressed] = useState(false);
+  const [userRole, setUserRole] = useState<string>('customer');
 
   useEffect(() => {
+    const getUserRoleInfo = async () => {
+      const userRole = await getUserRole();
+      setUserRole(userRole ? userRole : 'customer');
+    };
+    getUserRoleInfo();
     hideBottomBar();
     return () => showBottomBar();
   }, []);
+
   return (
     <SafeAreaView>
       <DetailScreenHeader
         title=""
         leftButton="CustomBack"
-        rightButton="Report"
+        rightButton={userRole === 'customer' ? 'Report' : 'Edit'} // FIXME: 업씨러가 소유하는 마켓
         onPressLeft={() => {}}
         onPressRight={() => {}}
         reportButtonPressed={reportButtonPressed}

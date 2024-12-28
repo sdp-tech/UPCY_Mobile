@@ -26,6 +26,7 @@ import ScrollTopButton from '../../../common/ScrollTopButton.tsx';
 import ReformerTag from '../components/ReformerTag.tsx';
 import { defaultImageUri } from './Service.tsx';
 import { getUserRole } from '../../../common/storage.js';
+import Flag from '../../../assets/common/Flag.svg';
 
 export const ProfileSection = ({
   navigation,
@@ -47,6 +48,7 @@ export const ProfileSection = ({
       <ProfileHeader
         marketName={marketName}
         backgroundImageUri={backgroundImageUri}
+        navigation={navigation}
         // rate={rate}
         // reviewNumber={reviewNumber}
       />
@@ -63,11 +65,13 @@ export const ProfileSection = ({
 const ProfileHeader = ({
   marketName,
   backgroundImageUri,
+  navigation,
   // rate,
   // reviewNumber,
 }: {
   marketName: string;
   backgroundImageUri?: string;
+  navigation: any;
   // rate: number;
   // reviewNumber: number;
 }) => {
@@ -79,14 +83,24 @@ const ProfileHeader = ({
     };
     getUserRoleInfo();
   }, []);
+
+  const [reportButtonPressed, setReportButtonPressed] = useState(false);
+
+  const onPressReport = () => {
+    setReportButtonPressed(false);
+    navigation.navigate('ReportPage');
+  };
+
   return (
     <>
       <DetailScreenHeader
         title=""
         leftButton="CustomBack"
         onPressLeft={() => {}}
-        rightButton={userRole === 'customer' ? 'Edit' : 'Report'}
+        rightButton={userRole === 'customer' ? 'Edit' : 'Report'} // FIXME: 업씨러가 소유하는 마켓 여부 확인 후 edit하기로 변경
         onPressRight={() => {}}
+        reportButtonPressed={reportButtonPressed}
+        setReportButtonPressed={setReportButtonPressed}
       />
       <ImageBackground
         style={{ width: '100%', height: 200 }}
@@ -115,6 +129,14 @@ const ProfileHeader = ({
             uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
           }}
         />
+        {reportButtonPressed && (
+          <TouchableOpacity style={styles.reportWindow} onPress={onPressReport}>
+            <View style={{ justifyContent: 'center' }}>
+              <Flag />
+            </View>
+            <Text style={TextStyles.reportText}>신고</Text>
+          </TouchableOpacity>
+        )}
       </ImageBackground>
       <View style={{ gap: 12, alignItems: 'center' }}>
         <Text style={TextStyles.marketName}>{marketName}</Text>
@@ -279,6 +301,19 @@ const styles = StyleSheet.create({
     height: 12,
     gap: 8,
   },
+  reportWindow: {
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    width: 186,
+    height: 48,
+    borderRadius: 8,
+    zIndex: 1000,
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    paddingHorizontal: 13,
+    display: 'flex',
+    flexDirection: 'row',
+  },
 });
 
 const TextStyles = StyleSheet.create({
@@ -304,6 +339,13 @@ const TextStyles = StyleSheet.create({
     fontFamily: 'Pretendard Variable',
     fontSize: 16,
     fontWeight: '400',
+  },
+  reportText: {
+    color: '#000',
+    fontSize: 16,
+    fontWeight: '600',
+    lineHeight: 48,
+    marginLeft: 10,
   },
 });
 
