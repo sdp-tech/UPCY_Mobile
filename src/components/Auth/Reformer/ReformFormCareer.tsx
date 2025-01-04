@@ -126,7 +126,7 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
     setForm(prev => {
       return {
         ...prev,
-        field: [...prev.field, { name: '', file: [], type: undefined }],
+        field: [...prev.field, { name: '', file: [], type: '' }],
       };
     });
     setCareerIndex(newIndex); // 인덱스값 추가해서 모달 열기 
@@ -688,7 +688,7 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
         if (response?.status === 201) {
           console.log(response?.data);
           await createMarket();
-          navigation.navigate('ReformSubmit');
+          console.log('리폼러 프로필 생성 성공')
         } else if (response?.status === 500) {
           console.log(response);
           Alert.alert('다시 시도해주세요.')
@@ -705,18 +705,21 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
         introduce: updatedForm.introduce,
       }
       try {
-        const response = await request.put(`/api/user`, data, headers);
-        if (response && response.status === 200) {
+        const updateResponse = await request.put(`/api/user`, data, headers);
+        if (updateResponse && updateResponse.status === 200) {
           console.log(data, '닉네임, 소개글 등록 성공');
+          // 이 아래는 프로필 이미지 등록 
+          await uploadProfileImage();
         }
         else {
-          console.log(response);
+          console.log(updateResponse);
+          return;
         }
+
+        navigation.navigate('ReformSubmit'); // 모든 작업 완료 후 이동
       } catch (err) {
         console.error(err);
       }
-      // 이 아래는 프로필 이미지 등록 
-      await uploadProfileImage();
     }
   };
 
@@ -736,7 +739,14 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
       const response = await request.post(`/api/user/profile-image`, formData, headers_)
       if (response && response.status === 201) {
         console.log(formData, '프로필 이미지 등록 성공')
-        if (fix) {
+        // 모든 uploadFiles 호출을 Promise.all로 처리
+        const uploadPromises = form.field
+          .filter((data) => Array.isArray(data.file) && data.file.length > 0) // file이 배열이고 빈 배열이 아닌 경우만 필터링
+          .map((data) => uploadFiles(data.type, data)); // 필터링된 데이터로 uploadFiles 호출
+
+        await Promise.all(uploadPromises);
+        console.log('모든 파일 업로드 완료');
+        if (fix) { // 수정하러 들어왔을 경우
           Alert.alert(
             "프로필 수정이 완료되었습니다.",
             "",
@@ -754,6 +764,77 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
       console.error(err)
     }
   }
+
+  const uploadFiles = async (Type: any, data: any) => {
+    // data가 객체이고, data.file이 배열인지 확인
+    if (!data || !Array.isArray(data.file)) {
+      console.error("data.file is not an array or undefined:", data);
+      return;
+    }
+
+    const updatedForm = { ...form };
+    const formData = new FormData();
+    const accessToken = await getAccessToken();
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    };
+
+    // Type에 따라 engType 결정
+    const engType =
+      Type === '학력'
+        ? 'education'
+        : Type === '실무 경험'
+          ? 'career'
+          : Type === '공모전'
+            ? 'awards'
+            : Type === '자격증'
+              ? 'certification'
+              : 'freelancer'; // 기타 (개인 포트폴리오, 외주 등)
+    const uuidKey = `${engType}_uuid`; // 각 타입에 따른 UUID 키 생성
+    // data.file 배열 처리
+    data.file.forEach((file: any) => {
+      formData.append('document', {
+        uri: file.uri, // 파일의 URI
+        type: file.type || 'application/pdf',
+        name: file.name || 'document.pdf', // 파일 이름
+      });
+      console.log("FormData for upload:", formData);
+    });
+
+    try {
+      // Step 1: 기존 데이터의 UUID를 가져오기 위해 GET 요청
+      const response = await request.get(`/api/user/reformer/${engType}`, headers);
+      if (response && response.status === 200) {
+        const UUIDs = response.data.map((item: any) => item[uuidKey]);
+        console.log(UUIDs)
+        // Step 2: 파일 업로드 요청
+        const headers_ = {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'multipart/form-data', // multipart/form-data 설정
+        };
+        for (const uuid of UUIDs) {
+          const response2 = await request.post(
+            `/api/user/reformer/${engType}/${uuid}/document`,
+            formData,
+            headers_
+          );
+          if (response2.status === 200) {
+            console.log(engType, '자격증명 파일 업로드 성공');
+          } else {
+            console.log(response2);
+            console.log(engType, '자격증명 파일 업로드 실패', response2.status);
+            Alert.alert('Failed uploading files.');
+          }
+        }
+      } else {
+        console.log('upliadFiles에서 데이터 get 실패')
+      }
+
+    } catch (error) {
+      console.error('Error uploading files:', error);
+      Alert.alert('Failed uploading files.');
+    }
+  };
 
   useEffect(() => { // 수정하려고 들어왔을때 패치 
     if (fix) {
@@ -957,7 +1038,7 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
           onPress={!fix ? handleSubmit : handleFix}
           style={{ width: '90%', alignSelf: 'center', marginBottom: 10 }}
         />
-        {fix && <View>
+        {<View>
           <BottomButton
             value="check"
             pressed={false}
