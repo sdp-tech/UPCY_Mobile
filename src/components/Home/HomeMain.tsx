@@ -112,7 +112,7 @@ const HomeTabView = ({
               />
               {styleFilterOpen && (
                 <HomeStyleFilterModal
-                  list={stylesList}
+                  list={selectedStylesList ?? stylesList}
                   styleFilterOpen={styleFilterOpen}
                   setStyleFilterOpen={setStyleFilterOpen}
                   setPressedStyles={setSelectedStylesList}
