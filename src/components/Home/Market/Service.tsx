@@ -18,6 +18,7 @@ import DetailModal from '../Market/GoodsDetailOptionsModal';
 import { SelectedOptionProps } from '../HomeMain.tsx';
 import Request from '../../../common/requests.js';
 import RenderHTML from 'react-native-render-html';
+import { numberToPrice } from './functions.ts';
 
 // 홈화면에 있는, 서비스 전체 리스트!
 
@@ -323,7 +324,9 @@ export const ServiceCard = ({
           uri: imageUri ?? defaultImageUri,
         }}>
         <Text style={TextStyles.serviceCardName}>{name}</Text>
-        <Text style={TextStyles.serviceCardPrice}>{basic_price} 원 ~</Text>
+        <Text style={TextStyles.serviceCardPrice}>
+          {numberToPrice(basic_price)} 원 ~
+        </Text>
         <View style={styles.service_style}>
           {service_styles?.map((service_style, index) => {
             return (
@@ -414,7 +417,7 @@ const TextStyles = StyleSheet.create({
     lineHeight: 24,
   },
   serviceCardTag: {
-    backgroundColor: '#612FEF',
+    backgroundColor: 'rgba(97, 47, 239, 0.80)',
     paddingHorizontal: 16,
     paddingVertical: 4,
     color: '#fff',
@@ -422,6 +425,7 @@ const TextStyles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '400',
     lineHeight: 24,
+    borderRadius: 8,
   },
   noServiceText: {
     fontSize: 16,

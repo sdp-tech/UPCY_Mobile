@@ -33,6 +33,7 @@ import {
 } from './Service';
 import Flag from '../../../assets/common/Flag.svg';
 import { getUserRole } from '../../../common/storage';
+import { numberToPrice } from './functions';
 
 const { width, height } = Dimensions.get('window');
 
@@ -268,10 +269,12 @@ const Header = ({
       <View style={{ flex: 1, flexDirection: 'column' }}>
         <Text style={TextStyles.Title}>{serviceName}</Text>
         <Text style={TextStyles.PriceInfo}>
-          기본 <Text style={TextStyles.Price}> {basicPrice} 원</Text>
+          기본
+          <Text style={TextStyles.Price}> {numberToPrice(basicPrice)} 원</Text>
         </Text>
         <Text style={TextStyles.PriceInfo}>
-          최대 <Text style={TextStyles.Price}> {maxPrice} 원</Text>
+          최대
+          <Text style={TextStyles.Price}> {numberToPrice(maxPrice)} 원</Text>
         </Text>
       </View>
       {/* <View style={{ margin: 15 }}>
