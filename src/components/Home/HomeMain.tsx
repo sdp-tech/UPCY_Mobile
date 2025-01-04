@@ -5,7 +5,8 @@ import { StyleFilterButton } from './components/StyleFilterButton';
 import styled from 'styled-components/native';
 import DetailModal from './Market/GoodsDetailOptionsModal';
 import DropDown from '../../assets/common/DropDown.svg';
-import HomeStyleFilterElement from './components/HomeStyleFilterElement';
+import HomeStyleFilterModal from './components/HomeStyleFilterModal';
+import FilterOptionModal from './components/FilterOptionModal';
 
 const CategoryBox = styled.View`
   z-index: 1000;
@@ -32,7 +33,7 @@ export type SelectedOptionProps =
   | '최신순'
   | '판매순';
 
-const selectOptionDropdown: SelectedOptionProps[] = [
+export const selectOptionDropdown: SelectedOptionProps[] = [
   '추천순',
   '인기순',
   '가격순',
@@ -107,7 +108,7 @@ const HomeTabView = ({
   }, [selectedOption, setSelectedFilterOption]);
 
   return (
-    <>
+    <View>
       <CategoryBox>
         {selectedTab === 'Goods' && (
           <View
@@ -120,14 +121,15 @@ const HomeTabView = ({
               <StyleFilterButton
                 onPressStyleFilterButton={setStyleFilterOpen}
               />
-              {/* {styleFilterOpen && (
-                <HomeStyleFilterElement
+              {styleFilterOpen && (
+                <HomeStyleFilterModal
                   list={pressedStyles}
+                  styleFilterOpen={styleFilterOpen}
                   setStyleFilterOpen={setStyleFilterOpen}
                   setPressedStyles={setPressedStyles}
                   setFinalPressedStyles={setSelectedStylesList}
                 />
-              )} */}
+              )}
             </View>
             <View style={styles.dropdownContainer}>
               <TouchableOpacity
@@ -137,26 +139,11 @@ const HomeTabView = ({
                 <DropDown />
               </TouchableOpacity>
               {dropdownOpen && (
-                <View style={styles.dropdownMenu}>
-                  {selectOptionDropdown.map(option => (
-                    <TouchableOpacity
-                      key={option}
-                      onPress={() => {
-                        selectOption(option);
-                        setSelectedFilterOption?.(option);
-                      }}
-                      style={styles.dropdownOption}>
-                      <Text
-                        style={
-                          selectedOption === option
-                            ? styles.dropdownSelectedOptionText
-                            : styles.dropdownOptionText
-                        }>
-                        {option}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
+                <FilterOptionModal
+                  open={dropdownOpen}
+                  setOpen={setDropdownOpen}
+                  setSelectedOption={setSelectedOption}
+                />
               )}
             </View>
           </View>
@@ -174,7 +161,7 @@ const HomeTabView = ({
         selectedStyles={selectedStyles}
         setSelectedStyles={setSelectedStyles}
       />
-    </>
+    </View>
   );
 };
 

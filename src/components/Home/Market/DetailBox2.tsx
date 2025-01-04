@@ -62,21 +62,19 @@ const MaterialBox = ({ list }: { list: MaterialDetail[] }) => {
     return data?.map((item, index) => (
       <View key={item.material_uuid}>
         <Text style={TextStyles.eachMaterialData}>
-          {item.material_name} {index < data.length - 1 && '|'}
+          {item.material_name} {index < data.length - 1 && '| '}
         </Text>
       </View>
     ));
   }
 
   return (
-    <>
-      <View style={styles.materialBox}>
-        <Text style={TextStyles.eachLabel}>작업 가능한 소재</Text>
-        <View style={styles.materialListLine}>
-          {materialList({ data: list })}
-        </View>
+    <View style={styles.materialBox}>
+      <Text style={TextStyles.eachLabel}>작업 가능한 소재</Text>
+      <View style={styles.materialListLine}>
+        {materialList({ data: list })}
       </View>
-    </>
+    </View>
   );
 };
 
@@ -137,7 +135,7 @@ const DetailBox2 = ({
   marketUuid,
 }: DetailBox2Props) => {
   return (
-    <>
+    <View>
       <PeriodBox period={servicePeriod} />
       <ContentBox content={serviceContent} />
       {serviceMaterials && serviceMaterials.length > 0 && (
@@ -146,7 +144,7 @@ const DetailBox2 = ({
       {serviceOptions && serviceOptions.length > 0 && (
         <OptionBox list={serviceOptions ?? []} />
       )}
-    </>
+    </View>
   );
 };
 

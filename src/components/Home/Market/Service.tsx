@@ -18,6 +18,7 @@ import DetailModal from '../Market/GoodsDetailOptionsModal';
 import { SelectedOptionProps } from '../HomeMain.tsx';
 import Request from '../../../common/requests.js';
 import RenderHTML from 'react-native-render-html';
+import { numberToPrice } from './functions.ts';
 
 // 홈화면에 있는, 서비스 전체 리스트!
 
@@ -167,8 +168,9 @@ const EntireServiceMarket = ({
   useEffect(() => {
     if (serviceCardData) {
       // filter by search term
+      let searchFilteredData = serviceCardData;
       if (searchTerm && searchTerm.length > 0) {
-        const filteredData = serviceCardData.filter(card => {
+        searchFilteredData = serviceCardData.filter(card => {
           const {
             name,
             basic_price,
@@ -195,22 +197,29 @@ const EntireServiceMarket = ({
               service_content.toLowerCase().includes(searchLower))
           );
         });
-        setServiceCardData(filteredData);
       }
-      // FIXME
-      // filter by selected styles
-      // const styleFilteredData = serviceCardData.filter(card => {
-      //   card.service_styles?.some(style => selectedStylesList.includes(style));
-      // });
+
+      // reorder by price
+      let priceFilteredData = searchFilteredData;
       if (selectedFilterOption == '가격순') {
         // filter by basic_price
-        // const sortedByPriceData = [...styleFilteredData].sort(
-        const sortedByPriceData = [...serviceCardData].sort(
+        priceFilteredData = [...searchFilteredData].sort(
           (a, b) => a.basic_price - b.basic_price,
         );
-        setServiceCardData(sortedByPriceData);
       }
+
+      // filter by selected styles
+      const styleFilteredData =
+        selectedStylesList.length > 0
+          ? priceFilteredData.filter(card =>
+              card.service_styles?.some(style =>
+                selectedStylesList.includes(style),
+              ),
+            )
+          : [];
+
       // TODO: add more filtering logic here
+      setServiceCardData(styleFilteredData);
     }
   }, [selectedFilterOption, selectedStylesList, searchTerm]);
 
@@ -325,7 +334,9 @@ export const ServiceCard = ({
           uri: imageUri ?? defaultImageUri,
         }}>
         <Text style={TextStyles.serviceCardName}>{name}</Text>
-        <Text style={TextStyles.serviceCardPrice}>{basic_price} 원 ~</Text>
+        <Text style={TextStyles.serviceCardPrice}>
+          {numberToPrice(basic_price)} 원 ~
+        </Text>
         <View style={styles.service_style}>
           {service_styles?.map((service_style, index) => {
             return (
@@ -416,7 +427,7 @@ const TextStyles = StyleSheet.create({
     lineHeight: 24,
   },
   serviceCardTag: {
-    backgroundColor: '#612FEF',
+    backgroundColor: 'rgba(97, 47, 239, 0.80)',
     paddingHorizontal: 16,
     paddingVertical: 4,
     color: '#fff',
@@ -424,6 +435,7 @@ const TextStyles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '400',
     lineHeight: 24,
+    borderRadius: 8,
   },
   noServiceText: {
     fontSize: 16,

@@ -17,7 +17,7 @@ import { BLACK, BLACK2, PURPLE } from '../../../styles/GlobalColor.tsx';
 import { StackScreenProps } from '@react-navigation/stack';
 import { HomeStackParams } from '../../../pages/Home';
 import InfoPage from './InfoPage.tsx';
-import Footer from '../../../common/Footer.tsx';
+// import Footer from '../../../common/Footer.tsx';
 import Request from '../../../common/requests.js';
 // import Arrow from '../../../assets/common/Arrow.svg';
 import ServicePage from './ServicePage.tsx';
@@ -25,6 +25,8 @@ import DetailScreenHeader from '../components/DetailScreenHeader.tsx';
 import ScrollTopButton from '../../../common/ScrollTopButton.tsx';
 import ReformerTag from '../components/ReformerTag.tsx';
 import { defaultImageUri } from './Service.tsx';
+import { getUserRole, getNickname } from '../../../common/storage.js';
+import Flag from '../../../assets/common/Flag.svg';
 
 export const ProfileSection = ({
   navigation,
@@ -46,6 +48,8 @@ export const ProfileSection = ({
       <ProfileHeader
         marketName={marketName}
         backgroundImageUri={backgroundImageUri}
+        navigation={navigation}
+        reformerName={reformerName}
         // rate={rate}
         // reviewNumber={reviewNumber}
       />
@@ -62,22 +66,56 @@ export const ProfileSection = ({
 const ProfileHeader = ({
   marketName,
   backgroundImageUri,
+  navigation,
+  reformerName,
   // rate,
   // reviewNumber,
 }: {
   marketName: string;
   backgroundImageUri?: string;
+  navigation: any;
+  reformerName: string;
   // rate: number;
   // reviewNumber: number;
 }) => {
+  const [userRole, setUserRole] = useState<string>('customer');
+  const [userNickname, setUserNickname] = useState<string>('');
+  useEffect(() => {
+    const getUserRoleInfo = async () => {
+      const userRole = await getUserRole();
+      setUserRole(userRole ? userRole : 'customer');
+    };
+    const getUserNicknameInfo = async () => {
+      const userNickname = await getNickname();
+      setUserNickname(userNickname ? userNickname : '');
+    };
+    getUserRoleInfo();
+    getUserNicknameInfo();
+  }, []);
+
+  const [reportButtonPressed, setReportButtonPressed] = useState(false);
+
+  const onPressReport = () => {
+    setReportButtonPressed(false);
+    navigation.navigate('ReportPage');
+  };
+
   return (
     <>
       <DetailScreenHeader
         title=""
         leftButton="CustomBack"
         onPressLeft={() => {}}
-        rightButton="Edit"
+        rightButton={
+          userRole === 'customer'
+            ? 'Report'
+            : userNickname == reformerName
+              ? 'Edit'
+              : 'Report'
+        }
         onPressRight={() => {}}
+        reportButtonPressed={reportButtonPressed}
+        setReportButtonPressed={setReportButtonPressed}
       />
       <ImageBackground
         style={{ width: '100%', height: 200 }}
@@ -106,6 +144,14 @@ const ProfileHeader = ({
             uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
           }}
         />
+        {reportButtonPressed && (
+          <TouchableOpacity style={styles.reportWindow} onPress={onPressReport}>
+            <View style={{ justifyContent: 'center' }}>
+              <Flag />
+            </View>
+            <Text style={TextStyles.reportText}>신고</Text>
+          </TouchableOpacity>
+        )}
       </ImageBackground>
       <View style={{ gap: 12, alignItems: 'center' }}>
         <Text style={TextStyles.marketName}>{marketName}</Text>
@@ -270,6 +316,19 @@ const styles = StyleSheet.create({
     height: 12,
     gap: 8,
   },
+  reportWindow: {
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    width: 186,
+    height: 48,
+    borderRadius: 8,
+    zIndex: 1000,
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    paddingHorizontal: 13,
+    display: 'flex',
+    flexDirection: 'row',
+  },
 });
 
 const TextStyles = StyleSheet.create({
@@ -295,6 +354,13 @@ const TextStyles = StyleSheet.create({
     fontFamily: 'Pretendard Variable',
     fontSize: 16,
     fontWeight: '400',
+  },
+  reportText: {
+    color: '#000',
+    fontSize: 16,
+    fontWeight: '600',
+    lineHeight: 48,
+    marginLeft: 10,
   },
 });
 
