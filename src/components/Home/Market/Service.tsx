@@ -166,8 +166,9 @@ const EntireServiceMarket = ({
   useEffect(() => {
     if (serviceCardData) {
       // filter by search term
+      let searchFilteredData = serviceCardData;
       if (searchTerm && searchTerm.length > 0) {
-        const filteredData = serviceCardData.filter(card => {
+        searchFilteredData = serviceCardData.filter(card => {
           const {
             name,
             basic_price,
@@ -194,22 +195,29 @@ const EntireServiceMarket = ({
               service_content.toLowerCase().includes(searchLower))
           );
         });
-        setServiceCardData(filteredData);
       }
-      // FIXME
-      // filter by selected styles
-      // const styleFilteredData = serviceCardData.filter(card => {
-      //   card.service_styles?.some(style => selectedStylesList.includes(style));
-      // });
+
+      // reorder by price
+      let priceFilteredData = searchFilteredData;
       if (selectedFilterOption == '가격순') {
         // filter by basic_price
-        // const sortedByPriceData = [...styleFilteredData].sort(
-        const sortedByPriceData = [...serviceCardData].sort(
+        priceFilteredData = [...searchFilteredData].sort(
           (a, b) => a.basic_price - b.basic_price,
         );
-        setServiceCardData(sortedByPriceData);
       }
+
+      // filter by selected styles
+      const styleFilteredData =
+        selectedStylesList.length > 0
+          ? priceFilteredData.filter(card =>
+              card.service_styles?.some(style =>
+                selectedStylesList.includes(style),
+              ),
+            )
+          : [];
+
       // TODO: add more filtering logic here
+      setServiceCardData(styleFilteredData);
     }
   }, [selectedFilterOption, selectedStylesList, searchTerm]);
 
