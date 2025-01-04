@@ -17,7 +17,7 @@ import { BLACK, BLACK2, PURPLE } from '../../../styles/GlobalColor.tsx';
 import { StackScreenProps } from '@react-navigation/stack';
 import { HomeStackParams } from '../../../pages/Home';
 import InfoPage from './InfoPage.tsx';
-import Footer from '../../../common/Footer.tsx';
+// import Footer from '../../../common/Footer.tsx';
 import Request from '../../../common/requests.js';
 // import Arrow from '../../../assets/common/Arrow.svg';
 import ServicePage from './ServicePage.tsx';
@@ -25,7 +25,7 @@ import DetailScreenHeader from '../components/DetailScreenHeader.tsx';
 import ScrollTopButton from '../../../common/ScrollTopButton.tsx';
 import ReformerTag from '../components/ReformerTag.tsx';
 import { defaultImageUri } from './Service.tsx';
-import { getUserRole } from '../../../common/storage.js';
+import { getUserRole, getNickname } from '../../../common/storage.js';
 import Flag from '../../../assets/common/Flag.svg';
 
 export const ProfileSection = ({
@@ -49,6 +49,7 @@ export const ProfileSection = ({
         marketName={marketName}
         backgroundImageUri={backgroundImageUri}
         navigation={navigation}
+        reformerName={reformerName}
         // rate={rate}
         // reviewNumber={reviewNumber}
       />
@@ -66,22 +67,30 @@ const ProfileHeader = ({
   marketName,
   backgroundImageUri,
   navigation,
+  reformerName,
   // rate,
   // reviewNumber,
 }: {
   marketName: string;
   backgroundImageUri?: string;
   navigation: any;
+  reformerName: string;
   // rate: number;
   // reviewNumber: number;
 }) => {
   const [userRole, setUserRole] = useState<string>('customer');
+  const [userNickname, setUserNickname] = useState<string>('');
   useEffect(() => {
     const getUserRoleInfo = async () => {
       const userRole = await getUserRole();
       setUserRole(userRole ? userRole : 'customer');
     };
+    const getUserNicknameInfo = async () => {
+      const userNickname = await getNickname();
+      setUserNickname(userNickname ? userNickname : '');
+    };
     getUserRoleInfo();
+    getUserNicknameInfo();
   }, []);
 
   const [reportButtonPressed, setReportButtonPressed] = useState(false);
@@ -97,7 +106,13 @@ const ProfileHeader = ({
         title=""
         leftButton="CustomBack"
         onPressLeft={() => {}}
-        rightButton={userRole === 'customer' ? 'Edit' : 'Report'} // FIXME: 업씨러가 소유하는 마켓 여부 확인 후 edit하기로 변경
+        rightButton={
+          userRole === 'customer'
+            ? 'Report'
+            : userNickname == reformerName
+              ? 'Edit'
+              : 'Report'
+        }
         onPressRight={() => {}}
         reportButtonPressed={reportButtonPressed}
         setReportButtonPressed={setReportButtonPressed}

@@ -32,7 +32,7 @@ import {
   ServiceDetailOption,
 } from './Service';
 import Flag from '../../../assets/common/Flag.svg';
-import { getUserRole } from '../../../common/storage';
+import { getUserRole, getNickname } from '../../../common/storage';
 import { numberToPrice } from './functions';
 
 const { width, height } = Dimensions.get('window');
@@ -151,13 +151,19 @@ const ProfileSection = ({
 
   const [reportButtonPressed, setReportButtonPressed] = useState(false);
   const [userRole, setUserRole] = useState<string>('customer');
+  const [userNickname, setUserNickname] = useState<string>('');
 
   useEffect(() => {
     const getUserRoleInfo = async () => {
       const userRole = await getUserRole();
       setUserRole(userRole ? userRole : 'customer');
     };
+    const getUserNicknameInfo = async () => {
+      const userNickname = await getNickname();
+      setUserNickname(userNickname ? userNickname : '');
+    };
     getUserRoleInfo();
+    getUserNicknameInfo();
     hideBottomBar();
     return () => showBottomBar();
   }, []);
@@ -167,7 +173,13 @@ const ProfileSection = ({
       <DetailScreenHeader
         title=""
         leftButton="CustomBack"
-        rightButton={userRole === 'customer' ? 'Report' : 'Edit'} // FIXME: 업씨러가 소유하는 마켓
+        rightButton={
+          userRole === 'customer'
+            ? 'Report'
+            : userNickname == reformerName
+              ? 'Edit'
+              : 'Report'
+        }
         onPressLeft={() => {}}
         onPressRight={() => {}}
         reportButtonPressed={reportButtonPressed}
