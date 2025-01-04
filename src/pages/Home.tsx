@@ -182,9 +182,9 @@ const HomeMainScreen = ({
     );
   };
 
-  const handleTabChange = (tab: 'Goods' | 'Market' | 'temp') => {
-    setSelectedTab(tab);
-  };
+  // const handleTabChange = (tab: 'Goods' | 'Market' | 'temp') => {
+  //   setSelectedTab(tab);
+  // };
   const items = [...new Array(6).keys()];
   const splitArrayIntoPairs = (arr: any[], pairSize: number) => {
     return arr.reduce((result, item, index) => {
@@ -214,10 +214,9 @@ const HomeMainScreen = ({
           <View style={{ zIndex: 100 }}>
             {/* 이제 아이폰에서도 렌더링 잘 됩니다 (가격 필터) */}
             <HomeTabView
-              onSearch={() => { }}
               selectedTab={selectedTab}
-              onTabChange={handleTabChange}
               setSelectedFilterOption={setSelectedFilterOption}
+              selectedStylesList={selectedStylesList}
               setSelectedStylesList={setSelectedStylesList}
             />
           </View>

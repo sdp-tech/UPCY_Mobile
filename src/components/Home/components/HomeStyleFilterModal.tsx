@@ -14,7 +14,6 @@ interface filterElementProps {
   styleFilterOpen: boolean;
   setStyleFilterOpen: (styleFilterOpen: boolean) => void;
   setPressedStyles: (pressedStyles: string[]) => void;
-  setFinalPressedStyles: (finalPressedStyles: string[]) => void;
 }
 
 const HomeStyleFilterModal = ({
@@ -22,7 +21,6 @@ const HomeStyleFilterModal = ({
   styleFilterOpen,
   setStyleFilterOpen,
   setPressedStyles,
-  setFinalPressedStyles,
 }: filterElementProps) => {
   const filterList: string[] = [
     '빈티지',
@@ -49,15 +47,8 @@ const HomeStyleFilterModal = ({
       } else {
         updatedStyles = [...prevStyles, style];
       }
-      setPressedStyles(updatedStyles);
       return updatedStyles;
     });
-  };
-
-  const applyStyles = () => {
-    // TODO: 렌더링 관련 고치기
-    // setFinalPressedStyles(pressed);
-    setStyleFilterOpen(false);
   };
 
   const renderBackdrop = useCallback(
@@ -87,7 +78,7 @@ const HomeStyleFilterModal = ({
   }, []);
 
   const handleSelectOption = (selectedStyles: string[]) => {
-    // setSelectedOption(selectedOption);
+    setPressedStyles(selectedStyles);
     handlePresentModalClose();
   };
 
@@ -145,7 +136,7 @@ const HomeStyleFilterModal = ({
           </View>
           <TouchableOpacity
             style={{ alignItems: 'center', paddingBottom: 10, marginTop: 20 }}
-            onPress={applyStyles}>
+            onPress={() => handleSelectOption(pressed)}>
             <Text style={{ color: '#000' }}>적용하기</Text>
           </TouchableOpacity>
         </View>
