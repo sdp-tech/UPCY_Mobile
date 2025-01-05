@@ -50,8 +50,8 @@ export const ProfileSection = ({
         backgroundImageUri={backgroundImageUri}
         navigation={navigation}
         reformerName={reformerName}
-        // rate={rate}
-        // reviewNumber={reviewNumber}
+      // rate={rate}
+      // reviewNumber={reviewNumber}
       />
       <View style={{ padding: 20, paddingTop: 0, paddingBottom: 0 }}>
         {/* 이 밑에거 지우면 이상하게 에러남... 그냥 냅둬도 되는 거라 무시하셔도 됩니다.  */}
@@ -105,7 +105,7 @@ const ProfileHeader = ({
       <DetailScreenHeader
         title=""
         leftButton="CustomBack"
-        onPressLeft={() => {}}
+        onPressLeft={() => { }}
         rightButton={
           userRole === 'customer'
             ? 'Report'
@@ -113,7 +113,7 @@ const ProfileHeader = ({
               ? 'Edit'
               : 'Report'
         }
-        onPressRight={() => {}}
+        onPressRight={() => { }}
         reportButtonPressed={reportButtonPressed}
         setReportButtonPressed={setReportButtonPressed}
       />
@@ -174,7 +174,8 @@ type MarketTabViewProps = {
 };
 
 export type MarketResponseType = {
-  market_address: string;
+  //TODO: 리폼러  지역, 경력사항 추가 필요 
+  market_address: string; // 이게 링크 
   market_introduce: string;
   market_name: string;
   market_thumbnail: string;
@@ -214,12 +215,13 @@ const MarketTabView = ({
   const fetchData = async () => {
     try {
       // API 호출
+      //TODO: 여기 수정 필요... 
       const response = await request.get(`/api/market/${marketUuid}`, {}, {});
       if (response && response.status === 200) {
         const marketResult: MarketResponseType = response.data;
         setMarketData(marketResult);
       } else {
-        Alert.alert('오류가 발생했습니다.');
+        Alert.alert('마켓 정보 불러오기에서 오류가 발생했습니다.');
       }
     } catch (error) {
       console.error(error);

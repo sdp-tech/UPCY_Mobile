@@ -24,7 +24,7 @@ import ServiceDetailPageScreen from '../components/Home/Market/ServiceDetailPage
 import GoodsDetailPageScreen from '../components/Home/Market/GoodsDetailPage';
 import GoodsRegistrationPage from '../components/Home/Market/GoodsRegistration';
 import TempStorageEdit from '../components/Home/Market/TempStorageEdit';
-import WriteDetailPage from '../components/Home/Market/WriteDetailPage';
+//import WriteDetailPage from '../components/Home/Market/WriteDetailPage';
 import AddPortfolio from '../components/Home/Portfolio/AddPortfolio';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
@@ -71,7 +71,7 @@ export type HomeStackParams = {
   // ServiceRegistrationPage: { inputText?: string; detailphoto?: PhotoType[] };
   GoodsRegistrationPage: undefined;
   TempStorageEdit: undefined;
-  WriteDetailPage: { inputText: string; detailphoto?: PhotoType[] };
+  //WriteDetailPage: { inputText: string; detailphoto?: PhotoType[] };
   AddPortfolio: undefined;
   InputInfo: {
     materials: string[];
@@ -137,7 +137,7 @@ const HomeScreen = ({
         component={GoodsRegistrationPage}
       />
       <HomeStack.Screen name="TempStorageEdit" component={TempStorageEdit} />
-      <HomeStack.Screen name="WriteDetailPage" component={WriteDetailPage} />
+      {/* <HomeStack.Screen name="WriteDetailPage" component={WriteDetailPage} /> */}
       <HomeStack.Screen name="AddPortfolio" component={AddPortfolio} />
       <HomeStack.Screen name="InputInfo" component={InputInfo} />
       <HomeStack.Screen name="QuotationConfirm" component={QuotationConfirm} />

@@ -180,8 +180,8 @@ const ProfileSection = ({
               ? 'Edit'
               : 'Report'
         }
-        onPressLeft={() => {}}
-        onPressRight={() => {}}
+        onPressLeft={() => { }}
+        onPressRight={() => { }}
         reportButtonPressed={reportButtonPressed}
         setReportButtonPressed={setReportButtonPressed}
       />

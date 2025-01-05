@@ -203,7 +203,7 @@ const ServiceRegistrationPage = ({
     }
   };
 
-  const handleNavigate = () => {
+  const handleNavigate = () => { // 서비스 상세 작성 페이지
     navigation.navigate('WriteDetailPage', {
       inputText,
       detailphoto,
@@ -343,9 +343,9 @@ const ServiceRegistrationPage = ({
       for (const id of option_uuidList) { // 여러개의 uuid 각각에 진행 
         const formData = new FormData();
         formData.append('option_image', {
-          uri: detailphoto[0]?.uri, // 파일의 URI
+          uri: optionPhotos[0]?.uri, // 파일의 URI
           type: 'image/jpeg', // 이미지 형식 (예: 'image/jpeg')
-          name: detailphoto[0]?.fileName || 'option_image.jpg', // 파일 이름
+          name: optionPhotos[0]?.fileName || 'option_image.jpg', // 파일 이름
         });
         try {
           const response = await request.post(`/api/market/${market_uuid}/service/${service_uuid}/option/${id}/image`, formData, headers_);
@@ -645,7 +645,7 @@ const ServiceRegistrationPage = ({
       setHashtagText('');
       console.log(optionList);
     } else {
-      Alert.alert('해시태그는 5개 이하로 입력해주세요');
+      Alert.alert('추가소재는 5개 이하로 입력해주세요');
     }
   };
   const removeHashtag = (value: string) => {

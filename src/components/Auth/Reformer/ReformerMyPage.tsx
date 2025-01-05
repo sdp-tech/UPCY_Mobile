@@ -118,7 +118,6 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
 
   const request = Request();
   const { isLogin, setLogin } = useContext(LoginContext);
-  const [market_uuid, setMarket_uuid] = useState<any>('');
   const [reformerInfo, setReformerInfo] = useState({
     nickname: route.params?.nickname || '',
     backgroundphoto:
@@ -128,8 +127,8 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
       'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
     introduce: route.params?.introduce || '',
     role: 'reformer',
-    link: route.params?.link || '',
-    region: route.params?.region || '',
+    // link: route.params?.link || '',
+    // region: route.params?.region || '',
   });
 
   useEffect(() => {
@@ -170,9 +169,19 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
             '나는야 업씨러 이하늘 환경을 사랑하지요 눈누난나',
           role: 'reformer',
         });
-        setNickname(response.data.nickname);
-        const UUID = await getMarketUUID();
-        setMarket_uuid(UUID);
+        // setNickname(response.data.nickname);
+        try { // 본인 마켓 정보 가져오기 
+          const response2 = await request.get(`/api/market`, {}, headers);
+          if (response && response.status === 200) {
+            const marketResult: MarketResponseType = response.data;
+            setMarketData(marketResult);
+            console.log('마켓 정보 가져오기 성공', response.data);
+          } else {
+            console.log('마켓 정보 가져오기에 실패했습니다.');
+          }
+        } catch (error) {
+          console.log(error);
+        }
         return response.data;
       } else {
         console.log('Failed to fetch user data:', response);
@@ -356,13 +365,7 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
         <Tabs.Tab name="프로필" key="profile">
           {/* FIXME */}
           <InfoPage
-            marketData={{
-              market_address: '',
-              market_introduce: '정보 없음',
-              market_name: '정보 없음',
-              market_thumbnail: '',
-              market_uuid: '',
-            }}
+            marketData={marketData}
           />
         </Tabs.Tab>
         <Tabs.Tab name="서비스" key="service">
