@@ -111,3 +111,14 @@ type OutsourcingType = Field & {
 };
 export type FieldType = Field[];
 // 종류별 타입 정의
+
+export type ReformerResponseType = {
+  nickname: string;
+  reformer_link: string;
+  reformer_area: string;
+  education: EducType;
+  certification: CertifiType;
+  awards: AwardsType;
+  career: CareerType;
+  freelancer: FreeType;
+}

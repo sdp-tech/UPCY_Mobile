@@ -114,12 +114,12 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
   // `form`이 초기화되었는지 확인하는 useEffect
   useEffect(() => {
     // form이 완전히 초기화되었는지 확인
-    if (!isFormInitialized && form.link && form.region) {
-      memorizedForm.current = { ...form }; // 초기 form 상태 저장
+    if (!isFormInitialized && form.link && form.region && form.field) {
+      memorizedForm.current = JSON.parse(JSON.stringify(form)); // 깊은 복사로 저장
       setIsFormInitialized(true); // 초기화 완료 표시
       console.log("Initial form state saved in memorizedForm:", memorizedForm.current);
     }
-  }, [form, isFormInitialized]);
+  }, [form.picture, isFormInitialized]);
 
   const handleAddCareer = () => { // 빈 필드 생성
     const newIndex = form.field.length;
@@ -183,9 +183,25 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
       nickname: updatedForm.nickname,
       introduce: updatedForm.introduce,
     }
-    try {
+    try { // TODO: 마켓 정보도 수정하기: 소개글, 링크, 닉네임 등 
       const response = await request.put(`/api/user`, params, headers);
       if (response && response.status === 200) {
+        try {
+          const marketUUID = await getMarketUUID();
+          const params_ = {
+            market_name: updatedForm.nickname,
+            market_address: updatedForm.link,
+            market_introduce: updatedForm.introduce,
+          }
+          const response2 = await request.put(`/api/market/${marketUUID}`, params_, headers)
+          if (response2 && response2.status === 200) {
+            console.log('마켓 정보 업데이트 성공: ', updatedForm.nickname, updatedForm.link, updatedForm.introduce);
+          } else {
+            console.log('마켓 정보 업데이트 실패 ');
+          }
+        } catch (error) {
+          console.log(error);
+        }
         console.log('닉네임, 소개글 업데이트 완료!');
       } else {
         console.log('닉네임, 소개글 업데이트 실패:', response)
@@ -211,7 +227,7 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
     );
     const hasChanges = JSON.stringify(updatedEducationFields) !== JSON.stringify(initialEducationFields);
     const hasAdded = !initialEducationFields || initialEducationFields.length === 0; // 이전에 없었을 때 
-
+    console.log(JSON.stringify(updatedEducationFields), '///', JSON.stringify(initialEducationFields));
     if (hasAdded && hasChanges) { // 새롭게 추가됐을 때 
       for (const edu of updatedEducationFields) {
         const response3 = await request.post(
@@ -263,7 +279,7 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
             console.log("학력 데이터 추가 실패:", response3.status, response3.data);
           }
         }
-        console.log("새 학력 데이터 등록 완료");
+
       } catch (error) {
         console.error("Error updating education data:", error);
         Alert.alert("학력 정보 업데이트 중 오류가 발생했습니다.");
@@ -589,7 +605,7 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
         try {
           const response = await request.put(`/api/user/reformer`, params, headers);
           if (response && response.status === 200) {
-            console.log('지역, 업데이트 성공:', response.data);
+            console.log('지역, 링크 업데이트 성공:', updatedForm.link, updatedForm.region);
             navigation.goBack();
           } else {
             Alert.alert('지역, 링크 업데이트 실패');
@@ -745,7 +761,6 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
           .map((data) => uploadFiles(data.type, data)); // 필터링된 데이터로 uploadFiles 호출
 
         await Promise.all(uploadPromises);
-        console.log('모든 파일 업로드 완료');
         if (fix) { // 수정하러 들어왔을 경우
           Alert.alert(
             "프로필 수정이 완료되었습니다.",
@@ -793,7 +808,7 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
     const uuidKey = `${engType}_uuid`; // 각 타입에 따른 UUID 키 생성
     // data.file 배열 처리
     data.file.forEach((file: any) => {
-      formData.append('document', {
+      formData.append('proof_document', {
         uri: file.uri, // 파일의 URI
         type: file.type || 'application/pdf',
         name: file.name || 'document.pdf', // 파일 이름
@@ -872,7 +887,7 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
           return { ...prev, picture: profileImage }
         })
       } else {
-        console.log('Failed to fetch user data:', response);
+        console.log('유저 프로필 이미지 패치 실패:', response);
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
@@ -890,6 +905,9 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
         setForm(prev => {
           return { ...prev, introduce: response.data.introduce }
         })
+        console.log('자기소개 패치:', response.data.introduce)
+      } else {
+        console.log('자기소개 패치 실패:', response);
       }
     } catch (err) {
       console.error(err);
@@ -902,11 +920,10 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
       Authorization: `Bearer ${accessToken}`
     };
     try { // 링크, 지역
-      console.log('리폼러 데이터 가져오기');
       const response = await request.get(`/api/user/reformer`, {}, headers);
       if (response && response.status === 200) {
         const data = response.data;
-        console.log('테스트', data);
+        console.log('패치한 리폼러 데이터:', data);
         // 각 항목을 form.field 형식에 맞게 변환하여 추가
         const newFields: any[] = [];
         // 학력 데이터 추가
@@ -1038,16 +1055,17 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
           onPress={!fix ? handleSubmit : handleFix}
           style={{ width: '90%', alignSelf: 'center', marginBottom: 10 }}
         />
-        {<View>
-          <BottomButton
-            value="check"
-            pressed={false}
-            onPress={() => {
-              console.log(form);
-            }}
-            style={{ width: '90%', alignSelf: 'center', marginBottom: 10 }}
-          />
-        </View>}
+        {fix && // TODO: 이거 배포 전에는 삭제하기! (디버깅용)
+          <View>
+            <BottomButton
+              value="check"
+              pressed={false}
+              onPress={() => {
+                console.log(form);
+              }}
+              style={{ width: '90%', alignSelf: 'center', marginBottom: 10 }}
+            />
+          </View>}
       </View>
       {careerIndex >= 0 && (
         <CareerModal
