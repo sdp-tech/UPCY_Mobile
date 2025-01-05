@@ -19,7 +19,7 @@ import {
 import { Tabs, MaterialTabBar } from 'react-native-collapsible-tab-view';
 import { BLACK } from '../../../styles/GlobalColor.tsx';
 import ServicePage from '../../../components/Home/Market/ServicePage';
-import InfoPage from '../../../components/Home/Market/InfoPage.tsx';
+import InfoPage, { MarketType } from '../../../components/Home/Market/InfoPage.tsx';
 import ScrollTopButton from '../../../common/ScrollTopButton.tsx';
 import { LoginContext } from '../../../common/Context';
 import DetailScreenHeader from '../../../components/Home/components/DetailScreenHeader.tsx';
@@ -31,6 +31,7 @@ import { CommonActions, useFocusEffect } from '@react-navigation/native';
 import { Title20B } from '../../../styles/GlobalText.tsx';
 import DeleteModal from '../DeleteModal.tsx';
 import { MarketResponseType } from '../../Home/Market/MarketTabView.tsx';
+import { AwardsType, CareerType, CertifiType, EducType, FreeType, ReformerResponseType } from '../../../types/UserTypes.ts';
 
 export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) => {
 
@@ -105,20 +106,47 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
   const [activeTab, setActiveTab] = useState('profile');
   const scrollRef = useRef<ScrollView | null>(null);
   const defaultMarketResponseData: MarketResponseType = {
-    market_address: '',
-    market_introduce: '정보 없음',
-    market_name: '정보 없음',
-    market_thumbnail: '',
+    market_address: '', // 링크 
+    market_introduce: '정보 없음', // 자기소개 
+    market_name: '정보 없음', // 닉네임 
+    market_thumbnail: '', // 왜 안 나오지...? 원래없나 
     market_uuid: '',
   };
+  const defaultReformerResponseData: ReformerResponseType = {
+    nickname: '', // 닉네임 
+    reformer_link: '', // 자기소개 
+    reformer_area: '', // 활동지역 
+    education: [], // 학력
+    certification: [], // 자격증 
+    awards: [], // 공모전 
+    career: [], // 경력 
+    freelancer: [] // 외주 
+  }
 
-  const [marketData, setMarketData] = useState<MarketResponseType>(
+
+  const [marketResponseData, setMarketResponseData] = useState<MarketResponseType>(
     defaultMarketResponseData,
   );
+  const [reformerResponseData, setReformerResponseData] = useState<ReformerResponseType>(defaultReformerResponseData,);
+  const [marketData, setMarketData] = useState<MarketType>({
+    reformer_link: '', // 링크 
+    market_introduce: '정보 없음', // 자기소개 
+    market_name: '정보 없음', // 닉네임 
+    market_thumbnail: '', // 왜 안 나오지...? 원래없나 
+    market_uuid: '',
+    reformer_area: '??',
+  })
+  const fetchMarketData = (data: Partial<MarketType>) => {
+
+    setMarketData((prev) => ({
+      ...prev, // 기존 데이터를 유지
+      ...data, // 새로운 데이터로 업데이트
+    }));
+
+  };
 
   const request = Request();
   const { isLogin, setLogin } = useContext(LoginContext);
-  const [market_uuid, setMarket_uuid] = useState<any>('');
   const [reformerInfo, setReformerInfo] = useState({
     nickname: route.params?.nickname || '',
     backgroundphoto:
@@ -165,14 +193,52 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
           backgroundphoto:
             'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
           picture: profileImage,
-          introduce:
+          introduce:// 근데 이거 안씀 
             response.data.introduce ||
             '나는야 업씨러 이하늘 환경을 사랑하지요 눈누난나',
           role: 'reformer',
         });
-        setNickname(response.data.nickname);
-        const UUID = await getMarketUUID();
-        setMarket_uuid(UUID);
+        // setNickname(response.data.nickname);
+        try { // 본인 마켓 정보 가져오기: 링크, 자기소개, 닉네임, uuid
+          const response2 = await request.get(`/api/market`, {}, headers);
+          if (response2 && response2.status === 200) {
+            const marketResult: MarketResponseType = response2.data;
+            setMarketResponseData(marketResult);
+            fetchMarketData({
+              market_introduce: marketResult.market_introduce,
+              market_name: marketResult.market_name,
+              market_thumbnail: marketResult.market_thumbnail || '', // 기본값 유지
+              market_uuid: marketResult.market_uuid,
+            });
+            console.log('마켓 정보 가져오기 성공', response2.data);
+            try { // reformer 정보 가져오기: 활동지역, 경력사항들 
+              const response3 = await request.get(`/api/user/reformer`, {}, headers);
+              if (response3 && response3.status === 200) {
+                const reformerResult: ReformerResponseType = response3.data;
+                setReformerResponseData(reformerResult);
+                fetchMarketData({
+                  reformer_link: reformerResult.reformer_link,
+                  reformer_area: reformerResult.reformer_area,
+                  education: reformerResult.education,
+                  certification: reformerResult.certification,
+                  awards: reformerResult.awards,
+                  career: reformerResult.career,
+                  freelancer: reformerResult.freelancer,
+                });
+                console.log('리폼러 정보 가져오기 성공 ', response3.data);
+                console.log('마켓 최종 합산 데이터:', marketData);
+              } else {
+                console.log(response3);
+              }
+            } catch (error) {
+              console.log(error);
+            }
+          } else {
+            console.log('마켓 정보 가져오기에 실패했습니다.', response2);
+          }
+        } catch (error) {
+          console.log(error);
+        }
         return response.data;
       } else {
         console.log('Failed to fetch user data:', response);
@@ -356,24 +422,11 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
         <Tabs.Tab name="프로필" key="profile">
           {/* FIXME */}
           <InfoPage
-            marketData={{
-              market_address: '',
-              market_introduce: '정보 없음',
-              market_name: '정보 없음',
-              market_thumbnail: '',
-              market_uuid: '',
-            }}
+            marketData={marketData}
           />
         </Tabs.Tab>
         <Tabs.Tab name="서비스" key="service">
           <View>
-
-            {/*<TouchableOpacity
-              style={styles.saveButton}
-              onPress={() => navigation.navigate('TempStorage')}>
-              <Text style={styles.saveButtonText}>임시저장 (5)</Text>
-              {/*수정 필요
-            </TouchableOpacity>*/}
             <ServicePage scrollViewRef={scrollRef} navigation={navigation} />
             <ScrollTopButton scrollViewRef={scrollRef} />
           </View>

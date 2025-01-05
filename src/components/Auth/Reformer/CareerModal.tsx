@@ -379,7 +379,7 @@ export default function CareerModal({
                 </Caption11M>
               </View>
               <FileBox
-                data={form.field[index].file}
+                data={form.field[index]?.file || []} // `undefined`이면 빈 배열로 전달
                 setData={r => {
                   handleContentChange(r, 'file');
                 }}
