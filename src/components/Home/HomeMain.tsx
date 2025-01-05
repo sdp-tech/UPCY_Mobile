@@ -3,7 +3,6 @@ import { useFocusEffect } from '@react-navigation/native';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { StyleFilterButton } from './components/StyleFilterButton';
 import styled from 'styled-components/native';
-import DetailModal from './Market/GoodsDetailOptionsModal';
 import DropDown from '../../assets/common/DropDown.svg';
 import HomeStyleFilterModal from './components/HomeStyleFilterModal';
 import FilterOptionModal from './components/FilterOptionModal';
@@ -55,20 +54,18 @@ export const stylesList: string[] = [
 ] as string[];
 
 interface HomeTabViewProps {
-  onSearch: () => void;
-  onTabChange: (tab: 'Goods' | 'Market' | 'temp') => void;
   selectedTab: 'Goods' | 'Market' | 'temp';
   setSelectedFilterOption?: (
     selectedFilterOption: SelectedOptionProps | undefined,
   ) => void;
+  selectedStylesList: string[];
   setSelectedStylesList: (selectedStylesList: string[]) => void;
 }
 
 const HomeTabView = ({
-  onSearch,
-  onTabChange,
   selectedTab,
   setSelectedFilterOption, // selected filter (right button) option
+  selectedStylesList, // selected styles (left button)
   setSelectedStylesList, // selected styles (left button)
 }: HomeTabViewProps) => {
   const [form, setForm] = useState<SignupProps>({
@@ -77,10 +74,7 @@ const HomeTabView = ({
     password: '',
     region: '',
   });
-  const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [styleFilterOpen, setStyleFilterOpen] = useState<boolean>(false);
-  const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
-  const [pressedStyles, setPressedStyles] = useState<string[]>(stylesList);
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
   const [selectedOption, setSelectedOption] = useState<SelectedOptionProps>(
     selectOptionDropdown[0],
@@ -88,11 +82,6 @@ const HomeTabView = ({
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
-  };
-
-  const selectOption = (option: SelectedOptionProps) => {
-    setSelectedOption(option);
-    setDropdownOpen(false);
   };
 
   useFocusEffect(
@@ -123,11 +112,10 @@ const HomeTabView = ({
               />
               {styleFilterOpen && (
                 <HomeStyleFilterModal
-                  list={pressedStyles}
+                  list={selectedStylesList ?? stylesList}
                   styleFilterOpen={styleFilterOpen}
                   setStyleFilterOpen={setStyleFilterOpen}
-                  setPressedStyles={setPressedStyles}
-                  setFinalPressedStyles={setSelectedStylesList}
+                  setPressedStyles={setSelectedStylesList}
                 />
               )}
             </View>
@@ -149,18 +137,6 @@ const HomeTabView = ({
           </View>
         )}
       </CategoryBox>
-      <DetailModal
-        open={modalOpen}
-        setOpen={setModalOpen}
-        value={form.region}
-        setValue={text =>
-          setForm(prev => {
-            return { ...prev, region: text };
-          })
-        }
-        selectedStyles={selectedStyles}
-        setSelectedStyles={setSelectedStyles}
-      />
     </View>
   );
 };
