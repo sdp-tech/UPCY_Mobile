@@ -16,7 +16,9 @@ import {
   setAccessToken,
   setNickname,
   setRefreshToken,
-  setUserRole
+  setUserRole,
+  getUserRole,
+  setMarketUUID
 } from '../../common/storage';
 import { LoginContext, useUser } from '../../common/Context';
 
@@ -92,9 +94,12 @@ export const processLoginResponse2 = async ( // 회원가입시에 사용하는 
       if (response?.status === 200) {
         const user_role = response.data.role;
         setUserRole(user_role);
+        const role = await getUserRole();
+        console.log('processLogin2에서 유저롤 설정 완료', role);
       }
     } catch (err) {
       console.log(err);
+      console.log('유저롤 설정 오류');
     }
   } else if (response_.status == 400) {
     Alert.alert(
@@ -113,17 +118,45 @@ export async function processLoginResponse( // 통상 로그인시 호출 함수
   setLogin: (value: boolean) => void,
   setUser: (user: UserType) => void // setUser 전달
 ) {
+  const request = Request();
   // const navigation = useNavigation<StackNavigationProp<MyPageProps>>();
   if (response?.status === 200) {
     const accessToken = await response.data.access;
     const refreshToken = await response.data.refresh;
+    const headers = {
+      Authorization: `Bearer ${accessToken}`
+    }
     setAccessToken(accessToken);
     setRefreshToken(refreshToken);
     console.log({ accessToken }, ',', { refreshToken });
-    setLogin(true);
+    try { // 유저롤 설정 
+      const response = await request.get(`/api/user`, {}, headers)
+      if (response?.status === 200) {
+        const user_role = response.data.role;
+        setUserRole(user_role);
+        const role = await getUserRole();
+        console.log('processLogin에서 유저롤 설정 완료', role);
+        setLogin(true);
+        if (role === 'reformer') { // 리폼러인 경우, marketUUID 저장 
+          try {
+            const response = await request.get(`/api/market`, {}, headers)
+            if (response.status && response.status === 200) {
+              setMarketUUID(response.data[0].market_uuid);
+            } else {
+              console.log(response);
+            }
+          } catch (error) {
+            console.error(error);
+          }
+
+        }
+      }
+    } catch (err) {
+      console.log(err);
+      console.log('유저롤 설정 오류');
+    }
     navigate(); // 인자로 전달받은 네비게이팅 수행
     console.log('로그인 성공');
-
   } else if (response.status === 400) {
     Alert.alert('비밀번호가 틀렸습니다.');
   } else if (response.status === 404) {

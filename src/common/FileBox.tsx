@@ -34,7 +34,7 @@ const SelectView = styled.View`
   margin-bottom: 5px;
 `;
 
-const FileBox = ({ data, setData, max }: FileBoxProps) => {
+const FileBox = ({ data = [], setData, max }: FileBoxProps) => {
   const handleFileDelete = (index: number) => {
     const newData = data.filter((v, i) => i !== index);
     setData?.(newData);

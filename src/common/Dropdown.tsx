@@ -71,7 +71,7 @@ export default function Dropdown({
         </View>
         <ScrollView
           style={{
-            maxHeight: open ? ITEM_HEIGHT * 3 : ITEM_HEIGHT + 4,
+            maxHeight: open ? ITEM_HEIGHT * items.length : ITEM_HEIGHT + 4,
             borderTopWidth: open ? 2 : 0,
             borderColor: BLACK2,
           }}>

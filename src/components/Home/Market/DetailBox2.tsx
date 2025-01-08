@@ -1,14 +1,34 @@
 // DetailBox component without the tab
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import RenderHTML from 'react-native-render-html';
-import { ServiceDetailOption } from './Service';
+import { MaterialDetail, ServiceDetailOption } from './Service';
+
+function convertPeriod(period: number) {
+  let localPeriod: string = '';
+  if (period === 0) {
+    localPeriod = '3일';
+  } else if (period === 1) {
+    localPeriod = '5일';
+  } else if (period === 2) {
+    localPeriod = '7일';
+  } else if (period === 3) {
+    localPeriod = '3주';
+  } else if (period === 4) {
+    localPeriod = '5주';
+  } else if (period === 5) {
+    localPeriod = '8주';
+  } else {
+    localPeriod = '정보 없음';
+  }
+  return localPeriod;
+}
 
 const PeriodBox = ({ period }: { period: number }) => {
   return (
     <View style={styles.eachBox}>
       <View style={styles.periodLine}>
         <Text style={TextStyles.eachLabel}>예상 제작 기간</Text>
-        <Text style={TextStyles.eachData}>{period}주</Text>
+        <Text style={TextStyles.eachData}>{convertPeriod(period)}</Text>
       </View>
     </View>
   );
@@ -31,30 +51,31 @@ const ContentBox = ({ content }: { content: string }) => {
               maxWidth: 370,
             }}
           />
+          {/* TODO: 서비스 상세에 있는 사진들 받아오기  */}
         </View>
       </View>
     </View>
   );
 };
 
-const MaterialBox = ({ list }: { list: string[] }) => {
-  function materialList({ data }: { data: string[] }) {
+const MaterialBox = ({ list }: { list: MaterialDetail[] }) => {
+  function materialList({ data }: { data: MaterialDetail[] }) {
     return data?.map((item, index) => (
-      <View key={index}>
-        <Text style={TextStyles.eachMaterialData}>{item} | </Text>
+      <View key={item.material_uuid}>
+        <Text style={TextStyles.eachMaterialData}>
+          {item.material_name} {index < data.length - 1 && '| '}
+        </Text>
       </View>
     ));
   }
 
   return (
-    <>
-      <View style={styles.eachBox}>
-        <Text style={TextStyles.eachLabel}>작업 가능한 소재</Text>
-        <View style={styles.materialListLine}>
-          {materialList({ data: list })}
-        </View>
+    <View style={styles.materialBox}>
+      <Text style={TextStyles.eachLabel}>작업 가능한 소재</Text>
+      <View style={styles.materialListLine}>
+        {materialList({ data: list })}
       </View>
-    </>
+    </View>
   );
 };
 
@@ -65,7 +86,7 @@ const OptionBox = ({ list }: { list: ServiceDetailOption[] }) => {
       <View style={styles.optionListBox}>
         {list.map((option, index) => {
           return (
-            <View key={index} style={{ marginBottom: 16 }}>
+            <View key={option.option_uuid} style={{ marginBottom: 16 }}>
               <Text style={TextStyles.optionLabel}>option {index + 1}</Text>
               <View
                 style={{
@@ -75,21 +96,30 @@ const OptionBox = ({ list }: { list: ServiceDetailOption[] }) => {
                   marginBottom: 16,
                 }}>
                 <Text style={TextStyles.optionNameLabel}>
-                  {option.optionName}
+                  {option.option_name}
                 </Text>
                 <Text style={TextStyles.optionPriceLabel}>
-                  +{option.optionPrice}원
+                  +{option.option_price}원
                 </Text>
               </View>
-              <View
-                style={{
-                  backgroundColor: '#f1f1f1',
-                  padding: 14,
-                  borderRadius: 8,
-                }}>
-                <Text style={TextStyles.optionContentLabel}>
-                  {option.optionContent}
-                </Text>
+              <View style={{
+                flexDirection: 'row',
+              }}>
+                <View
+                  style={{
+                    backgroundColor: '#f1f1f1',
+                    padding: 14,
+                    borderRadius: 8,
+                    flexGrow: 1,
+                  }}>
+                  <Text style={TextStyles.optionContentLabel}>
+                    {option.option_content}
+                  </Text>
+                </View>
+                <Image
+                  style={{ width: 50, height: 50, flexGrow: 0.2 }}
+                  source={{ uri: option.option_photoUri }}
+                />
               </View>
             </View>
           );
@@ -101,7 +131,7 @@ const OptionBox = ({ list }: { list: ServiceDetailOption[] }) => {
 
 type DetailBox2Props = {
   servicePeriod: number;
-  serviceMaterials?: string[];
+  serviceMaterials?: MaterialDetail[];
   serviceContent: string;
   serviceOptions?: ServiceDetailOption[];
   marketUuid: string;
@@ -114,21 +144,8 @@ const DetailBox2 = ({
   serviceOptions,
   marketUuid,
 }: DetailBox2Props) => {
-  const testOptionList = [
-    {
-      optionName: '똑딱이 단추',
-      optionContent: '가방 입구에 똑딱이 단추를 추가합니다.',
-      optionPrice: 1000,
-    },
-    {
-      optionName: '주머니 지퍼',
-      optionContent: '주머니에 귀여운 지퍼를 달아보세요.',
-      optionPrice: 1000,
-    },
-  ] as ServiceDetailOption[];
-
   return (
-    <>
+    <View>
       <PeriodBox period={servicePeriod} />
       <ContentBox content={serviceContent} />
       {serviceMaterials && serviceMaterials.length > 0 && (
@@ -137,13 +154,20 @@ const DetailBox2 = ({
       {serviceOptions && serviceOptions.length > 0 && (
         <OptionBox list={serviceOptions ?? []} />
       )}
-    </>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   eachBox: {
     flexDirection: 'column',
+    borderBottomWidth: 1,
+    borderColor: '#dcdcdc',
+    paddingVertical: 8,
+  },
+  materialBox: {
+    display: 'flex',
+    flexDirection: 'row',
     borderBottomWidth: 1,
     borderColor: '#dcdcdc',
     paddingVertical: 8,
@@ -188,10 +212,11 @@ const TextStyles = StyleSheet.create({
   },
   eachMaterialData: {
     fontSize: 14,
-    lineHeight: 26,
+    lineHeight: 24,
     color: '#222222',
     fontFamily: 'Pretendard Variable',
     fontWeight: '400',
+    paddingVertical: 8,
   },
   optionLabel: {
     color: '#612FEF',

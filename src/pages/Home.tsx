@@ -24,7 +24,7 @@ import ServiceDetailPageScreen from '../components/Home/Market/ServiceDetailPage
 import GoodsDetailPageScreen from '../components/Home/Market/GoodsDetailPage';
 import GoodsRegistrationPage from '../components/Home/Market/GoodsRegistration';
 import TempStorageEdit from '../components/Home/Market/TempStorageEdit';
-import WriteDetailPage from '../components/Home/Market/WriteDetailPage';
+//import WriteDetailPage from '../components/Home/Market/WriteDetailPage';
 import AddPortfolio from '../components/Home/Portfolio/AddPortfolio';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
@@ -36,11 +36,12 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import ComponentsTest from './ComponentsTest';
 import { PURPLE } from '../styles/GlobalColor';
 import ReformerMarket from '../components/Home/Market/ReformerMarket';
-import Service from '../components/Home/Market/Service';
+import Service, { MaterialDetail } from '../components/Home/Market/Service';
 import { PhotoType } from '../hooks/useImagePicker';
 import { stylesList } from '../components/Home/HomeMain';
 import SearchPage from './SearchPage';
 import { ServiceDetailOption } from '../components/Home/Market/Service';
+import ReportPage from './ReportPage';
 
 export type HomeStackParams = {
   Home: { searchTerm?: string };
@@ -58,7 +59,7 @@ export type HomeStackParams = {
     backgroundImageUri: string;
     profileImageUri?: string;
     servicePeriod: number;
-    serviceMaterials: string[];
+    serviceMaterials: MaterialDetail[];
     serviceContent: string;
     serviceOptions: ServiceDetailOption[];
     marketUuid: string;
@@ -70,9 +71,14 @@ export type HomeStackParams = {
   // ServiceRegistrationPage: { inputText?: string; detailphoto?: PhotoType[] };
   GoodsRegistrationPage: undefined;
   TempStorageEdit: undefined;
-  WriteDetailPage: { inputText: string; detailphoto?: PhotoType[] };
+  //WriteDetailPage: { inputText: string; detailphoto?: PhotoType[] };
   AddPortfolio: undefined;
-  InputInfo: undefined;
+  InputInfo: {
+    materials: string[];
+    transactionMethod: string;
+    options: any[]; // TODO: fix
+    additionalRequest: string;
+  };
   QuotationConfirm: undefined;
   Rejection: undefined;
   SentRejection: undefined;
@@ -81,10 +87,12 @@ export type HomeStackParams = {
   MarketTabView: {
     reformerName: string;
     marketUuid: string;
+    backgroundImageUri?: string;
   };
   SearchPage: {
     navigation: any;
   };
+  ReportPage: undefined;
 };
 
 const HomeStack = createStackNavigator<HomeStackParams>();
@@ -129,7 +137,7 @@ const HomeScreen = ({
         component={GoodsRegistrationPage}
       />
       <HomeStack.Screen name="TempStorageEdit" component={TempStorageEdit} />
-      <HomeStack.Screen name="WriteDetailPage" component={WriteDetailPage} />
+      {/* <HomeStack.Screen name="WriteDetailPage" component={WriteDetailPage} /> */}
       <HomeStack.Screen name="AddPortfolio" component={AddPortfolio} />
       <HomeStack.Screen name="InputInfo" component={InputInfo} />
       <HomeStack.Screen name="QuotationConfirm" component={QuotationConfirm} />
@@ -138,6 +146,7 @@ const HomeScreen = ({
       <HomeStack.Screen name="TestComponents" component={ComponentsTest} />
       <HomeStack.Screen name="ReformerMarket" component={ReformerMarket} />
       <HomeStack.Screen name="SearchPage" component={SearchPage} />
+      <HomeStack.Screen name="ReportPage" component={ReportPage} />
     </HomeStack.Navigator>
   );
 };
@@ -146,6 +155,7 @@ const HomeMainScreen = ({
   navigation,
   route,
 }: StackScreenProps<HomeStackParams, 'Home'>) => {
+  const { searchTerm } = route.params || {};
   const [selectedTab, setSelectedTab] = useState<'Goods' | 'Market' | 'temp'>(
     'Goods',
   );
@@ -172,9 +182,9 @@ const HomeMainScreen = ({
     );
   };
 
-  const handleTabChange = (tab: 'Goods' | 'Market' | 'temp') => {
-    setSelectedTab(tab);
-  };
+  // const handleTabChange = (tab: 'Goods' | 'Market' | 'temp') => {
+  //   setSelectedTab(tab);
+  // };
   const items = [...new Array(6).keys()];
   const splitArrayIntoPairs = (arr: any[], pairSize: number) => {
     return arr.reduce((result, item, index) => {
@@ -201,21 +211,24 @@ const HomeMainScreen = ({
         {/* <CustomHeader onSearch={() => {}} onTabChange={handleTabChange} /> */}
         <CustomHeader2 navigation={navigation} />
         <BottomSheetModalProvider>
-          <View>
+          <View style={{ zIndex: 100 }}>
+            {/* 이제 아이폰에서도 렌더링 잘 됩니다 (가격 필터) */}
             <HomeTabView
-              onSearch={() => {}}
               selectedTab={selectedTab}
-              onTabChange={handleTabChange}
               setSelectedFilterOption={setSelectedFilterOption}
+              selectedStylesList={selectedStylesList}
               setSelectedStylesList={setSelectedStylesList}
             />
           </View>
           {selectedTab === 'Goods' && (
-            <Service
-              selectedStylesList={selectedStylesList}
-              selectedFilterOption={selectedFilterOption}
-              navigation={navigation}
-            />
+            <View>
+              <Service
+                selectedStylesList={selectedStylesList}
+                selectedFilterOption={selectedFilterOption}
+                searchTerm={searchTerm}
+                navigation={navigation}
+              />
+            </View>
           )}
           {selectedTab === 'Market' && <ReformerMarket />}
           {selectedTab === 'temp' && (
