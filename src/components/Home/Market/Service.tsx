@@ -1,4 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+// FIXME: 이거 사용
 import {
   View,
   Text,
@@ -9,26 +11,28 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
-import {
-  Title20B,
-  Filter11R,
-  Subtitle18B,
-  Body14R,
-} from '../../../styles/GlobalText';
+import { Title20B, Filter11R, Subtitle18B } from '../../../styles/GlobalText';
 import { LIGHTGRAY } from '../../../styles/GlobalColor';
 // import HeartButton from '../../../common/HeartButton';
 import DetailModal from '../Market/GoodsDetailOptionsModal';
 import { SelectedOptionProps } from '../HomeMain.tsx';
-import { getAccessToken } from '../../../common/storage.js';
 import Request from '../../../common/requests.js';
 import RenderHTML from 'react-native-render-html';
+import { numberToPrice } from './functions.ts';
 
 // 홈화면에 있는, 서비스 전체 리스트!
 
 export type ServiceDetailOption = {
-  optionName: string;
-  optionContent: string;
-  optionPrice: number;
+  option_content: string;
+  option_name: string;
+  option_price: number;
+  option_uuid: string;
+  option_photoUri?: string; // 옵션 사진 uri
+};
+
+export type MaterialDetail = {
+  material_uuid: string;
+  material_name: string;
 };
 
 interface ServiceCardProps {
@@ -42,13 +46,15 @@ interface ServiceCardProps {
   market_uuid: string;
   service_uuid: string;
   service_period?: number;
-  service_materials?: string[];
+  service_materials?: MaterialDetail[];
   service_options?: ServiceDetailOption[];
+  temporary?: boolean; //TODO: 수정 필요
 }
 
 export type ServiceResponseType = {
   // TODO: any type 나중에 알아보고 수정
   basic_price: number;
+  created?: Date;
   market_uuid: string;
   max_price: number;
   service_category: string;
@@ -61,6 +67,7 @@ export type ServiceResponseType = {
   service_title: string;
   service_uuid: string;
   temporary: boolean;
+  updated?: Date;
 };
 
 interface ServiceCardComponentProps extends ServiceCardProps {
@@ -70,12 +77,17 @@ interface ServiceCardComponentProps extends ServiceCardProps {
 type ServiceMarketProps = {
   selectedStylesList: string[];
   selectedFilterOption?: SelectedOptionProps;
+  searchTerm?: string;
   navigation: any;
 };
+
+export const defaultImageUri =
+  'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp';
 
 const EntireServiceMarket = ({
   selectedStylesList,
   selectedFilterOption,
+  searchTerm = '',
   navigation,
 }: ServiceMarketProps) => {
   const [form, setForm] = useState({
@@ -92,18 +104,18 @@ const EntireServiceMarket = ({
   const [serviceCardData, setServiceCardData] = useState<ServiceCardProps[]>(
     [] as ServiceCardProps[],
   );
+  const [serviceCardRawData, setServiceCardRawData] = useState<any[]>([]);
 
   const serviceTitle: string = '지금 주목해야 할 업사이클링 서비스';
   const serviceDescription: string = '옷장 속 옷들의 트렌디한 재탄생';
 
   const fetchData = async () => {
-
     try {
-      // API 호출
+      // API 호출: 전체 서비스 
       const response = await request.get(`/api/market/services`, {}, {});
       if (response && response.status === 200) {
-        const serviceListResults: ServiceResponseType[] =
-          response.data.results;
+        const serviceListResults: ServiceResponseType[] = response.data.results;
+        setServiceCardRawData(serviceListResults);
         const extractedServiceCardData = extractData(serviceListResults);
         setServiceCardData(extractedServiceCardData);
         console.log('서비스 목록 로드 완료');
@@ -117,31 +129,38 @@ const EntireServiceMarket = ({
       // 로딩 상태 false로 변경
       setLoading(false);
     }
-
   };
 
   const extractData = (rawData: ServiceResponseType[]) => {
     return rawData.map(service => ({
-      name: service.service_title,
+      //TODO: 밑에 수정
+      name: service.service_title, // 여기가 문제네.... 리폼러 이름 받아와야 하는데 서비스 이름이 나옴 @!!!
       basic_price: service.basic_price,
       max_price: service.max_price,
       service_styles: service.service_style.map(
         style => style.style_name,
       ) as string[],
-      imageUri: service.service_image?.[0] ?? '',
+      imageUri: service.service_image?.[0]?.image ?? defaultImageUri, // 썸네일
       service_title: service.service_title,
       service_content: service.service_content,
-      market_uuid: service.market_uuid,
+      market_uuid: service.market_uuid || '',
       service_uuid: service.service_uuid,
       service_period: service.service_period,
-      service_materials: service.service_material.map(
-        material => material.material_name,
-      ) as string[],
-      service_options: service.service_option.map(option => ({
-        optionName: option.option_name,
-        optionContent: option.option_content,
-        optionPrice: option.option_price,
-      })) as ServiceDetailOption[],
+      service_materials: service.service_material.map(material => ({
+        material_uuid: material.material_uuid,
+        material_name: material.material_name,
+      })) as MaterialDetail[],
+      service_options: Array.isArray(service.service_option)
+        ? (service.service_option.map(option => ({
+          option_content: option.option_content,
+          option_name: option.option_name,
+          option_price: option.option_price,
+          option_uuid: option.option_uuid,
+          option_photoUri: option.option_photoUri || '',
+          //option_
+        })) as ServiceDetailOption[])
+        : [],
+      temporary: service.temporary,
     })) as ServiceCardProps[];
   };
 
@@ -152,21 +171,61 @@ const EntireServiceMarket = ({
 
   useEffect(() => {
     if (serviceCardData) {
-      // filter by selected styles
-      // const styleFilteredData = serviceCardData.filter(card => {
-      //   card.service_styles?.some(style => selectedStylesList.includes(style));
-      // });
+      // filter by search term
+      let searchFilteredData = serviceCardData;
+      if (searchTerm && searchTerm.length > 0) {
+        searchFilteredData = serviceCardData.filter(card => {
+          const {
+            name,
+            basic_price,
+            max_price,
+            service_styles,
+            service_title,
+            service_content,
+          } = card;
+
+          const searchLower = searchTerm.toLowerCase();
+
+          // Check if any field matches the search term
+          return (
+            (name && name.toLowerCase().includes(searchLower)) ||
+            (basic_price && basic_price.toString().includes(searchLower)) ||
+            (max_price && max_price.toString().includes(searchLower)) ||
+            (service_styles &&
+              service_styles.some(style =>
+                style.toLowerCase().includes(searchLower),
+              )) ||
+            (service_title &&
+              service_title.toLowerCase().includes(searchLower)) ||
+            (service_content &&
+              service_content.toLowerCase().includes(searchLower))
+          );
+        });
+      }
+
+      // reorder by price
+      let priceFilteredData = searchFilteredData;
       if (selectedFilterOption == '가격순') {
         // filter by basic_price
-        // const sortedByPriceData = [...styleFilteredData].sort(
-        const sortedByPriceData = [...serviceCardData].sort(
+        priceFilteredData = [...searchFilteredData].sort(
           (a, b) => a.basic_price - b.basic_price,
         );
-        setServiceCardData(sortedByPriceData);
       }
+
+      // filter by selected styles
+      const styleFilteredData =
+        selectedStylesList.length > 0
+          ? priceFilteredData.filter(card =>
+            card.service_styles?.some(style =>
+              selectedStylesList.includes(style),
+            ),
+          )
+          : [];
+
       // TODO: add more filtering logic here
+      setServiceCardData(styleFilteredData);
     }
-  }, [selectedFilterOption, selectedStylesList]);
+  }, [selectedFilterOption, selectedStylesList, searchTerm]);
 
   // 로딩 중일 때 로딩 스피너 표시
   if (loading) {
@@ -178,7 +237,7 @@ const EntireServiceMarket = ({
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={styles.container} overScrollMode='never' bounces={false}>
       <Title20B
         style={{ marginTop: 15, marginHorizontal: 15, marginBottom: 8 }}>
         {serviceTitle}
@@ -197,26 +256,36 @@ const EntireServiceMarket = ({
       />
       <View style={{ backgroundColor: LIGHTGRAY }}>
         {serviceCardData.length > 0 ? (
-          serviceCardData.map(card => (
-            <ServiceCard
-              key={card.service_uuid}
-              name={card.name}
-              basic_price={card.basic_price}
-              max_price={card.max_price}
-              service_styles={card.service_styles}
-              imageUri={card.imageUri}
-              service_title={card.service_title}
-              service_content={card.service_content}
-              market_uuid={card.market_uuid}
-              service_uuid={card.service_uuid}
-              service_period={card.service_period}
-              navigation={navigation}
-            />
-          ))
+          serviceCardData.map(
+            (card, index) =>
+              !card.temporary && (
+                <ServiceCard
+                  key={card.service_uuid}
+                  name={card.name}
+                  basic_price={card.basic_price}
+                  max_price={card.max_price}
+                  service_styles={card.service_styles}
+                  imageUri={card.imageUri}
+                  service_title={card.service_title}
+                  service_content={card.service_content}
+                  market_uuid={card.market_uuid}
+                  service_uuid={card.service_uuid}
+                  service_period={card.service_period}
+                  navigation={navigation}
+                  service_options={serviceCardRawData[index].service_option}
+                  service_materials={serviceCardRawData[index].service_material}
+                />
+              ),
+          )
         ) : (
-          <Text>선택된 스타일의 서비스가 없습니다.</Text>
+          <View style={styles.centeredContainer}>
+            <Text style={TextStyles.noServiceText}>
+              해당하는 서비스가 없습니다.
+            </Text>
+          </View>
         )}
       </View>
+      <View style={{ marginBottom: 200 }} />
     </ScrollView>
   );
 };
@@ -254,7 +323,7 @@ export const ServiceCard = ({
           reviewNum: REVIEW_NUM,
           tags: service_styles,
           backgroundImageUri: imageUri,
-          profileImageUri: imageUri,
+          profileImageUri: defaultImageUri,
           servicePeriod: service_period,
           serviceMaterials: service_materials,
           serviceContent: service_content,
@@ -266,11 +335,12 @@ export const ServiceCard = ({
         style={{ width: '100%', height: 180, position: 'relative' }}
         imageStyle={{ height: 180 }}
         source={{
-          uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
-          // FIXME: fix here with imageUri variable
+          uri: imageUri ?? defaultImageUri,
         }}>
         <Text style={TextStyles.serviceCardName}>{name}</Text>
-        <Text style={TextStyles.serviceCardPrice}>{basic_price} 원 ~</Text>
+        <Text style={TextStyles.serviceCardPrice}>
+          {numberToPrice(basic_price)} 원 ~
+        </Text>
         <View style={styles.service_style}>
           {service_styles?.map((service_style, index) => {
             return (
@@ -328,6 +398,11 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     borderRadius: 4,
   },
+  centeredContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 const TextStyles = StyleSheet.create({
@@ -356,7 +431,7 @@ const TextStyles = StyleSheet.create({
     lineHeight: 24,
   },
   serviceCardTag: {
-    backgroundColor: '#612FEF',
+    backgroundColor: 'rgba(97, 47, 239, 0.80)',
     paddingHorizontal: 16,
     paddingVertical: 4,
     color: '#fff',
@@ -364,6 +439,12 @@ const TextStyles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '400',
     lineHeight: 24,
+    borderRadius: 8,
+  },
+  noServiceText: {
+    fontSize: 16,
+    color: '#000',
+    padding: 10,
   },
 });
 

@@ -18,13 +18,12 @@ export const UserContext = createContext<{
 }>({
   user: null,
   role: '',
-  setUser: () => {},
-  setRole: () => {},
+  setUser: () => { },
+  setRole: () => { },
 });
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   function sanitizeUserData(data: any) {
-    // null 오류 안 나도록 기본값 설정
     return {
       email: data.email || '',
       phone: data.phone || '',
@@ -42,13 +41,19 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   }
 
   const [user, setUser] = useState<UserType | null>(null);
-  const [role, setRole] = useState<string>(''); // 빈 문자열로 초기화
+  const [role, setRole] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const { isLogin } = useContext(LoginContext); // 로그인 상태 가져오기
   const request = Request();
 
   useEffect(() => {
     const fetchUserData = async () => {
+      if (!isLogin) {
+        setUser(null); // 로그인하지 않은 상태라면 유저 데이터를 초기화
+        return;
+      }
+
       const accessToken = await getAccessToken();
       try {
         if (accessToken) {
@@ -57,34 +62,33 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
           };
           const response = await request.get(`/api/user`, {}, headers);
           if (response && response.status === 200) {
-            console.log('유저 데이터를 저장합니다.');
             const sanitizedUserData = sanitizeUserData(response.data);
-            setUser(sanitizedUserData); // 전역 상태에 유저 데이터를 저장
+            setUser(sanitizedUserData);
+            setRole(sanitizedUserData.role);
             setUserRole(sanitizedUserData.role);
             console.log('Saving credentials:', sanitizedUserData);
           } else if (response && response.status === 404) {
-            console.log('유저 정보가 없습니다. 로그아웃 상태로 유지합니다.');
             setUser(null);
+          } else if (response && response.status === 401) {
+            console.log('Unauthorized access. Please log in again.');
           } else {
-            setError('유저 정보를 불러오는 중 문제가 발생했습니다.');
+            setError('Error fetching user data.');
           }
         } else {
-          console.log(
-            'access token 정보가 없습니다. 로그아웃 상태로 유지합니다.',
-          );
+          console.log('No access token found. User remains logged out.');
           setUser(null);
         }
       } catch (err) {
         console.error(err);
-        setError('유저 정보를 가져오는 중 에러가 발생했습니다.');
-        Alert.alert('Error', '유저 정보를 가져오는 중 오류가 발생했습니다.');
+        setError('Error occurred while fetching user data.');
       } finally {
-        setLoading(false); // 로딩 상태 종료
+        setLoading(false);
       }
     };
 
-    fetchUserData(); // Provider가 마운트될 때 유저 데이터 가져옴
-  }, []);
+    fetchUserData();
+  }, [isLogin]); // 로그인 상태가 변경될 때만 유저 데이터를 다시 가져옴
+
   return (
     <UserContext.Provider value={{ user, role, setUser, setRole }}>
       {children}
@@ -96,15 +100,18 @@ export const useUser = () => useContext(UserContext);
 
 export const LoginContext = createContext({
   isLogin: false,
-  setLogin: (value: boolean) => {},
+  setLogin: (value: boolean) => { },
 });
 
 export const LoginProvider = ({ children }: { children: ReactNode }) => {
   const [isLogin, setIsLogin] = useState<boolean>(false);
-  const { setUser, setRole } = useUser();
+  const { setUser, role, setRole } = useUser();
 
   const logout = () => {
     setRole('customer');
+    console.log(role);
+    console.log('Context의 로그아웃 실행');
+
     setIsLogin(false);
   };
 

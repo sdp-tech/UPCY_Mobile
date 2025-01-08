@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -17,20 +17,25 @@ import { BLACK, BLACK2, PURPLE } from '../../../styles/GlobalColor.tsx';
 import { StackScreenProps } from '@react-navigation/stack';
 import { HomeStackParams } from '../../../pages/Home';
 import InfoPage from './InfoPage.tsx';
-import Footer from '../../../common/Footer.tsx';
+// import Footer from '../../../common/Footer.tsx';
 import Request from '../../../common/requests.js';
 // import Arrow from '../../../assets/common/Arrow.svg';
 import ServicePage from './ServicePage.tsx';
 import DetailScreenHeader from '../components/DetailScreenHeader.tsx';
 import ScrollTopButton from '../../../common/ScrollTopButton.tsx';
 import ReformerTag from '../components/ReformerTag.tsx';
+import { defaultImageUri } from './Service.tsx';
+import { getUserRole, getNickname } from '../../../common/storage.js';
+import Flag from '../../../assets/common/Flag.svg';
 
 export const ProfileSection = ({
   navigation,
   reformerName,
+  backgroundImageUri,
 }: {
   navigation: any;
   reformerName: string;
+  backgroundImageUri?: string;
 }) => {
   const marketName: string = reformerName;
   const selfIntroduce: string =
@@ -42,8 +47,11 @@ export const ProfileSection = ({
     <View style={{ alignItems: 'center' }}>
       <ProfileHeader
         marketName={marketName}
-        // rate={rate}
-        // reviewNumber={reviewNumber}
+        backgroundImageUri={backgroundImageUri}
+        navigation={navigation}
+        reformerName={reformerName}
+      // rate={rate}
+      // reviewNumber={reviewNumber}
       />
       <View style={{ padding: 20, paddingTop: 0, paddingBottom: 0 }}>
         {/* 이 밑에거 지우면 이상하게 에러남... 그냥 냅둬도 되는 거라 무시하셔도 됩니다.  */}
@@ -57,27 +65,63 @@ export const ProfileSection = ({
 
 const ProfileHeader = ({
   marketName,
+  backgroundImageUri,
+  navigation,
+  reformerName,
   // rate,
   // reviewNumber,
 }: {
   marketName: string;
+  backgroundImageUri?: string;
+  navigation: any;
+  reformerName: string;
   // rate: number;
   // reviewNumber: number;
 }) => {
+  const [userRole, setUserRole] = useState<string>('customer');
+  const [userNickname, setUserNickname] = useState<string>('');
+  useEffect(() => {
+    const getUserRoleInfo = async () => {
+      const userRole = await getUserRole();
+      setUserRole(userRole ? userRole : 'customer');
+    };
+    const getUserNicknameInfo = async () => {
+      const userNickname = await getNickname();
+      setUserNickname(userNickname ? userNickname : '');
+    };
+    getUserRoleInfo();
+    getUserNicknameInfo();
+  }, []);
+
+  const [reportButtonPressed, setReportButtonPressed] = useState(false);
+
+  const onPressReport = () => {
+    setReportButtonPressed(false);
+    navigation.navigate('ReportPage');
+  };
+
   return (
     <>
       <DetailScreenHeader
         title=""
         leftButton="CustomBack"
-        onPressLeft={() => {}}
-        rightButton="Edit"
-        onPressRight={() => {}}
+        onPressLeft={() => { }}
+        rightButton={
+          userRole === 'customer'
+            ? 'Report'
+            : userNickname == reformerName
+              ? 'Edit'
+              : 'Report'
+        }
+        onPressRight={() => { }}
+        reportButtonPressed={reportButtonPressed}
+        setReportButtonPressed={setReportButtonPressed}
       />
       <ImageBackground
         style={{ width: '100%', height: 200 }}
         imageStyle={{ height: 160 }}
         source={{
-          uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
+          uri: backgroundImageUri ?? defaultImageUri,
         }}>
         <View
           style={{
@@ -100,8 +144,16 @@ const ProfileHeader = ({
             uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
           }}
         />
+        {reportButtonPressed && (
+          <TouchableOpacity style={styles.reportWindow} onPress={onPressReport}>
+            <View style={{ justifyContent: 'center' }}>
+              <Flag />
+            </View>
+            <Text style={TextStyles.reportText}>신고</Text>
+          </TouchableOpacity>
+        )}
       </ImageBackground>
-      <View style={{ gap: 12 }}>
+      <View style={{ gap: 12, alignItems: 'center' }}>
         <Text style={TextStyles.marketName}>{marketName}</Text>
         <ReformerTag />
       </View>
@@ -118,10 +170,12 @@ const ProfileHeader = ({
 type MarketTabViewProps = {
   reformerName: string;
   marketUuid: string;
+  backgroundImageUri?: string;
 };
 
 export type MarketResponseType = {
-  market_address: string;
+  //TODO: 리폼러  지역, 경력사항 추가 필요 
+  market_address: string; // 이게 링크 
   market_introduce: string;
   market_name: string;
   market_thumbnail: string;
@@ -135,8 +189,9 @@ const MarketTabView = ({
   const defaultMarketData = {
     reformerName: '정보 없음',
     marketUuid: '',
+    backgroundImageUri: defaultImageUri,
   } as MarketTabViewProps;
-  const { reformerName, marketUuid }: MarketTabViewProps =
+  const { reformerName, marketUuid, backgroundImageUri }: MarketTabViewProps =
     route.params || defaultMarketData;
   const [routes] = useState([
     { key: 'profile', title: '프로필' },
@@ -160,13 +215,13 @@ const MarketTabView = ({
   const fetchData = async () => {
     try {
       // API 호출
-      const response = await request.get(`/api/market/${marketUuid}`, {});
+      //TODO: 여기 수정 필요... 
+      const response = await request.get(`/api/market/${marketUuid}`, {}, {});
       if (response && response.status === 200) {
         const marketResult: MarketResponseType = response.data;
         setMarketData(marketResult);
       } else {
-        Alert.alert('오류가 발생했습니다.');
-        console.log(response);
+        Alert.alert('마켓 정보 불러오기에서 오류가 발생했습니다.');
       }
     } catch (error) {
       console.error(error);
@@ -180,34 +235,48 @@ const MarketTabView = ({
     fetchData();
   }, []);
 
+  const renderHeader = useCallback(
+    () => (
+      <ProfileSection
+        navigation={navigation}
+        reformerName={reformerName}
+        backgroundImageUri={backgroundImageUri}
+      />
+    ),
+    [navigation, reformerName],
+  );
+
+  const renderTabBar = useCallback(
+    (props: any) => (
+      <MaterialTabBar
+        {...props}
+        indicatorStyle={{
+          backgroundColor: '#BDBDBD',
+          height: 2,
+        }}
+        style={{
+          backgroundColor: 'white',
+        }}
+        labelStyle={{
+          color: BLACK,
+          fontWeight: '700',
+          fontSize: 16,
+        }}
+      />
+    ),
+    [],
+  );
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Tabs.Container
-        renderHeader={props => (
-          <ProfileSection navigation={navigation} reformerName={reformerName} />
-        )}
+        renderHeader={renderHeader}
         headerContainerStyle={{
           shadowOpacity: 0,
           borderBottomWidth: 1,
           borderColor: '#D9D9D9',
         }}
-        renderTabBar={props => (
-          <MaterialTabBar
-            {...props}
-            indicatorStyle={{
-              backgroundColor: '#BDBDBD',
-              height: 2,
-            }}
-            style={{
-              backgroundColor: 'white',
-            }}
-            labelStyle={{
-              color: BLACK,
-              fontWeight: '700',
-              fontSize: 16,
-            }}
-          />
-        )}>
+        renderTabBar={renderTabBar}>
         {routes.map(route => (
           <Tabs.Tab key={route.key} name={route.title}>
             {route.key === 'profile' && <InfoPage marketData={marketData} />}
@@ -217,6 +286,7 @@ const MarketTabView = ({
                   scrollViewRef={scrollRef}
                   navigation={navigation}
                   reformerName={reformerName}
+                  marketUuid={marketUuid}
                 />
                 <ScrollTopButton scrollViewRef={scrollRef} />
               </View>
@@ -248,6 +318,19 @@ const styles = StyleSheet.create({
     height: 12,
     gap: 8,
   },
+  reportWindow: {
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    width: 186,
+    height: 48,
+    borderRadius: 8,
+    zIndex: 1000,
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    paddingHorizontal: 13,
+    display: 'flex',
+    flexDirection: 'row',
+  },
 });
 
 const TextStyles = StyleSheet.create({
@@ -273,6 +356,13 @@ const TextStyles = StyleSheet.create({
     fontFamily: 'Pretendard Variable',
     fontSize: 16,
     fontWeight: '400',
+  },
+  reportText: {
+    color: '#000',
+    fontSize: 16,
+    fontWeight: '600',
+    lineHeight: 48,
+    marginLeft: 10,
   },
 });
 

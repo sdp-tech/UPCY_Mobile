@@ -18,6 +18,7 @@ import Request from '../common/requests.js';
 import { useFocusEffect } from '@react-navigation/native';
 import { Body16B } from '../styles/GlobalText.tsx';
 import BottomButton from '../common/BottomButton.tsx';
+import TempStorageEdit from '../components/Home/Market/TempStorageEdit.tsx';
 
 export type MyPageStackParams = {
   MyPage: { userInfo?: any | undefined };
@@ -26,7 +27,8 @@ export type MyPageStackParams = {
   ReformerMyPageScreen: { navigation: any; route: any };
   UpcyerMyPageMainScreen: { navigation: any; route: any };
   TempStorage: undefined;
-  ServiceRegistrationPage: { inputText?: string; detailphoto?: PhotoType[] };
+  TempStorageEdit: undefined;
+  ServiceRegistrationPage: { inputText?: string; detailphoto?: PhotoType[]; serviceData: any; };
   WriteDetailPage: { inputText: string; detailphoto?: PhotoType[] };
 };
 
@@ -60,6 +62,11 @@ const MyPageScreen = ({
       <MyPageStack.Screen
         name="TempStorage"
         component={TempStorage}
+        options={{ headerShown: false }}
+      />
+      <MyPageStack.Screen
+        name="TempStorageEdit"
+        component={TempStorageEdit}
         options={{ headerShown: false }}
       />
       <MyPageStack.Screen

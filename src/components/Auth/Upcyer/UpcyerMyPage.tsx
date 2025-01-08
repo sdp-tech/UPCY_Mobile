@@ -18,6 +18,7 @@ import {
   removeAccessToken,
   removeNickname,
   removeRefreshToken,
+  setUserRole,
 } from '../../../common/storage';
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { LoginContext } from '../../../common/Context';
@@ -225,12 +226,13 @@ export const UpcyerMyPageMainScreen = ({ navigation, route }: MypageStackProps) 
         removeAccessToken();
         removeRefreshToken();
         setLogin(false);
+        setUserRole('customer');
         console.log('AccessToken: ', { accessToken }, '| RefreshToken: ', { refreshToken });
         navigation.dispatch(
           CommonActions.navigate({
             name: "Main",
             params: {
-              screen: "홈", // MainTabNavigator의 홈 화면으로 이동
+              screen: "UPCY", // MainTabNavigator의 홈 화면으로 이동
             },
           })
         );

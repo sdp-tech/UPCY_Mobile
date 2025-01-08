@@ -1,22 +1,27 @@
-import { useState } from 'react';
-import Dot from '../../../assets/common/Dot.svg';
+import DotBlack from '../../../assets/common/DotBlack.svg';
 import { TouchableOpacity } from 'react-native';
 
-export const CustomReportButton: React.FC = () => {
-  const [buttonPressed, setButtomPressed] = useState<boolean>(false);
-
+export const CustomReportButton = ({
+  reportButtonPressed,
+  setReportButtonPressed,
+}: {
+  reportButtonPressed: boolean;
+  setReportButtonPressed: (reportButtonPressed: boolean) => void;
+}) => {
   const dots = Array(3).fill(null);
 
   const handleOnPress = () => {
-    setButtomPressed(!buttonPressed);
+    if (setReportButtonPressed) {
+      setReportButtonPressed(!reportButtonPressed);
+    }
   };
 
   return (
     <TouchableOpacity
-      style={{ display: 'flex', flexDirection: 'row', gap: 2 }}
+      style={{ display: 'flex', flexDirection: 'row', gap: 3 }}
       onPress={handleOnPress}>
       {dots.map((_, index) => (
-        <Dot key={index} width={5} />
+        <DotBlack key={index} />
       ))}
     </TouchableOpacity>
   );

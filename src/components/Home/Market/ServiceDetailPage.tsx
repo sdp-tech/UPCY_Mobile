@@ -6,8 +6,9 @@ import {
   View,
   StyleSheet,
   ImageBackground,
-  FlatList,
+  // FlatList,
   ScrollView,
+  Image,
 } from 'react-native';
 import {
   StackScreenProps,
@@ -25,7 +26,14 @@ import DetailScreenHeader from '../components/DetailScreenHeader';
 // import HeartButton from '../../../common/HeartButton';
 // import ReviewPage from './ReviewPage';
 import DetailBox2 from './DetailBox2';
-import { ServiceDetailOption } from './Service';
+import {
+  defaultImageUri,
+  MaterialDetail,
+  ServiceDetailOption,
+} from './Service';
+import Flag from '../../../assets/common/Flag.svg';
+import { getUserRole, getNickname } from '../../../common/storage';
+import { numberToPrice } from './functions';
 
 const { width, height } = Dimensions.get('window');
 
@@ -39,7 +47,7 @@ type ServiceDetailPageProps = {
   backgroundImageUri: string;
   profileImageUri?: string;
   servicePeriod: number;
-  serviceMaterials: string[];
+  serviceMaterials: MaterialDetail[];
   serviceContent: string;
   serviceOptions: ServiceDetailOption[];
   marketUuid: string;
@@ -57,7 +65,7 @@ export type DetailPageStackParams = {
     profileImageUri?: string;
     servicePeriod: number;
     serviceContent: string;
-    serviceMaterials: string[];
+    serviceMaterials: MaterialDetail[];
     serviceOptions: ServiceDetailOption[];
     marketUuid: string;
   };
@@ -84,6 +92,7 @@ const ServiceDetailPageScreen = ({
     serviceOptions,
     marketUuid,
   }: ServiceDetailPageProps = route.params;
+
   return (
     <DetailPageStack.Navigator
       screenOptions={() => ({
@@ -140,21 +149,52 @@ const ProfileSection = ({
   const [like, setLike] = useState<boolean>(false);
   const { hideBottomBar, showBottomBar } = useBottomBar();
 
+  const [reportButtonPressed, setReportButtonPressed] = useState(false);
+  const [userRole, setUserRole] = useState<string>('customer');
+  const [userNickname, setUserNickname] = useState<string>('');
+
   useEffect(() => {
+    const getUserRoleInfo = async () => {
+      const userRole = await getUserRole();
+      setUserRole(userRole ? userRole : 'customer');
+    };
+    const getUserNicknameInfo = async () => {
+      const userNickname = await getNickname();
+      setUserNickname(userNickname ? userNickname : '');
+    };
+    getUserRoleInfo();
+    getUserNicknameInfo();
     hideBottomBar();
     return () => showBottomBar();
   }, []);
+
   return (
     <SafeAreaView>
       <DetailScreenHeader
         title=""
         leftButton="CustomBack"
-        rightButton="Report"
-        onPressLeft={() => {}}
-        onPressRight={() => {}}
+        rightButton={
+          userRole === 'customer'
+            ? 'Report'
+            : userNickname == reformerName
+              ? 'Edit'
+              : 'Report'
+        }
+        onPressLeft={() => { }}
+        onPressRight={() => { }}
+        reportButtonPressed={reportButtonPressed}
+        setReportButtonPressed={setReportButtonPressed}
       />
-      <Banner backgroundImageUri={backgroundImageUri} tags={tags} />
+      <Banner
+        backgroundImageUri={backgroundImageUri}
+        tags={tags}
+        reportButtonPressed={reportButtonPressed}
+        setReportButtonPressed={setReportButtonPressed}
+        navigation={navigation}
+      />
       <Profile
+        backgroundImageUri={backgroundImageUri}
+        profilePictureUri={profileImageUri}
         reformerName={reformerName}
         reviewNum={reviewNum}
         navigation={navigation}
@@ -174,21 +214,39 @@ const ProfileSection = ({
 type BannerProps = {
   backgroundImageUri: string;
   tags: string[];
+  reportButtonPressed: boolean;
+  setReportButtonPressed: (reportButtonPressed: boolean) => void;
+  navigation: any;
 };
 
-const Banner = ({ backgroundImageUri, tags }: BannerProps) => {
+const Banner = ({
+  backgroundImageUri,
+  tags,
+  reportButtonPressed,
+  setReportButtonPressed,
+  navigation,
+}: BannerProps) => {
+  const onPressReport = () => {
+    setReportButtonPressed(false);
+    navigation.navigate('ReportPage');
+  };
+
   return (
-    <>
-      <ImageBackground // 임시 이미지
-        style={{ width: '100%', height: width * 0.5 }}
-        imageStyle={{ height: width * 0.5 }}
-        source={{
-          uri:
-            backgroundImageUri ||
-            'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
-          // backgroundImageUri가 없는 경우 기본 이미지
-        }}
-      />
+    <ImageBackground // 임시 이미지
+      style={{ width: '100%', height: width * 0.5, position: 'relative' }}
+      imageStyle={{ height: width * 0.5 }}
+      source={{
+        uri: backgroundImageUri || defaultImageUri,
+        // backgroundImageUri가 없는 경우 기본 이미지
+      }}>
+      {reportButtonPressed && (
+        <TouchableOpacity style={styles.reportWindow} onPress={onPressReport}>
+          <View style={{ justifyContent: 'center' }}>
+            <Flag />
+          </View>
+          <Text style={TextStyles.reportText}>신고</Text>
+        </TouchableOpacity>
+      )}
       <View style={styles.tagContainer}>
         {tags?.length > 0 &&
           tags.map((tag, index) => {
@@ -199,7 +257,7 @@ const Banner = ({ backgroundImageUri, tags }: BannerProps) => {
             );
           })}
       </View>
-    </>
+    </ImageBackground>
   );
 };
 
@@ -223,10 +281,12 @@ const Header = ({
       <View style={{ flex: 1, flexDirection: 'column' }}>
         <Text style={TextStyles.Title}>{serviceName}</Text>
         <Text style={TextStyles.PriceInfo}>
-          기본 <Text style={TextStyles.Price}> {basicPrice} 원</Text>
+          기본
+          <Text style={TextStyles.Price}> {numberToPrice(basicPrice)} 원</Text>
         </Text>
         <Text style={TextStyles.PriceInfo}>
-          최대 <Text style={TextStyles.Price}> {maxPrice} 원</Text>
+          최대
+          <Text style={TextStyles.Price}> {numberToPrice(maxPrice)} 원</Text>
         </Text>
       </View>
       {/* <View style={{ margin: 15 }}>
@@ -238,6 +298,7 @@ const Header = ({
 
 type ProfileProps = {
   profilePictureUri?: string;
+  backgroundImageUri?: string;
   reformerName: string;
   reviewNum: number;
   navigation: any;
@@ -246,6 +307,7 @@ type ProfileProps = {
 
 const Profile = ({
   profilePictureUri,
+  backgroundImageUri,
   reformerName,
   reviewNum,
   navigation,
@@ -255,20 +317,28 @@ const Profile = ({
     <View style={{ justifyContent: 'space-between' }}>
       <View style={{ padding: 15, flexDirection: 'row' }}>
         {/* TODO: add profile picture here */}
-        <View
-          style={{
-            backgroundColor: 'gray',
-            width: 50,
-            height: 50,
-            borderRadius: 25,
-          }}></View>
-        <View style={{ marginLeft: 20, justifyContent: 'center' }}>
+        {profilePictureUri && profilePictureUri !== '' ? (
+          <Image
+            style={{ width: 50, height: 50, borderRadius: 25 }}
+            source={{ uri: profilePictureUri }}
+          />
+        ) : (
+          <View
+            style={{
+              backgroundColor: 'gray',
+              width: 50,
+              height: 50,
+              borderRadius: 25,
+            }}></View>
+        )}
+        <View style={{ marginLeft: 10, justifyContent: 'center' }}>
           <TouchableOpacity
             style={{ flexDirection: 'row', alignItems: 'center' }}
             onPress={() =>
               navigation.navigate('MarketTabView', {
                 reformerName: reformerName,
                 marketUuid: marketUuid,
+                backgroundImageUri: backgroundImageUri ?? defaultImageUri,
               })
             }>
             <Text style={TextStyles.reformerName}>{reformerName}</Text>
@@ -300,8 +370,8 @@ const ServiceDetailPageMainScreen = ({
     marketUuid,
   } = route.params;
 
-  const [index, setIndex] = useState<number>(0);
-  const optionPageRef = useRef<FlatList<any>>(null);
+  // const [index, setIndex] = useState<number>(0);
+  // const optionPageRef = useRef<FlatList<any>>(null);
 
   // const flatListRef = useRef<FlatList>(null);
 
@@ -318,6 +388,16 @@ const ServiceDetailPageMainScreen = ({
   //     profileImageUri={profileImageUri}
   //   />
   // );
+
+  const [userRole, setUserRole] = useState<string>('customer');
+
+  useEffect(() => {
+    const getUserRoleInfo = async () => {
+      const userRole = await getUserRole();
+      setUserRole(userRole ? userRole : '');
+    };
+    getUserRoleInfo();
+  }, []);
 
   return (
     <View style={{ flex: 1, position: 'relative' }}>
@@ -362,9 +442,11 @@ const ServiceDetailPageMainScreen = ({
           marketUuid={marketUuid}
         />
       </ScrollView>
-      <View style={styles.footerContainer}>
-        <Footer />
-      </View>
+      {userRole === 'customer' && (
+        <View style={styles.footerContainer}>
+          <Footer />
+        </View>
+      )}
     </View>
   );
 };
@@ -448,12 +530,19 @@ const TextStyles = StyleSheet.create({
     fontWeight: '700',
     color: '#222222',
   },
+  reportText: {
+    color: '#000',
+    fontSize: 16,
+    fontWeight: '600',
+    lineHeight: 48,
+    marginLeft: 10,
+  },
 });
 
 const styles = StyleSheet.create({
   tagContainer: {
     position: 'absolute',
-    top: 50,
+    top: 10,
     right: 16,
     flexDirection: 'row',
     gap: 8,
@@ -463,8 +552,8 @@ const styles = StyleSheet.create({
     paddingRight: 16,
     paddingTop: 3,
     paddingBottom: 3,
-    backgroundColor: '#612FEF',
-    borderRadius: 4,
+    backgroundColor: 'rgba(97, 47, 239, 0.80)',
+    borderRadius: 8,
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: '#612FEF',
@@ -492,6 +581,19 @@ const styles = StyleSheet.create({
     right: 0,
     height: 15,
     backgroundColor: '#fff',
+  },
+  reportWindow: {
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    width: 186,
+    height: 48,
+    borderRadius: 8,
+    zIndex: 1000,
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    paddingHorizontal: 13,
+    display: 'flex',
+    flexDirection: 'row',
   },
 });
 
