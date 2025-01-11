@@ -212,8 +212,7 @@ const HomeMainScreen = ({
         {/* <CustomHeader onSearch={() => {}} onTabChange={handleTabChange} /> */}
         <CustomHeader2 navigation={navigation} />
         <BottomSheetModalProvider>
-          <View style={{ zIndex: 100 }}>
-            {/* 이제 아이폰에서도 렌더링 잘 됩니다 (가격 필터) */}
+          <View>
             <HomeTabView
               selectedTab={selectedTab}
               setSelectedFilterOption={setSelectedFilterOption}
