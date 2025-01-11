@@ -31,7 +31,6 @@ const ServicePage: React.FC<ServicePageProps> = ({
       if (response && response.status === 200) {
         const marketResult = response.data;
         setItems(marketResult);
-        console.log(response.data);
       } else {
         setError('서비스를 불러오는 데 실패했습니다.');
         Alert.alert('오류가 발생했습니다.');
@@ -105,6 +104,7 @@ const ServicePage: React.FC<ServicePageProps> = ({
                 }))
                 :[]
             }
+            suspended={item.suspended}
             navigation={navigation}
           />
         ))}

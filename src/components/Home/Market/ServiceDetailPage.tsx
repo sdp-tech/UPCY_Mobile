@@ -33,7 +33,7 @@ import {
   ServiceDetailOption,
 } from './Service';
 import Flag from '../../../assets/common/Flag.svg';
-import { getUserRole } from '../../../common/storage';
+import { getUserRole, getAccessToken } from '../../../common/storage';
 import Request from '../../../common/requests.js';
 
 
@@ -53,6 +53,7 @@ type ServiceDetailPageProps = {
   serviceContent: string;
   serviceOptions: ServiceDetailOption[];
   marketUuid: string;
+  serviceUuid: string;
 };
 
 export type DetailPageStackParams = {
@@ -70,6 +71,7 @@ export type DetailPageStackParams = {
     serviceMaterials: MaterialDetail[];
     serviceOptions: ServiceDetailOption[];
     marketUuid: string;
+    serviceUuid: string;
   };
 };
 
@@ -93,6 +95,7 @@ const ServiceDetailPageScreen = ({
     serviceContent,
     serviceOptions,
     marketUuid,
+    serviceUuid,
   }: ServiceDetailPageProps = route.params;
 
   return (
@@ -117,6 +120,7 @@ const ServiceDetailPageScreen = ({
           serviceContent,
           serviceOptions,
           marketUuid,
+          serviceUuid,
         }}
       />
     </DetailPageStack.Navigator>
@@ -349,6 +353,7 @@ const ServiceDetailPageMainScreen = ({
     serviceContent,
     serviceOptions,
     marketUuid,
+    serviceUuid,
   } = route.params;
 
   // const [index, setIndex] = useState<number>(0);
@@ -370,7 +375,7 @@ const ServiceDetailPageMainScreen = ({
   //   />
   // );
 
-  const [quitted, setQuitted] = useState<boolean>(false);
+  const [suspended, setSuspended] = useState<boolean>(false);
   const [userRole, setUserRole] = useState<string>('customer');
   const [isServiceQuitPopupVisible, setServiceQuitPopupVisible] = useState(false);
   const [isServiceResumePopupVisible, setServiceResumePopupVisible] = useState(false);
@@ -387,8 +392,8 @@ const ServiceDetailPageMainScreen = ({
     const fetchServiceStatus = async () => {
       try {
         const response = await request.get(`/api/market/${marketUuid}/service/${serviceUuid}`, {})
-        if (resp && response.status === 200){
-        setQuitted(response.quitted); // 서비스 상태 (중단 여부) 받아오기
+        if (response && response.status === 200){
+            setSuspended(response.data.suspended); // 서비스 상태 (중단 여부) 받아오기
         }
       } catch (error) {
         console.error('Error fetching service status:', error);
@@ -402,21 +407,23 @@ const ServiceDetailPageMainScreen = ({
       const accessToken = await getAccessToken();
       const headers = {
           Authorization: `Bearer ${accessToken}`,
-      };
+      }
 
       try {
           const response = await request.put(
               `/api/market/${marketUuid}/service/${serviceUuid}`,
-              { quitted: true },
+              { "suspended": true },
               headers
           );
+          //console.log(response.data);
           if (response && response.status === 200) {
-              setQuitted(true);
+              setSuspended(true);
               setServiceQuitPopupVisible(false);
           }
-      } catch (error) {
-          console.error('Error quitting service:', error);
-      }
+      }catch (error) {
+           console.error('Error quitting service:', error.message);
+       }
+
   };
 
   const handleServiceResume = async() => {
@@ -428,15 +435,23 @@ const ServiceDetailPageMainScreen = ({
       try {
           const response = await request.put(
               `/api/market/${marketUuid}/service/${serviceUuid}`,
-              { quitted: false },
+              { suspended: false },
               headers
           );
           if (response && response.status === 200) {
-              setQuitted(false);
+              setSuspended(false);
               setServiceResumePopupVisible(false);
           }
       } catch (error) {
           console.error('Error quitting service:', error);
+      }
+  };
+
+  const handlePopup = (suspended) => {
+      if(suspended){
+          setServiceResumePopupVisible(true);
+      } else {
+          setServiceQuitPopupVisible(true)
       }
   };
 
@@ -488,10 +503,10 @@ const ServiceDetailPageMainScreen = ({
       </View>
       {userRole === 'reformer' && (
         <TouchableOpacity
-            style={quitted ? styles.serviceResumeButton : styles.serviceQuitButton}
-            onPress={quitted ? handleServiceResume : handleServiceQuit}>
-            <Text style={quitted ? styles.serviceResumeButtonText : styles.serviceQuitButtonText}>
-              {quitted ? '서비스 재개' : '서비스 중단'}
+            style={suspended ? styles.serviceResumeButton : styles.serviceQuitButton}
+            onPress={() => handlePopup(suspended)}>
+            <Text style={suspended ? styles.serviceResumeButtonText : styles.serviceQuitButtonText}>
+              {suspended ? '서비스 재개' : '서비스 중단'}
             </Text>
         </TouchableOpacity>
       )}
