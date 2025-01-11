@@ -177,9 +177,8 @@ const MainTabNavigator = () => {
       initialRouteName="UPCY"
       screenOptions={{ headerShown: false }}>
       <Tab.Screen name="UPCY" component={HomeScreen} />
-      {isLogin && userInfo === 'reformer' && (
         <Tab.Screen name="주문관리" component={OrderManagement} />
-      )}
+
       <Tab.Screen name="MY" component={MyPageScreen} />
     </Tab.Navigator>
   );
