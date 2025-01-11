@@ -1,5 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useFocusEffect } from '@react-navigation/native';
+import { useState, useEffect } from 'react';
 // FIXME: 이거 사용
 import {
   View,
@@ -37,6 +36,7 @@ export type MaterialDetail = {
 
 interface ServiceCardProps {
   name: string; // 리폼러 이름
+  created: Date;
   basic_price: number;
   max_price?: number;
   service_styles?: string[];
@@ -55,7 +55,7 @@ interface ServiceCardProps {
 export type ServiceResponseType = {
   // TODO: any type 나중에 알아보고 수정
   basic_price: number;
-  created?: Date;
+  created: Date;
   market_uuid: string;
   max_price: number;
   service_category: string;
@@ -113,7 +113,7 @@ const EntireServiceMarket = ({
 
   const fetchData = async () => {
     try {
-      // API 호출: 전체 서비스 
+      // API 호출: 전체 서비스
       const response = await request.get(`/api/market/services`, {}, {});
       if (response && response.status === 200) {
         const serviceListResults: ServiceResponseType[] = response.data.results;
@@ -137,6 +137,7 @@ const EntireServiceMarket = ({
     return rawData.map(service => ({
       //TODO: 밑에 수정
       name: service.service_title, // 여기가 문제네.... 리폼러 이름 받아와야 하는데 서비스 이름이 나옴 @!!!
+      created: service.created || new Date('2023-12-12'),
       basic_price: service.basic_price,
       max_price: service.max_price,
       service_styles: service.service_style.map(
@@ -154,13 +155,13 @@ const EntireServiceMarket = ({
       })) as MaterialDetail[],
       service_options: Array.isArray(service.service_option)
         ? (service.service_option.map(option => ({
-          option_content: option.option_content,
-          option_name: option.option_name,
-          option_price: option.option_price,
-          option_uuid: option.option_uuid,
-          option_photoUri: option.option_photoUri || '',
-          //option_
-        })) as ServiceDetailOption[])
+            option_content: option.option_content,
+            option_name: option.option_name,
+            option_price: option.option_price,
+            option_uuid: option.option_uuid,
+            option_photoUri: option.option_photoUri || '',
+            //option_
+          })) as ServiceDetailOption[])
         : [],
       temporary: service.temporary,
       suspended: service.suspended,
@@ -215,14 +216,24 @@ const EntireServiceMarket = ({
         );
       }
 
+      // reorder by created date
+      let dateFilteredData = priceFilteredData;
+      if (selectedFilterOption == '최신순') {
+        dateFilteredData = [...priceFilteredData].sort((a, b) => {
+          const dateA = a.created ? new Date(a.created).getTime() : 0;
+          const dateB = b.created ? new Date(b.created).getTime() : 0;
+          return dateB - dateA;
+        });
+      }
+
       // filter by selected styles
       const styleFilteredData =
         selectedStylesList.length > 0
-          ? priceFilteredData.filter(card =>
-            card.service_styles?.some(style =>
-              selectedStylesList.includes(style),
-            ),
-          )
+          ? dateFilteredData.filter(card =>
+              card.service_styles?.some(style =>
+                selectedStylesList.includes(style),
+              ),
+            )
           : [];
 
       // TODO: add more filtering logic here
@@ -240,7 +251,10 @@ const EntireServiceMarket = ({
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container} overScrollMode='never' bounces={false}>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      overScrollMode="never"
+      bounces={false}>
       <Title20B
         style={{ marginTop: 15, marginHorizontal: 15, marginBottom: 8 }}>
         {serviceTitle}
@@ -265,6 +279,7 @@ const EntireServiceMarket = ({
                 <ServiceCard
                   key={card.service_uuid}
                   name={card.name}
+                  created={card.created}
                   basic_price={card.basic_price}
                   max_price={card.max_price}
                   service_styles={card.service_styles}
@@ -296,6 +311,7 @@ const EntireServiceMarket = ({
 
 export const ServiceCard = ({
   name,
+  created,
   basic_price,
   max_price,
   service_styles,
@@ -320,58 +336,58 @@ export const ServiceCard = ({
       key={service_uuid}
       style={styles.cardContainer}
       onPress={() => {
-              navigation.navigate('ServiceDetailPage', {
-                  reformerName: name,
-                  serviceName: service_title,
-                  basicPrice: basic_price,
-                  maxPrice: max_price,
-                  reviewNum: REVIEW_NUM,
-                  tags: service_styles,
-                  backgroundImageUri: imageUri,
-                  profileImageUri: defaultImageUri,
-                  servicePeriod: service_period,
-                  serviceMaterials: service_materials,
-                  serviceContent: service_content,
-                  serviceOptions: service_options,
-                  marketUuid: market_uuid,
-                  serviceUuid: service_uuid,
-              });
+        navigation.navigate('ServiceDetailPage', {
+          reformerName: name,
+          serviceName: service_title,
+          basicPrice: basic_price,
+          maxPrice: max_price,
+          reviewNum: REVIEW_NUM,
+          tags: service_styles,
+          backgroundImageUri: imageUri,
+          profileImageUri: defaultImageUri,
+          servicePeriod: service_period,
+          serviceMaterials: service_materials,
+          serviceContent: service_content,
+          serviceOptions: service_options,
+          marketUuid: market_uuid,
+          serviceUuid: service_uuid,
+        });
       }}>
-
       <View style={styles.topContainer}>
         <ImageBackground
-            style={{ width: '100%', height: 180, position: 'relative' }}
-            imageStyle={{ height: 180 }}
-            source={{
-                uri: imageUri ?? defaultImageUri,
-            }}>
-
-            {suspended && (
-                <View style={styles.suspendedOverlay}>
-                    <Text style={styles.suspendedOverlayText}>중단된 서비스</Text>
-                </View>
-            )}
-            <Text style={TextStyles.serviceCardName}>{name}</Text>
-            <Text style={TextStyles.serviceCardPrice}>{basic_price} 원 ~</Text>
-            <View style={styles.service_style}>
-                {service_styles?.map((service_style, index) => {
-                    return (
-                    <Text style={TextStyles.serviceCardTag} key={index}>
-                        {service_style}
-                    </Text>
-                    );
-                })}
+          style={{ width: '100%', height: 180, position: 'relative' }}
+          imageStyle={{ height: 180 }}
+          source={{
+            uri: imageUri ?? defaultImageUri,
+          }}>
+          {suspended && (
+            <View style={styles.suspendedOverlay}>
+              <Text style={styles.suspendedOverlayText}>중단된 서비스</Text>
             </View>
+          )}
+          <Text style={TextStyles.serviceCardName}>{name}</Text>
+          <Text style={TextStyles.serviceCardPrice}>{basic_price} 원 ~</Text>
+          <View style={styles.service_style}>
+            {service_styles?.map((service_style, index) => {
+              return (
+                <Text style={TextStyles.serviceCardTag} key={index}>
+                  {service_style}
+                </Text>
+              );
+            })}
+          </View>
         </ImageBackground>
       </View>
-        
+
       <View style={styles.titleContainer}>
         <Subtitle18B
-            style={{
-                color: suspended ? "#929292" : "#222222",
-                fontSize: 18,
-                fontWeight: '700',
-            }}>{service_title}</Subtitle18B>
+          style={{
+            color: suspended ? '#929292' : '#222222',
+            fontSize: 18,
+            fontWeight: '700',
+          }}>
+          {service_title}
+        </Subtitle18B>
         {/* <HeartButton like={like} onPress={() => setLike(!like)} /> */}
       </View>
       <RenderHTML
@@ -401,10 +417,10 @@ const styles = StyleSheet.create({
     marginHorizontal: 0,
   },
   topContainer: {
-      position: 'relative',
-      width: '100%',
-      height: 180,
-      overflow: 'hidden',
+    position: 'relative',
+    width: '100%',
+    height: 180,
+    overflow: 'hidden',
   },
   suspendedCardContainer: {
     opacity: 0.6, // 중단된 서비스는 반투명 처리
