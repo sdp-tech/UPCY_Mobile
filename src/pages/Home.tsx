@@ -63,6 +63,7 @@ export type HomeStackParams = {
     serviceContent: string;
     serviceOptions: ServiceDetailOption[];
     marketUuid: string;
+    serviceUuid: string;
   };
   GoodsDetailPage: undefined;
   QuotationForm: undefined;
