@@ -15,8 +15,8 @@ const Footer = () => {
         <BottomButton
           value={'주문서 보내기'}
           pressed={pressed}
-          onPress={() => { }}
-          style={{ width: '90%' }}
+          onPress={() => {}}
+          style={{ width: '95%' }}
         />
       </FooterContainer>
     </View>

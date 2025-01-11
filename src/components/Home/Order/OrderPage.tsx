@@ -4,7 +4,11 @@ import { Tabs } from 'react-native-collapsible-tab-view';
 import styled from 'styled-components/native';
 import { Picker } from '@react-native-picker/picker';
 import { BLACK, LIGHTGRAY, PURPLE, GREEN } from '../../../styles/GlobalColor';
+
 import { Title20B, Body14R, Body16B, Caption11M } from '../../../styles/GlobalText.tsx';
+
+
+
 
 import { useNavigation } from '@react-navigation/native';
 import { StackScreenProps } from '@react-navigation/stack';
@@ -41,10 +45,13 @@ const OrderInfo = ({ name, customer, estimated_price, is_online, navigation }: O
 
 const OrderStatusLabel = ({ status }: any) => {
   switch (status) {
+    case 'before':
+      return <StatusText style={{ color: PURPLE }}>수락 대기중</StatusText>;
     case 'progress':
       return <StatusText style={{ color: PURPLE }}>배송중</StatusText>;
     case 'completed':
-      return <StatusText style={{ color: PURPLE }}>거래 완료</StatusText>;
+      return <StatusText style={{ color: PURPLE }}>거래 완료
+      </StatusText>;
     default:
       return null;
   }
@@ -60,7 +67,7 @@ const OrderActionButtons = ({ status, navigation, onPress }: { status: string; n
 
     {status === 'progress' && (
       <ActionButton onPress={onPress}>
-        <ActionText style={{ color: PURPLE }} >거래 완료</ActionText>
+        <ActionText style={{ color: PURPLE }} >거래 완료하기</ActionText>
       </ActionButton>
     )}
 
@@ -115,7 +122,7 @@ const OrderInfoContainer = styled.View`
   border: 1px solid white;
 `;
 
-// 리폼러가 마이페이지에서 보는 주문관리 탭 
+// 업씨러가 마이페이지에서 보는 주문관리 탭
 
 
 const OrderPage = ({ flatListRef, navigation, route }: OrderProps) => {
@@ -216,7 +223,7 @@ const OrderPage = ({ flatListRef, navigation, route }: OrderProps) => {
                 navigation={navigation}
               />
             </View>
-            <OrderDateText style={{ color: BLACK }}>{order.orderDate}</OrderDateText>
+            <OrderIDText style={{ color: BLACK }}>{order.id}</OrderIDText>
             <OrderStatusLabel status={order.status} />
             <OrderActionButtons status={order.status} navigation={navigation} onPress={handleCompletedPress} />
           </OrderInfoBox>
@@ -252,11 +259,11 @@ const OrderPage = ({ flatListRef, navigation, route }: OrderProps) => {
 const OrderInfoBox = styled.View`
   flex-direction: column;
   border-radius: 14px;
-  border-color: ${PURPLE};
   border-width: 1px;
   padding: 19px;
   margin: 10px;
   justify-content: space-between;
+  backgroundColor: white;
 `;
 
 const StatusText = styled.Text`
@@ -267,12 +274,11 @@ const StatusText = styled.Text`
   font-weight: bold;
 `;
 
-const OrderDateText = styled.Text`
+const OrderIDText = styled.Text`
   position: absolute;
-  left: 10px;
+  margin-left: 20px;
   top: 10px;
   font-size: 14px;
-  font-weight: bold;
 `;
 
 const ButtonContainer = styled.View`
