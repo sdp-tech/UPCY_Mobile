@@ -187,7 +187,6 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
       if (response.status === 200) {
         console.log('User data fetched successfully:', response.data);
         setReformerInfo({
-          ...reformerInfo,
           nickname: response.data.nickname,
           // 우선 기본이미지
           backgroundphoto:
@@ -197,6 +196,7 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
             response.data.introduce ||
             '나는야 업씨러 이하늘 환경을 사랑하지요 눈누난나',
           role: 'reformer',
+          link: response.data.address,
         });
         // setNickname(response.data.nickname);
         try { // 본인 마켓 정보 가져오기: 링크, 자기소개, 닉네임, uuid
@@ -426,10 +426,16 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
           />
         </Tabs.Tab>
         <Tabs.Tab name="서비스" key="service">
-          <View>
-            <ServicePage scrollViewRef={scrollRef} navigation={navigation} />
-            <ScrollTopButton scrollViewRef={scrollRef} />
-          </View>
+            {/*<TouchableOpacity
+              style={styles.saveButton}
+              onPress={() => navigation.navigate('TempStorage')}>
+              <Text style={styles.saveButtonText}>임시저장 (5)</Text>
+              {/*수정 필요
+            </TouchableOpacity>*/}
+            <View>
+                <ServicePage scrollViewRef={scrollRef} navigation={navigation} reformerName = {reformerInfo.nickname} marketUuid = {marketData.market_uuid}/>
+                <ScrollTopButton scrollViewRef={scrollRef} />
+            </View>
         </Tabs.Tab>
       </Tabs.Container>
 
