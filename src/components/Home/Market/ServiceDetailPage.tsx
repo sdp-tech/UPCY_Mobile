@@ -33,9 +33,9 @@ import {
   ServiceDetailOption,
 } from './Service';
 import Flag from '../../../assets/common/Flag.svg';
-import { getUserRole, getAccessToken } from '../../../common/storage';
+import { getUserRole, getAccessToken, getNickname } from '../../../common/storage';
 import Request from '../../../common/requests.js';
-
+import { numberToPrice } from './functions';
 
 const { width, height } = Dimensions.get('window');
 
@@ -156,19 +156,38 @@ const ProfileSection = ({
   const { hideBottomBar, showBottomBar } = useBottomBar();
 
   const [reportButtonPressed, setReportButtonPressed] = useState(false);
+  const [userRole, setUserRole] = useState<string>('customer');
+  const [userNickname, setUserNickname] = useState<string>('');
 
   useEffect(() => {
+    const getUserRoleInfo = async () => {
+      const userRole = await getUserRole();
+      setUserRole(userRole ? userRole : 'customer');
+    };
+    const getUserNicknameInfo = async () => {
+      const userNickname = await getNickname();
+      setUserNickname(userNickname ? userNickname : '');
+    };
+    getUserRoleInfo();
+    getUserNicknameInfo();
     hideBottomBar();
     return () => showBottomBar();
   }, []);
+
   return (
     <SafeAreaView>
       <DetailScreenHeader
         title=""
         leftButton="CustomBack"
-        rightButton="Report"
-        onPressLeft={() => {}}
-        onPressRight={() => {}}
+        rightButton={
+          userRole === 'customer'
+            ? 'Report'
+            : userNickname == reformerName
+              ? 'Edit'
+              : 'Report'
+        }
+        onPressLeft={() => { }}
+        onPressRight={() => { }}
         reportButtonPressed={reportButtonPressed}
         setReportButtonPressed={setReportButtonPressed}
       />
@@ -268,10 +287,12 @@ const Header = ({
       <View style={{ flex: 1, flexDirection: 'column' }}>
         <Text style={TextStyles.Title}>{serviceName}</Text>
         <Text style={TextStyles.PriceInfo}>
-          기본 <Text style={TextStyles.Price}> {basicPrice} 원</Text>
+          기본
+          <Text style={TextStyles.Price}> {numberToPrice(basicPrice)} 원</Text>
         </Text>
         <Text style={TextStyles.PriceInfo}>
-          최대 <Text style={TextStyles.Price}> {maxPrice} 원</Text>
+          최대
+          <Text style={TextStyles.Price}> {numberToPrice(maxPrice)} 원</Text>
         </Text>
       </View>
       {/* <View style={{ margin: 15 }}>
@@ -660,8 +681,8 @@ const styles = StyleSheet.create({
     paddingRight: 16,
     paddingTop: 3,
     paddingBottom: 3,
-    backgroundColor: '#612FEF',
-    borderRadius: 4,
+    backgroundColor: 'rgba(97, 47, 239, 0.80)',
+    borderRadius: 8,
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: '#612FEF',

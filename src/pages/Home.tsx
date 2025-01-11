@@ -24,7 +24,7 @@ import ServiceDetailPageScreen from '../components/Home/Market/ServiceDetailPage
 import GoodsDetailPageScreen from '../components/Home/Market/GoodsDetailPage';
 import GoodsRegistrationPage from '../components/Home/Market/GoodsRegistration';
 import TempStorageEdit from '../components/Home/Market/TempStorageEdit';
-import WriteDetailPage from '../components/Home/Market/WriteDetailPage';
+//import WriteDetailPage from '../components/Home/Market/WriteDetailPage';
 import AddPortfolio from '../components/Home/Portfolio/AddPortfolio';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
@@ -42,7 +42,6 @@ import { stylesList } from '../components/Home/HomeMain';
 import SearchPage from './SearchPage';
 import { ServiceDetailOption } from '../components/Home/Market/Service';
 import ReportPage from './ReportPage';
-import { getUserRole } from '../common/storage';
 
 export type HomeStackParams = {
   Home: { searchTerm?: string };
@@ -72,7 +71,7 @@ export type HomeStackParams = {
   // ServiceRegistrationPage: { inputText?: string; detailphoto?: PhotoType[] };
   GoodsRegistrationPage: undefined;
   TempStorageEdit: undefined;
-  WriteDetailPage: { inputText: string; detailphoto?: PhotoType[] };
+  //WriteDetailPage: { inputText: string; detailphoto?: PhotoType[] };
   AddPortfolio: undefined;
   InputInfo: {
     materials: string[];
@@ -138,7 +137,7 @@ const HomeScreen = ({
         component={GoodsRegistrationPage}
       />
       <HomeStack.Screen name="TempStorageEdit" component={TempStorageEdit} />
-      <HomeStack.Screen name="WriteDetailPage" component={WriteDetailPage} />
+      {/* <HomeStack.Screen name="WriteDetailPage" component={WriteDetailPage} /> */}
       <HomeStack.Screen name="AddPortfolio" component={AddPortfolio} />
       <HomeStack.Screen name="InputInfo" component={InputInfo} />
       <HomeStack.Screen name="QuotationConfirm" component={QuotationConfirm} />
@@ -183,9 +182,9 @@ const HomeMainScreen = ({
     );
   };
 
-  const handleTabChange = (tab: 'Goods' | 'Market' | 'temp') => {
-    setSelectedTab(tab);
-  };
+  // const handleTabChange = (tab: 'Goods' | 'Market' | 'temp') => {
+  //   setSelectedTab(tab);
+  // };
   const items = [...new Array(6).keys()];
   const splitArrayIntoPairs = (arr: any[], pairSize: number) => {
     return arr.reduce((result, item, index) => {
@@ -204,11 +203,6 @@ const HomeMainScreen = ({
   const [selectedStylesList, setSelectedStylesList] =
     useState<string[]>(stylesList);
 
-  const checkRole = async () => {
-    const role = await getUserRole();
-    console.log('유저롤:', role);
-  };
-
   return (
     <Fragment>
       <SafeAreaView style={{ flex: 0, backgroundColor: PURPLE }} />
@@ -217,18 +211,17 @@ const HomeMainScreen = ({
         {/* <CustomHeader onSearch={() => {}} onTabChange={handleTabChange} /> */}
         <CustomHeader2 navigation={navigation} />
         <BottomSheetModalProvider>
-          <View>
+          <View style={{ zIndex: 100 }}>
+            {/* 이제 아이폰에서도 렌더링 잘 됩니다 (가격 필터) */}
             <HomeTabView
-              onSearch={() => {}}
               selectedTab={selectedTab}
-              onTabChange={handleTabChange}
               setSelectedFilterOption={setSelectedFilterOption}
+              selectedStylesList={selectedStylesList}
               setSelectedStylesList={setSelectedStylesList}
             />
           </View>
           {selectedTab === 'Goods' && (
             <View>
-              <Button onPress={checkRole}></Button>
               <Service
                 selectedStylesList={selectedStylesList}
                 selectedFilterOption={selectedFilterOption}

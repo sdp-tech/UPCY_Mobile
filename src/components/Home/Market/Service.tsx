@@ -18,6 +18,7 @@ import DetailModal from '../Market/GoodsDetailOptionsModal';
 import { SelectedOptionProps } from '../HomeMain.tsx';
 import Request from '../../../common/requests.js';
 import RenderHTML from 'react-native-render-html';
+import { numberToPrice } from './functions.ts';
 
 // 홈화면에 있는, 서비스 전체 리스트!
 
@@ -26,6 +27,7 @@ export type ServiceDetailOption = {
   option_name: string;
   option_price: number;
   option_uuid: string;
+  option_photoUri?: string; // 옵션 사진 uri
 };
 
 export type MaterialDetail = {
@@ -53,6 +55,7 @@ interface ServiceCardProps {
 export type ServiceResponseType = {
   // TODO: any type 나중에 알아보고 수정
   basic_price: number;
+  created?: Date;
   market_uuid: string;
   max_price: number;
   service_category: string;
@@ -66,6 +69,7 @@ export type ServiceResponseType = {
   service_uuid: string;
   temporary: boolean;
   suspended: boolean;
+  updated?: Date;
 };
 
 interface ServiceCardComponentProps extends ServiceCardProps {
@@ -109,7 +113,7 @@ const EntireServiceMarket = ({
 
   const fetchData = async () => {
     try {
-      // API 호출
+      // API 호출: 전체 서비스 
       const response = await request.get(`/api/market/services`, {}, {});
       if (response && response.status === 200) {
         const serviceListResults: ServiceResponseType[] = response.data.results;
@@ -131,16 +135,17 @@ const EntireServiceMarket = ({
 
   const extractData = (rawData: ServiceResponseType[]) => {
     return rawData.map(service => ({
-      name: service.service_title,
+      //TODO: 밑에 수정
+      name: service.service_title, // 여기가 문제네.... 리폼러 이름 받아와야 하는데 서비스 이름이 나옴 @!!!
       basic_price: service.basic_price,
       max_price: service.max_price,
       service_styles: service.service_style.map(
         style => style.style_name,
       ) as string[],
-      imageUri: service.service_image?.[0]?.image ?? defaultImageUri,
+      imageUri: service.service_image?.[0]?.image ?? defaultImageUri, // 썸네일
       service_title: service.service_title,
       service_content: service.service_content,
-      market_uuid: service.market_uuid,
+      market_uuid: service.market_uuid || '',
       service_uuid: service.service_uuid,
       service_period: service.service_period,
       service_materials: service.service_material.map(material => ({
@@ -149,11 +154,13 @@ const EntireServiceMarket = ({
       })) as MaterialDetail[],
       service_options: Array.isArray(service.service_option)
         ? (service.service_option.map(option => ({
-            option_content: option.option_content,
-            option_name: option.option_name,
-            option_price: option.option_price,
-            option_uuid: option.option_uuid,
-          })) as ServiceDetailOption[])
+          option_content: option.option_content,
+          option_name: option.option_name,
+          option_price: option.option_price,
+          option_uuid: option.option_uuid,
+          option_photoUri: option.option_photoUri || '',
+          //option_
+        })) as ServiceDetailOption[])
         : [],
       temporary: service.temporary,
       suspended: service.suspended,
@@ -168,8 +175,9 @@ const EntireServiceMarket = ({
   useEffect(() => {
     if (serviceCardData) {
       // filter by search term
+      let searchFilteredData = serviceCardData;
       if (searchTerm && searchTerm.length > 0) {
-        const filteredData = serviceCardData.filter(card => {
+        searchFilteredData = serviceCardData.filter(card => {
           const {
             name,
             basic_price,
@@ -196,22 +204,29 @@ const EntireServiceMarket = ({
               service_content.toLowerCase().includes(searchLower))
           );
         });
-        setServiceCardData(filteredData);
       }
-      // FIXME
-      // filter by selected styles
-      // const styleFilteredData = serviceCardData.filter(card => {
-      //   card.service_styles?.some(style => selectedStylesList.includes(style));
-      // });
+
+      // reorder by price
+      let priceFilteredData = searchFilteredData;
       if (selectedFilterOption == '가격순') {
         // filter by basic_price
-        // const sortedByPriceData = [...styleFilteredData].sort(
-        const sortedByPriceData = [...serviceCardData].sort(
+        priceFilteredData = [...searchFilteredData].sort(
           (a, b) => a.basic_price - b.basic_price,
         );
-        setServiceCardData(sortedByPriceData);
       }
+
+      // filter by selected styles
+      const styleFilteredData =
+        selectedStylesList.length > 0
+          ? priceFilteredData.filter(card =>
+            card.service_styles?.some(style =>
+              selectedStylesList.includes(style),
+            ),
+          )
+          : [];
+
       // TODO: add more filtering logic here
+      setServiceCardData(styleFilteredData);
     }
   }, [selectedFilterOption, selectedStylesList, searchTerm]);
 
@@ -225,7 +240,7 @@ const EntireServiceMarket = ({
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={styles.container} overScrollMode='never' bounces={false}>
       <Title20B
         style={{ marginTop: 15, marginHorizontal: 15, marginBottom: 8 }}>
         {serviceTitle}
@@ -349,7 +364,7 @@ export const ServiceCard = ({
             </View>
         </ImageBackground>
       </View>
-
+        
       <View style={styles.titleContainer}>
         <Subtitle18B
             style={{
@@ -462,7 +477,7 @@ const TextStyles = StyleSheet.create({
     lineHeight: 24,
   },
   serviceCardTag: {
-    backgroundColor: '#612FEF',
+    backgroundColor: 'rgba(97, 47, 239, 0.80)',
     paddingHorizontal: 16,
     paddingVertical: 4,
     color: '#fff',
@@ -470,6 +485,7 @@ const TextStyles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '400',
     lineHeight: 24,
+    borderRadius: 8,
   },
   noServiceText: {
     fontSize: 16,

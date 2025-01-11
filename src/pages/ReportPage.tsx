@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import { StackScreenProps } from '@react-navigation/stack';
 import { HomeStackParams } from './Home';
 import DetailScreenHeader from '../components/Home/components/DetailScreenHeader';
@@ -9,32 +9,46 @@ import {
   StyleSheet,
   TextInput,
   Button,
+  TouchableOpacity,
 } from 'react-native';
-import DropDown from '../common/Dropdown';
+import DownArrow from '../assets/common/DownArrow.svg';
+import {
+  BottomSheetModal,
+  BottomSheetBackdrop,
+  BottomSheetFlatList,
+  BottomSheetModalProvider,
+} from '@gorhom/bottom-sheet';
+import { useNavigation } from '@react-navigation/native';
 
-const ReportPage = ({ }: StackScreenProps<HomeStackParams, 'ReportPage'>) => {
+const ReportPage = ({}: StackScreenProps<HomeStackParams, 'ReportPage'>) => {
   const [reportReason, setReportReason] = useState<string>('');
+  const navigation = useNavigation();
   return (
-    <SafeAreaView>
-      <DetailScreenHeader
-        title="신고"
-        leftButton="CustomBack"
-        rightButton="None"
-        onPressLeft={() => { }}
-        onPressRight={() => { }}
-      />
-      <View style={styles.container}>
-        <Text style={TextStyles.mainTitle}>
-          리폼러를 신고하는 이유를 설명해주세요
-        </Text>
-        <ReportReasonBox
-          reportReason={reportReason}
-          setReportReason={setReportReason}
+    <BottomSheetModalProvider>
+      <SafeAreaView>
+        <DetailScreenHeader
+          title="신고"
+          leftButton="CustomBack"
+          rightButton="None"
+          onPressLeft={() => {}}
+          onPressRight={() => {}}
         />
-        <ReportContentBox />
-        <ReportConfirmButton reportReason={reportReason} />
-      </View>
-    </SafeAreaView>
+        <View style={styles.container}>
+          <Text style={TextStyles.mainTitle}>
+            리폼러를 신고하는 이유를 설명해주세요
+          </Text>
+          <ReportReasonBox
+            reportReason={reportReason}
+            setReportReason={setReportReason}
+          />
+          <ReportContentBox />
+          <ReportConfirmButton
+            reportReason={reportReason}
+            navigation={navigation}
+          />
+        </View>
+      </SafeAreaView>
+    </BottomSheetModalProvider>
   );
 };
 
@@ -56,25 +70,25 @@ const ReportReasonBox = ({
     '연락이 두절됐습니다',
     '기타 부적절한 행위가 있었습니다.',
   ];
+  const [open, setOpen] = useState<boolean>(false);
   return (
     <View style={styles.wrapper}>
       <View style={styles.reasonBoxHeader}>
         <Text style={TextStyles.subTitles}> 신고 사유 </Text>
         <Text style={TextStyles.notice}>(필수)</Text>
       </View>
-      <DropDown
-        title="선택"
-        value={reportReason}
-        setValue={setReportReason}
-        items={reportReasonsList}
-        index={1000}
-        width={'100%'}
-        style={{
-          borderRadius: 5,
-          borderWidth: 1,
-          borderColor: '#6C4CE4',
-        }}
-      />
+      <TouchableOpacity style={styles.reasonBox} onPress={() => setOpen(!open)}>
+        <Text> {reportReason || '선택'} </Text>
+        <DownArrow />
+      </TouchableOpacity>
+      {open && (
+        <ReportReasonModal
+          open={open}
+          setOpen={setOpen}
+          reasons={reportReasonsList}
+          setReportReason={setReportReason}
+        />
+      )}
     </View>
   );
 };
@@ -93,21 +107,99 @@ const ReportContentBox = () => {
   );
 };
 
-const ReportConfirmButton = ({ reportReason }: { reportReason: string }) => {
+const ReportConfirmButton = ({
+  reportReason,
+  navigation,
+}: {
+  reportReason: string;
+  navigation: any;
+}) => {
   const onPressReportConfirm = () => {
-    //TODO
+    navigation.goBack();
   };
+
+  const isReasonValid = reportReason && reportReason.trim().length > 0;
+
   return (
     <View style={{ zIndex: 0 }}>
       <Button
         title="신고"
         onPress={onPressReportConfirm}
-        disabled={!(reportReason && reportReason.length > 0)}
-        color={
-          !(reportReason && reportReason.length > 0) ? '#6C4CE4' : '#D3D3D3'
-        }
+        disabled={!isReasonValid}
+        color={isReasonValid ? '#6C4CE4' : '#D3D3D3'}
       />
     </View>
+  );
+};
+
+const ReportReasonModal = ({
+  open,
+  setOpen,
+  reasons,
+  setReportReason,
+}: {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  reasons: string[];
+  setReportReason: (reason: string) => void;
+}) => {
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+
+  const renderBackdrop = useCallback(
+    (props: any) => (
+      <BottomSheetBackdrop
+        {...props}
+        pressBehavior="close"
+        disappearsOnIndex={-1}
+      />
+    ),
+    [],
+  );
+
+  const snapPoints = useMemo(() => ['65%'], []);
+
+  const handlePresentModalPress = useCallback(() => {
+    bottomSheetModalRef.current?.present();
+  }, []);
+
+  const handlePresentModalClose = useCallback(() => {
+    bottomSheetModalRef.current?.close();
+    setOpen(false);
+  }, []);
+
+  const handleSheetChanges = useCallback((index: number) => {
+    if (index < 0) setOpen(false);
+  }, []);
+
+  const handleSelectReason = (reason: string) => {
+    setReportReason(reason);
+    handlePresentModalClose();
+  };
+
+  useEffect(() => {
+    if (open) handlePresentModalPress();
+  }, [open]);
+
+  return (
+    <BottomSheetModal
+      ref={bottomSheetModalRef}
+      index={0}
+      snapPoints={snapPoints}
+      backdropComponent={renderBackdrop}
+      onChange={handleSheetChanges}>
+      <BottomSheetFlatList
+        data={reasons}
+        keyExtractor={item => item}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={styles.modalItem}
+            onPress={() => handleSelectReason(item)}>
+            <Text style={TextStyles.modalItem}>{item}</Text>
+          </TouchableOpacity>
+        )}
+        contentContainerStyle={{ padding: 16 }}
+      />
+    </BottomSheetModal>
   );
 };
 
@@ -132,6 +224,12 @@ const TextStyles = StyleSheet.create({
     fontWeight: '600',
     lineHeight: 24,
   },
+  modalItem: {
+    color: '#000',
+    fontSize: 16,
+    fontWeight: '600',
+    lineHeight: 24,
+  },
 });
 
 const styles = StyleSheet.create({
@@ -151,12 +249,30 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 8,
   },
+  reasonBox: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingLeft: 16,
+    paddingRight: 10,
+    paddingVertical: 10,
+    marginTop: 8,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#612FEF',
+  },
   textInputBox: {
     borderRadius: 5,
     borderWidth: 1,
     borderColor: '#6C4CE4',
     paddingHorizontal: 16,
     paddingTop: 10,
+  },
+  modalItem: {
+    paddingVertical: 12,
+    paddingLeft: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
   },
 });
 
