@@ -27,6 +27,7 @@ import ReformerTag from '../components/ReformerTag.tsx';
 import { defaultImageUri } from './Service.tsx';
 import { getUserRole, getNickname } from '../../../common/storage.js';
 import Flag from '../../../assets/common/Flag.svg';
+import { MarketType } from './InfoPage.tsx';
 
 export const ProfileSection = ({
   navigation,
@@ -50,8 +51,8 @@ export const ProfileSection = ({
         backgroundImageUri={backgroundImageUri}
         navigation={navigation}
         reformerName={reformerName}
-      // rate={rate}
-      // reviewNumber={reviewNumber}
+        // rate={rate}
+        // reviewNumber={reviewNumber}
       />
       <View style={{ padding: 20, paddingTop: 0, paddingBottom: 0 }}>
         {/* 이 밑에거 지우면 이상하게 에러남... 그냥 냅둬도 되는 거라 무시하셔도 됩니다.  */}
@@ -105,7 +106,7 @@ const ProfileHeader = ({
       <DetailScreenHeader
         title=""
         leftButton="CustomBack"
-        onPressLeft={() => { }}
+        onPressLeft={() => {}}
         rightButton={
           userRole === 'customer'
             ? 'Report'
@@ -113,7 +114,7 @@ const ProfileHeader = ({
               ? 'Edit'
               : 'Report'
         }
-        onPressRight={() => { }}
+        onPressRight={() => {}}
         reportButtonPressed={reportButtonPressed}
         setReportButtonPressed={setReportButtonPressed}
       />
@@ -174,12 +175,23 @@ type MarketTabViewProps = {
 };
 
 export type MarketResponseType = {
-  //TODO: 리폼러  지역, 경력사항 추가 필요 
-  market_address: string; // 이게 링크 
+  //TODO: 리폼러  지역, 경력사항 추가 필요
+  market_address: string; // 이게 링크
   market_introduce: string;
   market_name: string;
   market_thumbnail: string;
   market_uuid: string;
+};
+
+export type ReformerDataResponseType = {
+  awards: any[];
+  career: any[];
+  certification: any[];
+  education: any[];
+  freelancer: any[];
+  nickname: string;
+  reformer_area: string;
+  reformer_link: string;
 };
 
 const MarketTabView = ({
@@ -200,26 +212,50 @@ const MarketTabView = ({
   const scrollRef = useRef<ScrollView | null>(null);
   const request = Request();
 
-  const defaultMarketResponseData: MarketResponseType = {
+  const defaultMarketResponseData: MarketType = {
     market_address: '',
+    reformer_link: '',
     market_introduce: '정보 없음',
     market_name: '정보 없음',
     market_thumbnail: '',
     market_uuid: '',
+    reformer_area: '정보 없음',
+    education: [],
+    certification: [],
+    awards: [],
+    career: [],
+    freelancer: [],
   };
 
-  const [marketData, setMarketData] = useState<MarketResponseType>(
+  const [marketData, setMarketData] = useState<MarketType>(
     defaultMarketResponseData,
   );
 
   const fetchData = async () => {
     try {
       // API 호출
-      //TODO: 여기 수정 필요... 
-      const response = await request.get(`/api/market/${marketUuid}`, {}, {});
+      //TODO: 여기 수정 필요...
+      const response = await request.get(
+        `/api/user/reformer/${reformerName}`,
+        {},
+        {},
+      );
       if (response && response.status === 200) {
-        const marketResult: MarketResponseType = response.data;
-        setMarketData(marketResult);
+        const reformerDataResult: ReformerDataResponseType = response.data;
+        const tempMarketResult: MarketType = {
+          reformer_link: reformerDataResult.reformer_link ?? '',
+          market_introduce: '정보 없음',
+          market_name: reformerName,
+          market_thumbnail: '',
+          market_uuid: '',
+          reformer_area: reformerDataResult.reformer_area ?? '정보 없음',
+          education: reformerDataResult.education ?? [],
+          certification: reformerDataResult.certification ?? [],
+          awards: reformerDataResult.awards ?? [],
+          career: reformerDataResult.career ?? [],
+          freelancer: reformerDataResult.freelancer ?? [],
+        };
+        setMarketData(tempMarketResult);
       } else {
         Alert.alert('마켓 정보 불러오기에서 오류가 발생했습니다.');
       }
