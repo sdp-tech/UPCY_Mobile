@@ -1,11 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Dimensions, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { RichEditor, RichToolbar, actions } from 'react-native-pell-rich-editor';
-import { Body14M, Body16B } from '../../../styles/GlobalText';
-import Arrow from '../../../assets/common/Arrow.svg';
-import styled from 'styled-components/native';
-import { getStatusBarHeight } from 'react-native-safearea-height';
-import { HomeStackParams } from '../../../pages/Home';
 import { StackScreenProps } from '@react-navigation/stack';
 import DetailScreenHeader from '../components/DetailScreenHeader';
 import { useBottomBar } from '../../../../contexts/BottomBarContext';
@@ -40,7 +35,7 @@ const WriteDetailPage = ({ navigation, route }: StackScreenProps<MyPageStackPara
   }
 
   const handleGoBack = () => { // 파라미터 지정
-    navigation.navigate({ name: 'ServiceRegistrationPage', params: { inputText: localInput, detailphoto: d_detailphoto }, merge: true });
+    navigation.navigate('ServiceRegistrationPage', { inputText: localInput, detailphoto: d_detailphoto, serviceData: [] });
   };
 
   const editor = useRef<RichEditor>(null);

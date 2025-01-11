@@ -4,7 +4,6 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Modal,
   StyleSheet,
   ImageBackground,
   // FlatList,
@@ -33,9 +32,8 @@ import {
   ServiceDetailOption,
 } from './Service';
 import Flag from '../../../assets/common/Flag.svg';
-import { getUserRole, getAccessToken } from '../../../common/storage';
-import Request from '../../../common/requests.js';
-
+import { getUserRole, getNickname } from '../../../common/storage';
+import { numberToPrice } from './functions';
 
 const { width, height } = Dimensions.get('window');
 
@@ -53,7 +51,6 @@ type ServiceDetailPageProps = {
   serviceContent: string;
   serviceOptions: ServiceDetailOption[];
   marketUuid: string;
-  serviceUuid: string;
 };
 
 export type DetailPageStackParams = {
@@ -71,7 +68,6 @@ export type DetailPageStackParams = {
     serviceMaterials: MaterialDetail[];
     serviceOptions: ServiceDetailOption[];
     marketUuid: string;
-    serviceUuid: string;
   };
 };
 
@@ -95,7 +91,6 @@ const ServiceDetailPageScreen = ({
     serviceContent,
     serviceOptions,
     marketUuid,
-    serviceUuid,
   }: ServiceDetailPageProps = route.params;
 
   return (
@@ -120,7 +115,6 @@ const ServiceDetailPageScreen = ({
           serviceContent,
           serviceOptions,
           marketUuid,
-          serviceUuid,
         }}
       />
     </DetailPageStack.Navigator>
@@ -156,19 +150,38 @@ const ProfileSection = ({
   const { hideBottomBar, showBottomBar } = useBottomBar();
 
   const [reportButtonPressed, setReportButtonPressed] = useState(false);
+  const [userRole, setUserRole] = useState<string>('customer');
+  const [userNickname, setUserNickname] = useState<string>('');
 
   useEffect(() => {
+    const getUserRoleInfo = async () => {
+      const userRole = await getUserRole();
+      setUserRole(userRole ? userRole : 'customer');
+    };
+    const getUserNicknameInfo = async () => {
+      const userNickname = await getNickname();
+      setUserNickname(userNickname ? userNickname : '');
+    };
+    getUserRoleInfo();
+    getUserNicknameInfo();
     hideBottomBar();
     return () => showBottomBar();
   }, []);
+
   return (
     <SafeAreaView>
       <DetailScreenHeader
         title=""
         leftButton="CustomBack"
-        rightButton="Report"
-        onPressLeft={() => {}}
-        onPressRight={() => {}}
+        rightButton={
+          userRole === 'customer'
+            ? 'Report'
+            : userNickname == reformerName
+              ? 'Edit'
+              : 'Report'
+        }
+        onPressLeft={() => { }}
+        onPressRight={() => { }}
         reportButtonPressed={reportButtonPressed}
         setReportButtonPressed={setReportButtonPressed}
       />
@@ -268,10 +281,12 @@ const Header = ({
       <View style={{ flex: 1, flexDirection: 'column' }}>
         <Text style={TextStyles.Title}>{serviceName}</Text>
         <Text style={TextStyles.PriceInfo}>
-          기본 <Text style={TextStyles.Price}> {basicPrice} 원</Text>
+          기본
+          <Text style={TextStyles.Price}> {numberToPrice(basicPrice)} 원</Text>
         </Text>
         <Text style={TextStyles.PriceInfo}>
-          최대 <Text style={TextStyles.Price}> {maxPrice} 원</Text>
+          최대
+          <Text style={TextStyles.Price}> {numberToPrice(maxPrice)} 원</Text>
         </Text>
       </View>
       {/* <View style={{ margin: 15 }}>
@@ -353,7 +368,6 @@ const ServiceDetailPageMainScreen = ({
     serviceContent,
     serviceOptions,
     marketUuid,
-    serviceUuid,
   } = route.params;
 
   // const [index, setIndex] = useState<number>(0);
@@ -375,85 +389,15 @@ const ServiceDetailPageMainScreen = ({
   //   />
   // );
 
-  const [suspended, setSuspended] = useState<boolean>(false);
   const [userRole, setUserRole] = useState<string>('customer');
-  const [isServiceQuitPopupVisible, setServiceQuitPopupVisible] = useState(false);
-  const [isServiceResumePopupVisible, setServiceResumePopupVisible] = useState(false);
-
-  const request = Request();
 
   useEffect(() => {
     const getUserRoleInfo = async () => {
       const userRole = await getUserRole();
-      setUserRole(userRole ? userRole : 'customer');
+      setUserRole(userRole ? userRole : '');
     };
     getUserRoleInfo();
-
-    const fetchServiceStatus = async () => {
-      try {
-        const response = await request.get(`/api/market/${marketUuid}/service/${serviceUuid}`, {})
-        if (response && response.status === 200){
-            setSuspended(response.data.suspended); // 서비스 상태 (중단 여부) 받아오기
-        }
-      } catch (error) {
-        console.error('Error fetching service status:', error);
-      }
-    };
-
-    fetchServiceStatus();
-  }, [marketUuid, serviceUuid]);
-
-  const handleServiceQuit = async() => {
-      const accessToken = await getAccessToken();
-      const headers = {
-          Authorization: `Bearer ${accessToken}`,
-      }
-
-      try {
-          const response = await request.put(
-              `/api/market/${marketUuid}/service/${serviceUuid}`,
-              { "suspended": true },
-              headers
-          );
-          //console.log(response.data);
-          if (response && response.status === 200) {
-              setSuspended(true);
-              setServiceQuitPopupVisible(false);
-          }
-      }catch (error) {
-           console.error('Error quitting service:', error.message);
-       }
-
-  };
-
-  const handleServiceResume = async() => {
-      const accessToken = await getAccessToken();
-      const headers = {
-          Authorization: `Bearer ${accessToken}`,
-      };
-
-      try {
-          const response = await request.put(
-              `/api/market/${marketUuid}/service/${serviceUuid}`,
-              { suspended: false },
-              headers
-          );
-          if (response && response.status === 200) {
-              setSuspended(false);
-              setServiceResumePopupVisible(false);
-          }
-      } catch (error) {
-          console.error('Error quitting service:', error);
-      }
-  };
-
-  const handlePopup = (suspended) => {
-      if(suspended){
-          setServiceResumePopupVisible(true);
-      } else {
-          setServiceQuitPopupVisible(true)
-      }
-  };
+  }, []);
 
   return (
     <View style={{ flex: 1, position: 'relative' }}>
@@ -498,64 +442,12 @@ const ServiceDetailPageMainScreen = ({
           marketUuid={marketUuid}
         />
       </ScrollView>
-      <View style={styles.footerContainer}>
-        <Footer />
-      </View>
-      {userRole === 'reformer' && (
-        <TouchableOpacity
-            style={suspended ? styles.serviceResumeButton : styles.serviceQuitButton}
-            onPress={() => handlePopup(suspended)}>
-            <Text style={suspended ? styles.serviceResumeButtonText : styles.serviceQuitButtonText}>
-              {suspended ? '서비스 재개' : '서비스 중단'}
-            </Text>
-        </TouchableOpacity>
-      )}
-
-      <CustomPopup
-        visible={isServiceQuitPopupVisible}
-        title="서비스 주문 받기를 정말 중단할까요?"
-        subtitle="서비스 재개를 통해 다시 주문을 받을 수 있습니다."
-        confirmText="중단"
-        onConfirm={handleServiceQuit}
-        onCancel={() => setServiceQuitPopupVisible(false)}
-      />
-      <CustomPopup
-        visible={isServiceResumePopupVisible}
-        title="서비스 주문 받기를 재개할까요?"
-        subtitle="서비스 중단을 통해 다시 주문을 받지 않을 수 있습니다."
-        confirmText="재개"
-        onConfirm={handleServiceResume}
-        onCancel={() => setServiceResumePopupVisible(false)}
-      />
-    </View>
-  );
-};
-
-const CustomPopup = ({ visible, title, subtitle, confirmText, onConfirm, onCancel }) => {
-  return (
-    <Modal
-      visible={visible}
-      transparent={true}
-      animationType="fade"
-      onRequestClose={onCancel}
-    >
-      <View style={styles.overlay}>
-        <View style={styles.popupContainer}>
-            <View style={styles.messageContainer}>
-                <Text style={styles.title}>{title}</Text>
-                <Text style={styles.subtitle}>{subtitle}</Text>
-            </View>
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.confirmButton} onPress={onConfirm}>
-                    <Text style={styles.confirmText}>{confirmText}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
-                    <Text style={styles.cancelText}>취소</Text>
-                </TouchableOpacity>
-            </View>
+      {userRole === 'customer' && (
+        <View style={styles.footerContainer}>
+          <Footer />
         </View>
-      </View>
-    </Modal>
+      )}
+    </View>
   );
 };
 
@@ -660,8 +552,8 @@ const styles = StyleSheet.create({
     paddingRight: 16,
     paddingTop: 3,
     paddingBottom: 3,
-    backgroundColor: '#612FEF',
-    borderRadius: 4,
+    backgroundColor: 'rgba(97, 47, 239, 0.80)',
+    borderRadius: 8,
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: '#612FEF',
@@ -702,103 +594,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 13,
     display: 'flex',
     flexDirection: 'row',
-  },
-  serviceQuitButton: {
-    position: 'absolute',
-    bottom: 20,
-    left: 0,
-    right: 0,
-    backgroundColor: '#DBFC72',
-    padding: 15,
-    marginHorizontal: 20,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  serviceQuitButtonText: {
-    color: '#612FEF',
-    fontWeight: '600',
-    fontSize: 16,
-    lineHeight: 24,
-  },
-  serviceResumeButton: {
-    position: 'absolute',
-    bottom: 20,
-    left: 0,
-    right: 0,
-    backgroundColor: '#612FEF',
-    padding: 15,
-    marginHorizontal: 20,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  serviceResumeButtonText: {
-    color: '#FFFFFF',
-    fontWeight: '600',
-    fontSize: 16,
-    lineHeight: 24,
-  },
-  overlay: {
-    flex: 1,
-    justifyContent: "center", // 화면 중앙 정렬
-    alignItems: "center", // 가로 중앙 정렬
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // 반투명 배경
-  },
-  popupContainer: {
-    width: 300,
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 20,
-    alignItems: "center",
-    overflow: "hidden",
-  },
-  messageContainer: {
-    height: 154, // 메시지 영역 높이 고정
-    width: "100%", // 가로 전체 사용
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingTop: 20,
-    paddingBottom: 12,
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#000",
-    marginBottom: 10,
-    textAlign: "center",
-  },
-  subtitle: {
-    fontSize: 14,
-    color: "#929292",
-    textAlign: "center",
-    marginBottom: 20,
-  },
-  buttonContainer: {
-    width: "100%",
-    borderTopWidth: 1,
-    borderTopColor: "#E5E5E5",
-  },
-  confirmButton: {
-     height: 60, // 버튼 높이 줄임 (62 -> 60)
-     borderBottomWidth: 1,
-     borderBottomColor: "#E5E5E5", // 회색 구분선
-     justifyContent: "center",
-     alignItems: "center",
-  },
-  confirmText: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#FF3B30", // 빨간색 텍스트
-  },
-  cancelButton: {
-    height: 60, // 버튼 높이 줄임 (62 -> 60)
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  cancelText: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#000",
   },
 });
 

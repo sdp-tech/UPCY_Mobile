@@ -18,6 +18,7 @@ import DetailModal from '../Market/GoodsDetailOptionsModal';
 import { SelectedOptionProps } from '../HomeMain.tsx';
 import Request from '../../../common/requests.js';
 import RenderHTML from 'react-native-render-html';
+import { numberToPrice } from './functions.ts';
 
 // 홈화면에 있는, 서비스 전체 리스트!
 
@@ -26,6 +27,7 @@ export type ServiceDetailOption = {
   option_name: string;
   option_price: number;
   option_uuid: string;
+  option_photoUri?: string; // 옵션 사진 uri
 };
 
 export type MaterialDetail = {
@@ -47,12 +49,12 @@ interface ServiceCardProps {
   service_materials?: MaterialDetail[];
   service_options?: ServiceDetailOption[];
   temporary?: boolean; //TODO: 수정 필요
-  suspended?: boolean;
 }
 
 export type ServiceResponseType = {
   // TODO: any type 나중에 알아보고 수정
   basic_price: number;
+  created?: Date;
   market_uuid: string;
   max_price: number;
   service_category: string;
@@ -65,7 +67,7 @@ export type ServiceResponseType = {
   service_title: string;
   service_uuid: string;
   temporary: boolean;
-  suspended: boolean;
+  updated?: Date;
 };
 
 interface ServiceCardComponentProps extends ServiceCardProps {
@@ -109,7 +111,7 @@ const EntireServiceMarket = ({
 
   const fetchData = async () => {
     try {
-      // API 호출
+      // API 호출: 전체 서비스 
       const response = await request.get(`/api/market/services`, {}, {});
       if (response && response.status === 200) {
         const serviceListResults: ServiceResponseType[] = response.data.results;
@@ -131,16 +133,17 @@ const EntireServiceMarket = ({
 
   const extractData = (rawData: ServiceResponseType[]) => {
     return rawData.map(service => ({
-      name: service.service_title,
+      //TODO: 밑에 수정
+      name: service.service_title, // 여기가 문제네.... 리폼러 이름 받아와야 하는데 서비스 이름이 나옴 @!!!
       basic_price: service.basic_price,
       max_price: service.max_price,
       service_styles: service.service_style.map(
         style => style.style_name,
       ) as string[],
-      imageUri: service.service_image?.[0]?.image ?? defaultImageUri,
+      imageUri: service.service_image?.[0]?.image ?? defaultImageUri, // 썸네일
       service_title: service.service_title,
       service_content: service.service_content,
-      market_uuid: service.market_uuid,
+      market_uuid: service.market_uuid || '',
       service_uuid: service.service_uuid,
       service_period: service.service_period,
       service_materials: service.service_material.map(material => ({
@@ -149,14 +152,15 @@ const EntireServiceMarket = ({
       })) as MaterialDetail[],
       service_options: Array.isArray(service.service_option)
         ? (service.service_option.map(option => ({
-            option_content: option.option_content,
-            option_name: option.option_name,
-            option_price: option.option_price,
-            option_uuid: option.option_uuid,
-          })) as ServiceDetailOption[])
+          option_content: option.option_content,
+          option_name: option.option_name,
+          option_price: option.option_price,
+          option_uuid: option.option_uuid,
+          option_photoUri: option.option_photoUri || '',
+          //option_
+        })) as ServiceDetailOption[])
         : [],
       temporary: service.temporary,
-      suspended: service.suspended,
     })) as ServiceCardProps[];
   };
 
@@ -168,8 +172,9 @@ const EntireServiceMarket = ({
   useEffect(() => {
     if (serviceCardData) {
       // filter by search term
+      let searchFilteredData = serviceCardData;
       if (searchTerm && searchTerm.length > 0) {
-        const filteredData = serviceCardData.filter(card => {
+        searchFilteredData = serviceCardData.filter(card => {
           const {
             name,
             basic_price,
@@ -196,22 +201,29 @@ const EntireServiceMarket = ({
               service_content.toLowerCase().includes(searchLower))
           );
         });
-        setServiceCardData(filteredData);
       }
-      // FIXME
-      // filter by selected styles
-      // const styleFilteredData = serviceCardData.filter(card => {
-      //   card.service_styles?.some(style => selectedStylesList.includes(style));
-      // });
+
+      // reorder by price
+      let priceFilteredData = searchFilteredData;
       if (selectedFilterOption == '가격순') {
         // filter by basic_price
-        // const sortedByPriceData = [...styleFilteredData].sort(
-        const sortedByPriceData = [...serviceCardData].sort(
+        priceFilteredData = [...searchFilteredData].sort(
           (a, b) => a.basic_price - b.basic_price,
         );
-        setServiceCardData(sortedByPriceData);
       }
+
+      // filter by selected styles
+      const styleFilteredData =
+        selectedStylesList.length > 0
+          ? priceFilteredData.filter(card =>
+            card.service_styles?.some(style =>
+              selectedStylesList.includes(style),
+            ),
+          )
+          : [];
+
       // TODO: add more filtering logic here
+      setServiceCardData(styleFilteredData);
     }
   }, [selectedFilterOption, selectedStylesList, searchTerm]);
 
@@ -225,7 +237,7 @@ const EntireServiceMarket = ({
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={styles.container} overScrollMode='never' bounces={false}>
       <Title20B
         style={{ marginTop: 15, marginHorizontal: 15, marginBottom: 8 }}>
         {serviceTitle}
@@ -262,7 +274,6 @@ const EntireServiceMarket = ({
                   navigation={navigation}
                   service_options={serviceCardRawData[index].service_option}
                   service_materials={serviceCardRawData[index].service_material}
-                  suspended={serviceCardRawData[index].suspended}
                 />
               ),
           )
@@ -293,7 +304,6 @@ export const ServiceCard = ({
   service_period,
   service_materials,
   service_options,
-  suspended,
 }: ServiceCardComponentProps) => {
   const [like, setLike] = useState(false);
 
@@ -305,58 +315,44 @@ export const ServiceCard = ({
       key={service_uuid}
       style={styles.cardContainer}
       onPress={() => {
-              navigation.navigate('ServiceDetailPage', {
-                  reformerName: name,
-                  serviceName: service_title,
-                  basicPrice: basic_price,
-                  maxPrice: max_price,
-                  reviewNum: REVIEW_NUM,
-                  tags: service_styles,
-                  backgroundImageUri: imageUri,
-                  profileImageUri: defaultImageUri,
-                  servicePeriod: service_period,
-                  serviceMaterials: service_materials,
-                  serviceContent: service_content,
-                  serviceOptions: service_options,
-                  marketUuid: market_uuid,
-                  serviceUuid: service_uuid,
-              });
+        navigation.navigate('ServiceDetailPage', {
+          reformerName: name,
+          serviceName: service_title,
+          basicPrice: basic_price,
+          maxPrice: max_price,
+          reviewNum: REVIEW_NUM,
+          tags: service_styles,
+          backgroundImageUri: imageUri,
+          profileImageUri: defaultImageUri,
+          servicePeriod: service_period,
+          serviceMaterials: service_materials,
+          serviceContent: service_content,
+          serviceOptions: service_options,
+          marketUuid: market_uuid,
+        });
       }}>
-
-      <View style={styles.topContainer}>
-        <ImageBackground
-            style={{ width: '100%', height: 180, position: 'relative' }}
-            imageStyle={{ height: 180 }}
-            source={{
-                uri: imageUri ?? defaultImageUri,
-            }}>
-
-            {suspended && (
-                <View style={styles.suspendedOverlay}>
-                    <Text style={styles.suspendedOverlayText}>중단된 서비스</Text>
-                </View>
-            )}
-            <Text style={TextStyles.serviceCardName}>{name}</Text>
-            <Text style={TextStyles.serviceCardPrice}>{basic_price} 원 ~</Text>
-            <View style={styles.service_style}>
-                {service_styles?.map((service_style, index) => {
-                    return (
-                    <Text style={TextStyles.serviceCardTag} key={index}>
-                        {service_style}
-                    </Text>
-                    );
-                })}
-            </View>
-        </ImageBackground>
-      </View>
-
+      <ImageBackground
+        style={{ width: '100%', height: 180, position: 'relative' }}
+        imageStyle={{ height: 180 }}
+        source={{
+          uri: imageUri ?? defaultImageUri,
+        }}>
+        <Text style={TextStyles.serviceCardName}>{name}</Text>
+        <Text style={TextStyles.serviceCardPrice}>
+          {numberToPrice(basic_price)} 원 ~
+        </Text>
+        <View style={styles.service_style}>
+          {service_styles?.map((service_style, index) => {
+            return (
+              <Text style={TextStyles.serviceCardTag} key={index}>
+                {service_style}
+              </Text>
+            );
+          })}
+        </View>
+      </ImageBackground>
       <View style={styles.titleContainer}>
-        <Subtitle18B
-            style={{
-                color: suspended ? "#929292" : "#222222",
-                fontSize: 18,
-                fontWeight: '700',
-            }}>{service_title}</Subtitle18B>
+        <Subtitle18B>{service_title}</Subtitle18B>
         {/* <HeartButton like={like} onPress={() => setLike(!like)} /> */}
       </View>
       <RenderHTML
@@ -364,11 +360,10 @@ export const ServiceCard = ({
         source={{ html: service_content }}
         tagsStyles={{
           img: { maxWidth: '100%' },
-          p: { color: suspended ? '#A0A0A0' : '#222222', overflow: 'hidden' },
+          p: { overflow: 'hidden' },
         }}
         baseStyle={{
           maxWidth: 370,
-          color: suspended ? '#A0A0A0' : '#222222',
         }}
       />
     </TouchableOpacity>
@@ -384,32 +379,6 @@ const styles = StyleSheet.create({
     padding: 20,
     flex: 1,
     marginHorizontal: 0,
-  },
-  topContainer: {
-      position: 'relative',
-      width: '100%',
-      height: 180,
-      overflow: 'hidden',
-  },
-  suspendedCardContainer: {
-    opacity: 0.6, // 중단된 서비스는 반투명 처리
-    backgroundColor: '#F5F5F5',
-  },
-  suspendedOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)', // 반투명 배경
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 10,
-  },
-  suspendedOverlayText: {
-    color: '#FFF',
-    fontSize: 18,
-    fontWeight: '700',
   },
   service_style: {
     display: 'flex',
@@ -462,7 +431,7 @@ const TextStyles = StyleSheet.create({
     lineHeight: 24,
   },
   serviceCardTag: {
-    backgroundColor: '#612FEF',
+    backgroundColor: 'rgba(97, 47, 239, 0.80)',
     paddingHorizontal: 16,
     paddingVertical: 4,
     color: '#fff',
@@ -470,19 +439,12 @@ const TextStyles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '400',
     lineHeight: 24,
+    borderRadius: 8,
   },
   noServiceText: {
     fontSize: 16,
     color: '#000',
     padding: 10,
-  },
-  description: {
-    fontSize: 14,
-    color: '#555',
-    marginTop: 4,
-  },
-  suspendedDescription: {
-    color: '#B0B0B0', // 설명 글을 회색으로
   },
 });
 

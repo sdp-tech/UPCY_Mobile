@@ -1,5 +1,5 @@
 // DetailBox component without the tab
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import RenderHTML from 'react-native-render-html';
 import { MaterialDetail, ServiceDetailOption } from './Service';
 
@@ -51,6 +51,7 @@ const ContentBox = ({ content }: { content: string }) => {
               maxWidth: 370,
             }}
           />
+          {/* TODO: 서비스 상세에 있는 사진들 받아오기  */}
         </View>
       </View>
     </View>
@@ -62,21 +63,19 @@ const MaterialBox = ({ list }: { list: MaterialDetail[] }) => {
     return data?.map((item, index) => (
       <View key={item.material_uuid}>
         <Text style={TextStyles.eachMaterialData}>
-          {item.material_name} {index < data.length - 1 && '|'}
+          {item.material_name} {index < data.length - 1 && '| '}
         </Text>
       </View>
     ));
   }
 
   return (
-    <>
-      <View style={styles.materialBox}>
-        <Text style={TextStyles.eachLabel}>작업 가능한 소재</Text>
-        <View style={styles.materialListLine}>
-          {materialList({ data: list })}
-        </View>
+    <View style={styles.materialBox}>
+      <Text style={TextStyles.eachLabel}>작업 가능한 소재</Text>
+      <View style={styles.materialListLine}>
+        {materialList({ data: list })}
       </View>
-    </>
+    </View>
   );
 };
 
@@ -103,15 +102,24 @@ const OptionBox = ({ list }: { list: ServiceDetailOption[] }) => {
                   +{option.option_price}원
                 </Text>
               </View>
-              <View
-                style={{
-                  backgroundColor: '#f1f1f1',
-                  padding: 14,
-                  borderRadius: 8,
-                }}>
-                <Text style={TextStyles.optionContentLabel}>
-                  {option.option_content}
-                </Text>
+              <View style={{
+                flexDirection: 'row',
+              }}>
+                <View
+                  style={{
+                    backgroundColor: '#f1f1f1',
+                    padding: 14,
+                    borderRadius: 8,
+                    flexGrow: 1,
+                  }}>
+                  <Text style={TextStyles.optionContentLabel}>
+                    {option.option_content}
+                  </Text>
+                </View>
+                <Image
+                  style={{ width: 50, height: 50, flexGrow: 0.2 }}
+                  source={{ uri: option.option_photoUri }}
+                />
               </View>
             </View>
           );
@@ -137,7 +145,7 @@ const DetailBox2 = ({
   marketUuid,
 }: DetailBox2Props) => {
   return (
-    <>
+    <View>
       <PeriodBox period={servicePeriod} />
       <ContentBox content={serviceContent} />
       {serviceMaterials && serviceMaterials.length > 0 && (
@@ -146,7 +154,7 @@ const DetailBox2 = ({
       {serviceOptions && serviceOptions.length > 0 && (
         <OptionBox list={serviceOptions ?? []} />
       )}
-    </>
+    </View>
   );
 };
 
