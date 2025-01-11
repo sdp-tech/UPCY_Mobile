@@ -49,6 +49,7 @@ interface ServiceCardProps {
   service_materials?: MaterialDetail[];
   service_options?: ServiceDetailOption[];
   temporary?: boolean; //TODO: 수정 필요
+  suspended?: boolean;
 }
 
 export type ServiceResponseType = {
@@ -67,6 +68,7 @@ export type ServiceResponseType = {
   service_title: string;
   service_uuid: string;
   temporary: boolean;
+  suspended: boolean;
   updated?: Date;
 };
 
@@ -161,6 +163,7 @@ const EntireServiceMarket = ({
         })) as ServiceDetailOption[])
         : [],
       temporary: service.temporary,
+      suspended: service.suspended,
     })) as ServiceCardProps[];
   };
 
@@ -274,6 +277,7 @@ const EntireServiceMarket = ({
                   navigation={navigation}
                   service_options={serviceCardRawData[index].service_option}
                   service_materials={serviceCardRawData[index].service_material}
+                  suspended={serviceCardRawData[index].suspended}
                 />
               ),
           )
@@ -304,6 +308,7 @@ export const ServiceCard = ({
   service_period,
   service_materials,
   service_options,
+  suspended,
 }: ServiceCardComponentProps) => {
   const [like, setLike] = useState(false);
 
@@ -315,44 +320,58 @@ export const ServiceCard = ({
       key={service_uuid}
       style={styles.cardContainer}
       onPress={() => {
-        navigation.navigate('ServiceDetailPage', {
-          reformerName: name,
-          serviceName: service_title,
-          basicPrice: basic_price,
-          maxPrice: max_price,
-          reviewNum: REVIEW_NUM,
-          tags: service_styles,
-          backgroundImageUri: imageUri,
-          profileImageUri: defaultImageUri,
-          servicePeriod: service_period,
-          serviceMaterials: service_materials,
-          serviceContent: service_content,
-          serviceOptions: service_options,
-          marketUuid: market_uuid,
-        });
+              navigation.navigate('ServiceDetailPage', {
+                  reformerName: name,
+                  serviceName: service_title,
+                  basicPrice: basic_price,
+                  maxPrice: max_price,
+                  reviewNum: REVIEW_NUM,
+                  tags: service_styles,
+                  backgroundImageUri: imageUri,
+                  profileImageUri: defaultImageUri,
+                  servicePeriod: service_period,
+                  serviceMaterials: service_materials,
+                  serviceContent: service_content,
+                  serviceOptions: service_options,
+                  marketUuid: market_uuid,
+                  serviceUuid: service_uuid,
+              });
       }}>
-      <ImageBackground
-        style={{ width: '100%', height: 180, position: 'relative' }}
-        imageStyle={{ height: 180 }}
-        source={{
-          uri: imageUri ?? defaultImageUri,
-        }}>
-        <Text style={TextStyles.serviceCardName}>{name}</Text>
-        <Text style={TextStyles.serviceCardPrice}>
-          {numberToPrice(basic_price)} 원 ~
-        </Text>
-        <View style={styles.service_style}>
-          {service_styles?.map((service_style, index) => {
-            return (
-              <Text style={TextStyles.serviceCardTag} key={index}>
-                {service_style}
-              </Text>
-            );
-          })}
-        </View>
-      </ImageBackground>
+
+      <View style={styles.topContainer}>
+        <ImageBackground
+            style={{ width: '100%', height: 180, position: 'relative' }}
+            imageStyle={{ height: 180 }}
+            source={{
+                uri: imageUri ?? defaultImageUri,
+            }}>
+
+            {suspended && (
+                <View style={styles.suspendedOverlay}>
+                    <Text style={styles.suspendedOverlayText}>중단된 서비스</Text>
+                </View>
+            )}
+            <Text style={TextStyles.serviceCardName}>{name}</Text>
+            <Text style={TextStyles.serviceCardPrice}>{basic_price} 원 ~</Text>
+            <View style={styles.service_style}>
+                {service_styles?.map((service_style, index) => {
+                    return (
+                    <Text style={TextStyles.serviceCardTag} key={index}>
+                        {service_style}
+                    </Text>
+                    );
+                })}
+            </View>
+        </ImageBackground>
+      </View>
+        
       <View style={styles.titleContainer}>
-        <Subtitle18B>{service_title}</Subtitle18B>
+        <Subtitle18B
+            style={{
+                color: suspended ? "#929292" : "#222222",
+                fontSize: 18,
+                fontWeight: '700',
+            }}>{service_title}</Subtitle18B>
         {/* <HeartButton like={like} onPress={() => setLike(!like)} /> */}
       </View>
       <RenderHTML
@@ -360,10 +379,11 @@ export const ServiceCard = ({
         source={{ html: service_content }}
         tagsStyles={{
           img: { maxWidth: '100%' },
-          p: { overflow: 'hidden' },
+          p: { color: suspended ? '#A0A0A0' : '#222222', overflow: 'hidden' },
         }}
         baseStyle={{
           maxWidth: 370,
+          color: suspended ? '#A0A0A0' : '#222222',
         }}
       />
     </TouchableOpacity>
@@ -379,6 +399,32 @@ const styles = StyleSheet.create({
     padding: 20,
     flex: 1,
     marginHorizontal: 0,
+  },
+  topContainer: {
+      position: 'relative',
+      width: '100%',
+      height: 180,
+      overflow: 'hidden',
+  },
+  suspendedCardContainer: {
+    opacity: 0.6, // 중단된 서비스는 반투명 처리
+    backgroundColor: '#F5F5F5',
+  },
+  suspendedOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)', // 반투명 배경
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
+  },
+  suspendedOverlayText: {
+    color: '#FFF',
+    fontSize: 18,
+    fontWeight: '700',
   },
   service_style: {
     display: 'flex',
@@ -445,6 +491,14 @@ const TextStyles = StyleSheet.create({
     fontSize: 16,
     color: '#000',
     padding: 10,
+  },
+  description: {
+    fontSize: 14,
+    color: '#555',
+    marginTop: 4,
+  },
+  suspendedDescription: {
+    color: '#B0B0B0', // 설명 글을 회색으로
   },
 });
 
