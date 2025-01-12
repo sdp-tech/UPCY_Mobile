@@ -199,7 +199,7 @@ const HomeMainScreen = ({
 
   const [selectedFilterOption, setSelectedFilterOption] = useState<
     SelectedOptionProps | undefined
-  >('추천순');
+  >('최신순');
 
   const [selectedStylesList, setSelectedStylesList] =
     useState<string[]>(stylesList);
@@ -212,15 +212,12 @@ const HomeMainScreen = ({
         {/* <CustomHeader onSearch={() => {}} onTabChange={handleTabChange} /> */}
         <CustomHeader2 navigation={navigation} />
         <BottomSheetModalProvider>
-          <View style={{ zIndex: 100 }}>
-            {/* 이제 아이폰에서도 렌더링 잘 됩니다 (가격 필터) */}
-            <HomeTabView
-              selectedTab={selectedTab}
-              setSelectedFilterOption={setSelectedFilterOption}
-              selectedStylesList={selectedStylesList}
-              setSelectedStylesList={setSelectedStylesList}
-            />
-          </View>
+          <HomeTabView
+            selectedTab={selectedTab}
+            setSelectedFilterOption={setSelectedFilterOption}
+            selectedStylesList={selectedStylesList}
+            setSelectedStylesList={setSelectedStylesList}
+          />
           {selectedTab === 'Goods' && (
             <View>
               <Service

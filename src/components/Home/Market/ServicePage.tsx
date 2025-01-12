@@ -1,5 +1,12 @@
 import { useState, useEffect } from 'react';
-import { View, ScrollView, StyleSheet, Text, Alert, ActivityIndicator } from 'react-native';
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  Text,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
 import { Tabs } from 'react-native-collapsible-tab-view';
 import Request from '../../../common/requests';
 import { ServiceCard } from './Service';
@@ -19,7 +26,7 @@ const ServicePage: React.FC<ServicePageProps> = ({
   marketUuid,
 }) => {
   const [items, setItems] = useState<ServiceResponseType[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);  // 로딩 상태 관리
+  const [isLoading, setIsLoading] = useState<boolean>(true); // 로딩 상태 관리
   const [error, setError] = useState<string | null>(null); // 오류 메시지 관리
   const request = Request();
 
@@ -27,7 +34,10 @@ const ServicePage: React.FC<ServicePageProps> = ({
     try {
       // 로딩 시작
       setIsLoading(true);
-      const response = await request.get(`/api/market/${marketUuid}/service?temporary=false`, {});
+      const response = await request.get(
+        `/api/market/${marketUuid}/service?temporary=false`,
+        {},
+      );
       if (response && response.status === 200) {
         const marketResult = response.data;
         setItems(marketResult);
@@ -51,8 +61,8 @@ const ServicePage: React.FC<ServicePageProps> = ({
     }
   }, [reformerName, marketUuid]);
 
-  console.log('Reformer Name:', reformerName);  // Debugging step
-  console.log('Market UUID:', marketUuid);  // Debugging step
+  console.log('Reformer Name:', reformerName); // Debugging step
+  console.log('Market UUID:', marketUuid); // Debugging step
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
@@ -69,11 +79,14 @@ const ServicePage: React.FC<ServicePageProps> = ({
       bounces={false}
       overScrollMode="never">
       <View style={styles.container}>
-        <Text style={TextStyles.title}>{reformerName || '리포머 이름 없음' }의 서비스</Text>
+        <Text style={TextStyles.title}>
+          {reformerName || '리포머 이름 없음'}의 서비스
+        </Text>
         {error && <Text style={styles.errorText}>{error}</Text>}
         {items.map((item, index) => (
           <ServiceCard
             key={index}
+            created={item.created || new Date('2023-12-12')}
             name={reformerName || ''}
             basic_price={item.basic_price || 0}
             max_price={item.max_price || 0}
@@ -88,21 +101,23 @@ const ServicePage: React.FC<ServicePageProps> = ({
             market_uuid={marketUuid || ''}
             service_uuid={item.service_uuid || ''}
             service_period={item.service_period || undefined}
-            service_materials={Array.isArray(item.service_materials)
-                ? item.service_materials.map(material => ({
+            service_materials={
+              Array.isArray(item.service_material)
+                ? item.service_material.map(material => ({
                     material_uuid: material.material_uuid || '',
-                    material_name: material.material.name || ''
-                }))
+                    material_name: material.material.name || '',
+                  }))
                 : []
             }
-            service_options={Array.isArray(item.service_options)
-                ? item.service_options.map(option => ({
+            service_options={
+              Array.isArray(item.service_option)
+                ? item.service_option.map(option => ({
                     option_content: option.option_content || '',
                     option_name: option.option_name || '',
                     option_price: option.option_price || '',
-                    option_uuid: option.option_uuid || ''
-                }))
-                :[]
+                    option_uuid: option.option_uuid || '',
+                  }))
+                : []
             }
             suspended={item.suspended}
             navigation={navigation}

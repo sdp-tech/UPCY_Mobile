@@ -26,17 +26,15 @@ interface SignupProps {
 } // 의미 없음
 
 export type SelectedOptionProps =
-  | '추천순'
-  | '인기순'
-  | '가격순'
-  | '최신순'
-  | '판매순';
+  // | '추천순'
+  // | '인기순'
+  '최신순' | '가격순' | '판매순';
 
 export const selectOptionDropdown: SelectedOptionProps[] = [
-  '추천순',
-  '인기순',
-  '가격순',
+  // '추천순',
+  // '인기순',
   '최신순',
+  '가격순',
   '판매순',
 ] as SelectedOptionProps[];
 
