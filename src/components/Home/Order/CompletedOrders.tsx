@@ -3,11 +3,11 @@ import { SafeAreaView, ScrollView, Text, TouchableOpacity, Image } from 'react-n
 import styled from 'styled-components/native';
 import { useNavigation } from '@react-navigation/native';
 import { Body14R, Subtitle16B } from '../../../styles/GlobalText';
-import { BLACK, LIGHTGRAY } from '../../../styles/GlobalColor.tsx';
+import { LIGHTGRAY } from '../../../styles/GlobalColor.tsx';
 
 const completedOrders = [
   {
-    id : '02902',
+    id: '02902',
     title: '내 옷을 반려동물 옷으로',
     price: '25000원',
     customer: '전예영',
@@ -23,24 +23,24 @@ const completedOrders = [
     price: '25000원',
     customer: '홍길동',
     completedDate: '2024-05-20',
-    image: 'https://image.production.fruitsfamily.com/public/product/resized@width620/t6RDVV2b6--1703933039055.png' },
+    image: 'https://image.production.fruitsfamily.com/public/product/resized@width620/t6RDVV2b6--1703933039055.png',
     status: '거래 완료',
     is_completed: true,
   },
 
   {
-    id : '39202',
+    id: '39202',
     title: '평범했던 패딩, 퀼팅 백으로',
     price: '32000원',
     customer: '오민영',
     completedDate: '2024-05-15',
-    image:'https://image.yes24.com/goods/118500067/XL',
+    image: 'https://image.yes24.com/goods/118500067/XL',
     status: '거래 완료',
     is_completed: true,
   },
 
   {
-    id : '21292',
+    id: '21292',
     title: '청바지 에코백 서비스',
     price: '25000원',
     customer: '권수현',

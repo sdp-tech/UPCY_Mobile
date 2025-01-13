@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { Tabs, MaterialTabBar } from 'react-native-collapsible-tab-view';
 import { Caption11M } from '../../../styles/GlobalText.tsx';
-import { BLACK, BLACK2, PURPLE } from '../../../styles/GlobalColor.tsx';
+import { BLACK, BLACK2 } from '../../../styles/GlobalColor.tsx';
 // import StarIcon from '../../../assets/common/Star.svg';
 import { StackScreenProps } from '@react-navigation/stack';
 import { HomeStackParams } from '../../../pages/Home';
@@ -39,10 +39,6 @@ export const ProfileSection = ({
   backgroundImageUri?: string;
 }) => {
   const marketName: string = reformerName;
-  const selfIntroduce: string =
-    '안녕하세요 리폼러 이하늘입니다! 저는 업씨대학교 패션디자인학과에 수석입학했고요 짱짱 천재에요';
-  const rate: number = 4.5; // 평점
-  const reviewNumber: number = 100; // 후기 개수
 
   return (
     <View style={{ alignItems: 'center' }}>
@@ -51,8 +47,8 @@ export const ProfileSection = ({
         backgroundImageUri={backgroundImageUri}
         navigation={navigation}
         reformerName={reformerName}
-        // rate={rate}
-        // reviewNumber={reviewNumber}
+      // rate={rate}
+      // reviewNumber={reviewNumber}
       />
       <View style={{ padding: 20, paddingTop: 0, paddingBottom: 0 }}>
         {/* 이 밑에거 지우면 이상하게 에러남... 그냥 냅둬도 되는 거라 무시하셔도 됩니다.  */}
@@ -106,7 +102,7 @@ const ProfileHeader = ({
       <DetailScreenHeader
         title=""
         leftButton="CustomBack"
-        onPressLeft={() => {}}
+        onPressLeft={() => { }}
         rightButton={
           userRole === 'customer'
             ? 'Report'
@@ -114,7 +110,7 @@ const ProfileHeader = ({
               ? 'Edit'
               : 'Report'
         }
-        onPressRight={() => {}}
+        onPressRight={() => { }}
         reportButtonPressed={reportButtonPressed}
         setReportButtonPressed={setReportButtonPressed}
       />
@@ -172,6 +168,7 @@ type MarketTabViewProps = {
   reformerName: string;
   marketUuid: string;
   backgroundImageUri?: string;
+  reformerEmail?: string;
 };
 
 export type MarketResponseType = {
@@ -202,8 +199,9 @@ const MarketTabView = ({
     reformerName: '정보 없음',
     marketUuid: '',
     backgroundImageUri: defaultImageUri,
+    reformerEmail: 'omg2@naver.com'
   } as MarketTabViewProps;
-  const { reformerName, marketUuid, backgroundImageUri }: MarketTabViewProps =
+  const { reformerName, marketUuid, backgroundImageUri, reformerEmail }: MarketTabViewProps =
     route.params || defaultMarketData;
   const [routes] = useState([
     { key: 'profile', title: '프로필' },
@@ -213,10 +211,9 @@ const MarketTabView = ({
   const request = Request();
 
   const defaultMarketResponseData: MarketType = {
-    market_address: '',
     reformer_link: '',
     market_introduce: '정보 없음',
-    market_name: '정보 없음',
+    reformer_nickname: '정보 없음',
     market_thumbnail: '',
     market_uuid: '',
     reformer_area: '정보 없음',
@@ -245,7 +242,7 @@ const MarketTabView = ({
         const tempMarketResult: MarketType = {
           reformer_link: reformerDataResult.reformer_link ?? '',
           market_introduce: '정보 없음',
-          market_name: reformerName,
+          reformer_nickname: reformerName,
           market_thumbnail: '',
           market_uuid: '',
           reformer_area: reformerDataResult.reformer_area ?? '정보 없음',

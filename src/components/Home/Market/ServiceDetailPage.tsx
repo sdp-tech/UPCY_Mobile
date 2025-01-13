@@ -41,6 +41,8 @@ import {
 import Request from '../../../common/requests.js';
 import { numberToPrice } from './functions';
 
+// 전체 홈 화면에서, 특정 서비스 누르면 넘어오는 페이지 (개별 서비스 페이지)
+
 const { width, height } = Dimensions.get('window');
 
 type ServiceDetailPageProps = {
@@ -50,7 +52,7 @@ type ServiceDetailPageProps = {
   maxPrice: number;
   reviewNum: number;
   tags: string[];
-  backgroundImageUri: string;
+  imageUris: any[];
   profileImageUri?: string;
   servicePeriod: number;
   serviceMaterials: MaterialDetail[];
@@ -68,7 +70,7 @@ export type DetailPageStackParams = {
     maxPrice: number;
     reviewNum: number;
     tags: string[];
-    backgroundImageUri: string;
+    imageUris: any[];
     profileImageUri?: string;
     servicePeriod: number;
     serviceContent: string;
@@ -92,7 +94,7 @@ const ServiceDetailPageScreen = ({
     maxPrice,
     reviewNum,
     tags,
-    backgroundImageUri,
+    imageUris,
     profileImageUri,
     servicePeriod,
     serviceMaterials,
@@ -117,7 +119,7 @@ const ServiceDetailPageScreen = ({
           maxPrice,
           reviewNum,
           tags,
-          backgroundImageUri,
+          imageUris,
           profileImageUri,
           servicePeriod,
           serviceMaterials,
@@ -167,6 +169,7 @@ const ProfileSection = ({
     const getUserRoleInfo = async () => {
       const userRole = await getUserRole();
       setUserRole(userRole ? userRole : 'customer');
+      console.log(userRole); // debug
     };
     const getUserNicknameInfo = async () => {
       const userNickname = await getNickname();
@@ -184,14 +187,14 @@ const ProfileSection = ({
         title=""
         leftButton="CustomBack"
         rightButton={
-          userRole === 'customer'
+          (userRole === 'customer')
             ? 'Report'
-            : userNickname == reformerName
+            : (userRole === 'customer' && userNickname == reformerName)
               ? 'Edit'
               : 'Report'
         }
-        onPressLeft={() => {}}
-        onPressRight={() => {}}
+        onPressLeft={() => { }}
+        onPressRight={() => { }}
         reportButtonPressed={reportButtonPressed}
         setReportButtonPressed={setReportButtonPressed}
       />
@@ -345,7 +348,7 @@ const Profile = ({
           <TouchableOpacity
             style={{ flexDirection: 'row', alignItems: 'center' }}
             onPress={() =>
-              navigation.navigate('MarketTabView', {
+              navigation.navigate('MarketTabView', { // 프로필 사진 옆에 있는 이름 눌렀을 때 
                 reformerName: reformerName,
                 marketUuid: marketUuid,
                 backgroundImageUri: backgroundImageUri ?? defaultImageUri,
@@ -371,7 +374,7 @@ const ServiceDetailPageMainScreen = ({
     maxPrice,
     reviewNum,
     tags,
-    backgroundImageUri,
+    imageUris,
     profileImageUri,
     servicePeriod,
     serviceMaterials,
@@ -460,20 +463,26 @@ const ServiceDetailPageMainScreen = ({
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     };
+    const handleServiceResume = async () => {
+      const accessToken = await getAccessToken();
+      const headers = {
+        Authorization: `Bearer ${accessToken}`,
+      };
 
-    try {
-      const response = await request.put(
-        `/api/market/${marketUuid}/service/${serviceUuid}`,
-        { suspended: false },
-        headers,
-      );
-      if (response && response.status === 200) {
-        setSuspended(false);
-        setServiceResumePopupVisible(false);
+      try {
+        const response = await request.put(
+          `/api/market/${marketUuid}/service/${serviceUuid}`,
+          { suspended: false },
+          headers,
+        );
+        if (response && response.status === 200) {
+          setSuspended(false);
+          setServiceResumePopupVisible(false);
+        }
+      } catch (error) {
+        console.error('Error quitting service:', error);
       }
-    } catch (error) {
-      console.error('Error quitting service:', error);
-    }
+    };
   };
 
   const handlePopup = (suspended: boolean) => {
@@ -515,7 +524,7 @@ const ServiceDetailPageMainScreen = ({
           maxPrice={maxPrice}
           reviewNum={reviewNum}
           tags={tags}
-          backgroundImageUri={backgroundImageUri}
+          backgroundImageUri={imageUris?.[0]?.image}
           profileImageUri={profileImageUri}
           marketUuid={marketUuid}
         />
@@ -524,11 +533,13 @@ const ServiceDetailPageMainScreen = ({
           serviceMaterials={serviceMaterials}
           serviceContent={serviceContent}
           serviceOptions={serviceOptions}
+          imageUris={imageUris}
           marketUuid={marketUuid}
         />
       </ScrollView>
       <View style={styles.footerContainer}>
-        <Footer />
+        <Footer suspended={false} />
+        {/* TODO: 위 수정 필요  */}
       </View>
       {userRole === 'reformer' && (
         <TouchableOpacity
@@ -604,11 +615,24 @@ const CustomPopup = ({
               <Text style={styles.cancelText}>취소</Text>
             </TouchableOpacity>
           </View>
+          <View style={styles.messageContainer}>
+            <Text style={styles.title}>{title}</Text>
+            <Text style={styles.subtitle}>{subtitle}</Text>
+          </View>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.confirmButton} onPress={onConfirm}>
+              <Text style={styles.confirmText}>{confirmText}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
+              <Text style={styles.cancelText}>취소</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </Modal>
   );
 };
+
 
 const TextStyles = StyleSheet.create({
   Title: {
@@ -852,5 +876,6 @@ const styles = StyleSheet.create({
     color: '#000',
   },
 });
+
 
 export default ServiceDetailPageScreen;

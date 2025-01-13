@@ -1,13 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { SafeAreaView, ScrollView, View, FlatList, Text, TouchableOpacity, Image, Dimensions } from 'react-native';
-import { Tabs, MaterialTabBar } from 'react-native-collapsible-tab-view';
 
-import styled from 'styled-components/native';
-import { getStatusBarHeight } from 'react-native-safearea-height';
-import { Title20B, Body14R, Caption11M } from '../../../styles/GlobalText.tsx';
-import { BLACK, BLACK2 } from '../../../styles/GlobalColor.tsx';
-
-import { useNavigation } from '@react-navigation/native';
 import { createStackNavigator, StackScreenProps } from '@react-navigation/stack';
 import DetailScreenHeader from '../components/DetailScreenHeader.tsx';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
@@ -60,9 +53,6 @@ const OrderScreen = ({
 
 
 const OrderManagement = ({ navigation, route }: BottomTabScreenProps<TabProps, '주문관리'>) => {
-  const { width } = Dimensions.get('window');
-  const scrollRef = useRef<ScrollView | null>(null);
-
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f0f0f0' }}>
@@ -76,9 +66,9 @@ const OrderManagement = ({ navigation, route }: BottomTabScreenProps<TabProps, '
               <DetailScreenHeader
                 title="주문 관리"
                 leftButton="CustomBack"
-                onPressLeft={() => {}}
+                onPressLeft={() => { }}
                 rightButton="None"
-                onPressRight={() => {}}
+                onPressRight={() => { }}
               />
             ),
           }}
