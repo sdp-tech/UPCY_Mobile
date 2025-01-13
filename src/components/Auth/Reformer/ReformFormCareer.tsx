@@ -8,49 +8,22 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import styled from 'styled-components/native';
-import { Body14M, Caption11M, Subtitle16B } from '../../../styles/GlobalText';
+import { Caption11M, Subtitle16B } from '../../../styles/GlobalText';
 import { ReformProfileType, ReformProps } from './Reformer';
 import BottomButton from '../../../common/BottomButton';
-import RightArrow from '../../../assets/common/RightArrow.svg';
 import PlusIcon from '../../../assets/common/Plus.svg';
 import PencilIcon from '../../../assets/common/Pencil.svg';
 import CloseIcon from '../../../assets/header/Close.svg';
-import { memo, useEffect, useRef, useState } from 'react';
-import { BLACK, BLACK2, GRAY, PURPLE } from '../../../styles/GlobalColor';
-import SelectBox from '../../../common/SelectBox';
+import { useEffect, useRef, useState } from 'react';
+import { BLACK, GRAY, PURPLE } from '../../../styles/GlobalColor';
 import CareerModal from './CareerModal';
-import CustomScrollView from '../../../common/CustomScrollView';
 import Request from '../../../common/requests';
-import { err } from 'react-native-svg';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { SignInParams } from '../SignIn';
-import { getAccessToken, getMarketUUID, getUserRole, setMarketUUID } from '../../../common/storage';
+import { getAccessToken, getMarketUUID, setMarketUUID } from '../../../common/storage';
 import { PhotoType } from '../../../hooks/useImagePicker';
 
-const SelectView = styled.View`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  height: 44px;
-  width: 100%;
-  border-width: 2px;
-  border-color: #929292;
-  border-radius: 5px;
-  margin-top: 8px;
-`;
-
-const SelectTouchable = styled.TouchableOpacity`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  height: 44px;
-  padding-left: 16px;
-  padding-right: 16px;
-`;
 
 const AddTouchable = styled.TouchableOpacity`
   display: flex;
@@ -788,7 +761,6 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
       return;
     }
 
-    const updatedForm = { ...form };
     const formData = new FormData();
     const accessToken = await getAccessToken();
     const headers = {
@@ -861,6 +833,7 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
 
   const waitFetch = async () => {
     await fetchLink();
+    await fetchIntro();
     await fetchImage();
   }
 
@@ -891,6 +864,26 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
+    }
+  }
+
+  const fetchIntro = async () => {
+    const accessToken = await getAccessToken();
+    const headers = {
+      Authorization: `Bearer ${accessToken}`
+    };
+    try {
+      const response = await request.get(`/api/user`, {}, headers);
+      if (response && response.status === 200) {
+        setForm(prev => {
+          return { ...prev, introduce: response.data.introduce }
+        })
+        console.log('자기소개 패치:', response.data.introduce)
+      } else {
+        console.log('자기소개 패치 실패:', response);
+      }
+    } catch (err) {
+      console.error(err);
     }
   }
 

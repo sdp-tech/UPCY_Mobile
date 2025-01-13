@@ -56,7 +56,7 @@ export type HomeStackParams = {
     maxPrice: number;
     tags: string[];
     reviewNum: number;
-    backgroundImageUri: string;
+    imageUris: any[];
     profileImageUri?: string;
     servicePeriod: number;
     serviceMaterials: MaterialDetail[];

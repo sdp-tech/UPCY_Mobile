@@ -92,28 +92,12 @@ export type Field = {
   host?: string | undefined;
   content?: string | undefined;
 };
-type InternType = Field & {
-  team: string;
-  start: string;
-  end: string;
-};
-type ContestType = Field & {
-  host: string;
-};
-type CertificateType = Field & {
-  host: string;
-};
-type OutsourcingType = Field & {
-  client: string;
-  content: string;
-  start: string;
-  end: string;
-};
 export type FieldType = Field[];
 // 종류별 타입 정의
 
 export type ReformerResponseType = {
-  nickname: string;
+  introduce?: string;
+  reformer_nickname: string;
   reformer_link: string;
   reformer_area: string;
   education: EducType;

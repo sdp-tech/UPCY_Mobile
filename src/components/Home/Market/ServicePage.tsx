@@ -11,6 +11,7 @@ import { Tabs } from 'react-native-collapsible-tab-view';
 import Request from '../../../common/requests';
 import { ServiceCard } from './Service';
 import { ServiceResponseType, defaultImageUri } from './Service';
+// (MarketTabView)리폼러 마켓 페이지의 서비스 탭 
 
 interface ServicePageProps {
   scrollViewRef: React.RefObject<ScrollView>;
@@ -36,13 +37,14 @@ const ServicePage: React.FC<ServicePageProps> = ({
       setIsLoading(true);
       const response = await request.get(
         `/api/market/${marketUuid}/service?temporary=false`,
-        {},
+        {}, {}
       );
       if (response && response.status === 200) {
         const marketResult = response.data;
         setItems(marketResult);
       } else {
         setError('서비스를 불러오는 데 실패했습니다.');
+        console.log(response);
         Alert.alert('ServicePage.tsx에서 오류가 발생했습니다.');
       }
     } catch (error) {
@@ -58,11 +60,12 @@ const ServicePage: React.FC<ServicePageProps> = ({
   useEffect(() => {
     if (marketUuid) {
       fetchData();
+      console.log('Reformer Name:', reformerName); // Debugging step
+      console.log('Market UUID:', marketUuid); // Debugging step
     }
   }, [reformerName, marketUuid]);
 
-  console.log('Reformer Name:', reformerName); // Debugging step
-  console.log('Market UUID:', marketUuid); // Debugging step
+
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
@@ -95,7 +98,7 @@ const ServicePage: React.FC<ServicePageProps> = ({
                 ? item.service_style.map(style => style.style_name || '')
                 : []
             }
-            imageUri={item.service_image[0]?.image || defaultImageUri}
+            imageUris={item.service_image || []}
             service_title={item.service_title || ''}
             service_content={item.service_content || ''}
             market_uuid={marketUuid || ''}
@@ -115,6 +118,7 @@ const ServicePage: React.FC<ServicePageProps> = ({
                   option_name: option.option_name || '',
                   option_price: option.option_price || '',
                   option_uuid: option.option_uuid || '',
+                  service_option_image: option.service_option_image || [],
                 }))
                 : []
             }

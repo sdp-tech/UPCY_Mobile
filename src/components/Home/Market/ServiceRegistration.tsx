@@ -1,5 +1,4 @@
 import { StackScreenProps } from '@react-navigation/stack';
-import { HomeStackParams } from '../../../pages/Home';
 import {
   ScrollView,
   StyleSheet,
@@ -12,26 +11,20 @@ import {
   ImageBackground,
   Alert,
   Dimensions,
-  FlatList,
 } from 'react-native';
 import styled from 'styled-components/native';
 import {
   Body14B,
   Body14M,
   Body16B,
-  Caption11M,
   Subtitle16B,
   Subtitle16M,
   Subtitle18B,
-  Subtitle18M,
 } from '../../../styles/GlobalText';
 import { BLACK2, LIGHTGRAY, PURPLE } from '../../../styles/GlobalColor';
 import InputBox from '../../../common/InputBox';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import Filter from '../../../common/Filter';
 import Hashtag from '../../../common/Hashtag';
-import Photo from '../../../assets/common/Photo.svg';
-import TempStorage from './TempStorage';
 import Slider from '@react-native-community/slider';
 import PhotoOptions, { PhotoResultProps } from '../../../common/PhotoOptions';
 import Carousel from '../../../common/Carousel';
@@ -42,7 +35,6 @@ import SelectBox from '../../../common/SelectBox';
 import ServiceCategoryModal from '../components/ServiceCategoryModal';
 import ImageCarousel from '../../../common/ImageCarousel';
 import { PhotoType } from '../../../hooks/useImagePicker';
-import { useNavigation } from '@react-navigation/native';
 import { RichEditor } from 'react-native-pell-rich-editor';
 import Help from '../../../assets/common/Help.svg';
 import { Modal } from 'react-native';
@@ -229,7 +221,7 @@ const ServiceRegistrationPage = ({
   const [name, setName] = useState<string>(''); // 서비스 이름 
   const [price, setPrice] = useState<string>(''); // 기본 가격 (예: 20000)
   const [maxPrice, setMaxPrice] = useState<string>(''); // 최대 가격 (예: 24000)
-  const [photos, setPhotos] = useState<PhotoResultProps[]>([]); // 썸네일 사진 
+  const [photos, setPhotos] = useState<PhotoType[]>([]); // 썸네일 사진 
   const [detailphoto, setDetailPhoto] = useState<PhotoType[]>([]); // 서비스 설명에 들어가는 사진 
   const [inputText, setInputText] = useState(route.params?.inputText || ''); // 서비스 설명 내용 
   // 이 밑으론 옵션 개별 요소들 prop
@@ -345,11 +337,18 @@ const ServiceRegistrationPage = ({
     if (method === 'option') { // 옵션별 이미지 업로드 
       for (const id of option_uuidList) { // 여러개의 uuid 각각에 진행 
         const formData = new FormData();
-        formData.append('option_image', {
-          uri: optionPhotos[0]?.uri, // 파일의 URI
-          type: 'image/jpeg', // 이미지 형식 (예: 'image/jpeg')
-          name: optionPhotos[0]?.fileName || 'option_image.jpg', // 파일 이름
-        });
+        for (let option of optionList) {
+          for (let photo of option.optionPhotos) {
+            console.log('uploadImage에서 옵션별 사진 추가중...', option.optionPhotos);
+            if (photo?.uri) {
+              formData.append('option_image', {
+                uri: photo.uri,
+                type: 'image/jpeg',
+                name: photo.fileName || 'option_image.jpg',
+              });
+            }
+          }
+        }
         try {
           const response = await request.post(`/api/market/${market_uuid}/service/${service_uuid}/option/${id}/image`, formData, headers_);
           if (response && response.status === 200) {
@@ -362,13 +361,22 @@ const ServiceRegistrationPage = ({
           console.error(error);
         }
       }
-    } else if (method === 'thumbnail') { // 서비스 썸네일 등록 
+    } else if (method === 'thumbnail') { // 서비스 썸네일, 상세 사진들 등록 
       const formData = new FormData();
+      console.log('uploadImage에서 썸네일 사진 추가중...', photos[0]);
       formData.append('service_images', {
         uri: photos[0]?.uri, // 파일의 URI
         type: 'image/jpeg', // 이미지 형식 (예: 'image/jpeg')
         name: photos[0]?.fileName || 'service_images.jpg', // 파일 이름
       });
+      for (let index = 0; index < detailphoto.length; index++) {
+        console.log('uploadImage에서 상세 사진 추가중...', detailphoto[index]);
+        formData.append('service_images', {
+          uri: detailphoto[index]?.uri, // 파일의 URI
+          type: 'image/jpeg', // 이미지 형식 (예: 'image/jpeg')
+          name: detailphoto[index]?.fileName || 'service_images.jpg', // 파일 이름
+        });
+      }
       try {
         const response = await request.post(`/api/market/${market_uuid}/service/${service_uuid}/image`, formData, headers_);
         if (response && response.status === 200) {

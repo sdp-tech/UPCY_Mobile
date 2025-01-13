@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { Tabs, MaterialTabBar } from 'react-native-collapsible-tab-view';
 import { Caption11M } from '../../../styles/GlobalText.tsx';
-import { BLACK, BLACK2, PURPLE } from '../../../styles/GlobalColor.tsx';
+import { BLACK, BLACK2 } from '../../../styles/GlobalColor.tsx';
 // import StarIcon from '../../../assets/common/Star.svg';
 import { StackScreenProps } from '@react-navigation/stack';
 import { HomeStackParams } from '../../../pages/Home';
@@ -39,10 +39,6 @@ export const ProfileSection = ({
   backgroundImageUri?: string;
 }) => {
   const marketName: string = reformerName;
-  const selfIntroduce: string =
-    '안녕하세요 리폼러 이하늘입니다! 저는 업씨대학교 패션디자인학과에 수석입학했고요 짱짱 천재에요';
-  const rate: number = 4.5; // 평점
-  const reviewNumber: number = 100; // 후기 개수
 
   return (
     <View style={{ alignItems: 'center' }}>
@@ -215,10 +211,9 @@ const MarketTabView = ({
   const request = Request();
 
   const defaultMarketResponseData: MarketType = {
-    market_address: '',
     reformer_link: '',
     market_introduce: '정보 없음',
-    market_name: '정보 없음',
+    reformer_nickname: '정보 없음',
     market_thumbnail: '',
     market_uuid: '',
     reformer_area: '정보 없음',
@@ -247,7 +242,7 @@ const MarketTabView = ({
         const tempMarketResult: MarketType = {
           reformer_link: reformerDataResult.reformer_link ?? '',
           market_introduce: '정보 없음',
-          market_name: reformerName,
+          reformer_nickname: reformerName,
           market_thumbnail: '',
           market_uuid: '',
           reformer_area: reformerDataResult.reformer_area ?? '정보 없음',

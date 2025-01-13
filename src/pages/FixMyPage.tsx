@@ -1,25 +1,17 @@
 import { StackScreenProps } from "@react-navigation/stack";
-import { HomeStackParams } from "./Home";
 import { PhotoType, useImagePicker } from "../hooks/useImagePicker";
-import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
-import { Alert, Button, Dimensions, Image, Text, TouchableOpacity, View } from "react-native";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Alert, Dimensions, Image, TouchableOpacity, View } from "react-native";
 import PencilIcon from "../assets/common/Pencil.svg"
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomScrollView from "../common/CustomScrollView";
 import InputView from "../common/InputView";
-import { getAccessToken, getRefreshToken, removeAccessToken, removeMarketUUID, removeNickname, removeRefreshToken } from "../common/storage";
-import { LoginContext } from "../common/Context";
+import { getAccessToken } from "../common/storage";
 import { MyPageStackParams } from "./MyPage";
 import DetailScreenHeader from "../components/Home/components/DetailScreenHeader";
 import Request from "../common/requests";
 import BottomButton from "../common/BottomButton";
-import { Body16B } from "../styles/GlobalText";
-import { PURPLE } from "../styles/GlobalColor";
-import SelectBox from "../common/SelectBox";
-import { RegionType } from "../types/UserTypes";
-import RegionModal from "../components/Auth/RegionModal";
 import Reformer, { ReformProfileType } from "../components/Auth/Reformer/Reformer";
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 export interface MypageProps extends ProfileProps {
     route: any;
     navigation: any;
@@ -108,7 +100,6 @@ function ProfilePic({ form, setForm }: ProfileProps) {
 }
 
 const FixMyPage = ({ navigation, route }: FixMyPageProps) => {
-    const { isLogin, setLogin } = useContext(LoginContext);
     const request = Request();
     const userInfo = route.params.userInfo;
     const [form, setForm] = useState<ProfileType>({

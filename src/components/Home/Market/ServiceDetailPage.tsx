@@ -41,7 +41,7 @@ import {
 import Request from '../../../common/requests.js';
 import { numberToPrice } from './functions';
 
-// 전체 홈 화면에서, 특정 서비스 누르면 넘어오는 페이지 
+// 전체 홈 화면에서, 특정 서비스 누르면 넘어오는 페이지 (개별 서비스 페이지)
 
 const { width, height } = Dimensions.get('window');
 
@@ -52,7 +52,7 @@ type ServiceDetailPageProps = {
   maxPrice: number;
   reviewNum: number;
   tags: string[];
-  backgroundImageUri: string;
+  imageUris: any[];
   profileImageUri?: string;
   servicePeriod: number;
   serviceMaterials: MaterialDetail[];
@@ -70,7 +70,7 @@ export type DetailPageStackParams = {
     maxPrice: number;
     reviewNum: number;
     tags: string[];
-    backgroundImageUri: string;
+    imageUris: any[];
     profileImageUri?: string;
     servicePeriod: number;
     serviceContent: string;
@@ -94,7 +94,7 @@ const ServiceDetailPageScreen = ({
     maxPrice,
     reviewNum,
     tags,
-    backgroundImageUri,
+    imageUris,
     profileImageUri,
     servicePeriod,
     serviceMaterials,
@@ -119,7 +119,7 @@ const ServiceDetailPageScreen = ({
           maxPrice,
           reviewNum,
           tags,
-          backgroundImageUri,
+          imageUris,
           profileImageUri,
           servicePeriod,
           serviceMaterials,
@@ -187,9 +187,9 @@ const ProfileSection = ({
         title=""
         leftButton="CustomBack"
         rightButton={
-          userRole === 'customer'
+          (userRole === 'customer')
             ? 'Report'
-            : userNickname == reformerName
+            : (userRole === 'customer' && userNickname == reformerName)
               ? 'Edit'
               : 'Report'
         }
@@ -374,7 +374,7 @@ const ServiceDetailPageMainScreen = ({
     maxPrice,
     reviewNum,
     tags,
-    backgroundImageUri,
+    imageUris,
     profileImageUri,
     servicePeriod,
     serviceMaterials,
@@ -524,7 +524,7 @@ const ServiceDetailPageMainScreen = ({
           maxPrice={maxPrice}
           reviewNum={reviewNum}
           tags={tags}
-          backgroundImageUri={backgroundImageUri}
+          backgroundImageUri={imageUris?.[0]?.image}
           profileImageUri={profileImageUri}
           marketUuid={marketUuid}
         />
@@ -533,6 +533,7 @@ const ServiceDetailPageMainScreen = ({
           serviceMaterials={serviceMaterials}
           serviceContent={serviceContent}
           serviceOptions={serviceOptions}
+          imageUris={imageUris}
           marketUuid={marketUuid}
         />
       </ScrollView>
