@@ -2,6 +2,18 @@
   "extends": "@react-native/typescript-config/tsconfig.json",
   "compilerOptions": {
     "checkJs": false,
-    "types": ["@types/styled-components-react-native"]
+    "types": [
+      "@types/styled-components-react-native"
+    ],
+    "strict": true, // 엄격한 타입 검사 활성화
+    "strictNullChecks": true, // null 및 undefined 타입 검사 활성화
+    "noUnusedLocals": true, // 사용되지 않는 로컬 변수 경고
+    "noUnusedParameters": true, // 사용되지 않는 매개변수 경고
+    "noImplicitReturns": true, // 함수에서 명시적 반환이 없으면 경고
+    "noFallthroughCasesInSwitch": true, // switch 문에서 fallthrough 방지
+    "esModuleInterop": true, // ES 모듈 호환성 활성화
+    "resolveJsonModule": true, // JSON 모듈 가져오기 활성화
+    "jsx": "react-native", // React Native에서 JSX 사용
+    "skipLibCheck": true // 라이브러리 타입 검사 생략
   }
 }

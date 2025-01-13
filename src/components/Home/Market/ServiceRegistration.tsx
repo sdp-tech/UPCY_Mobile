@@ -49,6 +49,7 @@ import { Modal } from 'react-native';
 import { getAccessToken, getMarketUUID } from '../../../common/storage';
 import Request from '../../../common/requests';
 import { MyPageStackParams } from '../../../pages/MyPage';
+import React from 'react';
 
 const { width } = Dimensions.get('window');
 
@@ -974,115 +975,8 @@ const ServiceRegistrationPage = ({
                 재료 수령일로부터 소요되는 제작 기간을 설정해주세요
               </Text>
             </View>
-            {!(inputText == '') ? ( // 서비스 상세 있으면 노출
-              <View
-                style={{
-                  padding: 10,
-                  borderBottomWidth: 3,
-                  borderBottomColor: '#dcdcdc',
-                  flex: 1,
-                }}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                  }}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Body16B style={{ margin: 10 }}>서비스 상세</Body16B>
-                    <Subtitle18B style={{ color: PURPLE, marginLeft: '-1%' }}>
-                      *{' '}
-                    </Subtitle18B>
-                    <TouchableOpacity
-                      onPress={() => {
-                        setIsOpen(true);
-                      }}>
-                      <Help />
-                    </TouchableOpacity>
-                  </View>
-                  <View>
-                    <TouchableOpacity onPress={handleNavigate}>
-                      <Body16B style={{ color: '#612FEF', margin: 10 }}>
-                        수정하기
-                      </Body16B>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-                <FillerSection
-                  style={{
-                    borderWidth: 2,
-                    borderColor: BLACK2,
-                    backgroundColor: '#FFF',
-                  }}>
-                  <ScrollView
-                    bounces={false}
-                    overScrollMode="never"
-                    style={{ margin: 5 }}>
-                    <View style={{ flexGrow: 1 }}>
-                      <RichEditor
-                        ref={editorRef}
-                        initialContentHTML={inputText}
-                        onChange={setInputText}
-                        placeholder="내용"
-                        initialHeight={100}
-                        useContainer={true}
-                        onCursorPosition={handleCursorPosition}
-                        disabled={true}
-                      />
-                    </View>
-                    {!(detailphoto == undefined) ? (
-                      <View style={{ alignItems: 'center' }}>
-                        <ImageCarousel
-                          images={detailphoto}
-                          setFormImages={() => { }}
-                          max={5}
-                          originalSize
-                          originalHeight={(width - 32) / 2}
-                          originalWidth={(width - 32) / 2}
-                          unTouchable
-                        />
-                      </View>
-                    ) : (
-                      <></>
-                    )}
-                  </ScrollView>
-                </FillerSection>
-              </View>
-            ) : (
-              // 아직 안 썼으면 아래 노출
-              <View
-                style={{
-                  padding: 10,
-                  borderBottomWidth: 3,
-                  borderBottomColor: '#dcdcdc',
-                  flex: 1,
-                }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Body16B style={{ margin: 10 }}>서비스 상세</Body16B>
-                  <Subtitle18B style={{ color: PURPLE, marginLeft: '-1%' }}>
-                    *{' '}
-                  </Subtitle18B>
-                  <TouchableOpacity
-                    onPress={() => {
-                      setIsOpen(true);
-                    }}>
-                    <Help />
-                  </TouchableOpacity>
-                </View>
-                <FillerSection
-                  style={{
-                    borderWidth: 2,
-                    borderColor: BLACK2,
-                    backgroundColor: '#FFF',
-                  }}>
-                  <UploadButton
-                    onPress={handleNavigate}
-                    style={{ backgroundColor: '#dcdcdc' }}>
-                    <Subtitle16B>작성하기</Subtitle16B>
-                  </UploadButton>
-                </FillerSection>
-              </View>
-            )}
+            {ServiceDetailSection()}
+            {/* 서비스 상세 작성하기 섹션  */}
             <View style={{ flex: 1 }}>
               <View
                 style={{
@@ -1490,6 +1384,122 @@ const ServiceRegistrationPage = ({
         ))}
       </SafeAreaView>
     );
+  }
+
+  function ServiceDetailSection() {
+    return (
+      <View>
+        {!(inputText == '') ? ( // 서비스 상세 있으면 노출
+          <View
+            style={{
+              padding: 10,
+              borderBottomWidth: 3,
+              borderBottomColor: '#dcdcdc',
+              flex: 1,
+            }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Body16B style={{ margin: 10 }}>서비스 상세</Body16B>
+                <Subtitle18B style={{ color: PURPLE, marginLeft: '-1%' }}>
+                  *{' '}
+                </Subtitle18B>
+                <TouchableOpacity
+                  onPress={() => {
+                    setIsOpen(true);
+                  }}>
+                  <Help />
+                </TouchableOpacity>
+              </View>
+              <View>
+                <TouchableOpacity onPress={handleNavigate}>
+                  <Body16B style={{ color: '#612FEF', margin: 10 }}>
+                    수정하기
+                  </Body16B>
+                </TouchableOpacity>
+              </View>
+            </View>
+            <FillerSection
+              style={{
+                borderWidth: 2,
+                borderColor: BLACK2,
+                backgroundColor: '#FFF',
+              }}>
+              <ScrollView
+                bounces={false}
+                overScrollMode="never"
+                style={{ margin: 5 }}>
+                <View style={{ flexGrow: 1 }}>
+                  <RichEditor
+                    ref={editorRef}
+                    initialContentHTML={inputText}
+                    onChange={setInputText}
+                    placeholder="내용"
+                    initialHeight={100}
+                    useContainer={true}
+                    onCursorPosition={handleCursorPosition}
+                    disabled={true}
+                  />
+                </View>
+                {!(detailphoto == undefined) ? (
+                  <View style={{ alignItems: 'center' }}>
+                    <ImageCarousel
+                      images={detailphoto}
+                      setFormImages={() => { }}
+                      max={5}
+                      originalSize
+                      originalHeight={(width - 32) / 2}
+                      originalWidth={(width - 32) / 2}
+                      unTouchable
+                    />
+                  </View>
+                ) : (
+                  <></>
+                )}
+              </ScrollView>
+            </FillerSection>
+          </View>
+        ) : (
+          // 아직 안 썼으면 아래 노출
+          <View
+            style={{
+              padding: 10,
+              borderBottomWidth: 3,
+              borderBottomColor: '#dcdcdc',
+              flex: 1,
+            }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Body16B style={{ margin: 10 }}>서비스 상세</Body16B>
+              <Subtitle18B style={{ color: PURPLE, marginLeft: '-1%' }}>
+                *{' '}
+              </Subtitle18B>
+              <TouchableOpacity
+                onPress={() => {
+                  setIsOpen(true);
+                }}>
+                <Help />
+              </TouchableOpacity>
+            </View>
+            <FillerSection
+              style={{
+                borderWidth: 2,
+                borderColor: BLACK2,
+                backgroundColor: '#FFF',
+              }}>
+              <UploadButton
+                onPress={handleNavigate}
+                style={{ backgroundColor: '#dcdcdc' }}>
+                <Subtitle16B>작성하기</Subtitle16B>
+              </UploadButton>
+            </FillerSection>
+          </View>
+        )}
+      </View>
+    )
   }
 
   function addOptionSection() {

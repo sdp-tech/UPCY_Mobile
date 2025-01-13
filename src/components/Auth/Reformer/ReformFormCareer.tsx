@@ -183,16 +183,17 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
       nickname: updatedForm.nickname,
       introduce: updatedForm.introduce,
     }
-    try { // TODO: 마켓 정보도 수정하기: 소개글, 링크, 닉네임 등 
+    try { // 자기소개, 닉네임 업데이트
       const response = await request.put(`/api/user`, params, headers);
       if (response && response.status === 200) {
         try {
           const marketUUID = await getMarketUUID();
           const params_ = {
-            market_name: updatedForm.nickname,
-            market_address: updatedForm.link,
-            market_introduce: updatedForm.introduce,
-          }
+            //nickname: updatedForm.nickname,
+            reformer_link: updatedForm.link,
+            reformer_area: updatedForm.region,
+            //introduce: updatedForm.introduce,
+          } // 리포머 정보 업데이트하기:  링크, 지역
           const response2 = await request.put(`/api/market/${marketUUID}`, params_, headers)
           if (response2 && response2.status === 200) {
             console.log('마켓 정보 업데이트 성공: ', updatedForm.nickname, updatedForm.link, updatedForm.introduce);
@@ -860,7 +861,6 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
 
   const waitFetch = async () => {
     await fetchLink();
-    await fetchIntro();
     await fetchImage();
   }
 
@@ -894,32 +894,12 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
     }
   }
 
-  const fetchIntro = async () => {
-    const accessToken = await getAccessToken();
-    const headers = {
-      Authorization: `Bearer ${accessToken}`
-    };
-    try {
-      const response = await request.get(`/api/user`, {}, headers);
-      if (response && response.status === 200) {
-        setForm(prev => {
-          return { ...prev, introduce: response.data.introduce }
-        })
-        console.log('자기소개 패치:', response.data.introduce)
-      } else {
-        console.log('자기소개 패치 실패:', response);
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
   const fetchLink = async () => {
     const accessToken = await getAccessToken();
     const headers = {
       Authorization: `Bearer ${accessToken}`
     };
-    try { // 링크, 지역
+    try { // 링크, 지역, 자기소개
       const response = await request.get(`/api/user/reformer`, {}, headers);
       if (response && response.status === 200) {
         const data = response.data;
@@ -981,6 +961,7 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
         // 기존 form.field에 새로운 데이터 추가
         setForm(prevForm => ({
           ...prevForm,
+          introduce: data.introduce || prevForm.introduce,
           nickname: data.nickname || prevForm.nickname,
           link: data.reformer_link || prevForm.link,
           region: data.reformer_area || prevForm.region,

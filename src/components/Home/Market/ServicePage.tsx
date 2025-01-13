@@ -43,7 +43,7 @@ const ServicePage: React.FC<ServicePageProps> = ({
         setItems(marketResult);
       } else {
         setError('서비스를 불러오는 데 실패했습니다.');
-        Alert.alert('오류가 발생했습니다.');
+        Alert.alert('ServicePage.tsx에서 오류가 발생했습니다.');
       }
     } catch (error) {
       console.error(error);
@@ -101,22 +101,21 @@ const ServicePage: React.FC<ServicePageProps> = ({
             market_uuid={marketUuid || ''}
             service_uuid={item.service_uuid || ''}
             service_period={item.service_period || undefined}
-            service_materials={
-              Array.isArray(item.service_material)
-                ? item.service_material.map(material => ({
-                    material_uuid: material.material_uuid || '',
-                    material_name: material.material.name || '',
-                  }))
-                : []
+            service_materials={Array.isArray(item.service_material)
+              ? item.service_material.map(material => ({
+                material_uuid: material.material_uuid || '',
+                material_name: material.material_name || ''
+              }))
+              : []
             }
             service_options={
               Array.isArray(item.service_option)
                 ? item.service_option.map(option => ({
-                    option_content: option.option_content || '',
-                    option_name: option.option_name || '',
-                    option_price: option.option_price || '',
-                    option_uuid: option.option_uuid || '',
-                  }))
+                  option_content: option.option_content || '',
+                  option_name: option.option_name || '',
+                  option_price: option.option_price || '',
+                  option_uuid: option.option_uuid || '',
+                }))
                 : []
             }
             suspended={item.suspended}

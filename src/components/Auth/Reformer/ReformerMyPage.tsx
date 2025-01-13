@@ -66,7 +66,7 @@ export const ReformerMyPageScreen = ({
         <DetailScreenHeader
           title=""
           leftButton="CustomBack"
-          onPressLeft={() => {}}
+          onPressLeft={() => { }}
           rightButton="Fix"
           onPressRight={openModal}
         />
@@ -106,8 +106,8 @@ export const ReformerMyPageScreen = ({
                 picture
                   ? { uri: picture.uri } // 유효한 URL이면 그대로 사용
                   : {
-                      uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
-                    } // 기본 이미지 URL 사용
+                    uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
+                  } // 기본 이미지 URL 사용
               }
               alt={picture.fileName}
             />
@@ -160,10 +160,10 @@ export const ReformerMyPageScreen = ({
   const [reformerResponseData, setReformerResponseData] =
     useState<ReformerResponseType>(defaultReformerResponseData);
   const [marketData, setMarketData] = useState<MarketType>({
-    reformer_link: '', // 링크
-    market_introduce: '정보 없음', // 자기소개
-    market_name: '정보 없음', // 닉네임
-    market_thumbnail: '', // 왜 안 나오지...? 원래없나
+    reformer_link: '', // 링크 
+    market_introduce: '정보 없음', // 자기소개 
+    nickname: '정보 없음', // 닉네임 
+    market_thumbnail: '', // 왜 안 나오지...? 원래없나 
     market_uuid: '',
     reformer_area: '??',
   });
@@ -185,8 +185,6 @@ export const ReformerMyPageScreen = ({
       'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
     introduce: route.params?.introduce || '',
     role: 'reformer',
-    link: route.params?.link || '',
-    region: route.params?.region || '',
   });
 
   useEffect(() => {
@@ -227,8 +225,6 @@ export const ReformerMyPageScreen = ({
             response.data.introduce ||
             '나는야 업씨러 이하늘 환경을 사랑하지요 눈누난나',
           role: 'reformer',
-          link: response.data.address,
-          region: response.data.reformer_area || '',
         });
         // setNickname(response.data.nickname);
         try {
@@ -239,7 +235,6 @@ export const ReformerMyPageScreen = ({
             setMarketResponseData(marketResult);
             fetchMarketData({
               market_introduce: marketResult.market_introduce,
-              market_name: marketResult.market_name,
               market_thumbnail: marketResult.market_thumbnail || '', // 기본값 유지
               market_uuid: marketResult.market_uuid,
             });
@@ -255,6 +250,7 @@ export const ReformerMyPageScreen = ({
                 const reformerResult: ReformerResponseType = response3.data;
                 setReformerResponseData(reformerResult);
                 fetchMarketData({
+                  nickname: reformerResult.nickname,
                   reformer_link: reformerResult.reformer_link,
                   reformer_area: reformerResult.reformer_area,
                   education: reformerResult.education,
@@ -310,7 +306,7 @@ export const ReformerMyPageScreen = ({
       '로그아웃 하시겠습니까?',
       '',
       [
-        { text: '아니오', onPress: () => {}, style: 'destructive' },
+        { text: '아니오', onPress: () => { }, style: 'destructive' },
         { text: '네', onPress: Logout },
       ],
       { cancelable: false },
@@ -362,7 +358,7 @@ export const ReformerMyPageScreen = ({
       '정말로 계정을 삭제 하시겠습니까? 되돌릴 수 없습니다.',
       '',
       [
-        { text: '아니오', onPress: () => {}, style: 'destructive' },
+        { text: '아니오', onPress: () => { }, style: 'destructive' },
         { text: '네', onPress: () => handleDeleteAccountConfirm(password) }, // 별도의 함수 호출
       ],
       { cancelable: false },
@@ -469,6 +465,7 @@ export const ReformerMyPageScreen = ({
           <InfoPage marketData={marketData} />
         </Tabs.Tab>
         <Tabs.Tab name="서비스" key="service">
+          {/* TODO: 임시저장 목록 보는 버튼 만들기 */}
           {/*<TouchableOpacity
               style={styles.saveButton}
               onPress={() => navigation.navigate('TempStorage')}>

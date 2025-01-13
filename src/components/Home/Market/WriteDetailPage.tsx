@@ -7,6 +7,7 @@ import { useBottomBar } from '../../../../contexts/BottomBarContext';
 import ImageCarousel from '../../../common/ImageCarousel';
 import { PhotoType } from '../../../hooks/useImagePicker';
 import { MyPageStackParams } from '../../../pages/MyPage';
+import React from 'react';
 
 
 const { width, height } = Dimensions.get('window');
@@ -16,7 +17,7 @@ const WriteDetailPage = ({ navigation, route }: StackScreenProps<MyPageStackPara
   const { inputText } = route.params; // route 파라미터 전달받아옴 
   const { detailphoto } = route.params;
   const [localInput, setLocalInput] = useState(inputText); // 로컬변수 지정 
-  const [d_photoadded, setD_Photoadded] = useState<boolean>(true);
+  const [d_photoadded, setD_Photoadded] = useState<boolean>(false);
   const [d_detailphoto, setDetailPhoto] = useState<PhotoType[]>(detailphoto ? detailphoto : []);
   // 사진 삽입한 상태면 그거 그대로 보여줌 
   const { hideBottomBar, showBottomBar } = useBottomBar();
@@ -82,13 +83,12 @@ const WriteDetailPage = ({ navigation, route }: StackScreenProps<MyPageStackPara
           useContainer={true}
           onCursorPosition={handleCursorPosition}
         />
-        {d_photoadded ?
-          (
-            <View style={{ marginBottom: 200 }}>
-              <ImageCarousel images={d_detailphoto} setFormImages={setDetailPhoto} max={5}
-                originalSize originalHeight={width - 32} originalWidth={width - 32} />
-            </View>)
-          : (<></>)}
+        {d_photoadded &&
+          <View style={{ marginBottom: 200 }}>
+            <ImageCarousel images={d_detailphoto} setFormImages={setDetailPhoto} max={5}
+              originalSize originalHeight={width - 32} originalWidth={width - 32} />
+          </View>
+        }
 
       </ScrollView>
     </SafeAreaView>
