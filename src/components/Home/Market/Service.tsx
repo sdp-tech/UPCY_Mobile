@@ -65,7 +65,6 @@ export type ServiceResponseType = {
   service_category: string;
   service_content: string;
   service_image: any[];
-  service_option_images: any[];
   service_material: any[];
   service_option: any[];
   service_period: number;
@@ -122,7 +121,7 @@ const EntireServiceMarket = ({
       const response = await request.get(`/api/market/services`, {}, {});
       if (response && response.status === 200) {
         const serviceListResults: ServiceResponseType[] = response.data.results;
-        //console.log(serviceListResults);
+        console.log(serviceListResults[0].service_option);
         setServiceCardRawData(serviceListResults);
         const extractedServiceCardData = extractData(serviceListResults);
         setServiceCardData(extractedServiceCardData);
