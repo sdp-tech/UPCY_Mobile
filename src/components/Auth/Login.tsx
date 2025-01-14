@@ -141,15 +141,17 @@ export async function processLoginResponse( // 통상 로그인시 호출 함수
           try {
             const response = await request.get(`/api/market`, {}, headers)
             if (response.status && response.status === 200) {
-              setMarketUUID(response.data[0].market_uuid);
+              setMarketUUID(response.data.market_uuid);
+              console.log('processLogin에서:', response.data.market_uuid)
             } else {
-              console.log(response);
+              console.log('processLogin에서 MarketUUID 저장 실패:', response);
             }
           } catch (error) {
             console.error(error);
           }
-
         }
+      } else {
+        console.log('processLogin에서 유저롤 설정 오류')
       }
     } catch (err) {
       console.log(err);

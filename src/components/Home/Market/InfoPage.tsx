@@ -3,27 +3,35 @@ import { View, StyleSheet } from 'react-native';
 import { Tabs } from 'react-native-collapsible-tab-view';
 import styled from 'styled-components/native';
 import { Body14R, Body16B } from '../../../styles/GlobalText';
-import { AwardsType, CareerType, CertifiType, EducType, FreeType } from '../../../types/UserTypes';
+import {
+  AwardsType,
+  CareerType,
+  CertifiType,
+  EducType,
+  FreeType,
+} from '../../../types/UserTypes';
 
 // 개별 마켓 페이지 누르면 보이는 '프로필' 탭에 있는 페이지임!
 type InfoPageDataType = {
   label: string;
   data: any;
 };
+
 export type MarketType = {
-  market_address?: string;
   reformer_link?: string, // 링크 
-  market_introduce: string, // 자기소개 
-  market_name: string, // 닉네임 
+  market_introduce: string, // 자기소개
+  // TODO: introduce로 수정하기 
+  reformer_nickname?: string, // 닉네임 
   market_thumbnail: string, // ???
-  market_uuid: string, // market_uuid
+  market_uuid?: string, // market_uuid
   reformer_area?: string; // 주요 활동지역 
   education?: EducType;
   certification?: CertifiType;
   awards?: AwardsType;
   career?: CareerType;
   freelancer?: FreeType;
-}
+};
+
 const InfoPage = ({ marketData }: { marketData: MarketType }) => {
   // const data = [
   //   {
@@ -46,7 +54,7 @@ const InfoPage = ({ marketData }: { marketData: MarketType }) => {
   // 개별 경력 데이터를 포맷팅
   const formatCareerItem = (category: string, items: any[]) => {
     if (!items || items.length === 0) return []; // items가 비어있으면 빈 배열 반환
-    return items.map((item) => {
+    return items.map(item => {
       switch (category) {
         case 'awards':
           return `${item.competition} ${item.prize}`;
