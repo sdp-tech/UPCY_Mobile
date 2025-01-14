@@ -1,7 +1,10 @@
 // DetailBox component without the tab
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, Button, Dimensions } from 'react-native';
 import RenderHTML from 'react-native-render-html';
-import { MaterialDetail, ServiceDetailOption } from './Service';
+import { defaultImageUri, MaterialDetail, ServiceDetailOption, } from './Service';
+import { useState } from 'react';
+
+const { width, } = Dimensions.get("window");
 
 function convertPeriod(period: number) {
   let localPeriod: string = '';
@@ -34,11 +37,24 @@ const PeriodBox = ({ period }: { period: number }) => {
   );
 };
 
-const ContentBox = ({ content }: { content: string }) => {
+const ContentBox = ({ content, imageUris }: { content: string; imageUris: { image: string }[] }) => {
+  const [imageHeights, setImageHeights] = useState<number[]>([]);
+
+  // const handleImageLoad = (index: number, width: number, height: number) => {
+  //   // 이미지 비율에 따라 동적 높이 계산
+  //   const aspectRatio = height / width;
+  //   const adjustedHeight = width * aspectRatio; // 화면 너비 기준 높이 계산
+  //   setImageHeights((prev: any) => {
+  //     const newHeights = [...prev];
+  //     newHeights[index] = adjustedHeight;
+  //     return newHeights;
+  //   });
+  // };
+
   return (
     <View style={styles.eachBox}>
       <View style={styles.contentLine}>
-        <Text style={TextStyles.eachLabel}>서비스 상세</Text>
+        <Text style={styles.eachLabel}>서비스 상세</Text>
         <View style={{ paddingHorizontal: 16, paddingBottom: 8 }}>
           <RenderHTML
             contentWidth={350}
@@ -51,8 +67,34 @@ const ContentBox = ({ content }: { content: string }) => {
               maxWidth: 370,
             }}
           />
-          {/* TODO: 서비스 상세에 있는 사진들 받아오기  */}
         </View>
+
+        {/* 이미지 렌더링 */}
+        {imageUris && imageUris.length > 1 && (
+          <View style={{ paddingHorizontal: 16, marginTop: 16 }}>
+            {imageUris.slice(1).map((uriObj, index) => (
+              <Image
+                key={index}
+                style={{
+                  width: width - 32, // 좌우 padding (16 + 16)을 제외한 너비
+                  height: undefined, // 높이가 계산되기 전 기본값 200
+                  aspectRatio: 1, // 초기 비율
+                  marginBottom: 16,
+                  borderRadius: 8,
+                  resizeMode: 'cover',
+                }}
+                source={{ uri: uriObj.image }}
+                onLoad={(e) => {
+                  const { width: imgWidth, height: imgHeight } = e.nativeEvent.source;
+                  const aspectRatio = imgWidth / imgHeight;
+                  e.target.setNativeProps({
+                    style: { aspectRatio }, // 비율 동적 적용
+                  });
+                }}
+              />
+            ))}
+          </View>
+        )}
       </View>
     </View>
   );
@@ -79,7 +121,7 @@ const MaterialBox = ({ list }: { list: MaterialDetail[] }) => {
   );
 };
 
-const OptionBox = ({ list }: { list: ServiceDetailOption[] }) => {
+const OptionBox = ({ list, }: { list: ServiceDetailOption[], }) => {
   return (
     <View style={styles.eachBox}>
       <Text style={TextStyles.eachLabel}>옵션 상세</Text>
@@ -104,6 +146,7 @@ const OptionBox = ({ list }: { list: ServiceDetailOption[] }) => {
               </View>
               <View style={{
                 flexDirection: 'row',
+                gap: 14,
               }}>
                 <View
                   style={{
@@ -116,14 +159,19 @@ const OptionBox = ({ list }: { list: ServiceDetailOption[] }) => {
                     {option.option_content}
                   </Text>
                 </View>
-                <Image
-                  style={{ width: 50, height: 50, flexGrow: 0.2 }}
-                  source={{ uri: option.option_photoUri }}
-                />
+                {(Array.isArray(option.service_option_image) && option.service_option_image.length > 0) &&
+                  <Image
+                    style={{ width: 50, height: 100, flexGrow: 0.4 }}
+                    source={{
+                      uri: option.service_option_image[0].image
+                    }}
+                  />
+                }
               </View>
             </View>
           );
         })}
+        <Button title='test' onPress={() => { console.log('service_option_image:', list); }} />
       </View>
     </View>
   );
@@ -134,6 +182,7 @@ type DetailBox2Props = {
   serviceMaterials?: MaterialDetail[];
   serviceContent: string;
   serviceOptions?: ServiceDetailOption[];
+  imageUris: any[];
   marketUuid: string;
 };
 
@@ -142,12 +191,13 @@ const DetailBox2 = ({
   serviceMaterials,
   serviceContent,
   serviceOptions,
+  imageUris,
   marketUuid,
 }: DetailBox2Props) => {
   return (
     <View>
       <PeriodBox period={servicePeriod} />
-      <ContentBox content={serviceContent} />
+      <ContentBox content={serviceContent} imageUris={imageUris} />
       {serviceMaterials && serviceMaterials.length > 0 && (
         <MaterialBox list={serviceMaterials ?? []} />
       )}
@@ -163,6 +213,14 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     borderBottomWidth: 1,
     borderColor: '#dcdcdc',
+    paddingVertical: 8,
+  },
+  eachLabel: {
+    color: '#222222',
+    fontSize: 16,
+    fontWeight: '600',
+    lineHeight: 24,
+    paddingHorizontal: 16,
     paddingVertical: 8,
   },
   materialBox: {

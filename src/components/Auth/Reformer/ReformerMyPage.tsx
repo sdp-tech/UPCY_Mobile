@@ -19,34 +19,42 @@ import {
 import { Tabs, MaterialTabBar } from 'react-native-collapsible-tab-view';
 import { BLACK } from '../../../styles/GlobalColor.tsx';
 import ServicePage from '../../../components/Home/Market/ServicePage';
-import InfoPage, { MarketType } from '../../../components/Home/Market/InfoPage.tsx';
+import InfoPage, {
+  MarketType,
+} from '../../../components/Home/Market/InfoPage.tsx';
 import ScrollTopButton from '../../../common/ScrollTopButton.tsx';
 import { LoginContext } from '../../../common/Context';
 import DetailScreenHeader from '../../../components/Home/components/DetailScreenHeader.tsx';
 import { PhotoType } from '../../../hooks/useImagePicker.ts';
 import Request from '../../../common/requests.js';
 import { MypageStackProps } from '../../../pages/MyPage.tsx';
-import { getAccessToken, getMarketUUID, getNickname, getRefreshToken, getUserRole, removeAccessToken, removeRefreshToken, setNickname, setUserRole } from '../../../common/storage.js';
+import {
+  getAccessToken,
+  getMarketUUID,
+  getRefreshToken,
+  getUserRole,
+  removeAccessToken,
+  removeMarketUUID,
+  removeRefreshToken,
+  // setNickname,
+  setUserRole,
+} from '../../../common/storage.js';
 import { CommonActions, useFocusEffect } from '@react-navigation/native';
 import { Title20B } from '../../../styles/GlobalText.tsx';
 import DeleteModal from '../DeleteModal.tsx';
 import { MarketResponseType } from '../../Home/Market/MarketTabView.tsx';
-import { AwardsType, CareerType, CertifiType, EducType, FreeType, ReformerResponseType } from '../../../types/UserTypes.ts';
+import { ReformerResponseType } from '../../../types/UserTypes.ts';
 
-export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) => {
-
+export const ReformerMyPageScreen = ({
+  navigation,
+  route,
+}: MypageStackProps) => {
   const ProfileSection = ({
     nickname,
-    backgroundphoto,
     picture,
-    editProfile,
-    introduce,
   }: {
     nickname: string;
-    backgroundphoto: any;
     picture: PhotoType;
-    editProfile: any;
-    introduce: string;
   }) => {
     const { width, height } = Dimensions.get('screen');
     return (
@@ -59,7 +67,13 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
           onPressRight={openModal}
         />
         <View>
-          <View style={{ width: width, height: height * 0.11, backgroundColor: '#E9EBF8' }} />
+          <View
+            style={{
+              width: width,
+              height: height * 0.11,
+              backgroundColor: '#E9EBF8',
+            }}
+          />
           {picture === undefined || picture.uri === undefined ? ( // 전자는 편집페이지에서 사진 삭제했을 경우, 후자는 가장 처음에 로딩될 경우
             <Image
               style={{
@@ -96,8 +110,22 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
           )}
         </View>
         <Title20B style={{ marginTop: height * 0.06 }}>{nickname}</Title20B>
-        <View style={{ backgroundColor: "#E9EBF8", borderRadius: 20, paddingVertical: height * 0.005, paddingHorizontal: height * 0.012, marginTop: height * 0.02 }}>
-          <Text style={{ color: "#612FEF", fontSize: width * 0.03, fontWeight: "600" }}>리폼러</Text>
+        <View
+          style={{
+            backgroundColor: '#E9EBF8',
+            borderRadius: 20,
+            paddingVertical: height * 0.005,
+            paddingHorizontal: height * 0.012,
+            marginTop: height * 0.02,
+          }}>
+          <Text
+            style={{
+              color: '#612FEF',
+              fontSize: width * 0.03,
+              fontWeight: '600',
+            }}>
+            리폼러
+          </Text>
         </View>
       </View>
     );
@@ -106,58 +134,51 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
   const [activeTab, setActiveTab] = useState('profile');
   const scrollRef = useRef<ScrollView | null>(null);
   const defaultMarketResponseData: MarketResponseType = {
-    market_address: '', // 링크 
-    market_introduce: '정보 없음', // 자기소개 
-    market_name: '정보 없음', // 닉네임 
-    market_thumbnail: '', // 왜 안 나오지...? 원래없나 
+    market_address: '', // 링크
+    market_introduce: '정보 없음', // 자기소개
+    market_name: '정보 없음', // 닉네임
+    market_thumbnail: '', // 왜 안 나오지...? 원래없나
     market_uuid: '',
   };
   const defaultReformerResponseData: ReformerResponseType = {
-    nickname: '', // 닉네임 
-    reformer_link: '', // 자기소개 
-    reformer_area: '', // 활동지역 
+    reformer_nickname: '', // 닉네임
+    reformer_link: '', // 자기소개
+    reformer_area: '', // 활동지역
     education: [], // 학력
-    certification: [], // 자격증 
-    awards: [], // 공모전 
-    career: [], // 경력 
-    freelancer: [] // 외주 
-  }
-
-
-  const [marketResponseData, setMarketResponseData] = useState<MarketResponseType>(
-    defaultMarketResponseData,
-  );
-  const [reformerResponseData, setReformerResponseData] = useState<ReformerResponseType>(defaultReformerResponseData,);
+    certification: [], // 자격증
+    awards: [], // 공모전
+    career: [], // 경력
+    freelancer: [], // 외주
+  };
+  const [loading, setLoading] = useState(true); // 로딩 상태 추가
+  const [marketResponseData, setMarketResponseData] =
+    useState<MarketResponseType>(defaultMarketResponseData);
+  const [reformerResponseData, setReformerResponseData] =
+    useState<ReformerResponseType>(defaultReformerResponseData);
   const [marketData, setMarketData] = useState<MarketType>({
     reformer_link: '', // 링크 
-    market_introduce: '정보 없음', // 자기소개 
-    market_name: '정보 없음', // 닉네임 
+    market_introduce: '정보 없음', // TODO: 이거 introduce로 수정하기 
+    reformer_nickname: '정보 없음', // 닉네임 
     market_thumbnail: '', // 왜 안 나오지...? 원래없나 
     market_uuid: '',
     reformer_area: '??',
-  })
+  });
   const fetchMarketData = (data: Partial<MarketType>) => {
-
-    setMarketData((prev) => ({
+    setMarketData(prev => ({
       ...prev, // 기존 데이터를 유지
       ...data, // 새로운 데이터로 업데이트
     }));
-
   };
 
   const request = Request();
   const { isLogin, setLogin } = useContext(LoginContext);
   const [reformerInfo, setReformerInfo] = useState({
     nickname: route.params?.nickname || '',
-    backgroundphoto:
-      'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
     picture:
       route.params?.picture ||
       'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
-    introduce: route.params?.introduce || '',
+
     role: 'reformer',
-    link: route.params?.link || '',
-    region: route.params?.region || '',
   });
 
   useEffect(() => {
@@ -172,7 +193,8 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     };
-    try { // 닉네임, 소개글, 이미지 가져오는 로직 
+    try {
+      // 닉네임, 소개글, 이미지 가져오는 로직
       const response = await request.get(`/api/user`, {}, headers);
       const encodedUrl = encodeURI(response.data.profile_image_url);
       const decodedUri = decodeURIComponent(encodedUrl);
@@ -188,35 +210,37 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
         console.log('User data fetched successfully:', response.data);
         setReformerInfo({
           nickname: response.data.nickname,
-          // 우선 기본이미지
-          backgroundphoto:
-            'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
           picture: profileImage,
-          introduce:// 근데 이거 안씀 
-            response.data.introduce ||
-            '나는야 업씨러 이하늘 환경을 사랑하지요 눈누난나',
           role: 'reformer',
-          link: response.data.address,
         });
         // setNickname(response.data.nickname);
-        try { // 본인 마켓 정보 가져오기: 링크, 자기소개, 닉네임, uuid
+        try {
+          // 본인 마켓 정보 가져오기: 링크, 자기소개, 닉네임, uuid
           const response2 = await request.get(`/api/market`, {}, headers);
           if (response2 && response2.status === 200) {
             const marketResult: MarketResponseType = response2.data;
             setMarketResponseData(marketResult);
+            const marketUUID = await getMarketUUID();
             fetchMarketData({
               market_introduce: marketResult.market_introduce,
-              market_name: marketResult.market_name,
               market_thumbnail: marketResult.market_thumbnail || '', // 기본값 유지
-              market_uuid: marketResult.market_uuid,
+              market_uuid: marketUUID || '',
             });
             console.log('마켓 정보 가져오기 성공', response2.data);
-            try { // reformer 정보 가져오기: 활동지역, 경력사항들 
-              const response3 = await request.get(`/api/user/reformer`, {}, headers);
+            try {
+              // reformer 정보 가져오기: 활동지역, 경력사항들
+              const response3 = await request.get(
+                `/api/user/reformer`,
+                {},
+                headers,
+              );
               if (response3 && response3.status === 200) {
                 const reformerResult: ReformerResponseType = response3.data;
                 setReformerResponseData(reformerResult);
                 fetchMarketData({
+                  reformer_nickname: reformerResult.reformer_nickname,
+                  //TODO: 의종님이 api 수정하시면 여기서 자기소개 받도록 수정하기
+                  //introduce: reformerResult.introduce,
                   reformer_link: reformerResult.reformer_link,
                   reformer_area: reformerResult.reformer_area,
                   education: reformerResult.education,
@@ -247,14 +271,15 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
     } catch (error) {
       console.error('Error fetching user data:', error);
       return null;
+    } finally {
+      setLoading(false); // 로딩 상태 해제
     }
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      getProfile();
-    }, []),
-  );
+  useEffect(() => {
+    getProfile(); // 페이지가 처음 마운트될 때만 실행
+    console.log('debug:', marketData);
+  }, []);
 
   const [modalVisible, setModalVisible] = useState(false);
   const openModal = () => setModalVisible(true);
@@ -262,20 +287,20 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
 
   const handleEdit = () => {
     closeModal();
-    navigation.navigate('FixMyPage', { reformerInfo })
-    console.log('수정 페이지로 이동')
-  }
+    navigation.navigate('FixMyPage', { reformerInfo });
+    console.log('수정 페이지로 이동');
+  };
 
   const handleLogout = () => {
     closeModal();
     Alert.alert(
-      "로그아웃 하시겠습니까?",
-      "",
+      '로그아웃 하시겠습니까?',
+      '',
       [
-        { text: "아니오", onPress: () => { }, style: "destructive" },
-        { text: "네", onPress: Logout }
+        { text: '아니오', onPress: () => { }, style: 'destructive' },
+        { text: '네', onPress: Logout },
       ],
-      { cancelable: false }
+      { cancelable: false },
     );
   };
 
@@ -284,15 +309,15 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
     const accessToken = await getAccessToken();
     const refreshToken = await getRefreshToken();
     const params = {
-      refresh: refreshToken
-    }
+      refresh: refreshToken,
+    };
     const headers = {
-      Authorization: `Bearer ${accessToken}`
-    }
+      Authorization: `Bearer ${accessToken}`,
+    };
     try {
-      const response = await request.post(`/api/user/logout`, params, headers)
+      const response = await request.post(`/api/user/logout`, params, headers);
       if (response && response.status === 200) {
-        console.log('로그아웃 합니다.')
+        console.log('로그아웃 합니다.');
         removeAccessToken();
         removeRefreshToken();
         setLogin(false);
@@ -301,32 +326,33 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
 
         navigation.dispatch(
           CommonActions.navigate({
-            name: "Main",
+            name: 'Main',
             params: {
-              screen: "UPCY", // MainTabNavigator의 홈 화면으로 이동
+              screen: 'UPCY', // MainTabNavigator의 홈 화면으로 이동
             },
-          })
+          }),
         );
-        console.log('AccessToken: ', { accessToken }, '| RefreshToken: ', { refreshToken });
+        console.log('AccessToken: ', { accessToken }, '| RefreshToken: ', {
+          refreshToken,
+        });
       } else {
         console.log(response);
       }
-    }
-    catch (err) {
-      console.error(err)
+    } catch (err) {
+      console.error(err);
     }
   };
 
   const handleDeleteAccount = (password: string) => {
     closeModal();
     Alert.alert(
-      "정말로 계정을 삭제 하시겠습니까? 되돌릴 수 없습니다.",
-      "",
+      '정말로 계정을 삭제 하시겠습니까? 되돌릴 수 없습니다.',
+      '',
       [
-        { text: "아니오", onPress: () => { }, style: "destructive" },
-        { text: "네", onPress: () => handleDeleteAccountConfirm(password) } // 별도의 함수 호출
+        { text: '아니오', onPress: () => { }, style: 'destructive' },
+        { text: '네', onPress: () => handleDeleteAccountConfirm(password) }, // 별도의 함수 호출
       ],
-      { cancelable: false }
+      { cancelable: false },
     );
   };
 
@@ -339,7 +365,8 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
     }
   };
 
-  const DeleteAccout = async (password: string) => { // 수정 필요
+  const DeleteAccout = async (password: string) => {
+    // 수정 필요
     const accessToken = await getAccessToken();
     const refreshToken = await getRefreshToken();
     const headers = {
@@ -352,17 +379,22 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
       if (response && response.status === 200) {
         console.log('리폼러 삭제 성공');
         try {
-          const response = await request.del(`/api/user`, { password: password }, headers);
+          const response = await request.del(
+            `/api/user`,
+            { password: password },
+            headers,
+          );
           if (response && response.status === 200) {
             console.log('계정 삭제 완료');
             removeAccessToken();
             removeRefreshToken();
+            removeMarketUUID();
             setLogin(false);
             navigation.dispatch(
               CommonActions.reset({
                 index: 0,
                 routes: [{ name: 'Main', params: { screen: 'UPCY' } }],
-              })
+              }),
             );
           } else {
             console.log('계정 삭제 실패:', response.data);
@@ -379,72 +411,81 @@ export const ReformerMyPageScreen = ({ navigation, route }: MypageStackProps) =>
       console.error('Error deleting account:', error);
       Alert.alert('오류', '계정 삭제에 실패했습니다.');
     }
-
-  }
+  };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <Tabs.Container
-        renderHeader={props => (
-          <ProfileSection
-            nickname={reformerInfo.nickname}
-            backgroundphoto={reformerInfo.backgroundphoto}
-            picture={reformerInfo.picture}
-            editProfile={() => navigation.navigate('FixMyPage', { reformerInfo })}
-            introduce={reformerInfo.introduce}
-          />
-        )}
-        headerContainerStyle={{
-          shadowOpacity: 0,
-          borderBottomWidth: 1,
-          borderColor: '#D9D9D9',
-        }}
-        onIndexChange={index =>
-          setActiveTab(index === 0 ? 'profile' : 'service')
-        }
-        renderTabBar={props => (
-          <MaterialTabBar
-            {...props}
-            indicatorStyle={{
-              backgroundColor: '#BDBDBD',
-              height: 2,
-            }}
-            style={{
-              backgroundColor: 'white',
-            }}
-            labelStyle={{
-              color: BLACK,
-              fontWeight: '700',
-              fontSize: 16,
-            }}
-          />
-        )}>
-        <Tabs.Tab name="프로필" key="profile">
-          {/* FIXME */}
-          <InfoPage
-            marketData={marketData}
-          />
-        </Tabs.Tab>
-        <Tabs.Tab name="서비스" key="service">
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <Text style={styles.loadingText}>Loading...</Text>
+        </View>
+      ) : (
+        <Tabs.Container
+          renderHeader={() => (
+            <ProfileSection
+              nickname={reformerInfo.nickname}
+              picture={reformerInfo.picture}
+            />
+          )}
+          headerContainerStyle={{
+            shadowOpacity: 0,
+            borderBottomWidth: 1,
+            borderColor: '#D9D9D9',
+          }}
+          onIndexChange={index =>
+            setActiveTab(index === 0 ? 'profile' : 'service')
+          }
+          renderTabBar={props => (
+            <MaterialTabBar
+              {...props}
+              indicatorStyle={{
+                backgroundColor: '#BDBDBD',
+                height: 2,
+              }}
+              style={{
+                backgroundColor: 'white',
+              }}
+              labelStyle={{
+                color: BLACK,
+                fontWeight: '700',
+                fontSize: 16,
+              }}
+            />
+          )}>
+          <Tabs.Tab name="프로필" key="profile">
+            {/* FIXME */}
+            <InfoPage marketData={marketData} />
+          </Tabs.Tab>
+          <Tabs.Tab name="서비스" key="service">
+            {/* TODO: 임시저장 목록 보는 버튼 만들기 */}
             {/*<TouchableOpacity
               style={styles.saveButton}
               onPress={() => navigation.navigate('TempStorage')}>
-              <Text style={styles.saveButtonText}>임시저장 (5)</Text>
               {/*수정 필요
             </TouchableOpacity>*/}
-            <View>
-                <ServicePage scrollViewRef={scrollRef} navigation={navigation} reformerName = {reformerInfo.nickname} marketUuid = {marketData.market_uuid}/>
+            {marketData?.market_uuid ? (
+              <View>
+                <ServicePage
+                  scrollViewRef={scrollRef}
+                  navigation={navigation}
+                  reformerName={reformerInfo.nickname}
+                  marketUuid={marketData.market_uuid}
+                />
                 <ScrollTopButton scrollViewRef={scrollRef} />
-            </View>
-        </Tabs.Tab>
-      </Tabs.Container>
+              </View>
+            ) : (
+              <Text>Market data not available</Text>
+            )}
+          </Tabs.Tab>
+        </Tabs.Container>
+      )}
 
       {activeTab === 'service' ? (
         <TouchableOpacity
           style={styles.fixedButton}
           onPress={() => {
             //navigation.navigate('TempStorage');
-            navigation.navigate('ServiceRegistrationPage')
+            navigation.navigate('ServiceRegistrationPage');
           }}>
           <Text style={styles.fixedButtonText}>서비스 추가</Text>
         </TouchableOpacity>
@@ -518,6 +559,15 @@ const styles = StyleSheet.create({
     height: 12,
     marginLeft: 3,
     transform: [{ rotate: '180deg' }],
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    fontSize: 16,
+    color: '#555',
   },
 });
 

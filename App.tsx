@@ -19,7 +19,6 @@ import SignIn from './src/components/Auth/SignIn';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomBarProvider, useBottomBar } from './contexts/BottomBarContext';
 import { LoginContext, LoginProvider, UserProvider } from './src/common/Context';
-import Reformer from './src/components/Auth/Reformer/Reformer';
 import SplashScreen from './src/common/SplashScreen';
 
 import { getUserRole } from './src/common/storage';

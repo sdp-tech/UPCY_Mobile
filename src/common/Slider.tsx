@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
-import { View, Animated } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { Animated } from 'react-native';
 import styled from 'styled-components/native';
 import { BLACK, BLACK2, LIGHTGRAY, PURPLE } from '../styles/GlobalColor';
+import React from 'react';
 
 interface SliderProps {
   total: number;
