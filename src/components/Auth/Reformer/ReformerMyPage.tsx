@@ -141,7 +141,18 @@ export const ReformerMyPageScreen = ({
     market_uuid: '',
   };
   const defaultReformerResponseData: ReformerResponseType = {
-    reformer_nickname: '', // 닉네임
+    user_info: {
+      email: 'test@test.com',
+      phone: '010-1234-5678',
+      full_name: '',
+      nickname: '',
+      agreement_terms: true,
+      address: '',
+      profile_image_url: '',
+      introduce: '',
+      is_active: true,
+      role: 'reformer',
+    },
     reformer_link: '', // 자기소개
     reformer_area: '', // 활동지역
     education: [], // 학력
@@ -157,7 +168,7 @@ export const ReformerMyPageScreen = ({
     useState<ReformerResponseType>(defaultReformerResponseData);
   const [marketData, setMarketData] = useState<MarketType>({
     reformer_link: '', // 링크 
-    market_introduce: '정보 없음', // TODO: 이거 introduce로 수정하기 
+    introduce: '정보 없음', // TODO: 이거 introduce로 수정하기 
     reformer_nickname: '정보 없음', // 닉네임 
     market_thumbnail: '', // 왜 안 나오지...? 원래없나 
     market_uuid: '',
@@ -218,13 +229,12 @@ export const ReformerMyPageScreen = ({
           // 본인 마켓 정보 가져오기: 링크, 자기소개, 닉네임, uuid
           const response2 = await request.get(`/api/market`, {}, headers);
           if (response2 && response2.status === 200) {
-            const marketResult: MarketResponseType = response2.data;
+            const marketResult: MarketResponseType = response2.data[0];
             setMarketResponseData(marketResult);
             const marketUUID = await getMarketUUID();
             fetchMarketData({
-              market_introduce: marketResult.market_introduce,
-              market_thumbnail: marketResult.market_thumbnail || '', // 기본값 유지
-              market_uuid: marketUUID || '',
+              //market_thumbnail: marketResult.market_thumbnail || '', // 기본값 유지
+              market_uuid: marketUUID || marketResult.market_uuid,
             });
             console.log('마켓 정보 가져오기 성공', response2.data);
             try {
@@ -238,9 +248,9 @@ export const ReformerMyPageScreen = ({
                 const reformerResult: ReformerResponseType = response3.data;
                 setReformerResponseData(reformerResult);
                 fetchMarketData({
-                  reformer_nickname: reformerResult.reformer_nickname,
+                  reformer_nickname: reformerResult.user_info.nickname,
                   //TODO: 의종님이 api 수정하시면 여기서 자기소개 받도록 수정하기
-                  //introduce: reformerResult.introduce,
+                  introduce: reformerResult.user_info.introduce,
                   reformer_link: reformerResult.reformer_link,
                   reformer_area: reformerResult.reformer_area,
                   education: reformerResult.education,

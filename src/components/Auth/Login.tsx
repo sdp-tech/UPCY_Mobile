@@ -5,6 +5,7 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
+  Button,
 } from 'react-native';
 import { GREEN, PURPLE } from '../../styles/GlobalColor';
 import { useState, Fragment, useContext } from 'react';
@@ -18,7 +19,8 @@ import {
   setRefreshToken,
   setUserRole,
   getUserRole,
-  setMarketUUID
+  setMarketUUID,
+  removeAccessToken
 } from '../../common/storage';
 import { LoginContext, useUser } from '../../common/Context';
 
@@ -141,8 +143,8 @@ export async function processLoginResponse( // 통상 로그인시 호출 함수
           try {
             const response = await request.get(`/api/market`, {}, headers)
             if (response.status && response.status === 200) {
-              setMarketUUID(response.data.market_uuid);
-              console.log('processLogin에서:', response.data.market_uuid)
+              setMarketUUID(response.data[0].market_uuid);
+              console.log('processLogin에서:', response.data[0].market_uuid)
             } else {
               console.log('processLogin에서 MarketUUID 저장 실패:', response);
             }
@@ -254,6 +256,7 @@ export default function Login({ navigation, route }: LoginProps) {
             <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
               <Caption11M style={{ color: '#ffffff' }}>회원가입</Caption11M>
             </TouchableOpacity>
+            <Button title='test' onPress={() => { removeAccessToken }} />
             {/* <Caption11M style={{ color: '#ffffff' }}> | </Caption11M>
             <Caption11M style={{ color: '#ffffff' }}>비밀번호 찾기</Caption11M> */}
           </View>

@@ -182,11 +182,11 @@ export default function BasicForm({ navigation, route }: FormProps) {
         const accessToken = await response.data.access;
         const refreshToken = await response.data.refresh;
         console.log({ accessToken }, '||', { refreshToken });
-      } else if (response?.status === 500) {
+      } else if (response?.status === 400) {
         console.log(response);
         Alert.alert('이미 가입된 이메일입니다.');
       } else {
-        console.error('Error Status:', response?.status);
+        console.error('Error Status:', response);
         Alert.alert('가입에 실패했습니다.');
       }
     } catch (err) {
@@ -210,11 +210,11 @@ export default function BasicForm({ navigation, route }: FormProps) {
         const refreshToken = await response.data.refresh;
         console.log({ accessToken }, '||', { refreshToken });
         handleNext();
-      } else if (response?.status === 500) {
+      } else if (response?.status === 400) {
         console.log(response);
         Alert.alert('이미 가입된 이메일입니다.');
       } else {
-        console.error('Error Status:', response?.status);
+        console.error('Error Status:', response);
         Alert.alert('가입에 실패했습니다.');
       }
     } catch (err) {
