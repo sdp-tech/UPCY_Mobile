@@ -1,12 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Modal,
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  TextInput,
-} from 'react-native';
+import { Modal, View, Text, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
 
 type DeleteModalProps = {
   visible: any;
@@ -14,20 +7,13 @@ type DeleteModalProps = {
   onEdit: () => void;
   onLogout: () => void;
   onDeleteAccount: (password: string) => void; // 비밀번호를 전달받는 함수
-};
+}
 
-export const DeleteModal = ({
-  visible,
-  onEdit,
-  onClose,
-  onLogout,
-  onDeleteAccount,
-}: DeleteModalProps) => {
+export const DeleteModal = ({ visible, onEdit, onClose, onLogout, onDeleteAccount }: DeleteModalProps) => {
   const [showPasswordInput, setShowPasswordInput] = useState(false);
   const [password, setPassword] = useState('');
 
-  const handleDeletePress = () => {
-    // 계정 삭제 버튼 누르면 호출됨
+  const handleDeletePress = () => { // 계정 삭제 버튼 누르면 호출됨 
     setShowPasswordInput(true);
   };
 
@@ -41,17 +27,17 @@ export const DeleteModal = ({
       transparent={true}
       animationType="fade"
       visible={visible}
-      onRequestClose={onClose}>
+      onRequestClose={onClose}
+    >
       <TouchableOpacity
         style={styles.modalOverlay}
         activeOpacity={1}
-        onPress={onClose}>
+        onPress={onClose}
+      >
         <View style={styles.modalContent}>
           {showPasswordInput ? (
             <>
-              <Text style={styles.modalTitle}>
-                계정 삭제를 위해 비밀번호를 입력하세요
-              </Text>
+              <Text style={styles.modalTitle}>계정 삭제를 위해 비밀번호를 입력하세요</Text>
               <TextInput
                 style={styles.input}
                 placeholder="비밀번호"
@@ -61,7 +47,8 @@ export const DeleteModal = ({
               />
               <TouchableOpacity
                 onPress={handlePasswordSubmit}
-                style={styles.modalButtonDelete}>
+                style={styles.modalButtonDelete}
+              >
                 <Text style={styles.buttonTextDelete}>계정 삭제 확인</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => setShowPasswordInput(false)}>
@@ -78,7 +65,8 @@ export const DeleteModal = ({
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={handleDeletePress}
-                style={styles.modalButtonDelete}>
+                style={styles.modalButtonDelete}
+              >
                 <Text style={styles.buttonTextDelete}>계정 삭제</Text>
               </TouchableOpacity>
             </>
@@ -94,17 +82,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     alignItems: 'flex-end',
-    position: 'relative',
   },
   modalContent: {
     width: '50%',
     padding: 20,
     backgroundColor: 'white',
     borderRadius: 10,
-    position: 'absolute',
-    top: 40,
-    right: 0,
+    position: 'relative',
     alignItems: 'center',
+    top: 90,
   },
   modalTitle: {
     fontSize: 18,
