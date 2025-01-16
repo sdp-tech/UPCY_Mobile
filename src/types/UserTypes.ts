@@ -45,41 +45,41 @@ export type RegionType =
   | '중구'
   | '중랑구'
   | '';
-  type BaseType = {
-    file?: Files; // 공통 속성
-  };
-  
-  type Educ = BaseType & {
-    school?: string; // 학교명
-    major?: string | undefined; // 전공
-    academic_status?: string | undefined; // 상태
-  };
-  export type EducType = Educ[];
-  
-  type Career = BaseType & {
-    company_name?: string; // 회사명
-    department?: string | undefined; // 근무부서 및 직책
-    period?: string | undefined; // 근무기간
-  };
-  export type CareerType = Career[];
-  
-  type Awards = BaseType & {
-    competition?: string; // 공모전명
-    prize?: string | undefined; // 수상내역
-  };
-  export type AwardsType = Awards[];
-  
-  type Certifi = BaseType & {
-    name?: string; // 자격증명
-    issuing_authority?: string | undefined; // 발급기관
-  };
-  export type CertifiType = Certifi[];
-  
-  type Free = BaseType & {
-    project_name?: string; // 프로젝트명
-    description?: string | undefined; // 상세설명
-  };
-  export type FreeType = Free[];
+type BaseType = {
+  file?: Files; // 공통 속성
+};
+
+type Educ = BaseType & {
+  school?: string; // 학교명
+  major?: string | undefined; // 전공
+  academic_status?: string | undefined; // 상태
+};
+export type EducType = Educ[];
+
+type Career = BaseType & {
+  company_name?: string; // 회사명
+  department?: string | undefined; // 근무부서 및 직책
+  period?: string | undefined; // 근무기간
+};
+export type CareerType = Career[];
+
+type Awards = BaseType & {
+  competition?: string; // 공모전명
+  prize?: string | undefined; // 수상내역
+};
+export type AwardsType = Awards[];
+
+type Certifi = BaseType & {
+  name?: string; // 자격증명
+  issuing_authority?: string | undefined; // 발급기관
+};
+export type CertifiType = Certifi[];
+
+type Free = BaseType & {
+  project_name?: string; // 프로젝트명
+  description?: string | undefined; // 상세설명
+};
+export type FreeType = Free[];
 
 export type Field = {
   name: string;
@@ -95,9 +95,21 @@ export type Field = {
 export type FieldType = Field[];
 // 종류별 타입 정의
 
+export type UserInfoType = {
+  email: string;
+  phone: string | null;
+  full_name: string;
+  nickname: string;
+  agreement_terms: boolean;
+  address: string | null;
+  profile_image_url: string;
+  introduce: string;
+  is_active: boolean;
+  role: string;
+}
+
 export type ReformerResponseType = {
-  introduce?: string;
-  reformer_nickname: string;
+  user_info: UserInfoType;
   reformer_link: string;
   reformer_area: string;
   education: EducType;
