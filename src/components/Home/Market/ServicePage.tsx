@@ -42,7 +42,10 @@ const ServicePage: React.FC<ServicePageProps> = ({
       if (response && response.status === 200) {
         const marketResult = response.data;
         setItems(marketResult);
-      } else {
+      } else if (response.status === 404) {
+        setError('아직 등록된 서비스가 없습니다.')
+      }
+      else {
         setError('서비스를 불러오는 데 실패했습니다.');
         console.log(response);
         Alert.alert('ServicePage.tsx에서 오류가 발생했습니다.');

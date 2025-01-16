@@ -212,7 +212,7 @@ const MarketTabView = ({
 
   const defaultMarketResponseData: MarketType = {
     reformer_link: '',
-    market_introduce: '정보 없음',
+    introduce: '정보 없음',
     reformer_nickname: '정보 없음',
     market_thumbnail: '',
     market_uuid: '',
@@ -241,7 +241,7 @@ const MarketTabView = ({
         const reformerDataResult: ReformerDataResponseType = response.data;
         const tempMarketResult: MarketType = {
           reformer_link: reformerDataResult.reformer_link ?? '',
-          market_introduce: '정보 없음',
+          introduce: '정보 없음',
           reformer_nickname: reformerName,
           market_thumbnail: '',
           market_uuid: '',

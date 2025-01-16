@@ -19,7 +19,7 @@ type InfoPageDataType = {
 
 export type MarketType = {
   reformer_link?: string, // 링크 
-  market_introduce: string, // 자기소개
+  introduce: string, // 자기소개
   // TODO: introduce로 수정하기 
   reformer_nickname?: string, // 닉네임 
   market_thumbnail: string, // ???
@@ -87,7 +87,7 @@ const InfoPage = ({ marketData }: { marketData: MarketType }) => {
     const newData = [
       {
         label: '소개글',
-        data: marketData.market_introduce,
+        data: marketData.introduce,
       },
       { label: '오픈채팅 링크', data: marketData.reformer_link },
       { label: '주요 활동지역', data: marketData.reformer_area },
