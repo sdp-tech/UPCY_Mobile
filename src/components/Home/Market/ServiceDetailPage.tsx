@@ -63,6 +63,11 @@ type ServiceDetailPageProps = {
   serviceOptions: ServiceDetailOption[];
   marketUuid: string;
   serviceUuid: string;
+  education: any[];
+  certification: any[];
+  awards: any[];
+  career: any[];
+  freelancer: any[];
 };
 
 export type DetailPageStackParams = {
@@ -84,6 +89,11 @@ export type DetailPageStackParams = {
     serviceOptions: ServiceDetailOption[];
     marketUuid: string;
     serviceUuid: string;
+    education: any[];
+    certification: any[];
+    awards: any[];
+    career: any[];
+    freelancer: any[];
   };
 };
 
@@ -111,6 +121,11 @@ const ServiceDetailPageScreen = ({
     serviceOptions,
     marketUuid,
     serviceUuid,
+    education,
+    certification,
+    awards,
+    career,
+    freelancer,
   }: ServiceDetailPageProps = route.params;
 
   return (
@@ -139,6 +154,11 @@ const ServiceDetailPageScreen = ({
           serviceOptions,
           marketUuid,
           serviceUuid,
+          education,
+          certification,
+          awards,
+          career,
+          freelancer,
         }}
       />
     </DetailPageStack.Navigator>
@@ -159,6 +179,11 @@ type ProfileSectionProps = {
   backgroundImageUri: string;
   profileImageUri?: string;
   marketUuid: string;
+  education: any[];
+  certification: any[];
+  awards: any[];
+  career: any[];
+  freelancer: any[];
 };
 
 const ProfileSection = ({
@@ -175,6 +200,11 @@ const ProfileSection = ({
   backgroundImageUri,
   profileImageUri,
   marketUuid,
+  education,
+  certification,
+  awards,
+  career,
+  freelancer,
 }: ProfileSectionProps) => {
   const [like, setLike] = useState<boolean>(false);
   const { hideBottomBar, showBottomBar } = useBottomBar();
@@ -233,6 +263,11 @@ const ProfileSection = ({
         reviewNum={reviewNum}
         navigation={navigation}
         marketUuid={marketUuid}
+        education={education}
+        certification={certification}
+        awards={awards}
+        career={career}
+        freelancer={freelancer}
       />
       <Header
         like={like}
@@ -340,6 +375,11 @@ type ProfileProps = {
   reviewNum: number;
   navigation: any;
   marketUuid: string;
+  education: any[];
+  certification: any[];
+  awards: any[];
+  career: any[];
+  freelancer: any[];
 };
 
 const Profile = ({
@@ -352,6 +392,11 @@ const Profile = ({
   reviewNum,
   navigation,
   marketUuid,
+  education,
+  certification,
+  awards,
+  career,
+  freelancer,
 }: ProfileProps) => {
   return (
     <View style={{ justifyContent: 'space-between' }}>
@@ -383,6 +428,11 @@ const Profile = ({
                 reformerLink: reformerLink,
                 marketUuid: marketUuid,
                 profileImageUri: profilePictureUri ?? defaultImageUri,
+                education: education,
+                certification: certification,
+                awards: awards,
+                career: career,
+                freelancer: freelancer,
               })
             }>
             <Text style={TextStyles.reformerName}>{reformerName}</Text>
@@ -416,6 +466,11 @@ const ServiceDetailPageMainScreen = ({
     serviceOptions,
     marketUuid,
     serviceUuid,
+    education,
+    certification,
+    awards,
+    career,
+    freelancer,
   } = route.params;
 
   // const [index, setIndex] = useState<number>(0);
@@ -564,6 +619,11 @@ const ServiceDetailPageMainScreen = ({
           backgroundImageUri={imageUris?.[0]?.image}
           profileImageUri={profileImageUri}
           marketUuid={marketUuid}
+          education={education}
+          certification={certification}
+          awards={awards}
+          career={career}
+          freelancer={freelancer}
         />
         <DetailBox2
           servicePeriod={servicePeriod}
