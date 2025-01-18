@@ -57,11 +57,11 @@ interface ServiceCardProps {
   temporary?: boolean; //TODO: 수정 필요
   suspended?: boolean;
   profileImageUri?: string;
-  education: any[];
-  certification: any[];
-  awards: any[];
-  career: any[];
-  freelancer: any[];
+  education?: any[];
+  certification?: any[];
+  awards?: any[];
+  career?: any[];
+  freelancer?: any[];
 }
 
 export type ServiceResponseType = {
@@ -236,11 +236,11 @@ const EntireServiceMarket = ({
       suspended: service.suspended,
       profileImageUri:
         service.reformer_info.user_info.profile_image_url || defaultImageUri,
-      education: service.reformer_info.education,
-      certification: service.reformer_info.certification,
-      awards: service.reformer_info.awards,
-      career: service.reformer_info.career,
-      freelancer: service.reformer_info.freelancer,
+      education: service.reformer_info.education || [],
+      certification: service.reformer_info.certification || [],
+      awards: service.reformer_info.awards || [],
+      career: service.reformer_info.career || [],
+      freelancer: service.reformer_info.freelancer || [],
     })) as ServiceCardProps[];
   };
 
