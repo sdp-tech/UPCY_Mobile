@@ -11,7 +11,7 @@ import { Tabs } from 'react-native-collapsible-tab-view';
 import Request from '../../../common/requests';
 import { ServiceCard } from './Service';
 import { ServiceResponseType, defaultImageUri } from './Service';
-// (MarketTabView)리폼러 마켓 페이지의 서비스 탭 
+// (MarketTabView)리폼러 마켓 페이지의 서비스 탭
 
 interface ServicePageProps {
   scrollViewRef: React.RefObject<ScrollView>;
@@ -37,15 +37,15 @@ const ServicePage: React.FC<ServicePageProps> = ({
       setIsLoading(true);
       const response = await request.get(
         `/api/market/${marketUuid}/service?temporary=false`,
-        {}, {}
+        {},
+        {},
       );
       if (response && response.status === 200) {
         const marketResult = response.data;
         setItems(marketResult);
       } else if (response.status === 404) {
-        setError('아직 등록된 서비스가 없습니다.')
-      }
-      else {
+        setError('아직 등록된 서비스가 없습니다.');
+      } else {
         setError('서비스를 불러오는 데 실패했습니다.');
         console.log(response);
         Alert.alert('ServicePage.tsx에서 오류가 발생했습니다.');
@@ -67,7 +67,6 @@ const ServicePage: React.FC<ServicePageProps> = ({
       console.log('Market UUID:', marketUuid); // Debugging step
     }
   }, [reformerName, marketUuid]);
-
 
   if (isLoading) {
     return (
@@ -92,6 +91,9 @@ const ServicePage: React.FC<ServicePageProps> = ({
         {items.map((item, index) => (
           <ServiceCard
             key={index}
+            introduce=""
+            reformer_area="정보없음"
+            reformer_link=""
             created={item.created || new Date('2023-12-12')}
             name={reformerName || ''}
             basic_price={item.basic_price || 0}
@@ -107,22 +109,23 @@ const ServicePage: React.FC<ServicePageProps> = ({
             market_uuid={marketUuid || ''}
             service_uuid={item.service_uuid || ''}
             service_period={item.service_period || undefined}
-            service_materials={Array.isArray(item.service_material)
-              ? item.service_material.map(material => ({
-                material_uuid: material.material_uuid || '',
-                material_name: material.material_name || ''
-              }))
-              : []
+            service_materials={
+              Array.isArray(item.service_material)
+                ? item.service_material.map(material => ({
+                    material_uuid: material.material_uuid || '',
+                    material_name: material.material_name || '',
+                  }))
+                : []
             }
             service_options={
               Array.isArray(item.service_option)
                 ? item.service_option.map(option => ({
-                  option_content: option.option_content || '',
-                  option_name: option.option_name || '',
-                  option_price: option.option_price || '',
-                  option_uuid: option.option_uuid || '',
-                  service_option_image: option.service_option_image || [],
-                }))
+                    option_content: option.option_content || '',
+                    option_name: option.option_name || '',
+                    option_price: option.option_price || '',
+                    option_uuid: option.option_uuid || '',
+                    service_option_image: option.service_option_image || [],
+                  }))
                 : []
             }
             suspended={item.suspended}
