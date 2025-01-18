@@ -64,6 +64,11 @@ export type HomeStackParams = {
     serviceOptions: ServiceDetailOption[];
     marketUuid: string;
     serviceUuid: string;
+    education: any[];
+    certification: any[];
+    awards: any[];
+    career: any[];
+    freelancer: any[];
   };
   GoodsDetailPage: undefined;
   QuotationForm: undefined;
@@ -92,6 +97,11 @@ export type HomeStackParams = {
     reformerLink: string;
     marketUuid: string;
     profileImageUri?: string;
+    education: any[];
+    certification: any[];
+    awards: any[];
+    career: any[];
+    freelancer: any[];
   };
   SearchPage: {
     navigation: any;

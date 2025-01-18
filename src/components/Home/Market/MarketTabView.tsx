@@ -161,6 +161,11 @@ type MarketTabViewProps = {
   marketUuid: string;
   profileImageUri?: string;
   reformerEmail?: string;
+  education: any[];
+  certification: any[];
+  awards: any[];
+  career: any[];
+  freelancer: any[];
 };
 
 export type MarketResponseType = {
@@ -170,17 +175,6 @@ export type MarketResponseType = {
   market_name: string;
   market_thumbnail: string;
   market_uuid: string;
-};
-
-export type ReformerDataResponseType = {
-  awards: any[];
-  career: any[];
-  certification: any[];
-  education: any[];
-  freelancer: any[];
-  nickname: string;
-  reformer_area: string;
-  reformer_link: string;
 };
 
 const MarketTabView = ({
@@ -204,6 +198,11 @@ const MarketTabView = ({
     marketUuid,
     profileImageUri,
     reformerEmail,
+    education,
+    certification,
+    awards,
+    career,
+    freelancer,
   }: MarketTabViewProps = route.params || defaultMarketData;
   const [routes] = useState([
     { key: 'profile', title: '프로필' },
@@ -218,11 +217,11 @@ const MarketTabView = ({
     market_thumbnail: '',
     market_uuid: marketUuid,
     reformer_area: reformerArea,
-    education: [],
-    certification: [],
-    awards: [],
-    career: [],
-    freelancer: [],
+    education: education,
+    certification: certification,
+    awards: awards,
+    career: career,
+    freelancer: freelancer,
   };
 
   const [marketData, setMarketData] = useState<MarketType>(

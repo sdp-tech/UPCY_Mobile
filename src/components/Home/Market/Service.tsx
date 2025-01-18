@@ -57,6 +57,11 @@ interface ServiceCardProps {
   temporary?: boolean; //TODO: 수정 필요
   suspended?: boolean;
   profileImageUri?: string;
+  education: any[];
+  certification: any[];
+  awards: any[];
+  career: any[];
+  freelancer: any[];
 }
 
 export type ServiceResponseType = {
@@ -231,6 +236,11 @@ const EntireServiceMarket = ({
       suspended: service.suspended,
       profileImageUri:
         service.reformer_info.user_info.profile_image_url || defaultImageUri,
+      education: service.reformer_info.education,
+      certification: service.reformer_info.certification,
+      awards: service.reformer_info.awards,
+      career: service.reformer_info.career,
+      freelancer: service.reformer_info.freelancer,
     })) as ServiceCardProps[];
   };
 
@@ -363,6 +373,11 @@ const EntireServiceMarket = ({
                   service_materials={serviceCardRawData[index].service_material}
                   suspended={serviceCardData[index].suspended}
                   profileImageUri={card.profileImageUri}
+                  education={card.education}
+                  certification={card.certification}
+                  awards={card.awards}
+                  career={card.career}
+                  freelancer={card.freelancer}
                 />
               ),
           )
@@ -399,6 +414,11 @@ export const ServiceCard = ({
   service_options,
   suspended,
   profileImageUri,
+  education,
+  certification,
+  awards,
+  career,
+  freelancer,
 }: ServiceCardComponentProps) => {
   //TODO: get review num using API
   const REVIEW_NUM = 5;
@@ -426,6 +446,11 @@ export const ServiceCard = ({
           serviceOptions: service_options,
           marketUuid: market_uuid,
           serviceUuid: service_uuid,
+          education: education,
+          certification: certification,
+          awards: awards,
+          career: career,
+          freelancer: freelancer,
         });
       }}>
       <View style={styles.topContainer}>
