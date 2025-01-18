@@ -22,7 +22,7 @@ import RenderHTML from 'react-native-render-html';
 // 홈화면에 있는, 서비스 전체 리스트!
 type ServiceOptionImage = {
   image: string;
-}
+};
 
 export type ServiceDetailOption = {
   option_content: string;
@@ -56,23 +56,42 @@ interface ServiceCardProps {
 }
 
 export type ServiceResponseType = {
-  // TODO: any type 나중에 알아보고 수정
-  basic_price: number;
-  created: Date;
+  reformer_info: {
+    user_info: {
+      email: string;
+      phone: number;
+      full_name: string;
+      nickname: string;
+      agreement_terms: boolean;
+      address: string;
+      profile_image_url: string;
+      introduce: string;
+      is_active: boolean;
+      role: string;
+    };
+    reformer_link: string;
+    reformer_area: string;
+    education: any[];
+    certification: any[];
+    awards: any[];
+    career: any[];
+    freelancer: any[];
+  };
   market_uuid: string;
-  max_price: number;
-  reformer_nickname: string;
-  service_category: string;
-  service_content: string;
-  service_image: any[];
-  service_material: any[];
-  service_option: any[];
-  service_period: number;
-  service_style: any[];
-  service_title: string;
   service_uuid: string;
-  temporary: boolean;
+  service_title: string;
+  service_content: string;
+  service_category: string;
+  service_style: any[];
+  service_period: number;
+  basic_price: number;
+  max_price: number;
+  service_option: any[];
+  service_material: any[];
+  service_image: any[];
   suspended: boolean;
+  temporary: boolean;
+  created: Date;
   updated?: Date;
 };
 
@@ -120,25 +139,22 @@ const EntireServiceMarket = ({
       // API 호출: 전체 서비스
       const response = await request.get(`/api/market/services`, {}, {});
       if (response.status === 404) {
-        Alert.alert('아직 등록된 서비스가 없습니다.')
+        Alert.alert('아직 등록된 서비스가 없거나, 오류가 발생하였습니다.');
       } else if (response && response.status === 200) {
         const serviceListResults: ServiceResponseType[] = response.data.results;
-        console.log(serviceListResults[0].service_option);
-        setServiceCardRawData(serviceListResults);
         const extractedServiceCardData = extractData(serviceListResults);
         setServiceCardData(extractedServiceCardData);
-        // TODO: 마켓이랑 서비스 통합되면, 아래 코드 수정해서 사용하기!
         try {
           // 개별 옵션 데이터를 가져오기 위한 API 호출
           const optionResponses = await Promise.all(
-            extractedServiceCardData.map(async (service) => {
+            extractedServiceCardData.map(async service => {
               const optionResponse = await request.get(
                 `/api/market/${service.market_uuid}/service/${service.service_uuid}`,
                 {},
-                {}
+                {},
               );
               return optionResponse.data.results;
-            })
+            }),
           );
 
           // 옵션 데이터 병합
@@ -152,7 +168,7 @@ const EntireServiceMarket = ({
                 option_uuid: option.option_uuid,
                 service_option_image: option.service_option_image || [],
               })),
-            })
+            }),
           );
 
           setServiceCardData(mergedServiceCardData);
@@ -175,7 +191,7 @@ const EntireServiceMarket = ({
   const extractData = (rawData: ServiceResponseType[]) => {
     return rawData.map(service => ({
       //TODO: 밑에 수정
-      name: service.reformer_nickname,
+      name: service.reformer_info.user_info.full_name,
       created: service.created || new Date('2023-12-12'),
       basic_price: service.basic_price,
       max_price: service.max_price,
@@ -194,12 +210,12 @@ const EntireServiceMarket = ({
       })) as MaterialDetail[],
       service_options: Array.isArray(service.service_option)
         ? (service.service_option.map(option => ({
-          option_content: option.option_content,
-          option_name: option.option_name,
-          option_price: option.option_price,
-          option_uuid: option.option_uuid,
-          service_option_image: option.service_option_image || '',
-        })) as ServiceDetailOption[])
+            option_content: option.option_content,
+            option_name: option.option_name,
+            option_price: option.option_price,
+            option_uuid: option.option_uuid,
+            service_option_image: option.service_option_image || '',
+          })) as ServiceDetailOption[])
         : [],
       temporary: service.temporary,
       suspended: service.suspended,
@@ -268,10 +284,10 @@ const EntireServiceMarket = ({
       const styleFilteredData =
         selectedStylesList.length > 0
           ? dateFilteredData.filter(card =>
-            card.service_styles?.some(style =>
-              selectedStylesList.includes(style),
-            ),
-          )
+              card.service_styles?.some(style =>
+                selectedStylesList.includes(style),
+              ),
+            )
           : [];
 
       // TODO: add more filtering logic here
@@ -364,7 +380,6 @@ export const ServiceCard = ({
   service_options,
   suspended,
 }: ServiceCardComponentProps) => {
-
   //TODO: get review num using API
   const REVIEW_NUM = 5;
 
