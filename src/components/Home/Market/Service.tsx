@@ -203,7 +203,7 @@ const EntireServiceMarket = ({
   const extractData = (rawData: ServiceResponseType[]) => {
     return rawData.map(service => ({
       //TODO: 밑에 수정
-      name: service.reformer_info.user_info.full_name,
+      name: service.reformer_info.user_info.nickname,
       introduce: service.reformer_info.user_info.introduce,
       reformer_link: service.reformer_info.reformer_link,
       reformer_area: service.reformer_info.reformer_area,
