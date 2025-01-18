@@ -47,6 +47,9 @@ const { width, height } = Dimensions.get('window');
 
 type ServiceDetailPageProps = {
   reformerName: string;
+  introduce: string;
+  reformerArea: string;
+  reformerLink: string;
   serviceName: string;
   basicPrice: number;
   maxPrice: number;
@@ -65,6 +68,9 @@ type ServiceDetailPageProps = {
 export type DetailPageStackParams = {
   DetailPage: {
     reformerName: string;
+    introduce: string;
+    reformerArea: string;
+    reformerLink: string;
     serviceName: string;
     basicPrice: number;
     maxPrice: number;
@@ -89,6 +95,9 @@ const ServiceDetailPageScreen = ({
 }: StackScreenProps<HomeStackParams, 'ServiceDetailPage'>) => {
   const {
     reformerName,
+    introduce,
+    reformerArea,
+    reformerLink,
     serviceName,
     basicPrice,
     maxPrice,
@@ -114,6 +123,9 @@ const ServiceDetailPageScreen = ({
         component={ServiceDetailPageMainScreen}
         initialParams={{
           reformerName,
+          introduce,
+          reformerArea,
+          reformerLink,
           serviceName,
           basicPrice,
           maxPrice,
@@ -136,6 +148,9 @@ const ServiceDetailPageScreen = ({
 type ProfileSectionProps = {
   navigation: any;
   reformerName: string;
+  introduce: string;
+  reformerArea: string;
+  reformerLink: string;
   serviceName: string;
   basicPrice: number;
   maxPrice: number;
@@ -149,6 +164,9 @@ type ProfileSectionProps = {
 const ProfileSection = ({
   navigation,
   reformerName,
+  introduce,
+  reformerArea,
+  reformerLink,
   serviceName,
   basicPrice,
   maxPrice,
@@ -187,14 +205,14 @@ const ProfileSection = ({
         title=""
         leftButton="CustomBack"
         rightButton={
-          (userRole === 'customer')
+          userRole === 'customer'
             ? 'Report'
-            : (userRole === 'customer' && userNickname == reformerName)
+            : userRole === 'customer' && userNickname == reformerName
               ? 'Edit'
               : 'Report'
         }
-        onPressLeft={() => { }}
-        onPressRight={() => { }}
+        onPressLeft={() => {}}
+        onPressRight={() => {}}
         reportButtonPressed={reportButtonPressed}
         setReportButtonPressed={setReportButtonPressed}
       />
@@ -209,6 +227,9 @@ const ProfileSection = ({
         backgroundImageUri={backgroundImageUri}
         profilePictureUri={profileImageUri}
         reformerName={reformerName}
+        introduce={introduce}
+        reformerArea={reformerArea}
+        reformerLink={reformerLink}
         reviewNum={reviewNum}
         navigation={navigation}
         marketUuid={marketUuid}
@@ -313,6 +334,9 @@ type ProfileProps = {
   profilePictureUri?: string;
   backgroundImageUri?: string;
   reformerName: string;
+  introduce: string;
+  reformerArea: string;
+  reformerLink: string;
   reviewNum: number;
   navigation: any;
   marketUuid: string;
@@ -322,6 +346,9 @@ const Profile = ({
   profilePictureUri,
   backgroundImageUri,
   reformerName,
+  introduce,
+  reformerArea,
+  reformerLink,
   reviewNum,
   navigation,
   marketUuid,
@@ -348,8 +375,12 @@ const Profile = ({
           <TouchableOpacity
             style={{ flexDirection: 'row', alignItems: 'center' }}
             onPress={() =>
-              navigation.navigate('MarketTabView', { // 프로필 사진 옆에 있는 이름 눌렀을 때 
+              navigation.navigate('MarketTabView', {
+                // 프로필 사진 옆에 있는 이름 눌렀을 때
                 reformerName: reformerName,
+                introduce: introduce,
+                reformerArea: reformerArea,
+                reformerLink: reformerLink,
                 marketUuid: marketUuid,
                 backgroundImageUri: backgroundImageUri ?? defaultImageUri,
               })
@@ -369,6 +400,9 @@ const ServiceDetailPageMainScreen = ({
 }: StackScreenProps<DetailPageStackParams, 'DetailPage'>) => {
   const {
     reformerName,
+    introduce,
+    reformerArea,
+    reformerLink,
     serviceName,
     basicPrice,
     maxPrice,
@@ -519,6 +553,9 @@ const ServiceDetailPageMainScreen = ({
         <ProfileSection
           navigation={navigation}
           reformerName={reformerName}
+          introduce={introduce}
+          reformerArea={reformerArea}
+          reformerLink={reformerLink}
           serviceName={serviceName}
           basicPrice={basicPrice}
           maxPrice={maxPrice}
@@ -632,7 +669,6 @@ const CustomPopup = ({
     </Modal>
   );
 };
-
 
 const TextStyles = StyleSheet.create({
   Title: {
@@ -876,6 +912,5 @@ const styles = StyleSheet.create({
     color: '#000',
   },
 });
-
 
 export default ServiceDetailPageScreen;

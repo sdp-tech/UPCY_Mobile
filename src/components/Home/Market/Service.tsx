@@ -39,6 +39,9 @@ export type MaterialDetail = {
 
 interface ServiceCardProps {
   name: string; // 리폼러 이름
+  introduce: string;
+  reformer_link: string;
+  reformer_area: string;
   created: Date;
   basic_price: number;
   max_price?: number;
@@ -129,7 +132,9 @@ const EntireServiceMarket = ({
   const [serviceCardData, setServiceCardData] = useState<ServiceCardProps[]>(
     [] as ServiceCardProps[],
   );
-  const [serviceCardRawData, setServiceCardRawData] = useState<any[]>([]);
+  const [serviceCardRawData, setServiceCardRawData] = useState<
+    ServiceResponseType[]
+  >([]);
 
   const serviceTitle: string = '지금 주목해야 할 업사이클링 서비스';
   const serviceDescription: string = '옷장 속 옷들의 트렌디한 재탄생';
@@ -142,6 +147,7 @@ const EntireServiceMarket = ({
         Alert.alert('아직 등록된 서비스가 없거나, 오류가 발생하였습니다.');
       } else if (response && response.status === 200) {
         const serviceListResults: ServiceResponseType[] = response.data.results;
+        setServiceCardRawData(serviceListResults);
         const extractedServiceCardData = extractData(serviceListResults);
         setServiceCardData(extractedServiceCardData);
         try {
@@ -192,6 +198,9 @@ const EntireServiceMarket = ({
     return rawData.map(service => ({
       //TODO: 밑에 수정
       name: service.reformer_info.user_info.full_name,
+      introduce: service.reformer_info.user_info.introduce,
+      reformer_link: service.reformer_info.reformer_link,
+      reformer_area: service.reformer_info.reformer_area,
       created: service.created || new Date('2023-12-12'),
       basic_price: service.basic_price,
       max_price: service.max_price,
@@ -333,6 +342,9 @@ const EntireServiceMarket = ({
                 <ServiceCard
                   key={card.service_uuid}
                   name={card.name}
+                  introduce={card.introduce}
+                  reformer_area={card.reformer_area}
+                  reformer_link={card.reformer_link}
                   created={card.created}
                   basic_price={card.basic_price}
                   max_price={card.max_price}
@@ -346,7 +358,7 @@ const EntireServiceMarket = ({
                   navigation={navigation}
                   service_options={serviceCardRawData[index].service_option}
                   service_materials={serviceCardRawData[index].service_material}
-                  suspended={serviceCardRawData[index].suspended}
+                  suspended={serviceCardData[index].suspended}
                 />
               ),
           )
@@ -365,6 +377,9 @@ const EntireServiceMarket = ({
 
 export const ServiceCard = ({
   name,
+  introduce,
+  reformer_area,
+  reformer_link,
   created,
   basic_price,
   max_price,
@@ -390,6 +405,9 @@ export const ServiceCard = ({
       onPress={() => {
         navigation.navigate('ServiceDetailPage', {
           reformerName: name,
+          introduce: introduce,
+          reformerArea: reformer_area,
+          reformerLink: reformer_link,
           serviceName: service_title,
           basicPrice: basic_price,
           maxPrice: max_price,

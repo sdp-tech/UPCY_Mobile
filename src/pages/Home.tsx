@@ -48,6 +48,9 @@ export type HomeStackParams = {
   ServiceDetailPage: {
     // id: string;
     serviceName: string;
+    introduce: string;
+    reformerArea: string;
+    reformerLink: string;
     reformerName: string;
     basicPrice: number;
     maxPrice: number;
@@ -84,6 +87,9 @@ export type HomeStackParams = {
   TestComponents: undefined;
   MarketTabView: {
     reformerName: string;
+    introduce: string;
+    reformerArea: string;
+    reformerLink: string;
     marketUuid: string;
     backgroundImageUri?: string;
   };

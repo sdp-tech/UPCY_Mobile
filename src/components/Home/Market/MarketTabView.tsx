@@ -47,8 +47,8 @@ export const ProfileSection = ({
         backgroundImageUri={backgroundImageUri}
         navigation={navigation}
         reformerName={reformerName}
-      // rate={rate}
-      // reviewNumber={reviewNumber}
+        // rate={rate}
+        // reviewNumber={reviewNumber}
       />
       <View style={{ padding: 20, paddingTop: 0, paddingBottom: 0 }}>
         {/* 이 밑에거 지우면 이상하게 에러남... 그냥 냅둬도 되는 거라 무시하셔도 됩니다.  */}
@@ -102,7 +102,7 @@ const ProfileHeader = ({
       <DetailScreenHeader
         title=""
         leftButton="CustomBack"
-        onPressLeft={() => { }}
+        onPressLeft={() => {}}
         rightButton={
           userRole === 'customer'
             ? 'Report'
@@ -110,7 +110,7 @@ const ProfileHeader = ({
               ? 'Edit'
               : 'Report'
         }
-        onPressRight={() => { }}
+        onPressRight={() => {}}
         reportButtonPressed={reportButtonPressed}
         setReportButtonPressed={setReportButtonPressed}
       />
@@ -166,6 +166,9 @@ const ProfileHeader = ({
 
 type MarketTabViewProps = {
   reformerName: string;
+  introduce: string;
+  reformerArea: string;
+  reformerLink: string;
   marketUuid: string;
   backgroundImageUri?: string;
   reformerEmail?: string;
@@ -197,26 +200,35 @@ const MarketTabView = ({
 }: StackScreenProps<HomeStackParams, 'MarketTabView'>) => {
   const defaultMarketData = {
     reformerName: '정보 없음',
+    introduce: '',
+    reformerArea: '정보 없음',
+    reformerLink: '',
     marketUuid: '',
     backgroundImageUri: defaultImageUri,
-    reformerEmail: 'omg2@naver.com'
+    reformerEmail: 'omg2@naver.com',
   } as MarketTabViewProps;
-  const { reformerName, marketUuid, backgroundImageUri, reformerEmail }: MarketTabViewProps =
-    route.params || defaultMarketData;
+  const {
+    reformerName,
+    introduce,
+    reformerArea,
+    reformerLink,
+    marketUuid,
+    backgroundImageUri,
+    reformerEmail,
+  }: MarketTabViewProps = route.params || defaultMarketData;
   const [routes] = useState([
     { key: 'profile', title: '프로필' },
     { key: 'service', title: '서비스' },
   ]);
   const scrollRef = useRef<ScrollView | null>(null);
-  const request = Request();
 
   const defaultMarketResponseData: MarketType = {
-    reformer_link: '',
-    introduce: '정보 없음',
-    reformer_nickname: '정보 없음',
+    reformer_link: reformerLink,
+    introduce: introduce,
+    reformer_nickname: reformerName,
     market_thumbnail: '',
-    market_uuid: '',
-    reformer_area: '정보 없음',
+    market_uuid: marketUuid,
+    reformer_area: reformerArea,
     education: [],
     certification: [],
     awards: [],
@@ -227,46 +239,6 @@ const MarketTabView = ({
   const [marketData, setMarketData] = useState<MarketType>(
     defaultMarketResponseData,
   );
-
-  const fetchData = async () => {
-    try {
-      // API 호출
-      //TODO: 여기 수정 필요...
-      const response = await request.get(
-        `/api/user/reformer/${reformerName}`,
-        {},
-        {},
-      );
-      if (response && response.status === 200) {
-        const reformerDataResult: ReformerDataResponseType = response.data;
-        const tempMarketResult: MarketType = {
-          reformer_link: reformerDataResult.reformer_link ?? '',
-          introduce: '정보 없음',
-          reformer_nickname: reformerName,
-          market_thumbnail: '',
-          market_uuid: '',
-          reformer_area: reformerDataResult.reformer_area ?? '정보 없음',
-          education: reformerDataResult.education ?? [],
-          certification: reformerDataResult.certification ?? [],
-          awards: reformerDataResult.awards ?? [],
-          career: reformerDataResult.career ?? [],
-          freelancer: reformerDataResult.freelancer ?? [],
-        };
-        setMarketData(tempMarketResult);
-      } else {
-        Alert.alert('마켓 정보 불러오기에서 오류가 발생했습니다.');
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      // TODO: 로딩 상태 추가하기
-    }
-  };
-
-  // 컴포넌트가 처음 렌더링될 때 API 호출
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   const renderHeader = useCallback(
     () => (
