@@ -91,7 +91,7 @@ export type HomeStackParams = {
     reformerArea: string;
     reformerLink: string;
     marketUuid: string;
-    backgroundImageUri?: string;
+    profileImageUri?: string;
   };
   SearchPage: {
     navigation: any;

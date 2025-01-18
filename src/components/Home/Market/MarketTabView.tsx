@@ -6,9 +6,7 @@ import {
   Text,
   TouchableOpacity,
   Image,
-  ImageBackground,
   StyleSheet,
-  Alert,
 } from 'react-native';
 import { Tabs, MaterialTabBar } from 'react-native-collapsible-tab-view';
 import { Caption11M } from '../../../styles/GlobalText.tsx';
@@ -18,7 +16,6 @@ import { StackScreenProps } from '@react-navigation/stack';
 import { HomeStackParams } from '../../../pages/Home';
 import InfoPage from './InfoPage.tsx';
 // import Footer from '../../../common/Footer.tsx';
-import Request from '../../../common/requests.js';
 // import Arrow from '../../../assets/common/Arrow.svg';
 import ServicePage from './ServicePage.tsx';
 import DetailScreenHeader from '../components/DetailScreenHeader.tsx';
@@ -32,11 +29,11 @@ import { MarketType } from './InfoPage.tsx';
 export const ProfileSection = ({
   navigation,
   reformerName,
-  backgroundImageUri,
+  profileImageUri,
 }: {
   navigation: any;
   reformerName: string;
-  backgroundImageUri?: string;
+  profileImageUri: string;
 }) => {
   const marketName: string = reformerName;
 
@@ -44,9 +41,9 @@ export const ProfileSection = ({
     <View style={{ alignItems: 'center' }}>
       <ProfileHeader
         marketName={marketName}
-        backgroundImageUri={backgroundImageUri}
         navigation={navigation}
         reformerName={reformerName}
+        profileImageUri={profileImageUri}
         // rate={rate}
         // reviewNumber={reviewNumber}
       />
@@ -62,16 +59,16 @@ export const ProfileSection = ({
 
 const ProfileHeader = ({
   marketName,
-  backgroundImageUri,
   navigation,
   reformerName,
+  profileImageUri,
   // rate,
   // reviewNumber,
 }: {
   marketName: string;
-  backgroundImageUri?: string;
   navigation: any;
   reformerName: string;
+  profileImageUri: string;
   // rate: number;
   // reviewNumber: number;
 }) => {
@@ -114,20 +111,12 @@ const ProfileHeader = ({
         reportButtonPressed={reportButtonPressed}
         setReportButtonPressed={setReportButtonPressed}
       />
-      <ImageBackground
-        style={{ width: '100%', height: 200 }}
-        imageStyle={{ height: 160 }}
-        source={{
-          uri: backgroundImageUri ?? defaultImageUri,
+      <View
+        style={{
+          width: '100%',
+          height: 150,
+          backgroundColor: '#E9EBF8',
         }}>
-        <View
-          style={{
-            width: '100%',
-            height: 160,
-            backgroundColor: '#00000066',
-            opacity: 0.7,
-          }}
-        />
         <Image
           style={{
             alignSelf: 'center',
@@ -135,10 +124,10 @@ const ProfileHeader = ({
             height: 90,
             borderRadius: 180,
             position: 'absolute',
-            top: 110,
+            top: 100,
           }}
           source={{
-            uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
+            uri: profileImageUri,
           }}
         />
         {reportButtonPressed && (
@@ -149,8 +138,8 @@ const ProfileHeader = ({
             <Text style={TextStyles.reportText}>신고</Text>
           </TouchableOpacity>
         )}
-      </ImageBackground>
-      <View style={{ gap: 12, alignItems: 'center' }}>
+      </View>
+      <View style={{ marginTop: 50, gap: 12, alignItems: 'center' }}>
         <Text style={TextStyles.marketName}>{marketName}</Text>
         <ReformerTag />
       </View>
@@ -170,7 +159,7 @@ type MarketTabViewProps = {
   reformerArea: string;
   reformerLink: string;
   marketUuid: string;
-  backgroundImageUri?: string;
+  profileImageUri?: string;
   reformerEmail?: string;
 };
 
@@ -204,8 +193,8 @@ const MarketTabView = ({
     reformerArea: '정보 없음',
     reformerLink: '',
     marketUuid: '',
-    backgroundImageUri: defaultImageUri,
-    reformerEmail: 'omg2@naver.com',
+    profileImageUri: defaultImageUri,
+    reformerEmail: '정보 없음',
   } as MarketTabViewProps;
   const {
     reformerName,
@@ -213,7 +202,7 @@ const MarketTabView = ({
     reformerArea,
     reformerLink,
     marketUuid,
-    backgroundImageUri,
+    profileImageUri,
     reformerEmail,
   }: MarketTabViewProps = route.params || defaultMarketData;
   const [routes] = useState([
@@ -245,7 +234,7 @@ const MarketTabView = ({
       <ProfileSection
         navigation={navigation}
         reformerName={reformerName}
-        backgroundImageUri={backgroundImageUri}
+        profileImageUri={profileImageUri || defaultImageUri}
       />
     ),
     [navigation, reformerName],

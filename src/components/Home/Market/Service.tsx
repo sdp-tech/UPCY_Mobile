@@ -56,6 +56,7 @@ interface ServiceCardProps {
   service_options?: ServiceDetailOption[];
   temporary?: boolean; //TODO: 수정 필요
   suspended?: boolean;
+  profileImageUri?: string;
 }
 
 export type ServiceResponseType = {
@@ -228,6 +229,8 @@ const EntireServiceMarket = ({
         : [],
       temporary: service.temporary,
       suspended: service.suspended,
+      profileImageUri:
+        service.reformer_info.user_info.profile_image_url || defaultImageUri,
     })) as ServiceCardProps[];
   };
 
@@ -359,6 +362,7 @@ const EntireServiceMarket = ({
                   service_options={serviceCardRawData[index].service_option}
                   service_materials={serviceCardRawData[index].service_material}
                   suspended={serviceCardData[index].suspended}
+                  profileImageUri={card.profileImageUri}
                 />
               ),
           )
@@ -394,6 +398,7 @@ export const ServiceCard = ({
   service_materials,
   service_options,
   suspended,
+  profileImageUri,
 }: ServiceCardComponentProps) => {
   //TODO: get review num using API
   const REVIEW_NUM = 5;
@@ -414,7 +419,7 @@ export const ServiceCard = ({
           reviewNum: REVIEW_NUM,
           tags: service_styles,
           imageUris: imageUris,
-          profileImageUri: defaultImageUri,
+          profileImageUri: profileImageUri,
           servicePeriod: service_period,
           serviceMaterials: service_materials,
           serviceContent: service_content,

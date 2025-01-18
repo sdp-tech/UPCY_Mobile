@@ -39,7 +39,7 @@ import {
   getNickname,
 } from '../../../common/storage';
 import Request from '../../../common/requests.js';
-import { numberToPrice } from './functions';
+// import { numberToPrice } from './functions';
 
 // 전체 홈 화면에서, 특정 서비스 누르면 넘어오는 페이지 (개별 서비스 페이지)
 
@@ -316,11 +316,11 @@ const Header = ({
         <Text style={TextStyles.Title}>{serviceName}</Text>
         <Text style={TextStyles.PriceInfo}>
           기본
-          <Text style={TextStyles.Price}> {numberToPrice(basicPrice)} 원</Text>
+          <Text style={TextStyles.Price}> {basicPrice} 원</Text>
         </Text>
         <Text style={TextStyles.PriceInfo}>
           최대
-          <Text style={TextStyles.Price}> {numberToPrice(maxPrice)} 원</Text>
+          <Text style={TextStyles.Price}> {maxPrice} 원</Text>
         </Text>
       </View>
       {/* <View style={{ margin: 15 }}>
@@ -382,7 +382,7 @@ const Profile = ({
                 reformerArea: reformerArea,
                 reformerLink: reformerLink,
                 marketUuid: marketUuid,
-                backgroundImageUri: backgroundImageUri ?? defaultImageUri,
+                profileImageUri: profilePictureUri ?? defaultImageUri,
               })
             }>
             <Text style={TextStyles.reformerName}>{reformerName}</Text>
