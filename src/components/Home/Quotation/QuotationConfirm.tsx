@@ -32,6 +32,7 @@ import CheckBox from '../../../common/CheckBox';
 const statusBarHeight = getStatusBarHeight(true);
 const { width, height } = Dimensions.get('window');
 
+//리폼러 기준 '주문 수락/거절 선택 페이지'
 const QuotationPage = ({
   navigation,
   route,
@@ -248,8 +249,8 @@ const QuotationPage = ({
             alignItems: 'center',
             borderRadius: 20,
           }}
-          onPress={() => console.log('카톡 상담 버튼 클릭')}>
-          <Text style={{ color: BLACK }}>카톡 상담</Text>
+          onPress={() => console.log('수락')}>
+          <Text style={{ color: BLACK }}>수락하기</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

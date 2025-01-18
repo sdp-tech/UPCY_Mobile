@@ -43,7 +43,7 @@ const NewOrders = () => {
                 </ContentRow>
               </TopSection>
               <BottomSection>
-                <TouchableOpacity onPress={() => navigation.navigate('QuotationPage')}>
+                <TouchableOpacity onPress={() => navigation.navigate('QuotationConfirm')}>
                   <CheckOrderText>주문서 확인</CheckOrderText>
                 </TouchableOpacity>
               </BottomSection>

@@ -78,6 +78,8 @@ const InputInfo = ({ onClose, navigation, onNavigate, route }: InputInfoProps): 
 
 
 
+
+
   return (
     <ScrollView>
       <SafeAreaView>
