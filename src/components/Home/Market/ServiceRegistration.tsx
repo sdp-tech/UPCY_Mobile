@@ -454,6 +454,7 @@ const ServiceRegistrationPage = ({
               response.data.service_options ? response.data.service_options.map((option: any) => option.option_uuid)
                 : []; // 없으면 빈 배열
             // 그리고 아래에서 그 리스트 전달, 이후 함수에서 리스트 다시 분해해서 반복문 돌려서 사진 업로드
+            console.log('옵션 id 리스트:', option_uuidList);
             await uploadImage(service_uuid, 'option', option_uuidList); // 옵션별 사진 등록
             await uploadImage(service_uuid, 'thumbnail'); // 서비스 썸네일 등록
             console.log("TempService UUID:", service_uuid);
@@ -491,14 +492,17 @@ const ServiceRegistrationPage = ({
           console.log("Service UUID:", service_uuid);
           // navigation.navigate('ReformerProfilePage');
           console.log("서비스가 성공적으로 등록되었습니다!");
+          Alert.alert(
+            "서비스 등록이 완료되었습니다.",
+            "",
+            [
+              { text: "확인", onPress: () => { navigation.goBack(); } }
+            ]
+          );
+        } else {
+          Alert.alert('서비스 등록에 실패했습니다.')
+          console.log(response);
         }
-        Alert.alert(
-          "서비스 등록이 완료되었습니다.",
-          "",
-          [
-            { text: "확인", onPress: () => { navigation.goBack(); } }
-          ]
-        );
       } catch (err) {
         console.error(err);
       }
@@ -710,7 +714,15 @@ const ServiceRegistrationPage = ({
           <ButtonSection style={{ flex: 1, marginHorizontal: 10 }}>
             <FooterButton
               style={{ flex: 0.2, backgroundColor: '#612FEF' }}
-              onPress={() => handleSubmit(true)}>
+              onPress={() => Alert.alert(
+                '썸네일, 상세 사진 등은 저장되지 않습니다. 괜찮으시겠습니까?',
+                '',
+                [
+                  { text: '아니오', onPress: () => { }, style: 'destructive' },
+                  { text: '네', onPress: () => handleSubmit(true) },
+                ],
+                { cancelable: false },
+              )}>
               <Subtitle16B style={{ color: '#FFFFFF' }}>임시저장</Subtitle16B>
             </FooterButton>
             <FooterButton
@@ -730,7 +742,18 @@ const ServiceRegistrationPage = ({
       "정말로 나가시겠습니까?",
       "",
       [
-        { text: "임시저장", onPress: () => handleSubmit(true) },
+        {
+          text: "임시저장", onPress: () =>
+            Alert.alert(
+              '썸네일, 상세 사진 등은 저장되지 않습니다. 괜찮으시겠습니까?',
+              '',
+              [
+                { text: '아니오', onPress: () => { }, style: 'destructive' },
+                { text: '네', onPress: () => handleSubmit(true) },
+              ],
+              { cancelable: false },
+            )
+        },
         { text: "아니오", onPress: () => { } },
         { text: "네", onPress: navigation.goBack, style: "destructive" }
       ],

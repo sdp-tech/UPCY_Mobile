@@ -6,6 +6,7 @@ import {
   Text,
   Alert,
   ActivityIndicator,
+  TouchableOpacity,
 } from 'react-native';
 import { Tabs } from 'react-native-collapsible-tab-view';
 import Request from '../../../common/requests';
@@ -18,6 +19,7 @@ interface ServicePageProps {
   navigation: any;
   reformerName?: string;
   marketUuid?: string;
+  is_reformer?: boolean;
 }
 
 const ServicePage: React.FC<ServicePageProps> = ({
@@ -25,8 +27,10 @@ const ServicePage: React.FC<ServicePageProps> = ({
   navigation,
   reformerName,
   marketUuid,
+  is_reformer,
 }) => {
   const [items, setItems] = useState<ServiceResponseType[]>([]);
+  const [tempItem, setTempItem] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true); // 로딩 상태 관리
   const [error, setError] = useState<string | null>(null); // 오류 메시지 관리
   const request = Request();
@@ -43,6 +47,16 @@ const ServicePage: React.FC<ServicePageProps> = ({
       if (response && response.status === 200) {
         const marketResult = response.data;
         setItems(marketResult);
+        const response2 = await request.get(`/api/market/${marketUuid}/service?temporary=true`,
+          {}, {});
+        if (response2 && response2.status === 200) {
+          setTempItem(response2.data.length)
+        } else if (response2 && response2.status === 404) {
+          setTempItem(0);
+          console.log("등록된 임시저장 서비스가 없습니다.")
+        } else {
+          console.log(response);
+        }
       } else if (response.status === 404) {
         setError('아직 등록된 서비스가 없습니다.');
       } else {
@@ -83,10 +97,21 @@ const ServicePage: React.FC<ServicePageProps> = ({
       style={{ marginBottom: 60 }}
       bounces={false}
       overScrollMode="never">
-      <View style={styles.container}>
-        <Text style={TextStyles.title}>
-          {reformerName || '리포머 이름 없음'}의 서비스
-        </Text>
+      <View >
+        <View style={{ flexDirection: 'column' }}>
+          <Text style={TextStyles.title}>
+            {reformerName || '리포머 이름 없음'}의 서비스
+          </Text>
+          {is_reformer &&
+            <TouchableOpacity
+              style={styles.saveButton}
+              onPress={() => navigation.navigate('TempStorage')}>
+              <Text style={TextStyles.saveButtonText}>
+                임시저장 ({tempItem})
+              </Text>
+            </TouchableOpacity>
+          }
+        </View>
         {error && <Text style={styles.errorText}>{error}</Text>}
         {items.map((item, index) => (
           <ServiceCard
@@ -98,39 +123,32 @@ const ServicePage: React.FC<ServicePageProps> = ({
             name={reformerName || ''}
             basic_price={item.basic_price || 0}
             max_price={item.max_price || 0}
-            service_styles={
-              Array.isArray(item.service_style)
-                ? item.service_style.map(style => style.style_name || '')
-                : []
-            }
+            service_styles={Array.isArray(item.service_style)
+              ? item.service_style.map(style => style.style_name || '')
+              : []}
             imageUris={item.service_image || []}
             service_title={item.service_title || ''}
             service_content={item.service_content || ''}
             market_uuid={marketUuid || ''}
             service_uuid={item.service_uuid || ''}
             service_period={item.service_period || undefined}
-            service_materials={
-              Array.isArray(item.service_material)
-                ? item.service_material.map(material => ({
-                    material_uuid: material.material_uuid || '',
-                    material_name: material.material_name || '',
-                  }))
-                : []
-            }
-            service_options={
-              Array.isArray(item.service_option)
-                ? item.service_option.map(option => ({
-                    option_content: option.option_content || '',
-                    option_name: option.option_name || '',
-                    option_price: option.option_price || '',
-                    option_uuid: option.option_uuid || '',
-                    service_option_image: option.service_option_image || [],
-                  }))
-                : []
-            }
+            service_materials={Array.isArray(item.service_material)
+              ? item.service_material.map(material => ({
+                material_uuid: material.material_uuid || '',
+                material_name: material.material_name || '',
+              }))
+              : []}
+            service_options={Array.isArray(item.service_option)
+              ? item.service_option.map(option => ({
+                option_content: option.option_content || '',
+                option_name: option.option_name || '',
+                option_price: option.option_price || '',
+                option_uuid: option.option_uuid || '',
+                service_option_image: option.service_option_image || [],
+              }))
+              : []}
             suspended={item.suspended}
-            navigation={navigation}
-          />
+            navigation={navigation} education={[]} certification={[]} awards={[]} career={[]} freelancer={[]} />
         ))}
         <View style={{ paddingBottom: 100 }} />
       </View>
@@ -152,6 +170,19 @@ const styles = StyleSheet.create({
     marginTop: 10,
     textAlign: 'center',
   },
+  saveButton: {
+    height: 35,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    marginTop: 12,
+    marginHorizontal: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 4,
+    backgroundColor: '#DBFC72', // var(--NeonGreen-upcy-green) 값으로 설정
+    flexDirection: 'row', // 가로 방향 배치 설정
+    alignSelf: 'flex-start',
+  },
 });
 
 const TextStyles = StyleSheet.create({
@@ -163,6 +194,11 @@ const TextStyles = StyleSheet.create({
     lineHeight: 24,
     marginTop: 12,
     marginHorizontal: 16,
+  },
+  saveButtonText: {
+    color: '#612FEF',
+    fontSize: 14,
+    fontWeight: '600',
   },
 });
 
