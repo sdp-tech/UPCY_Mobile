@@ -57,11 +57,11 @@ interface ServiceCardProps {
   temporary?: boolean; //TODO: 수정 필요
   suspended?: boolean;
   profileImageUri?: string;
-  education: any[];
-  certification: any[];
-  awards: any[];
-  career: any[];
-  freelancer: any[];
+  education?: any[];
+  certification?: any[];
+  awards?: any[];
+  career?: any[];
+  freelancer?: any[];
 }
 
 export type ServiceResponseType = {
@@ -203,7 +203,7 @@ const EntireServiceMarket = ({
   const extractData = (rawData: ServiceResponseType[]) => {
     return rawData.map(service => ({
       //TODO: 밑에 수정
-      name: service.reformer_info.user_info.full_name,
+      name: service.reformer_info.user_info.nickname,
       introduce: service.reformer_info.user_info.introduce,
       reformer_link: service.reformer_info.reformer_link,
       reformer_area: service.reformer_info.reformer_area,
@@ -236,11 +236,11 @@ const EntireServiceMarket = ({
       suspended: service.suspended,
       profileImageUri:
         service.reformer_info.user_info.profile_image_url || defaultImageUri,
-      education: service.reformer_info.education,
-      certification: service.reformer_info.certification,
-      awards: service.reformer_info.awards,
-      career: service.reformer_info.career,
-      freelancer: service.reformer_info.freelancer,
+      education: service.reformer_info.education || [],
+      certification: service.reformer_info.certification || [],
+      awards: service.reformer_info.awards || [],
+      career: service.reformer_info.career || [],
+      freelancer: service.reformer_info.freelancer || [],
     })) as ServiceCardProps[];
   };
 
