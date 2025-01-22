@@ -18,8 +18,9 @@ import { HomeStackParams } from '../../../pages/Home';
 import { StackScreenProps } from '@react-navigation/stack';
 
 import Arrow from '../../../assets/common/Arrow.svg';
+import BottomButton from '../../../common/BottomButton';
 
-import { BLACK, PURPLE } from '../../../styles/GlobalColor';
+import { BLACK, PURPLE , GREEN} from '../../../styles/GlobalColor';
 import {
   Body14R,
   Body16M,
@@ -32,7 +33,6 @@ import CheckBox from '../../../common/CheckBox';
 const statusBarHeight = getStatusBarHeight(true);
 const { width, height } = Dimensions.get('window');
 
-//리폼러 기준 '주문 수락/거절 선택 페이지'
 const QuotationPage = ({
   navigation,
   route,
@@ -253,6 +253,15 @@ const QuotationPage = ({
           <Text style={{ color: BLACK }}>수락하기</Text>
         </TouchableOpacity>
       </View>
+
+     <View style={{ padding: 10, marginVertical: 30 }}>
+             <BottomButton value={'수락 하기'} onPress={handleSendQuotation} pressed={true} style={{ paddingVertical: 30 }}
+             />
+             <View style={{ marginVertical: 5 }} />
+             <BottomButton value={'거절 하기'} pressed={true} onPress={handleRejection} color={GREEN}  />
+           </View>
+
+
     </ScrollView>
   );
 };

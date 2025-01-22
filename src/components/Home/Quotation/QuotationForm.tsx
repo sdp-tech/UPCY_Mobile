@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   selectedFilterButton: {
-    backgroundColor: PURPLE, // 선택된 경우의 배경색
+    backgroundColor: PURPLE,
   },
   selectedFilterButton2: {
     borderColor: PURPLE,
@@ -150,15 +150,28 @@ const toggleSelection = <T,>(
 };
 
 
+const handlePhotoUpdate = (
+  photos: PhotoResultProps[],
+  setPhotos: Dispatch<SetStateAction<PhotoResultProps[]>>,
+  newPhotos: PhotoResultProps[]
+) => {
+  setPhotos((prevPhotos) => [...prevPhotos, ...newPhotos]);
+};
+
+
 const FilterSection = ({ label, items, showDuplicate = true, onMaterialSelect }: FilterSectionProps) => {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
  const handleSelectItem = (item: string) => {
     toggleSelection(selectedItems, setSelectedItems, item);
-    setSelectedItems((updatedItems) => {
-      onMaterialSelect(updatedItems);
-      return updatedItems;
-    });  };
+
+    };
+
+useEffect(() => {
+  if (selectedItems.length > 0) {
+    onMaterialSelect(selectedItems);
+  }
+}, [selectedItems])
 
   return (
     <FilterContainer>
@@ -224,6 +237,8 @@ const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 
 
   const [showDuplicate] = useState(true);
   const [text, setText] = useState<string>('');
+  const [materialInput, setMaterialInput] = useState<string>(''); // 재질 선택 Input
+  const [additionalRequestInput, setAdditionalRequestInput] = useState<string>(''); //추가요청사항 input
   const [photos, setPhotos] = useState<PhotoResultProps[]>([]);
   const [refPhotos, setRefPhotos] = useState<PhotoResultProps[]>([]);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
@@ -276,14 +291,20 @@ const handleNextPress = () => {
     Alert.alert('거래 방식을 선택해주세요');
     return;
   }
+  const finalSelectedMaterials = materialInput
+    ? [...selectedMaterial, materialInput]
+    : selectedMaterial;
 
   const selectedOptionDetails = selectedOptions.map(index => options[index]);
 
   navigation.navigate('InputInfo', {
-     materials: selectedMaterial,
+      photos,
+     materials: finalSelectedMaterials,
      transactionMethod: selectedFilter,
      options: selectedOptionDetails, // 선택한 옵션
-     additionalRequest: text,
+     additionalRequest: {text:additionalRequestInput, photos:refPhotos,},
+
+
    });
  };
 
@@ -312,13 +333,12 @@ const handleNextPress = () => {
         {photos.length > 0 &&
           <Carousel
             data={splitPhotos}
-            renderItem={({ item }: any) => {
+            renderItem={({ item, index }: any) => {
               return (
-                <View style={{ flexDirection: 'row' }}>
-                  {item.map((subItem: any) => (
-                    <View style={{ width: '50%', paddingHorizontal: 20 }}>
-                      <ImageBackground
-                        key={subItem.id}
+                <View style={{ flexDirection: 'row' }} key={`photo-row-${index}`}>
+                    {item.map((subItem: any, subIndex: number) => (
+                    <View style={{ width: '50%', paddingHorizontal: 20 }} key={`photo-${subItem.id || subIndex}`}>
+                    <ImageBackground
                         source={{ uri: subItem.uri }}
                         style={{ width: '100%', height: 170 }}
                         alt={subItem.fileName}
@@ -335,7 +355,7 @@ const handleNextPress = () => {
           <PhotoOptions
             style={Object.assign({}, styles.grayButton, { marginright: 5, marginBottom: 5 })}
             max={4}
-            setPhoto={setPhotos}
+            setPhoto={(newPhotos) => handlePhotoUpdate(photos, setPhotos, newPhotos)}
             buttonLabel='의뢰할 의류 사진 첨부  '
           />
         </View>
@@ -349,8 +369,8 @@ const handleNextPress = () => {
      <Subtitle16M style={{ paddingHorizontal: 15, marginBottom: 5 }}>기타 재질</Subtitle16M>
     <View style={{ paddingHorizontal: 10, flex: 1 }}>
         <InputBox
-        value={text}
-        setValue={setText}
+        value={materialInput}
+        setValue={setMaterialInput}
         placeholder='의뢰하시는 소재가 상단에 없는 경우 작성해주세요'
         long
         style={{ height: 50, flex: 1 }}
@@ -419,13 +439,12 @@ const handleNextPress = () => {
         {refPhotos.length > 0 &&
           <Carousel
             data={splitRefPhotos}
-            renderItem={({ item }: any) => {
+            renderItem={({ item, index }: any) => {
               return (
-                <View style={{ flexDirection: 'row' }}>
-                  {item.map((subItem: any) => (
-                    <View style={{ width: '50%', paddingHorizontal: 20 }}>
+                 <View style={{ flexDirection: 'row' }} key={`ref-row-${index}`}>
+                     {item.map((subItem: any, subIndex: number) => (
+                      <View style={{ width: '50%', paddingHorizontal: 20 }} key={`ref-${subItem.id || subIndex}`}>
                       <ImageBackground
-                        key={subItem.id}
                         source={{ uri: subItem.uri }}
                         style={{ width: '100%', height: 170 }}
                         alt={subItem.fileName}
@@ -442,10 +461,10 @@ const handleNextPress = () => {
           <PhotoOptions
             style={Object.assign({}, styles.grayButton, { margin: 5, marginBottom: 5 })}
             max={4}
-            setPhoto={setRefPhotos}
+            setPhoto={(newPhotos) => handlePhotoUpdate(refPhotos, setRefPhotos, newPhotos)}
             buttonLabel='참고 이미지 첨부'
           />
-          <InputBox value={text} setValue={setText} placeholder='예) 16인치 파우치로 만들고 싶어요, 평소 상의 55 사이즈를 입어요' long />
+          <InputBox value={additionalRequestInput} setValue={setAdditionalRequestInput} placeholder='예) 16인치 파우치로 만들고 싶어요, 평소 상의 55 사이즈를 입어요' long />
         </View>
       </View>
 

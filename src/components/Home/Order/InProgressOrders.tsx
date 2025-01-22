@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { SafeAreaView, Text, TouchableOpacity, View, StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
+import { Picker} from '@react-native-picker/picker';
 import Modal from 'react-native-modal';
 import CheckBox from '../../../common/CheckBox';
 import DropDownIcon from '../../../assets/common/DropDown.svg';
@@ -9,6 +10,27 @@ import { Body14R, Subtitle16B, Body16R } from '../../../styles/GlobalText';
 import { BLACK, PURPLE, LIGHTGRAY } from '../../../styles/GlobalColor';
 import { useNavigation } from '@react-navigation/native';
 
+
+// 화면상단 필터, 채팅
+const OrderFilter = ({ filter, setFilter, onOpenChat }) => {
+  return (
+    <FilterContainer>
+      <PickerWrapper>
+        <Picker
+          selectedValue={filter}
+          onValueChange={(value) => setFilter(value)}
+          style={[styles.filterPicker, {height:'100%'}]}
+        >
+          <Picker.Item label="최신순" value="desc" />
+          <Picker.Item label="오래된 순" value="asc" />
+        </Picker>
+      </PickerWrapper>
+      <OpenChatButton onPress={onOpenChat}>
+        <Text style={{ color: 'BLACK', fontSize: 14 }}>내 오픈채팅 바로가기</Text>
+      </OpenChatButton>
+    </FilterContainer>
+  );
+};
 
 // OrderInfoBox 컴포넌트
 const OrderInfoBox = ({ order }) => {
@@ -179,8 +201,8 @@ const OrderInfoBox = ({ order }) => {
               style={{
                 backgroundColor: steps[2] ? PURPLE : LIGHTGRAY,
                 borderRadius: 4,
-                paddingHorizontal: 10, // 좌우 패딩만 설정
-                paddingVertical: 5, // 상하 패딩을 줄여 텍스트 공간 확보
+                paddingHorizontal: 10,
+                paddingVertical: 5,
                 marginLeft: 10,
                 marginTop:10,
                 height: 30,
@@ -285,30 +307,65 @@ const OrderInfoBox = ({ order }) => {
 
 // InProgressOrders 컴포넌트
 const InProgressOrders = () => {
+  const [filter, setFilter] = useState('asc')
   const orders = [
     { id: '09230', title: '데님으로 만드는 숄더백', customer: '전예영', method: '비대면', date: '2024-05-22', is_online: false,     image: 'https://image.production.fruitsfamily.com/public/product/resized@width620/t6RDVV2b6--1703933039055.png' },
     { id: '92930', title: '내 옷을 반려동물 옷으로', customer: '전예영', method: '대면', date: '2024-05-22', is_online: true,     image:'https://m.lovecoco.co.kr/web/product/big/201911/55d890a77de72b7213b84fec2083e3fe.jpg' },
     { id: '23894', title: '평범했던 패딩, 퀼팅백으로', customer: '전예영', method: '대면', date: '2024-05-22', is_online: true,     image:'https://image.yes24.com/goods/118500067/XL' },
-    {
-      date: '2024-05-23',
-      title: '주문 제목 예시',
-      price: '30000',
-      customer: '김철수',
-      method: '택배',
-      image: 'https://m.lovecoco.co.kr/web/product/big/201911/55d890a77de72b7213b84fec2083e3fe.jpg',
-    },
+    { id: '12345',title: '주문 제목 예시', customer: '김철수', method: '비대면', date: '2024-05-10', is_online: false,  image: 'https://m.lovecoco.co.kr/web/product/big/201911/55d890a77de72b7213b84fec2083e3fe.jpg'},
   ];
 
+  // 필터링된 데이터 정렬
+  const sortedOrders = orders.sort((a, b) => {
+    if (filter === 'asc') {
+      return new Date(a.date) - new Date(b.date);
+    }
+    return new Date(b.date) - new Date(a.date);
+  });
+
+  const handleOpenChat = () => {
+    // console.log('오픈채팅 바로가기');
+  };
+
   return (
-    <SafeAreaView>
-      {orders.map((order, index) => (
-        <OrderInfoBox key={index} order={order} />
-      ))}
-    </SafeAreaView>
+<SafeAreaView style={{ flex: 1, backgroundColor: LIGHTGRAY }}>
+   <OrderFilter filter={filter} setFilter={setFilter} onOpenChat={handleOpenChat} />
+  {orders.map((order, index) => (
+    <OrderInfoBox key={index} order={order} />
+  ))}
+</SafeAreaView>
   );
 };
 
 // 스타일 정의
+
+const FilterContainer = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  background-color: 'LIGHTGRAY';
+  padding: 10px;
+  border-bottom-width: 1px;
+  border-bottom-color: ${LIGHTGRAY};
+`;
+
+const PickerWrapper = styled.View`
+  background-color: white;
+  width: 150px;
+  height:40px;
+  border-radius: 30px;
+  border-width: 1px;
+  border-color: ${PURPLE};
+  justify-content: center;
+  alignItems: center;
+`;
+
+const OpenChatButton = styled.TouchableOpacity`
+  background-color: white;
+  padding: 10px 15px;
+  border-radius: 30px;
+`;
+
 const OrderInfoContainer = styled.View`
   flex-direction: column;
   border-radius: 12px;
@@ -320,6 +377,8 @@ const OrderInfoContainer = styled.View`
 
 const TopSection = styled.View`
   padding: 15px;
+  backgroundColor: white;
+  borderRadius: 12px;
 `;
 
 const OrderID = styled.Text`
@@ -349,6 +408,7 @@ const ExpandedContent = styled.View`
   margin-top: 10px;
   width: 100%;
   align-items: center;
+  backgroundColor: '#F5F5F5';
 `;
 
 const FlowContainer = styled.View`
@@ -402,6 +462,7 @@ const StepRow = styled.View`
 const DropdownContainer = styled.View`
   width: 188px;
   height: 30px;
+  backgroundColor: '#F5F5F5';
   margin-top: 10px;
   align-self: center;
 `;
@@ -410,7 +471,7 @@ const DropdownList = styled.View`
   border: 1px solid ${PURPLE};
   border-radius: 4px;
   margin-top: 5px;
-  background-color: white;
+  background-color: LIGHTGRAY;
   z-index: 10;
 `;
 const TrackingNumberContainer = styled.View`
@@ -459,6 +520,17 @@ const CheckBoxWrapper = styled.View`
 
 
 const styles = StyleSheet.create({
+  filterPicker: {
+    borderRadius: 12,
+    borderColor: PURPLE,
+    backgroundColor: 'transparent',
+    paddingRight: 5,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign:'center',
+  },
+
   dropdownButton: {
     width: 188,
     height: 30,
@@ -505,6 +577,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 10,
+    backgroundColor: '#F5F5F5',
+    borderRadius: 12,
   },
   modalContainer: {
     backgroundColor: 'white',

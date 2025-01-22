@@ -45,34 +45,25 @@ const InputInfo = ({ onClose, navigation, onNavigate, route }: InputInfoProps): 
 
 
   const handleNextPress = async () => {
-    // 입력된 데이터 준비
-    const deliveryData = {
-      delivery_name: name,
-      delivery_phone_number: tel,
-      delivery_address: `${selectedAddress} ${detailedAddress}`,
-    };
+        if (!name || !tel || !selectedAddress) {
+          Alert.alert('필수 정보를 입력해주세요.');
+          return;
+        }
 
-    try {
-      // `route.params.orderId`로 주문 ID를 포함해 백엔드로 데이터 전송
-      //const response = await request.post(`/api/order/${route.params.orderId}/delivery`, deliveryData);
-      // 성공 시 알림 및 페이지 이동
-      Alert.alert('성공', '배송 정보가 성공적으로 저장되었습니다.');
-      navigation.navigate('QuotationPage', {
-        ...route.params, // 이전 데이터 유지
-        deliveryData, // 전달된 배송 정보
-      });
-    } catch (error) {
-      // 오류 처리
-      if (error.response) {
-        Alert.alert('오류', error.response.data.message || '배송 정보 저장 중 문제가 발생했습니다.');
-      } else if (error.request) {
-        Alert.alert('네트워크 오류', '서버와의 통신에 실패했습니다. 인터넷 연결을 확인해주세요.');
-      } else {
-        Alert.alert('오류', error.message);
-      }
-      console.error(error);
-    }
-  };
+
+    navigation.navigate('QuotationPage', {
+          ...route.params, // 이전 데이터를 유지
+          name, // 이름
+          tel, // 전화번호
+          address: selectedAddress, // 주소
+          detailedAddress, // 상세 주소
+          zonecode: postalCode, // 우편번호
+        });
+      };
+
+
+
+
 
 
 
