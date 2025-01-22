@@ -39,7 +39,7 @@ import {
   getNickname,
 } from '../../../common/storage';
 import Request from '../../../common/requests.js';
-import { numberToPrice } from './functions';
+// import { numberToPrice } from './functions';
 
 // 전체 홈 화면에서, 특정 서비스 누르면 넘어오는 페이지 (개별 서비스 페이지)
 
@@ -47,6 +47,9 @@ const { width, height } = Dimensions.get('window');
 
 type ServiceDetailPageProps = {
   reformerName: string;
+  introduce: string;
+  reformerArea: string;
+  reformerLink: string;
   serviceName: string;
   basicPrice: number;
   maxPrice: number;
@@ -60,11 +63,19 @@ type ServiceDetailPageProps = {
   serviceOptions: ServiceDetailOption[];
   marketUuid: string;
   serviceUuid: string;
+  education: any[];
+  certification: any[];
+  awards: any[];
+  career: any[];
+  freelancer: any[];
 };
 
 export type DetailPageStackParams = {
   DetailPage: {
     reformerName: string;
+    introduce: string;
+    reformerArea: string;
+    reformerLink: string;
     serviceName: string;
     basicPrice: number;
     maxPrice: number;
@@ -78,6 +89,11 @@ export type DetailPageStackParams = {
     serviceOptions: ServiceDetailOption[];
     marketUuid: string;
     serviceUuid: string;
+    education: any[];
+    certification: any[];
+    awards: any[];
+    career: any[];
+    freelancer: any[];
   };
 };
 
@@ -89,6 +105,9 @@ const ServiceDetailPageScreen = ({
 }: StackScreenProps<HomeStackParams, 'ServiceDetailPage'>) => {
   const {
     reformerName,
+    introduce,
+    reformerArea,
+    reformerLink,
     serviceName,
     basicPrice,
     maxPrice,
@@ -102,6 +121,11 @@ const ServiceDetailPageScreen = ({
     serviceOptions,
     marketUuid,
     serviceUuid,
+    education,
+    certification,
+    awards,
+    career,
+    freelancer,
   }: ServiceDetailPageProps = route.params;
 
   return (
@@ -114,6 +138,9 @@ const ServiceDetailPageScreen = ({
         component={ServiceDetailPageMainScreen}
         initialParams={{
           reformerName,
+          introduce,
+          reformerArea,
+          reformerLink,
           serviceName,
           basicPrice,
           maxPrice,
@@ -127,6 +154,11 @@ const ServiceDetailPageScreen = ({
           serviceOptions,
           marketUuid,
           serviceUuid,
+          education,
+          certification,
+          awards,
+          career,
+          freelancer,
         }}
       />
     </DetailPageStack.Navigator>
@@ -136,6 +168,9 @@ const ServiceDetailPageScreen = ({
 type ProfileSectionProps = {
   navigation: any;
   reformerName: string;
+  introduce: string;
+  reformerArea: string;
+  reformerLink: string;
   serviceName: string;
   basicPrice: number;
   maxPrice: number;
@@ -144,11 +179,19 @@ type ProfileSectionProps = {
   backgroundImageUri: string;
   profileImageUri?: string;
   marketUuid: string;
+  education: any[];
+  certification: any[];
+  awards: any[];
+  career: any[];
+  freelancer: any[];
 };
 
 const ProfileSection = ({
   navigation,
   reformerName,
+  introduce,
+  reformerArea,
+  reformerLink,
   serviceName,
   basicPrice,
   maxPrice,
@@ -157,6 +200,11 @@ const ProfileSection = ({
   backgroundImageUri,
   profileImageUri,
   marketUuid,
+  education,
+  certification,
+  awards,
+  career,
+  freelancer,
 }: ProfileSectionProps) => {
   const [like, setLike] = useState<boolean>(false);
   const { hideBottomBar, showBottomBar } = useBottomBar();
@@ -187,14 +235,14 @@ const ProfileSection = ({
         title=""
         leftButton="CustomBack"
         rightButton={
-          (userRole === 'customer')
+          userRole === 'customer'
             ? 'Report'
-            : (userRole === 'customer' && userNickname == reformerName)
+            : userRole === 'customer' && userNickname == reformerName
               ? 'Edit'
               : 'Report'
         }
-        onPressLeft={() => { }}
-        onPressRight={() => { }}
+        onPressLeft={() => {}}
+        onPressRight={() => {}}
         reportButtonPressed={reportButtonPressed}
         setReportButtonPressed={setReportButtonPressed}
       />
@@ -209,9 +257,17 @@ const ProfileSection = ({
         backgroundImageUri={backgroundImageUri}
         profilePictureUri={profileImageUri}
         reformerName={reformerName}
+        introduce={introduce}
+        reformerArea={reformerArea}
+        reformerLink={reformerLink}
         reviewNum={reviewNum}
         navigation={navigation}
         marketUuid={marketUuid}
+        education={education}
+        certification={certification}
+        awards={awards}
+        career={career}
+        freelancer={freelancer}
       />
       <Header
         like={like}
@@ -295,11 +351,11 @@ const Header = ({
         <Text style={TextStyles.Title}>{serviceName}</Text>
         <Text style={TextStyles.PriceInfo}>
           기본
-          <Text style={TextStyles.Price}> {numberToPrice(basicPrice)} 원</Text>
+          <Text style={TextStyles.Price}> {basicPrice} 원</Text>
         </Text>
         <Text style={TextStyles.PriceInfo}>
           최대
-          <Text style={TextStyles.Price}> {numberToPrice(maxPrice)} 원</Text>
+          <Text style={TextStyles.Price}> {maxPrice} 원</Text>
         </Text>
       </View>
       {/* <View style={{ margin: 15 }}>
@@ -313,18 +369,34 @@ type ProfileProps = {
   profilePictureUri?: string;
   backgroundImageUri?: string;
   reformerName: string;
+  introduce: string;
+  reformerArea: string;
+  reformerLink: string;
   reviewNum: number;
   navigation: any;
   marketUuid: string;
+  education: any[];
+  certification: any[];
+  awards: any[];
+  career: any[];
+  freelancer: any[];
 };
 
 const Profile = ({
   profilePictureUri,
   backgroundImageUri,
   reformerName,
+  introduce,
+  reformerArea,
+  reformerLink,
   reviewNum,
   navigation,
   marketUuid,
+  education,
+  certification,
+  awards,
+  career,
+  freelancer,
 }: ProfileProps) => {
   return (
     <View style={{ justifyContent: 'space-between' }}>
@@ -348,10 +420,19 @@ const Profile = ({
           <TouchableOpacity
             style={{ flexDirection: 'row', alignItems: 'center' }}
             onPress={() =>
-              navigation.navigate('MarketTabView', { // 프로필 사진 옆에 있는 이름 눌렀을 때 
+              navigation.navigate('MarketTabView', {
+                // 프로필 사진 옆에 있는 이름 눌렀을 때
                 reformerName: reformerName,
+                introduce: introduce,
+                reformerArea: reformerArea,
+                reformerLink: reformerLink,
                 marketUuid: marketUuid,
-                backgroundImageUri: backgroundImageUri ?? defaultImageUri,
+                profileImageUri: profilePictureUri ?? defaultImageUri,
+                education: education,
+                certification: certification,
+                awards: awards,
+                career: career,
+                freelancer: freelancer,
               })
             }>
             <Text style={TextStyles.reformerName}>{reformerName}</Text>
@@ -369,6 +450,9 @@ const ServiceDetailPageMainScreen = ({
 }: StackScreenProps<DetailPageStackParams, 'DetailPage'>) => {
   const {
     reformerName,
+    introduce,
+    reformerArea,
+    reformerLink,
     serviceName,
     basicPrice,
     maxPrice,
@@ -382,6 +466,11 @@ const ServiceDetailPageMainScreen = ({
     serviceOptions,
     marketUuid,
     serviceUuid,
+    education,
+    certification,
+    awards,
+    career,
+    freelancer,
   } = route.params;
 
   // const [index, setIndex] = useState<number>(0);
@@ -519,6 +608,9 @@ const ServiceDetailPageMainScreen = ({
         <ProfileSection
           navigation={navigation}
           reformerName={reformerName}
+          introduce={introduce}
+          reformerArea={reformerArea}
+          reformerLink={reformerLink}
           serviceName={serviceName}
           basicPrice={basicPrice}
           maxPrice={maxPrice}
@@ -527,6 +619,11 @@ const ServiceDetailPageMainScreen = ({
           backgroundImageUri={imageUris?.[0]?.image}
           profileImageUri={profileImageUri}
           marketUuid={marketUuid}
+          education={education}
+          certification={certification}
+          awards={awards}
+          career={career}
+          freelancer={freelancer}
         />
         <DetailBox2
           servicePeriod={servicePeriod}
@@ -632,7 +729,6 @@ const CustomPopup = ({
     </Modal>
   );
 };
-
 
 const TextStyles = StyleSheet.create({
   Title: {
@@ -876,6 +972,5 @@ const styles = StyleSheet.create({
     color: '#000',
   },
 });
-
 
 export default ServiceDetailPageScreen;

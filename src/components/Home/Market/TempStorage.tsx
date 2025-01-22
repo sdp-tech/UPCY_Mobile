@@ -9,7 +9,7 @@ import { StackScreenProps } from "@react-navigation/stack";
 import BottomButton from "../../../common/BottomButton";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Request from '../../../common/requests.js';
-import { getMarketUUID } from '../../../common/storage';
+import { getAccessToken, getMarketUUID } from '../../../common/storage';
 
 const statusBarHeight = getStatusBarHeight(true);
 
@@ -40,13 +40,16 @@ const TempStorage = ({ navigation }: StackScreenProps<any>) => {
   const fetchData = async () => {
     try {
       const marketUuid = await getMarketUUID();
-      const response = await request.get(`/api/market/${marketUuid}/service?temporary=true`, {});
+      const response = await request.get(`/api/market/${marketUuid}/service?temporary=true`, {}, {});
       console.log(marketUuid);
       if (response && response.status === 200) {
         const tempData = response.data.filter((item: ServiceItem) => item.temporary);
         setStorage(tempData);
+      } else if (response && response.status === 404) {
+        Alert.alert("등록된 임시저장 서비스가 없습니다.")
       } else {
         Alert.alert("데이터를 불러오는 중 오류가 발생했습니다.");
+        console.log(response)
       }
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -85,8 +88,12 @@ const TempStorage = ({ navigation }: StackScreenProps<any>) => {
   const handleDeleteAll = async () => {
     try {
       const marketUuid = await getMarketUUID();
+      const accessToken = await getAccessToken();
+      const headers = {
+        Authorization: `Bearer ${accessToken}`,
+      };
       const deletePromises = storage.map((item) =>
-        request.del(`/api/market/${marketUuid}/service/${item.service_uuid}`, {})
+        request.del(`/api/market/${marketUuid}/service/${item.service_uuid}`, {}, headers)
       );
 
       const responses = await Promise.all(deletePromises);
@@ -96,6 +103,9 @@ const TempStorage = ({ navigation }: StackScreenProps<any>) => {
         setStorage([]);
         setSelectedItems([]);
         setDeleteAllPopupVisible(false);
+      } else {
+        console.log(responses)
+        Alert.alert("전체 삭제에 실패했습니다.")
       }
     } catch (error) {
       console.error("Error deleting all items:", error);
@@ -106,19 +116,24 @@ const TempStorage = ({ navigation }: StackScreenProps<any>) => {
   const handleDeleteSelected = async () => {
     try {
       const marketUuid = await getMarketUUID();
+      const accessToken = await getAccessToken();
+      const headers = {
+        Authorization: `Bearer ${accessToken}`,
+      };
       const deletePromises = selectedItems.map((serviceUuid) =>
-        request.del(`/api/market/${marketUuid}/service/${serviceUuid}`, {})
+        request.del(`/api/market/${marketUuid}/service/${serviceUuid}`, {}, headers)
       );
-
       const responses = await Promise.all(deletePromises);
       const allSuccess = responses.every((res: any) => res.status === 200);
-
       if (allSuccess) {
         setStorage((prev) =>
           prev.filter((item) => !selectedItems.includes(item.service_uuid))
         );
         setSelectedItems([]);
         setDeleteSelectedPopupVisible(false);
+      } else {
+        console.log(responses)
+        Alert.alert("선택 삭제에 실패했습니다.")
       }
     } catch (error) {
       console.error("Error deleting selected items:", error);

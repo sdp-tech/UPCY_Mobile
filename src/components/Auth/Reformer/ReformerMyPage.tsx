@@ -468,11 +468,6 @@ export const ReformerMyPageScreen = ({
           </Tabs.Tab>
           <Tabs.Tab name="서비스" key="service">
             {/* TODO: 임시저장 목록 보는 버튼 만들기 */}
-            {/*<TouchableOpacity
-              style={styles.saveButton}
-              onPress={() => navigation.navigate('TempStorage')}>
-              {/*수정 필요
-            </TouchableOpacity>*/}
             {marketData?.market_uuid ? (
               <View>
                 <ServicePage
@@ -480,6 +475,7 @@ export const ReformerMyPageScreen = ({
                   navigation={navigation}
                   reformerName={reformerInfo.nickname}
                   marketUuid={marketData.market_uuid}
+                  is_reformer={true}
                 />
                 <ScrollTopButton scrollViewRef={scrollRef} />
               </View>
@@ -520,24 +516,6 @@ export const ReformerMyPageScreen = ({
 };
 
 const styles = StyleSheet.create({
-  saveButton: {
-    height: 35,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 4,
-    backgroundColor: '#DBFC72', // var(--NeonGreen-upcy-green) 값으로 설정
-    flexDirection: 'row', // 가로 방향 배치 설정
-    alignSelf: 'flex-start',
-  },
-  saveButtonText: {
-    marginLeft: 10, // gap 대신 텍스트에 좌측 여백 설정
-    color: '#612FEF',
-    fontSize: 14,
-    fontWeight: '600',
-    lineHeight: 24,
-  },
   fixedButton: {
     position: 'absolute',
     bottom: 20,
@@ -581,26 +559,26 @@ const styles = StyleSheet.create({
   },
 });
 
-const TextStyles = StyleSheet.create({
-  marketName: {
-    color: '#000',
-    fontSize: 20,
-    fontWeight: '700',
-    lineHeight: 24,
-    textAlign: 'center',
-    marginTop: 8,
-    marginBottom: 4,
-  },
-  rate: {
-    color: '#222',
-    fontSize: 16,
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-  reviewNumber: {
-    color: '#222',
-    fontSize: 16,
-    fontWeight: '400',
-    textAlign: 'center',
-  },
-});
+// const TextStyles = StyleSheet.create({
+//   marketName: {
+//     color: '#000',
+//     fontSize: 20,
+//     fontWeight: '700',
+//     lineHeight: 24,
+//     textAlign: 'center',
+//     marginTop: 8,
+//     marginBottom: 4,
+//   },
+//   rate: {
+//     color: '#222',
+//     fontSize: 16,
+//     fontWeight: '600',
+//     textAlign: 'center',
+//   },
+//   reviewNumber: {
+//     color: '#222',
+//     fontSize: 16,
+//     fontWeight: '400',
+//     textAlign: 'center',
+//   },
+// });

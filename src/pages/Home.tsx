@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useRef } from 'react';
+import { Fragment, useState, useLayoutEffect } from 'react';
 
 import { SafeAreaView, Text, View, Alert } from 'react-native';
 import styled from 'styled-components/native';
@@ -10,7 +10,7 @@ import { TabProps } from '../../App';
 import { ScrollView } from 'react-native-gesture-handler';
 
 // TODO: 나중에 CustomHeader2 사용
-import CustomHeader from '../common/CustomHeader';
+// import CustomHeader from '../common/CustomHeader';
 import CustomHeader2 from '../common/CustomHeader2';
 import HomeTabView, { SelectedOptionProps } from '../components/Home/HomeMain';
 import MarketTabView from '../components/Home/Market/MarketTabView';
@@ -37,7 +37,7 @@ import ComponentsTest from './ComponentsTest';
 import { PURPLE } from '../styles/GlobalColor';
 import ReformerMarket from '../components/Home/Market/ReformerMarket';
 import Service, { MaterialDetail } from '../components/Home/Market/Service';
-import { PhotoType } from '../hooks/useImagePicker';
+// import { PhotoType } from '../hooks/useImagePicker';
 import { stylesList } from '../components/Home/HomeMain';
 import SearchPage from './SearchPage';
 import { ServiceDetailOption } from '../components/Home/Market/Service';
@@ -45,12 +45,12 @@ import ReportPage from './ReportPage';
 
 export type HomeStackParams = {
   Home: { searchTerm?: string };
-  // 혼란 방지를 위해 Market -> MarketTabView로 수정하였습니다.
-  // Market: undefined;
   ServiceDetailPage: {
-    // TODO: add later
     // id: string;
     serviceName: string;
+    introduce: string;
+    reformerArea: string;
+    reformerLink: string;
     reformerName: string;
     basicPrice: number;
     maxPrice: number;
@@ -64,6 +64,11 @@ export type HomeStackParams = {
     serviceOptions: ServiceDetailOption[];
     marketUuid: string;
     serviceUuid: string;
+    education: any[];
+    certification: any[];
+    awards: any[];
+    career: any[];
+    freelancer: any[];
   };
   GoodsDetailPage: undefined;
   QuotationForm: undefined;
@@ -72,7 +77,7 @@ export type HomeStackParams = {
   // ServiceRegistrationPage: { inputText?: string; detailphoto?: PhotoType[] };
   GoodsRegistrationPage: undefined;
   TempStorageEdit: undefined;
-  //WriteDetailPage: { inputText: string; detailphoto?: PhotoType[] };
+  // WriteDetailPage: { inputText: string; detailphoto?: PhotoType[] };
   AddPortfolio: undefined;
   InputInfo: {
     materials: string[];
@@ -87,8 +92,16 @@ export type HomeStackParams = {
   TestComponents: undefined;
   MarketTabView: {
     reformerName: string;
+    introduce: string;
+    reformerArea: string;
+    reformerLink: string;
     marketUuid: string;
-    backgroundImageUri?: string;
+    profileImageUri?: string;
+    education: any[];
+    certification: any[];
+    awards: any[];
+    career: any[];
+    freelancer: any[];
   };
   SearchPage: {
     navigation: any;
@@ -102,7 +115,7 @@ const HomeScreen = ({
   navigation,
   route,
 }: BottomTabScreenProps<TabProps, 'UPCY'>) => {
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     const routeName = getFocusedRouteNameFromRoute(route);
     if (routeName === 'AddPortfolio') {
       navigation.setOptions({ tabBarStyle: { display: 'none' } });
@@ -160,7 +173,7 @@ const HomeMainScreen = ({
   const [selectedTab, setSelectedTab] = useState<'Goods' | 'Market' | 'temp'>(
     'Goods',
   );
-  const ServicePageRef = useRef<ScrollView>(null);
+
   const handlePopupButtonPress = () => {
     Alert.alert(
       '알림', // 팝업제목
@@ -186,16 +199,6 @@ const HomeMainScreen = ({
   // const handleTabChange = (tab: 'Goods' | 'Market' | 'temp') => {
   //   setSelectedTab(tab);
   // };
-  const items = [...new Array(6).keys()];
-  const splitArrayIntoPairs = (arr: any[], pairSize: number) => {
-    return arr.reduce((result, item, index) => {
-      if (index % pairSize === 0) {
-        result.push([]);
-      }
-      result[result.length - 1].push(item);
-      return result;
-    }, []);
-  };
 
   const [selectedFilterOption, setSelectedFilterOption] = useState<
     SelectedOptionProps | undefined
@@ -276,12 +279,6 @@ const Button = styled.TouchableOpacity`
 const ButtonText = styled.Text`
   color: #612fef;
   font-weight: bold;
-`;
-
-const LabelButton = styled.TouchableOpacity`
-  display: flex;
-  flex-direction: row;
-  padding: 16px;
 `;
 
 export default HomeScreen;

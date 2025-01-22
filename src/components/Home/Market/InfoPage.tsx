@@ -18,13 +18,13 @@ type InfoPageDataType = {
 };
 
 export type MarketType = {
-  reformer_link?: string, // 링크 
-  introduce: string, // 자기소개
-  // TODO: introduce로 수정하기 
-  reformer_nickname?: string, // 닉네임 
-  market_thumbnail: string, // ???
-  market_uuid?: string, // market_uuid
-  reformer_area?: string; // 주요 활동지역 
+  reformer_link?: string; // 링크
+  introduce: string; // 자기소개
+  // TODO: introduce로 수정하기
+  reformer_nickname?: string; // 닉네임
+  market_thumbnail: string; // ???
+  market_uuid?: string; // market_uuid
+  reformer_area?: string; // 주요 활동지역
   education?: EducType;
   certification?: CertifiType;
   awards?: AwardsType;

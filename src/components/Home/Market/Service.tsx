@@ -22,7 +22,7 @@ import RenderHTML from 'react-native-render-html';
 // 홈화면에 있는, 서비스 전체 리스트!
 type ServiceOptionImage = {
   image: string;
-}
+};
 
 export type ServiceDetailOption = {
   option_content: string;
@@ -39,6 +39,9 @@ export type MaterialDetail = {
 
 interface ServiceCardProps {
   name: string; // 리폼러 이름
+  introduce: string;
+  reformer_link: string;
+  reformer_area: string;
   created: Date;
   basic_price: number;
   max_price?: number;
@@ -53,26 +56,51 @@ interface ServiceCardProps {
   service_options?: ServiceDetailOption[];
   temporary?: boolean; //TODO: 수정 필요
   suspended?: boolean;
+  profileImageUri?: string;
+  education?: any[];
+  certification?: any[];
+  awards?: any[];
+  career?: any[];
+  freelancer?: any[];
 }
 
 export type ServiceResponseType = {
-  // TODO: any type 나중에 알아보고 수정
-  basic_price: number;
-  created: Date;
+  reformer_info: {
+    user_info: {
+      email: string;
+      phone: number;
+      full_name: string;
+      nickname: string;
+      agreement_terms: boolean;
+      address: string;
+      profile_image_url: string;
+      introduce: string;
+      is_active: boolean;
+      role: string;
+    };
+    reformer_link: string;
+    reformer_area: string;
+    education: any[];
+    certification: any[];
+    awards: any[];
+    career: any[];
+    freelancer: any[];
+  };
   market_uuid: string;
-  max_price: number;
-  reformer_nickname: string;
-  service_category: string;
-  service_content: string;
-  service_image: any[];
-  service_material: any[];
-  service_option: any[];
-  service_period: number;
-  service_style: any[];
-  service_title: string;
   service_uuid: string;
-  temporary: boolean;
+  service_title: string;
+  service_content: string;
+  service_category: string;
+  service_style: any[];
+  service_period: number;
+  basic_price: number;
+  max_price: number;
+  service_option: any[];
+  service_material: any[];
+  service_image: any[];
   suspended: boolean;
+  temporary: boolean;
+  created: Date;
   updated?: Date;
 };
 
@@ -110,7 +138,9 @@ const EntireServiceMarket = ({
   const [serviceCardData, setServiceCardData] = useState<ServiceCardProps[]>(
     [] as ServiceCardProps[],
   );
-  const [serviceCardRawData, setServiceCardRawData] = useState<any[]>([]);
+  const [serviceCardRawData, setServiceCardRawData] = useState<
+    ServiceResponseType[]
+  >([]);
 
   const serviceTitle: string = '지금 주목해야 할 업사이클링 서비스';
   const serviceDescription: string = '옷장 속 옷들의 트렌디한 재탄생';
@@ -120,25 +150,23 @@ const EntireServiceMarket = ({
       // API 호출: 전체 서비스
       const response = await request.get(`/api/market/services`, {}, {});
       if (response.status === 404) {
-        Alert.alert('아직 등록된 서비스가 없습니다.')
+        Alert.alert('아직 등록된 서비스가 없거나, 오류가 발생하였습니다.');
       } else if (response && response.status === 200) {
         const serviceListResults: ServiceResponseType[] = response.data.results;
-        console.log(serviceListResults[0].service_option);
         setServiceCardRawData(serviceListResults);
         const extractedServiceCardData = extractData(serviceListResults);
         setServiceCardData(extractedServiceCardData);
-        // TODO: 마켓이랑 서비스 통합되면, 아래 코드 수정해서 사용하기!
         try {
           // 개별 옵션 데이터를 가져오기 위한 API 호출
           const optionResponses = await Promise.all(
-            extractedServiceCardData.map(async (service) => {
+            extractedServiceCardData.map(async service => {
               const optionResponse = await request.get(
                 `/api/market/${service.market_uuid}/service/${service.service_uuid}`,
                 {},
-                {}
+                {},
               );
               return optionResponse.data.results;
-            })
+            }),
           );
 
           // 옵션 데이터 병합
@@ -152,7 +180,7 @@ const EntireServiceMarket = ({
                 option_uuid: option.option_uuid,
                 service_option_image: option.service_option_image || [],
               })),
-            })
+            }),
           );
 
           setServiceCardData(mergedServiceCardData);
@@ -175,7 +203,10 @@ const EntireServiceMarket = ({
   const extractData = (rawData: ServiceResponseType[]) => {
     return rawData.map(service => ({
       //TODO: 밑에 수정
-      name: service.reformer_nickname,
+      name: service.reformer_info.user_info.nickname,
+      introduce: service.reformer_info.user_info.introduce,
+      reformer_link: service.reformer_info.reformer_link,
+      reformer_area: service.reformer_info.reformer_area,
       created: service.created || new Date('2023-12-12'),
       basic_price: service.basic_price,
       max_price: service.max_price,
@@ -194,15 +225,22 @@ const EntireServiceMarket = ({
       })) as MaterialDetail[],
       service_options: Array.isArray(service.service_option)
         ? (service.service_option.map(option => ({
-          option_content: option.option_content,
-          option_name: option.option_name,
-          option_price: option.option_price,
-          option_uuid: option.option_uuid,
-          service_option_image: option.service_option_image || '',
-        })) as ServiceDetailOption[])
+            option_content: option.option_content,
+            option_name: option.option_name,
+            option_price: option.option_price,
+            option_uuid: option.option_uuid,
+            service_option_image: option.service_option_image || '',
+          })) as ServiceDetailOption[])
         : [],
       temporary: service.temporary,
       suspended: service.suspended,
+      profileImageUri:
+        service.reformer_info.user_info.profile_image_url || defaultImageUri,
+      education: service.reformer_info.education || [],
+      certification: service.reformer_info.certification || [],
+      awards: service.reformer_info.awards || [],
+      career: service.reformer_info.career || [],
+      freelancer: service.reformer_info.freelancer || [],
     })) as ServiceCardProps[];
   };
 
@@ -268,10 +306,10 @@ const EntireServiceMarket = ({
       const styleFilteredData =
         selectedStylesList.length > 0
           ? dateFilteredData.filter(card =>
-            card.service_styles?.some(style =>
-              selectedStylesList.includes(style),
-            ),
-          )
+              card.service_styles?.some(style =>
+                selectedStylesList.includes(style),
+              ),
+            )
           : [];
 
       // TODO: add more filtering logic here
@@ -317,6 +355,9 @@ const EntireServiceMarket = ({
                 <ServiceCard
                   key={card.service_uuid}
                   name={card.name}
+                  introduce={card.introduce}
+                  reformer_area={card.reformer_area}
+                  reformer_link={card.reformer_link}
                   created={card.created}
                   basic_price={card.basic_price}
                   max_price={card.max_price}
@@ -330,7 +371,13 @@ const EntireServiceMarket = ({
                   navigation={navigation}
                   service_options={serviceCardRawData[index].service_option}
                   service_materials={serviceCardRawData[index].service_material}
-                  suspended={serviceCardRawData[index].suspended}
+                  suspended={serviceCardData[index].suspended}
+                  profileImageUri={card.profileImageUri}
+                  education={card.education}
+                  certification={card.certification}
+                  awards={card.awards}
+                  career={card.career}
+                  freelancer={card.freelancer}
                 />
               ),
           )
@@ -349,6 +396,9 @@ const EntireServiceMarket = ({
 
 export const ServiceCard = ({
   name,
+  introduce,
+  reformer_area,
+  reformer_link,
   created,
   basic_price,
   max_price,
@@ -363,8 +413,13 @@ export const ServiceCard = ({
   service_materials,
   service_options,
   suspended,
+  profileImageUri,
+  education,
+  certification,
+  awards,
+  career,
+  freelancer,
 }: ServiceCardComponentProps) => {
-
   //TODO: get review num using API
   const REVIEW_NUM = 5;
 
@@ -375,19 +430,27 @@ export const ServiceCard = ({
       onPress={() => {
         navigation.navigate('ServiceDetailPage', {
           reformerName: name,
+          introduce: introduce,
+          reformerArea: reformer_area,
+          reformerLink: reformer_link,
           serviceName: service_title,
           basicPrice: basic_price,
           maxPrice: max_price,
           reviewNum: REVIEW_NUM,
           tags: service_styles,
           imageUris: imageUris,
-          profileImageUri: defaultImageUri,
+          profileImageUri: profileImageUri,
           servicePeriod: service_period,
           serviceMaterials: service_materials,
           serviceContent: service_content,
           serviceOptions: service_options,
           marketUuid: market_uuid,
           serviceUuid: service_uuid,
+          education: education,
+          certification: certification,
+          awards: awards,
+          career: career,
+          freelancer: freelancer,
         });
       }}>
       <View style={styles.topContainer}>
