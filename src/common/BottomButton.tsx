@@ -11,6 +11,7 @@ interface BottomButtonProps {
   onPress: () => void;
   style?: ViewStyle;
   disable?: boolean;
+  color?: string;
 }
 
 const BottomButton = ({
@@ -19,13 +20,16 @@ const BottomButton = ({
   onPress,
   style,
   disable,
+  color,
 }: BottomButtonProps) => {
   return (
     <ButtonContainer
       pressed={pressed}
       onPress={onPress}
       style={{ ...style }}
-      disabled={disable}>
+      disabled={disable}
+      customColor ={color}
+      >
       <Body16M style={{ color: pressed ? PURPLE2 : PURPLE }}>{value}</Body16M>
     </ButtonContainer>
   );
@@ -34,15 +38,20 @@ const BottomButton = ({
 const ButtonContainer = styled.TouchableOpacity<{
   pressed: boolean;
   disabled: boolean;
+  customColor?: string;
 }>`
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 8px;
   padding: 10px 90px;
-  background-color: ${(props: { pressed: boolean }) =>
-    props.pressed ? PURPLE : GREEN};
-  ${(props: { disabled: boolean }) => props.disabled && 'opacity: 0.4;'};
+  background-color: ${(props) =>
+                        props.customColor
+                          ? props.customColor
+                          : props.pressed
+                          ? PURPLE
+                          : GREEN};
+                      ${(props) => props.disabled && 'opacity: 0.4;'};
 `;
 
 export default BottomButton;

@@ -18,8 +18,9 @@ import { HomeStackParams } from '../../../pages/Home';
 import { StackScreenProps } from '@react-navigation/stack';
 
 import Arrow from '../../../assets/common/Arrow.svg';
+import BottomButton from '../../../common/BottomButton';
 
-import { BLACK, PURPLE } from '../../../styles/GlobalColor';
+import { BLACK, PURPLE , GREEN} from '../../../styles/GlobalColor';
 import {
   Body14R,
   Body16M,
@@ -248,10 +249,19 @@ const QuotationPage = ({
             alignItems: 'center',
             borderRadius: 20,
           }}
-          onPress={() => console.log('카톡 상담 버튼 클릭')}>
-          <Text style={{ color: BLACK }}>카톡 상담</Text>
+          onPress={() => console.log('수락')}>
+          <Text style={{ color: BLACK }}>수락하기</Text>
         </TouchableOpacity>
       </View>
+
+     <View style={{ padding: 10, marginVertical: 30 }}>
+             <BottomButton value={'수락 하기'} onPress={handleSendQuotation} pressed={true} style={{ paddingVertical: 30 }}
+             />
+             <View style={{ marginVertical: 5 }} />
+             <BottomButton value={'거절 하기'} pressed={true} onPress={handleRejection} color={GREEN}  />
+           </View>
+
+
     </ScrollView>
   );
 };
