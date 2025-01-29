@@ -17,12 +17,14 @@ import Arrow from '../../../assets/common/Arrow.svg';
 import Search from '../../../assets/common/Search.svg';
 import PhotoOptions, { PhotoResultProps } from '../../../common/PhotoOptions';
 import Carousel from '../../../common/Carousel';
-
+// 서비스 디테일에서 Footer 누르면 연결되는 주문서 보내기 페이지(1)
 const statusBarHeight = getStatusBarHeight(true);
 
 interface FilterSectionProps {
   label: string;
   items: any[];
+  showDuplicate: boolean;
+  onMaterialSelect: (selectedItems: string[]) => void;
 }
 
 interface FilterProps {
@@ -40,7 +42,7 @@ const Filter = ({ value, onPress, isSelected }: FilterProps) => {
       ]}
       onPress={onPress}
     >
-      <Text style={[styles.text, isSelected ? styles.selectedText : null]}>{value}</Text>
+      <Text style={[isSelected ? styles.selectedText : null]}>{value}</Text>
     </TouchableOpacity>
   );
 };
@@ -99,7 +101,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: PURPLE,
     backgroundColor: '#fff',
-    flex:1,
+    flex: 1,
   },
   selectedOptionCard: {
     backgroundColor: '#EDE7F6',
@@ -108,10 +110,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-  },
-  optionText: {
-    flex: 1,
-    marginRight: 10,
   },
   optionImage: {
     width: 70,
@@ -131,6 +129,7 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#F0F0F0',
     borderRadius: 8,
+    flex: 0.9,
   },
 });
 
@@ -162,16 +161,16 @@ const handlePhotoUpdate = (
 const FilterSection = ({ label, items, showDuplicate = true, onMaterialSelect }: FilterSectionProps) => {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
- const handleSelectItem = (item: string) => {
+  const handleSelectItem = (item: string) => {
     toggleSelection(selectedItems, setSelectedItems, item);
 
-    };
+  };
 
-useEffect(() => {
-  if (selectedItems.length > 0) {
-    onMaterialSelect(selectedItems);
-  }
-}, [selectedItems])
+  useEffect(() => {
+    if (selectedItems.length > 0) {
+      onMaterialSelect(selectedItems);
+    }
+  }, [selectedItems])
 
   return (
     <FilterContainer>
@@ -203,15 +202,15 @@ const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 
   const meet = ['대면', '비대면'];
 
   const options = [
- {
+    {
       option: 'option 0',
       title: '유료 옵션',
       description: '옵션입니다.',
       price: '1,000 원',
-       image: 'https://example.com/image1.jpg'
+      image: 'https://example.com/image1.jpg'
 
     },
-{
+    {
       option: 'option 1',
       title: '단추',
       description: '가방 입구에 똑딱이 단추를 추가할 수 있어요.',
@@ -279,34 +278,32 @@ const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 
   };
 
   const handleOptionPress = (index: number) => {
-     toggleSelection(selectedOptions, setSelectedOptions, index);
-   };
+    toggleSelection(selectedOptions, setSelectedOptions, index);
+  };
 
   const handleFilterSelection = (filterType: string) => {
     setSelectedFilter(filterType);
   };
 
-const handleNextPress = () => {
-  if (!selectedFilter) {
-    Alert.alert('거래 방식을 선택해주세요');
-    return;
-  }
-  const finalSelectedMaterials = materialInput
-    ? [...selectedMaterial, materialInput]
-    : selectedMaterial;
+  const handleNextPress = () => {
+    if (!selectedFilter) {
+      Alert.alert('거래 방식을 선택해주세요');
+      return;
+    }
+    const finalSelectedMaterials = materialInput
+      ? [...selectedMaterial, materialInput]
+      : selectedMaterial;
 
-  const selectedOptionDetails = selectedOptions.map(index => options[index]);
+    const selectedOptionDetails = selectedOptions.map(index => options[index]);
 
-  navigation.navigate('InputInfo', {
+    navigation.navigate('InputInfo', {
       photos,
-     materials: finalSelectedMaterials,
-     transactionMethod: selectedFilter,
-     options: selectedOptionDetails, // 선택한 옵션
-     additionalRequest: {text:additionalRequestInput, photos:refPhotos,},
-
-
-   });
- };
+      materials: finalSelectedMaterials,
+      transactionMethod: selectedFilter,
+      options: selectedOptionDetails, // 선택한 옵션
+      additionalRequest: { text: additionalRequestInput, photos: refPhotos, },
+    });
+  };
 
 
   return (
@@ -329,16 +326,16 @@ const handleNextPress = () => {
         </View>
       </ImageBackground>
       <View style={{ justifyContent: 'center' }}>
-        <Subtitle18M style={{ textAlign: 'center',fontWeight: 'bold', paddingVertical: 10 }}>주문서 작성</Subtitle18M>
+        <Subtitle18M style={{ textAlign: 'center', fontWeight: 'bold', paddingVertical: 10 }}>주문서 작성</Subtitle18M>
         {photos.length > 0 &&
           <Carousel
             data={splitPhotos}
             renderItem={({ item, index }: any) => {
               return (
                 <View style={{ flexDirection: 'row' }} key={`photo-row-${index}`}>
-                    {item.map((subItem: any, subIndex: number) => (
+                  {item.map((subItem: any, subIndex: number) => (
                     <View style={{ width: '50%', paddingHorizontal: 20 }} key={`photo-${subItem.id || subIndex}`}>
-                    <ImageBackground
+                      <ImageBackground
                         source={{ uri: subItem.uri }}
                         style={{ width: '100%', height: 170 }}
                         alt={subItem.fileName}
@@ -362,27 +359,23 @@ const handleNextPress = () => {
       </View>
       <View style={{ height: 8, backgroundColor: 'white' }} />
       <FilterSection
-              label='재질 선택'
-              items={materials}
-              showDuplicate ={true}
-              onMaterialSelect ={setSelectedMaterial}/>
-     <Subtitle16M style={{ paddingHorizontal: 15, marginBottom: 5 }}>기타 재질</Subtitle16M>
-    <View style={{ paddingHorizontal: 10, flex: 1 }}>
+        label='재질 선택'
+        items={materials}
+        showDuplicate={true}
+        onMaterialSelect={setSelectedMaterial} />
+      <Subtitle16M style={{ paddingHorizontal: 15, marginBottom: 5 }}>기타 재질</Subtitle16M>
+      <View style={{ paddingHorizontal: 10, flex: 1 }}>
         <InputBox
-        value={materialInput}
-        setValue={setMaterialInput}
-        placeholder='의뢰하시는 소재가 상단에 없는 경우 작성해주세요'
-        long
-        style={{ height: 50, flex: 1 }}
+          value={materialInput}
+          setValue={setMaterialInput}
+          placeholder='의뢰하시는 소재가 상단에 없는 경우 작성해주세요'
+          long
+          style={{ height: 50, flex: 1 }}
         />
-    </View>
+      </View>
 
       <View style={{ height: 32, backgroundColor: 'white' }} />
-     <View style={{ borderBottomWidth: 5, borderColor: '#D9D9D9'}}/>
-
-
-
-
+      <View style={{ borderBottomWidth: 5, borderColor: '#D9D9D9' }} />
 
       <View style={styles.optionBox}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 5 }}>
@@ -390,50 +383,49 @@ const handleNextPress = () => {
           {showDuplicate && <Caption11M style={{ color: PURPLE }}>• 중복 가능</Caption11M>}
         </View>
 
+        {options.map((option, optionIndex) => (
+          <View key={optionIndex} style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <CheckBox
+              value={selectedOptions.includes(optionIndex)}
+              onValueChange={() => handleOptionPress(optionIndex)}
+              tintColors={{ true: PURPLE, false: '#D9D9D9' }}
+            />
+            <TouchableOpacity
+              key={optionIndex}
+              style={[styles.optionCard, selectedOptions.includes(optionIndex) && styles.selectedOptionCard]}
+              onPress={() => handleOptionPress(optionIndex)}
+            >
+              <Subtitle16M style={selectedOptions.includes(optionIndex) ? styles.selectedOptionText : { color: PURPLE }}>
+                {option.title}
+              </Subtitle16M>
 
-            {options.map((option, optionIndex) => (
-              <View key={optionIndex} style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <CheckBox
-                  value={selectedOptions.includes(optionIndex)}
-                  onValueChange={() => handleOptionPress(optionIndex)}
-                  tintColors={{ true: PURPLE, false: '#D9D9D9' }}
-                />
-                <TouchableOpacity
-                  key={optionIndex}
-                  style={[styles.optionCard, selectedOptions.includes(optionIndex) && styles.selectedOptionCard]}
-                  onPress={() => handleOptionPress(optionIndex)}
-                >
-                  <Subtitle16M style={selectedOptions.includes(optionIndex) ? styles.selectedOptionText : { color: PURPLE }}>
-                    {option.title}
-                  </Subtitle16M>
-
-                  <View style={styles.optionHeader}>
-                    <Subtitle16M style={selectedOptions.includes(optionIndex) ? styles.selectedOptionText : { color: BLACK }}>
-                      {option.title}
-                    </Subtitle16M>
-                    <Body16M style={selectedOptions.includes(optionIndex) ? styles.selectedOptionText : { color: BLACK, textAlign: 'right' }}>
-                      {option.price}
-                    </Body16M>
-                  </View>
-
-                  <View style={styles.optionContent}>
-                    <View style={styles.optionDescription}>
-                      <Body14R style={{ color: BLACK }}>{option.description}</Body14R>
-                    </View>
-                    <View style={styles.optionImage}>
-                      <Image source={{ uri: option.image }} style={styles.optionImage} />
-                    </View>
-                  </View>
-                </TouchableOpacity>
+              <View style={styles.optionHeader}>
+                <Subtitle16M style={selectedOptions.includes(optionIndex) ? styles.selectedOptionText : { color: BLACK }}>
+                  {option.title}
+                </Subtitle16M>
+                <Body16M style={selectedOptions.includes(optionIndex) ? styles.selectedOptionText : { color: BLACK, textAlign: 'right' }}>
+                  {option.price}
+                </Body16M>
               </View>
-            ))}
+
+              <View style={styles.optionContent}>
+                <View style={styles.optionDescription}>
+                  <Body14R style={{ color: BLACK }}>{option.description}</Body14R>
+                </View>
+                <View style={styles.optionImage}>
+                  <Image source={{ uri: option.image }} style={styles.optionImage} />
+                </View>
+              </View>
+            </TouchableOpacity>
           </View>
+        ))}
+      </View>
 
 
       <View style={{ paddingVertical: 20, borderBottomWidth: 5, borderColor: '#D9D9D9', backgroundColor: '#FFFFFF', marginBottom: 20 }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 5 }}>
           <Subtitle18M style={{ paddingHorizontal: 15 }}>추가 요청사항</Subtitle18M>
-          { <Caption11M style={{ color: PURPLE }}>* 최대 2장 (PNG,JPG) </Caption11M>}
+          {<Caption11M style={{ color: PURPLE }}>* 최대 2장 (PNG,JPG) </Caption11M>}
         </View>
 
         {refPhotos.length > 0 &&
@@ -441,9 +433,9 @@ const handleNextPress = () => {
             data={splitRefPhotos}
             renderItem={({ item, index }: any) => {
               return (
-                 <View style={{ flexDirection: 'row' }} key={`ref-row-${index}`}>
-                     {item.map((subItem: any, subIndex: number) => (
-                      <View style={{ width: '50%', paddingHorizontal: 20 }} key={`ref-${subItem.id || subIndex}`}>
+                <View style={{ flexDirection: 'row' }} key={`ref-row-${index}`}>
+                  {item.map((subItem: any, subIndex: number) => (
+                    <View style={{ width: '50%', paddingHorizontal: 20 }} key={`ref-${subItem.id || subIndex}`}>
                       <ImageBackground
                         source={{ uri: subItem.uri }}
                         style={{ width: '100%', height: 170 }}
@@ -472,39 +464,39 @@ const handleNextPress = () => {
 
 
       <View style={{ paddingHorizontal: 15, paddingVertical: 20, backgroundColor: '#FFFFFF' }}>
-         <Subtitle18M style={{ marginBottom: 10 }}>거래 방식 선택</Subtitle18M>
+        <Subtitle18M style={{ marginBottom: 10 }}>거래 방식 선택</Subtitle18M>
 
 
-                {/* 비대면 버튼 */}
-                <TouchableOpacity
-                  style={[
-                    styles.filterButton,
-                    selectedFilter === '비대면' && styles.selectedFilterButton2,
-                  ]}
-                  onPress={() => handleFilterSelection('비대면')}
-                >
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Text style={styles.filterText}>📦</Text>
-                    <Text style={styles.filterText}>비대면</Text>
-                  </View>
-                  <Text style={styles.filterDescription}>오픈채팅에서 리폼접수 주소를 주고 받으세요!</Text>
-                </TouchableOpacity>
+        {/* 비대면 버튼 */}
+        <TouchableOpacity
+          style={[
+            styles.filterButton,
+            selectedFilter === '비대면' && styles.selectedFilterButton2,
+          ]}
+          onPress={() => handleFilterSelection('비대면')}
+        >
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Text>📦</Text>
+            <Text>비대면</Text>
+          </View>
+          <Text>오픈채팅에서 리폼접수 주소를 주고 받으세요!</Text>
+        </TouchableOpacity>
 
-                {/* 대면 버튼 */}
-                <TouchableOpacity
-                  style={[
-                    styles.filterButton,
-                    selectedFilter === '대면' && styles.selectedFilterButton2,
-                  ]}
-                  onPress={() => handleFilterSelection('대면')}
-                >
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Text style={styles.filterText}>📍</Text>
-                    <Text style={styles.filterText}>대면</Text>
-                  </View>
-                  <Text style={styles.filterDescription}>오픈채팅에서 리폼과 약속을 잡아보세요!</Text>
-                </TouchableOpacity>
-              </View>
+        {/* 대면 버튼 */}
+        <TouchableOpacity
+          style={[
+            styles.filterButton,
+            selectedFilter === '대면' && styles.selectedFilterButton2,
+          ]}
+          onPress={() => handleFilterSelection('대면')}
+        >
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Text>📍</Text>
+            <Text>대면</Text>
+          </View>
+          <Text>오픈채팅에서 리폼과 약속을 잡아보세요!</Text>
+        </TouchableOpacity>
+      </View>
 
       <View style={{ paddingHorizontal: 45, paddingVertical: 20 }}>
         <BottomButton value='다음' pressed={false} onPress={handleNextPress} />
@@ -543,7 +535,7 @@ const FilterBox = styled.View`
   border-color: ${PURPLE};
   flex-wrap: wrap;
   align-items: center;
-  backgroundColor:'white';
+  background-color:'white';
 `;
 
 export default QuotationForm;

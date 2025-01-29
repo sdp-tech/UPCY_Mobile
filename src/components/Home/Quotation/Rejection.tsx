@@ -7,10 +7,11 @@ import { BLACK, LIGHTGRAY, PURPLE } from '../../../styles/GlobalColor';
 import Arrow from '../../../assets/common/Arrow.svg';
 import InputBox from '../../../common/InputBox';
 import BottomButton from '../../../common/BottomButton';
-import { useNavigation } from '@react-navigation/native';
+import { StackScreenProps } from '@react-navigation/stack';
+import { OrderStackParams } from '../Order/OrderManagement';
 
-interface RejectionProps {
-  onClose: () => void;
+interface RejectionProps extends StackScreenProps<OrderStackParams, 'Rejection'> {
+  onClose?: () => void;
 }
 
 const statusBarHeight = getStatusBarHeight(true);
@@ -23,14 +24,13 @@ const data = [
   { id: 5, text: "기타" },
 ];
 
-const Rejection = ({ onClose }: RejectionProps) => {
+const Rejection = ({ navigation, route, onClose }: RejectionProps) => {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [customReason, setCustomReason] = useState<string>('');
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const handlePress = (id: number) => {
     setSelectedId(id);
   };
-  const navigation = useNavigation();
 
   const handleConfirmRejection = () => {
     setIsModalVisible(false);
@@ -53,9 +53,9 @@ const Rejection = ({ onClose }: RejectionProps) => {
           <Title20B style={{ textAlign: 'center' }}>주문서 거절 사유</Title20B>
           <View style={{ padding: 20, marginVertical: 15, alignItems: 'center' }}>
             <Subtitle18B>주문서를 거절한 이유가 무엇인가요?</Subtitle18B>
-            <View style ={{marginVertical:3}}/>
+            <View style={{ marginVertical: 3 }} />
             <Body14R>다음 주문서를 작성할 때 많은 도움이 돼요.</Body14R>
-          <View style ={{marginVertical:20}}/>
+            <View style={{ marginVertical: 20 }} />
             <FlatList
               data={data}
               style={{ height: 400 }}
@@ -83,52 +83,52 @@ const Rejection = ({ onClose }: RejectionProps) => {
             />
 
             {selectedId === 5 && (
-            <View style={{ width: '100%', marginTop: 2 }}>
-                 <InputBox
-                   placeholder='추가적인 의견이나 거절 사유가 있다면 작성해 주세요'
-                   long
-                   value={customReason}
-                   onChangeText={setCustomReason}
-                   style={{ width: '100%' }}
-                 />
-                 </View>
-               )}
-            </View>
+              <View style={{ width: '100%', marginTop: 2 }}>
+                <InputBox
+                  placeholder='추가적인 의견이나 거절 사유가 있다면 작성해 주세요'
+                  long
+                  value={customReason}
+                  onChangeText={setCustomReason}
+                  style={{ width: '100%' }}
+                />
+              </View>
+            )}
           </View>
-         </ScrollView>
+        </View>
+      </ScrollView>
 
-<Modal transparent={true} visible={isModalVisible} onRequestClose={handleCancel}>
-  <ModalContainer>
-    <ModalBox>
-      <Subtitle16B style={{ textAlign: 'center', marginBottom: 10 }}>
-        해당 거래를 정말 거절하시겠어요?
-      </Subtitle16B>
-      <Text style={{ textAlign: 'center', marginBottom: 15 }}>
-        거절 사유가 업씨러에게 전달됩니다
-      </Text>
+      <Modal transparent={true} visible={isModalVisible} onRequestClose={handleCancel}>
+        <ModalContainer>
+          <ModalBox>
+            <Subtitle16B style={{ textAlign: 'center', marginBottom: 10 }}>
+              해당 거래를 정말 거절하시겠어요?
+            </Subtitle16B>
+            <Text style={{ textAlign: 'center', marginBottom: 15 }}>
+              거절 사유가 업씨러에게 전달됩니다
+            </Text>
 
-      <ButtonContainer>
-        <TouchableOpacity onPress={handleCancel} style={styles.cancelButton}>
-          <Text style={styles.cancelButtonText}>취소</Text>
-        </TouchableOpacity>
+            <ButtonContainer>
+              <TouchableOpacity onPress={handleCancel} style={styles.cancelButton}>
+                <Text style={styles.cancelButtonText}>취소</Text>
+              </TouchableOpacity>
 
-        <View style={styles.separator} />
+              <View style={styles.separator} />
 
-        <TouchableOpacity onPress={handleConfirmRejection} style={styles.confirmButton}>
-          <Text style={styles.confirmButtonText}>확인</Text>
-        </TouchableOpacity>
-      </ButtonContainer>
-    </ModalBox>
-  </ModalContainer>
-</Modal>
+              <TouchableOpacity onPress={handleConfirmRejection} style={styles.confirmButton}>
+                <Text style={styles.confirmButtonText}>확인</Text>
+              </TouchableOpacity>
+            </ButtonContainer>
+          </ModalBox>
+        </ModalContainer>
+      </Modal>
 
 
 
       <View style={{ position: 'absolute', width: '100%', bottom: 0, borderTopWidth: 8, borderColor: 'white', zIndex: 1, backgroundColor: 'white', paddingHorizontal: 10 }}>
         <View style={{ paddingHorizontal: 30, paddingVertical: 20 }}>
           <BottomButton value='주문 거절하기' pressed={false}
-          onPress={() => setIsModalVisible(true)}
-             />
+            onPress={() => setIsModalVisible(true)}
+          />
         </View>
       </View>
     </SafeAreaView>

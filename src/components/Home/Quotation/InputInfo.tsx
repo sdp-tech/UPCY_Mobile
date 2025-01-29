@@ -13,12 +13,11 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { HomeStackParams } from '../../../pages/Home';
 
 import Request from '../../../common/requests';
+import { OrderStackParams } from '../Order/OrderManagement';
 
 
-export type InputInfoProps = StackScreenProps<HomeStackParams, 'InputInfo'> & {
-  onClose: () => void;
-  onNavigate: () => void;
-  navigation: StackNavigationProp<HomeStackParams, 'InputInfo'>;
+export type InputInfoProps = {
+  navigation: StackNavigationProp<OrderStackParams, 'InputInfo'>;
   route: any;
 }
 
@@ -26,7 +25,7 @@ export type InputInfoProps = StackScreenProps<HomeStackParams, 'InputInfo'> & {
 
 const statusBarHeight = getStatusBarHeight(true);
 
-const InputInfo = ({ onClose, navigation, onNavigate, route }: InputInfoProps): React.JSX.Element => {
+const InputInfo = ({ navigation, route }: InputInfoProps): React.JSX.Element => {
   // 컴포넌트 내부 구현
   const [postModal, setPostModal] = useState(false); // 모달 가시성 관리
   const [selectedAddress, setSelectedAddress] = useState(''); // 선택한 주소를 저장
@@ -45,21 +44,21 @@ const InputInfo = ({ onClose, navigation, onNavigate, route }: InputInfoProps): 
 
 
   const handleNextPress = async () => {
-        if (!name || !tel || !selectedAddress) {
-          Alert.alert('필수 정보를 입력해주세요.');
-          return;
-        }
+    if (!name || !tel || !selectedAddress) {
+      Alert.alert('필수 정보를 입력해주세요.');
+      return;
+    }
 
 
     navigation.navigate('QuotationPage', {
-          ...route.params, // 이전 데이터를 유지
-          name, // 이름
-          tel, // 전화번호
-          address: selectedAddress, // 주소
-          detailedAddress, // 상세 주소
-          zonecode: postalCode, // 우편번호
-        });
-      };
+      ...route.params, // 이전 데이터를 유지
+      name, // 이름
+      tel, // 전화번호
+      address: selectedAddress, // 주소
+      detailedAddress, // 상세 주소
+      zonecode: postalCode, // 우편번호
+    });
+  };
 
 
 

@@ -1,6 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
 import { useBottomBar } from "../../../../contexts/BottomBarContext";
-import { Text, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import React from "react";
 import Arrow from '../../../assets/common/Arrow.svg';
