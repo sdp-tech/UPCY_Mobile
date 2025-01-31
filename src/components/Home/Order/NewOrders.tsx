@@ -1,9 +1,10 @@
 import React from 'react';
-import { SafeAreaView, ScrollView, Text, TouchableOpacity, Image } from 'react-native';
+import { SafeAreaView, ScrollView, Text, TouchableOpacity, } from 'react-native';
 import styled from 'styled-components/native';
-import { useNavigation } from '@react-navigation/native';
-import { Body14R, Body16M, Caption11M, Caption12M, Caption14M, Filter14M, Subtitle16M, Subtitle16B, Subtitle18M, Title20B } from '../../../styles/GlobalText';
-import { BLACK, LIGHTGRAY } from '../../../styles/GlobalColor.tsx';
+import { Body14R, Subtitle16B, } from '../../../styles/GlobalText';
+import { LIGHTGRAY } from '../../../styles/GlobalColor.tsx';
+import { StackScreenProps } from '@react-navigation/stack';
+import { OrderStackParams } from './OrderManagement.tsx';
 
 type OrderInfoType = {
   id: string;
@@ -16,13 +17,12 @@ type OrderInfoType = {
 
 const newOrders = [
   // Sample data for "새 주문"
-  { title: '내 옷을 반려동물 옷으로', price: '25000원', customer: '전예영', orderDate: '2024-05-22', is_online: false,     image: 'https://m.lovecoco.co.kr/web/product/big/201911/55d890a77de72b7213b84fec2083e3fe.jpg' },
-  { title: '데님으로 만드는 숄더백', price: '28000원', customer: '전예영', orderDate: '2024-05-22', is_online: false,     image: 'https://image.production.fruitsfamily.com/public/product/resized@width620/t6RDVV2b6--1703933039055.png' },
+  { title: '내 옷을 반려동물 옷으로', price: '25000원', customer: '전예영', orderDate: '2024-05-22', is_online: false, image: 'https://m.lovecoco.co.kr/web/product/big/201911/55d890a77de72b7213b84fec2083e3fe.jpg' },
+  { title: '데님으로 만드는 숄더백', price: '28000원', customer: '전예영', orderDate: '2024-05-22', is_online: false, image: 'https://image.production.fruitsfamily.com/public/product/resized@width620/t6RDVV2b6--1703933039055.png' },
 ];
 
 
-const NewOrders = () => {
-  const navigation = useNavigation();
+const NewOrders = ({ navigation, route }: StackScreenProps<OrderStackParams, 'NewOrders'>) => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: LIGHTGRAY }}>

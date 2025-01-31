@@ -1,4 +1,4 @@
-import { Fragment, useState, useLayoutEffect } from 'react';
+import { Fragment, useState, useLayoutEffect, useEffect } from 'react';
 
 import { SafeAreaView, Text, View, Alert } from 'react-native';
 import styled from 'styled-components/native';
@@ -20,7 +20,6 @@ import QuotationPage, {
 } from '../components/Home/Quotation/QuotationPage';
 import SentQuotation from '../components/Home/Quotation/SentQuotation';
 // import ServiceRegistrationPage from '../components/Home/Market/ServiceRegistration';
-import ServiceDetailPageScreen from '../components/Home/Market/ServiceDetailPage';
 import GoodsDetailPageScreen from '../components/Home/Market/GoodsDetailPage';
 import GoodsRegistrationPage from '../components/Home/Market/GoodsRegistration';
 import TempStorageEdit from '../components/Home/Market/TempStorageEdit';
@@ -29,19 +28,19 @@ import AddPortfolio from '../components/Home/Portfolio/AddPortfolio';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import InputInfo from '../components/Home/Quotation/InputInfo';
-import QuotationConfirm from '../components/Home/Quotation/QuotationConfirm';
-import Rejection from '../components/Home/Quotation/Rejection';
-import SentRejection from '../components/Home/Quotation/SentRejection';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import ComponentsTest from './ComponentsTest';
+//import ComponentsTest from './ComponentsTest';
 import { PURPLE } from '../styles/GlobalColor';
-import ReformerMarket from '../components/Home/Market/ReformerMarket';
+//import ReformerMarket from '../components/Home/Market/ReformerMarket';
 import Service, { MaterialDetail } from '../components/Home/Market/Service';
 // import { PhotoType } from '../hooks/useImagePicker';
 import { stylesList } from '../components/Home/HomeMain';
 import SearchPage from './SearchPage';
 import { ServiceDetailOption } from '../components/Home/Market/Service';
 import ReportPage from './ReportPage';
+import { PhotoResultProps } from '../common/PhotoOptions';
+import ServiceDetailPageMainScreen from '../components/Home/Market/ServiceDetailPage';
+import ReformerMarket from '../components/Home/Market/ReformerMarket';
 
 export type HomeStackParams = {
   Home: { searchTerm?: string };
@@ -80,14 +79,12 @@ export type HomeStackParams = {
   // WriteDetailPage: { inputText: string; detailphoto?: PhotoType[] };
   AddPortfolio: undefined;
   InputInfo: {
+    photos: PhotoResultProps[];
     materials: string[];
     transactionMethod: string;
     options: any[]; // TODO: fix
-    additionalRequest: string;
+    additionalRequest: { text: string, photos: PhotoResultProps[] };
   };
-  QuotationConfirm: undefined;
-  Rejection: undefined;
-  SentRejection: undefined;
   ReformerMarket: undefined;
   TestComponents: undefined;
   MarketTabView: {
@@ -112,20 +109,22 @@ export type HomeStackParams = {
 const HomeStack = createStackNavigator<HomeStackParams>();
 
 const HomeScreen = ({
-  navigation,
-  route,
+  //   navigation,
+  //   route,
 }: BottomTabScreenProps<TabProps, 'UPCY'>) => {
-  useLayoutEffect(() => {
-    const routeName = getFocusedRouteNameFromRoute(route);
-    if (routeName === 'AddPortfolio') {
-      navigation.setOptions({ tabBarStyle: { display: 'none' } });
-    } else {
-      navigation.setOptions({ tabBarStyle: { display: 'flex' } });
-    }
-  }, [navigation, route]);
+  // useLayoutEffect(() => {
+  //   const routeName = getFocusedRouteNameFromRoute(route) ?? 'Home'; // 기본값 설정
+  //   console.log('🎯 현재 포커스된 페이지:', routeName);
 
+  //   if (routeName === 'AddPortfolio') {
+  //     navigation.setOptions({ tabBarStyle: { display: 'none' } });
+  //   } else {
+  //     navigation.setOptions({ tabBarStyle: { display: 'flex' } });
+  //   }
+  // }, [navigation, route]);
   return (
     <HomeStack.Navigator
+      initialRouteName="Home"
       screenOptions={() => ({
         headerShown: false,
       })}>
@@ -133,7 +132,7 @@ const HomeScreen = ({
       <HomeStack.Screen name="MarketTabView" component={MarketTabView} />
       <HomeStack.Screen
         name="ServiceDetailPage"
-        component={ServiceDetailPageScreen}
+        component={ServiceDetailPageMainScreen}
       />
       {/* <HomeStack.Screen
         name="ServiceRegistrationPage"
@@ -154,10 +153,7 @@ const HomeScreen = ({
       {/* <HomeStack.Screen name="WriteDetailPage" component={WriteDetailPage} /> */}
       <HomeStack.Screen name="AddPortfolio" component={AddPortfolio} />
       <HomeStack.Screen name="InputInfo" component={InputInfo} />
-      <HomeStack.Screen name="QuotationConfirm" component={QuotationConfirm} />
-      <HomeStack.Screen name="Rejection" component={Rejection} />
-      <HomeStack.Screen name="SentRejection" component={SentRejection} />
-      <HomeStack.Screen name="TestComponents" component={ComponentsTest} />
+      {/* <HomeStack.Screen name="TestComponents" component={ComponentsTest} /> */}
       <HomeStack.Screen name="ReformerMarket" component={ReformerMarket} />
       <HomeStack.Screen name="SearchPage" component={SearchPage} />
       <HomeStack.Screen name="ReportPage" component={ReportPage} />
@@ -169,6 +165,7 @@ const HomeMainScreen = ({
   navigation,
   route,
 }: StackScreenProps<HomeStackParams, 'Home'>) => {
+
   const { searchTerm } = route.params || {};
   const [selectedTab, setSelectedTab] = useState<'Goods' | 'Market' | 'temp'>(
     'Goods',
@@ -183,7 +180,7 @@ const HomeMainScreen = ({
           text: '네',
           onPress: () => {
             console.log('네 선택');
-            navigation.navigate('QuotationConfirm');
+
           },
         },
         {
@@ -231,7 +228,9 @@ const HomeMainScreen = ({
               />
             </View>
           )}
-          {selectedTab === 'Market' && <ReformerMarket />}
+          {selectedTab === 'Market' &&
+            <ReformerMarket />
+          }
           {selectedTab === 'temp' && (
             <ScrollView>
               <Button onPress={handlePopupButtonPress}>

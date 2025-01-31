@@ -97,74 +97,6 @@ export type DetailPageStackParams = {
   };
 };
 
-const DetailPageStack = createStackNavigator<DetailPageStackParams>();
-
-const ServiceDetailPageScreen = ({
-  navigation,
-  route,
-}: StackScreenProps<HomeStackParams, 'ServiceDetailPage'>) => {
-  const {
-    reformerName,
-    introduce,
-    reformerArea,
-    reformerLink,
-    serviceName,
-    basicPrice,
-    maxPrice,
-    reviewNum,
-    tags,
-    imageUris,
-    profileImageUri,
-    servicePeriod,
-    serviceMaterials,
-    serviceContent,
-    serviceOptions,
-    marketUuid,
-    serviceUuid,
-    education,
-    certification,
-    awards,
-    career,
-    freelancer,
-  }: ServiceDetailPageProps = route.params;
-
-  return (
-    <DetailPageStack.Navigator
-      screenOptions={() => ({
-        headerShown: false,
-      })}>
-      <DetailPageStack.Screen
-        name="DetailPage"
-        component={ServiceDetailPageMainScreen}
-        initialParams={{
-          reformerName,
-          introduce,
-          reformerArea,
-          reformerLink,
-          serviceName,
-          basicPrice,
-          maxPrice,
-          reviewNum,
-          tags,
-          imageUris,
-          profileImageUri,
-          servicePeriod,
-          serviceMaterials,
-          serviceContent,
-          serviceOptions,
-          marketUuid,
-          serviceUuid,
-          education,
-          certification,
-          awards,
-          career,
-          freelancer,
-        }}
-      />
-    </DetailPageStack.Navigator>
-  );
-};
-
 type ProfileSectionProps = {
   navigation: any;
   reformerName: string;
@@ -241,8 +173,8 @@ const ProfileSection = ({
               ? 'Edit'
               : 'Report'
         }
-        onPressLeft={() => {}}
-        onPressRight={() => {}}
+        onPressLeft={() => { }}
+        onPressRight={() => { }}
         reportButtonPressed={reportButtonPressed}
         setReportButtonPressed={setReportButtonPressed}
       />
@@ -445,9 +377,8 @@ const Profile = ({
 };
 
 const ServiceDetailPageMainScreen = ({
-  navigation,
-  route,
-}: StackScreenProps<DetailPageStackParams, 'DetailPage'>) => {
+  navigation, route
+}: StackScreenProps<HomeStackParams, 'ServiceDetailPage'>) => {
   const {
     reformerName,
     introduce,
@@ -491,7 +422,6 @@ const ServiceDetailPageMainScreen = ({
   //     profileImageUri={profileImageUri}
   //   />
   // );
-
   const [suspended, setSuspended] = useState<boolean>(false);
   const [userRole, setUserRole] = useState<string>('customer');
   const [isServiceQuitPopupVisible, setServiceQuitPopupVisible] =
@@ -635,7 +565,7 @@ const ServiceDetailPageMainScreen = ({
         />
       </ScrollView>
       <View style={styles.footerContainer}>
-        <Footer suspended={false} />
+        <Footer suspended={false} onNavigate={() => navigation.navigate('QuotationForm')} />
         {/* TODO: 위 수정 필요  */}
       </View>
       {userRole === 'reformer' && (
@@ -973,4 +903,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ServiceDetailPageScreen;
+export default ServiceDetailPageMainScreen;

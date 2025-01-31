@@ -1,10 +1,11 @@
-import React, {useState} from 'react';
-import { SafeAreaView, ScrollView, Text, TouchableOpacity, Image } from 'react-native';
+import React, { useState } from 'react';
+import { SafeAreaView, ScrollView, Text, TouchableOpacity, Image, View } from 'react-native';
 import styled from 'styled-components/native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { useNavigation } from '@react-navigation/native';
 import { Body14R, Subtitle16B } from '../../../styles/GlobalText';
 import { PURPLE, LIGHTGRAY } from '../../../styles/GlobalColor.tsx';
+import { useNavigation } from '@react-navigation/native';
+// 주문관리 탭에서, 상단의 3번째 탭 (완료/취소 탭)
 
 const completedOrders = [
   {
@@ -78,7 +79,7 @@ const CompletedOrders = () => {
     <SafeAreaView style={{ flex: 1, backgroundColor: LIGHTGRAY }}>
       {/* 필터 영역 */}
       <FilterContainer style={{ zIndex: 10 }}>
-          <DropDownPicker
+        <DropDownPicker
           open={open}
           value={filter}
           items={items}
@@ -91,39 +92,38 @@ const CompletedOrders = () => {
             borderWidth: 1,
             borderRadius: 30,
             alignSelf: 'flex-start',
-            maxWidth:130,
-            maxheight:30,
-            lineHeight:30,
+            maxWidth: 130,
+            maxHeight: 30,
             paddingVertical: 0,
-            paddingHorizontal:10,
-            justifyContent:' center',
-            alignItems:'center',
+            paddingHorizontal: 10,
+            justifyContent: 'center',
+            alignItems: 'center',
           }}
           containerStyle={{
             height: 36,
           }}
           dropDownContainerStyle={{
             borderColor: PURPLE,
-            alignSelf:'flex-start',
-             minWidth:100,
-             maxWidth:130,
-             margin:0,
+            alignSelf: 'flex-start',
+            minWidth: 100,
+            maxWidth: 130,
+            margin: 0,
 
           }}
-      textStyle= {{
-          fontSize:14,
-          textAlign:'center',
-          lineHeight:30,
+          textStyle={{
+            fontSize: 14,
+            textAlign: 'center',
+            lineHeight: 30,
 
           }}
         />
       </FilterContainer>
 
       {/* orderinfobox 영역 */}
-      <ScrollView style= {{zIndex:1}}>
+      <View style={{ zIndex: 1 }}>
         {completedOrders.length > 0 ? (
           filteredOrders.map((order, index) => (
-            <OrderInfoBox key={`${order.completedDate}-${index}`}>
+            <OrderInfoBox key={order.id}>
               <TopSection>
                 <TopRow>
                   <OrderDate> {order.is_completed ? `완료일: ${order.completedDate}` : `취소일: ${order.completedDate}`}</OrderDate>
@@ -149,7 +149,7 @@ const CompletedOrders = () => {
         ) : (
           <Text>새 주문이 없습니다.</Text>
         )}
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 };

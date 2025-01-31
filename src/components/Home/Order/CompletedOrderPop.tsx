@@ -2,7 +2,6 @@ import { SafeAreaView, Image, View, TouchableOpacity } from "react-native"
 import { Body14M, Body16B, Subtitle16B, Title20B } from "../../../styles/GlobalText"
 import Arrow from '../../../assets/common/Arrow.svg';
 import { GREEN } from "../../../styles/GlobalColor";
-import { useNavigation } from '@react-navigation/native';
 import BottomButton from '../../../common/BottomButton';
 import { OrderProps } from "./OrderManagement";
 

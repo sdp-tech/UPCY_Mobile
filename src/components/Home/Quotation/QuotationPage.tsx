@@ -3,7 +3,6 @@ import { ScrollView, View, Text, TouchableOpacity, ImageBackground, Dimensions, 
 import styled from 'styled-components/native';
 import { getStatusBarHeight } from 'react-native-safearea-height';
 
-import { HomeStackParams } from '../../../pages/Home';
 import { StackScreenProps } from '@react-navigation/stack';
 
 import Arrow from '../../../assets/common/Arrow.svg';
@@ -15,6 +14,7 @@ import CheckBox from '../../../common/CheckBox';
 import BottomButton from '../../../common/BottomButton';
 import Rejection from './Rejection';
 import Request from '../../../common/requests.js';
+import { OrderStackParams } from '../Order/OrderManagement';
 
 const statusBarHeight = getStatusBarHeight(true);
 const { width, height } = Dimensions.get('window');
@@ -33,7 +33,7 @@ export interface QuotationProps {
 }
 
 
-const QuotationPage = ({ navigation, route }: StackScreenProps<HomeStackParams, 'QuotationPage'>) => {
+const QuotationPage = ({ navigation, route }: StackScreenProps<OrderStackParams, 'QuotationPage'>) => {
   const {
     photos = [],
     materials = [],
@@ -77,7 +77,7 @@ const QuotationPage = ({ navigation, route }: StackScreenProps<HomeStackParams, 
       options,
       additionalRequest: {
         text: additionalRequest.text,
-        photos: additionalRequest.photos.map(photo => photo.uri) || [],
+        photos: additionalRequest.photos?.map(photo => photo.uri) || [],
       },
       photos: photos.map(photo => photo.uri) || [],
       name,
@@ -88,40 +88,40 @@ const QuotationPage = ({ navigation, route }: StackScreenProps<HomeStackParams, 
     };
 
 
-  const request = Request();
+    const request = Request();
 
-  try {
-    setLoading(true); // 로딩 상태 시작
+    try {
+      setLoading(true); // 로딩 상태 시작
 
-    // API 요청: 주문 생성
-    const response = await request.post('/api/orders', orderData, {
-      headers: {
-        'Content-Type': 'application/json', //json 데이터 형식
-        Authorization: 'Bearer your_access_token', // 인증 토큰(필요시 교체)
-      },
-    });
+      // API 요청: 주문 생성
+      const response = await request.post('/api/orders', orderData, {
+        headers: {
+          'Content-Type': 'application/json', //json 데이터 형식
+          Authorization: 'Bearer your_access_token', // 인증 토큰(필요시 교체)
+        },
+      });
 
-    if (response && response.status === 201) { // 주문 생성 성공
-      const result = response.data; // 서버 응답 데이터
-      Alert.alert('주문 성공!', `주문번호: ${result.order_uuid}`);
-      navigation.navigate('SentQuotation'); // 성공 시 sentquotation으로 이동
-    } else {
-      Alert.alert('주문 실패', '주문서를 생성할 수 없습니다.');
+      if (response && response.status === 201) { // 주문 생성 성공
+        const result = response.data; // 서버 응답 데이터
+        Alert.alert('주문 성공!', `주문번호: ${result.order_uuid}`);
+        navigation.navigate('SentQuotation'); // 성공 시 sentquotation으로 이동
+      } else {
+        Alert.alert('주문 실패', '주문서를 생성할 수 없습니다.');
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('에러', '주문서를 생성하는 중 문제가 발생했습니다.');
+    } finally {
+      setLoading(false); // 로딩 상태 종료
     }
-  } catch (error) {
-    console.error(error);
-    Alert.alert('에러', '주문서를 생성하는 중 문제가 발생했습니다.');
-  } finally {
-    setLoading(false); // 로딩 상태 종료
-  }
-};
+  };
 
 
   const quotation = [
-    { key: '의뢰한 의류 정보', data: photos,  ref: true, },
+    { key: '의뢰한 의류 정보', data: photos, ref: true, },
     { key: '소재', data: materials }, // QuotationForm에서 선택한 재질
     { key: '추가한 옵션', data: options?.map(option => option.title).join(', ') || '없음' }, // 선택한 옵션들, 없으면 '없음'
-    { key: '추가 요청사항', data: additionalRequest?.text || '없음', photos:additionalRequest?.photos.map(photo => photo.uri) || [] , }, // 추가 요청사항, 없으면 '없음'
+    { key: '추가 요청사항', data: additionalRequest?.text || '없음', photos: additionalRequest.photos?.map(photo => photo.uri) || [], }, // 추가 요청사항, 없으면 '없음'
     { key: '거래 방식', data: transactionMethod }, //선택한 거래 방식 (대면/비대면)
     { key: '이름', data: name },
     { key: '연락처', data: tel },
@@ -142,8 +142,10 @@ const QuotationPage = ({ navigation, route }: StackScreenProps<HomeStackParams, 
     }, []);
   };
 
-const splitPhotos = photos?.length > 0 ? splitArrayIntoPairs(photos, 2) : [];
-const splitAdditionalPhotos = additionalRequest?.photos?.length > 0 ? splitArrayIntoPairs(additionalRequest.photos, 2) : [];
+  const splitPhotos = photos?.length > 0 ? splitArrayIntoPairs(photos, 2) : [];
+  const splitAdditionalPhotos = additionalRequest.photos?.length ?
+    additionalRequest.photos?.length > 0 ? splitArrayIntoPairs(additionalRequest.photos, 2) : []
+    : []
 
 
   return (
@@ -166,138 +168,138 @@ const splitAdditionalPhotos = additionalRequest?.photos?.length > 0 ? splitArray
 
         </View>
         {quotation.map((item, index) => {
-             const value = Array.isArray(item.data)
-                ? item.data.join(', ') // 배열을 쉼표로 구분된 문자열로 변환
-                : item.data || '없음'; // undefined나 null일 경우 기본값 처리
+          const value = Array.isArray(item.data)
+            ? item.data.join(', ') // 배열을 쉼표로 구분된 문자열로 변환
+            : item.data || '없음'; // undefined나 null일 경우 기본값 처리
 
 
           return (
             <View key={index}>
 
-            <TextBox>
-              <Subtitle16B style={{ flex: 1 }}>{item.key}</Subtitle16B>
+              <TextBox>
+                <Subtitle16B style={{ flex: 1 }}>{item.key}</Subtitle16B>
                 {item.key !== '의뢰한 의류 정보' && item.key !== '추가 요청사항' && item.key !== '추가한 옵션' && (
-                <Body14R style={{ flex: 1.5, textAlign: 'right' }}>{value}</Body14R>
-              )}
-            </TextBox>
+                  <Body14R style={{ flex: 1.5, textAlign: 'right' }}>{value}</Body14R>
+                )}
+              </TextBox>
 
-            {item.key === '의뢰한 의류 정보' && photos.length > 0 && (
-               <View style={{ alignItems: 'center', marginTop: 10 , marginBottom:10}}>
-                          <TouchableOpacity onPress={() => setModalVisible(true)}>
-                            <Image
-                              source={{ uri: photos[0]?.uri }}
-                              style={{ width: 200, height: 150, borderRadius: 10 }}
-                              resizeMode="cover"
-                            />
-                          </TouchableOpacity>
-
-                          {/* 전체보기 모달 */}
-                          <Modal visible={modalVisible} transparent={true}>
-                            <View style={styles.modalBackground}>
-                              <View style={styles.modalContent}>
-                                <TouchableOpacity
-                                  style={styles.closeButton}
-                                  onPress={() => setModalVisible(false)}
-                                >
-                                  <Text style={{ fontSize: 18, color: 'black' }}>X</Text>
-                                </TouchableOpacity>
-                                <ScrollView>
-                                  {photos.map((photo, index) => (
-                                    <Image
-                                      key={index}
-                                      source={{ uri: photo.uri }}
-                                      style={{ width: width - 40, height: 250, marginBottom: 10, borderRadius: 10 }}
-                                      resizeMode="contain"
-                                    />
-                                  ))}
-                                </ScrollView>
-                              </View>
-                            </View>
-                          </Modal>
-                        </View>
-            )}
-
-         {item.key === '추가 요청사항' && (
-            <View style={{ alignItems: 'center', marginTop: 20 }}>
-             <View
-                  style={{
-                    backgroundColor: '#E9EBF8',
-                    width: '90%',
-                    padding: 15,
-                    borderRadius: 8,
-                  }}
-                >
-                  <Body14R style={{ color: 'black', marginBottom: 10 }}>
-                    {additionalRequest.text || '없음'}
-                  </Body14R>
-
-                  {additionalRequest.photos.length > 0 && (
-                    <TouchableOpacity
-                      style={{
-                        backgroundColor: '#CEBFFA',
-                        padding: 10,
-                        borderRadius: 8,
-                        alignItems: 'center',
-                      }}
-                      onPress={() => setAdditionalModalVisible(true)}
-                    >
-                      <Body14R style={{ color: 'white' }}>참고 사진 보기</Body14R>
-                    </TouchableOpacity>
-                  )}
-                </View>
-
-
-            <Modal visible={additionalModalVisible} transparent={true}>
-              <View style={styles.modalBackground}>
-                <View style={styles.modalContent}>
-                  <TouchableOpacity
-                    style={styles.closeButton}
-                    onPress={() => setAdditionalModalVisible(false)}
-                  >
-                    <Text style={{ fontSize: 18, color: 'black' }}>X</Text>
+              {item.key === '의뢰한 의류 정보' && photos.length > 0 && (
+                <View style={{ alignItems: 'center', marginTop: 10, marginBottom: 10 }}>
+                  <TouchableOpacity onPress={() => setModalVisible(true)}>
+                    <Image
+                      source={{ uri: photos[0]?.uri }}
+                      style={{ width: 200, height: 150, borderRadius: 10 }}
+                      resizeMode="cover"
+                    />
                   </TouchableOpacity>
-                  <ScrollView>
-                    {additionalRequest.photos.map((photo, index) => (
-                      <Image
-                        key={index}
-                        source={{ uri: photo.uri }}
-                        style={{ width: width - 40, height: 250, marginBottom: 10, borderRadius: 10 }}
-                        resizeMode="contain"
-                      />
-                    ))}
-                  </ScrollView>
+
+                  {/* 전체보기 모달 */}
+                  <Modal visible={modalVisible} transparent={true}>
+                    <View style={styles.modalBackground}>
+                      <View style={styles.modalContent}>
+                        <TouchableOpacity
+                          //style={styles.closeButton}
+                          onPress={() => setModalVisible(false)}
+                        >
+                          <Text style={{ fontSize: 18, color: 'black' }}>X</Text>
+                        </TouchableOpacity>
+                        <ScrollView>
+                          {photos.map((photo, index) => (
+                            <Image
+                              key={index}
+                              source={{ uri: photo.uri }}
+                              style={{ width: width - 40, height: 250, marginBottom: 10, borderRadius: 10 }}
+                              resizeMode="contain"
+                            />
+                          ))}
+                        </ScrollView>
+                      </View>
+                    </View>
+                  </Modal>
                 </View>
-              </View>
-            </Modal>
-          </View>
+              )}
 
-          )}
+              {item.key === '추가 요청사항' && (
+                <View style={{ alignItems: 'center', marginTop: 20 }}>
+                  <View
+                    style={{
+                      backgroundColor: '#E9EBF8',
+                      width: '90%',
+                      padding: 15,
+                      borderRadius: 8,
+                    }}
+                  >
+                    <Body14R style={{ color: 'black', marginBottom: 10 }}>
+                      {additionalRequest.text || '없음'}
+                    </Body14R>
 
-    {item.key === '추가 요청사항' && (
-        <View style={{ marginTop: 30, marginBottom: 40 }}>
-          <TextBox>
-            <Subtitle16M style={{ flex: 1 }}>서비스 금액</Subtitle16M>
-            <Body14R style={{ flex: 1.5, textAlign: 'right' }}>19900원</Body14R>
-          </TextBox>
-          <TextBox>
-            <Subtitle16M style={{ flex: 1 }}>옵션 추가 금액</Subtitle16M>
-            <Body14R style={{ flex: 1.5, textAlign: 'right' }}>2000원</Body14R>
-          </TextBox>
-          <View
-            style={{
-              height: 1,
-              backgroundColor: BLACK,
-              width: '100%',
-              paddingHorizontal: 40,
-              marginVertical: 10,
-            }}
-          />
-          <TextBox>
-            <Subtitle16B style={{ flex: 1 }}>예상 결제 금액</Subtitle16B>
-            <Subtitle16B style={{ flex: 1.5, textAlign: 'right' }}>21900원</Subtitle16B>
-          </TextBox>
-        </View>
-      )}
+                    {additionalRequest.photos?.length ? additionalRequest.photos?.length > 0 && (
+                      <TouchableOpacity
+                        style={{
+                          backgroundColor: '#CEBFFA',
+                          padding: 10,
+                          borderRadius: 8,
+                          alignItems: 'center',
+                        }}
+                        onPress={() => setAdditionalModalVisible(true)}
+                      >
+                        <Body14R style={{ color: 'white' }}>참고 사진 보기</Body14R>
+                      </TouchableOpacity>
+                    ) : <></>}
+                  </View>
+
+
+                  <Modal visible={additionalModalVisible} transparent={true}>
+                    <View style={styles.modalBackground}>
+                      <View style={styles.modalContent}>
+                        <TouchableOpacity
+                          //style={styles.closeButton}
+                          onPress={() => setAdditionalModalVisible(false)}
+                        >
+                          <Text style={{ fontSize: 18, color: 'black' }}>X</Text>
+                        </TouchableOpacity>
+                        <ScrollView>
+                          {additionalRequest.photos?.map((photo, index) => (
+                            <Image
+                              key={index}
+                              source={{ uri: photo.uri }}
+                              style={{ width: width - 40, height: 250, marginBottom: 10, borderRadius: 10 }}
+                              resizeMode="contain"
+                            />
+                          ))}
+                        </ScrollView>
+                      </View>
+                    </View>
+                  </Modal>
+                </View>
+
+              )}
+
+              {item.key === '추가 요청사항' && (
+                <View style={{ marginTop: 30, marginBottom: 40 }}>
+                  <TextBox>
+                    <Subtitle16M style={{ flex: 1 }}>서비스 금액</Subtitle16M>
+                    <Body14R style={{ flex: 1.5, textAlign: 'right' }}>19900원</Body14R>
+                  </TextBox>
+                  <TextBox>
+                    <Subtitle16M style={{ flex: 1 }}>옵션 추가 금액</Subtitle16M>
+                    <Body14R style={{ flex: 1.5, textAlign: 'right' }}>2000원</Body14R>
+                  </TextBox>
+                  <View
+                    style={{
+                      height: 1,
+                      backgroundColor: BLACK,
+                      width: '100%',
+                      paddingHorizontal: 40,
+                      marginVertical: 10,
+                    }}
+                  />
+                  <TextBox>
+                    <Subtitle16B style={{ flex: 1 }}>예상 결제 금액</Subtitle16B>
+                    <Subtitle16B style={{ flex: 1.5, textAlign: 'right' }}>21900원</Subtitle16B>
+                  </TextBox>
+                </View>
+              )}
 
 
 
