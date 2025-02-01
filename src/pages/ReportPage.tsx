@@ -10,6 +10,7 @@ import {
   TextInput,
   Button,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import DownArrow from '../assets/common/DownArrow.svg';
 import {
@@ -19,9 +20,12 @@ import {
   BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet';
 import { useNavigation } from '@react-navigation/native';
+import Request from '../common/requests';
+import { getNickname } from '../common/storage';
 
 const ReportPage = ({}: StackScreenProps<HomeStackParams, 'ReportPage'>) => {
   const [reportReason, setReportReason] = useState<string>('');
+  const [reportContent, setReportContent] = useState<string>('');
   const navigation = useNavigation();
   return (
     <BottomSheetModalProvider>
@@ -41,9 +45,10 @@ const ReportPage = ({}: StackScreenProps<HomeStackParams, 'ReportPage'>) => {
             reportReason={reportReason}
             setReportReason={setReportReason}
           />
-          <ReportContentBox />
+          <ReportContentBox setReportContent={setReportContent} />
           <ReportConfirmButton
             reportReason={reportReason}
+            reportContent={reportContent}
             navigation={navigation}
           />
         </View>
@@ -93,15 +98,23 @@ const ReportReasonBox = ({
   );
 };
 
-const ReportContentBox = () => {
+const ReportContentBox = ({
+  setReportContent,
+}: {
+  setReportContent: (content: string) => void;
+}) => {
+  const handleTextChange = (text: string) => {
+    setReportContent(text);
+  };
   return (
     <View style={styles.wrapper}>
-      <Text style={TextStyles.subTitles}> 신고 내용</Text>
+      <Text style={TextStyles.subTitles}> 신고 내용 </Text>
       <TextInput
         style={styles.textInputBox}
         placeholder="신고 이유를 자세히 적어주시면 신고 처리에 도움이 됩니다."
         multiline
         numberOfLines={6}
+        onChangeText={handleTextChange}
       />
     </View>
   );
@@ -109,12 +122,55 @@ const ReportContentBox = () => {
 
 const ReportConfirmButton = ({
   reportReason,
+  reportContent,
   navigation,
 }: {
   reportReason: string;
+  reportContent: string;
   navigation: any;
 }) => {
+  const [userNickname, setUserNickname] = useState<string>('');
+
+  useEffect(() => {
+    const getUserNicknameInfo = async () => {
+      const userNickname = await getNickname();
+      setUserNickname(userNickname ? userNickname : '');
+    };
+    getUserNicknameInfo();
+  }, []);
+
+  const request = Request();
+
+  const postReport = async ({
+    reason,
+    details,
+  }: {
+    reason: string;
+    details: string;
+  }) => {
+    try {
+      const params = {
+        reported_user_id: 'malangcow', // TODO: fix
+        reporter_user_id: userNickname,
+        reason: reason,
+        details: details,
+      };
+      const response = await request.post(`/api/market/report`, params);
+      if (!response || response.status === 404) {
+        Alert.alert('오류가 발생하였습니다.');
+      } else if (response.status === 500) {
+        Alert.alert('서버에 오류가 발생하였습니다.');
+      } else if (response && response.status === 200) {
+        // TODO
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+    }
+  };
+
   const onPressReportConfirm = () => {
+    postReport({ reason: reportReason, details: reportContent });
     navigation.goBack();
   };
 
