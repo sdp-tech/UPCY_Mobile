@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { LoginContext } from '../common/Context';
 import Lock from '../assets/common/Lock.svg';
 import { ReformerMyPageScreen } from '../components/Auth/Reformer/ReformerMyPage.tsx';
@@ -39,8 +39,8 @@ export interface MypageStackProps {
 
 const MyPageStack = createStackNavigator<MyPageStackParams>();
 const MyPageScreen = ({
-  navigation,
-  route,
+  // navigation,
+  // route,
 }: BottomTabScreenProps<TabProps, 'MY'>) => {
   return (
     <MyPageStack.Navigator initialRouteName="MyPage">
@@ -96,6 +96,7 @@ const MyPageScreen = ({
 const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
   const request = Request();
   const { isLogin, setLogin } = useContext(LoginContext);
+  const [loading, setLoading] = useState(true);
   const [role, setRole] = useState<string | false>('');
   const [userInfo, setUserInfo] = useState({
     nickname: route.params?.userInfo?.nickname || '',
@@ -153,6 +154,8 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
       // 에러 처리
       console.error('Error fetching user data:', error);
       return null;
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -163,8 +166,15 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
       }
     }, [isLogin]),
   );
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#5e008d" />
+      </View>
+    );
+  }
 
-  if (userInfo.nickname === '' || userInfo.nickname === null) {
+  if (!loading && userInfo.nickname === '' || userInfo.nickname === null) {
     return (
       <View
         style={{
@@ -201,11 +211,11 @@ const MyPageMainScreen = ({ navigation, route }: MypageStackProps) => {
       </View>
     );
   } else {
-    if (role === 'reformer') {
+    if (!loading && role === 'reformer') {
       return <ReformerMyPageScreen navigation={navigation} route={route} />;
     } else if (role === 'customer') {
       return <UpcyerMyPageMainScreen navigation={navigation} route={route} />;
-    } else {
+    } else if (!loading) {
       return (
         <View
           style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
