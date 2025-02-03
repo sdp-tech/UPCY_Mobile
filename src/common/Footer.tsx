@@ -5,9 +5,10 @@ import BottomButton from './BottomButton';
 import { View } from 'react-native';
 interface FooterProps {
   suspended: boolean; // 중단된 서비스인지 여부.
+  hideButton: boolean;
 }
 
-const Footer: React.FC<FooterProps> = ({ suspended }) => {
+const Footer: React.FC<FooterProps> = ({ suspended, hideButton }) => {
   // API 연결 전, 인터랙션만
   const [like, setLike] = useState<boolean>(false);
   const [pressed, setPressed] = useState<boolean>(false);
@@ -16,12 +17,14 @@ const Footer: React.FC<FooterProps> = ({ suspended }) => {
     <View>
       <FooterContainer style={{ paddingTop: 10 }}>
         {/* <HeartButton like={like} onPress={() => { setLike(!like) }} blank /> */}
-        <BottomButton
-          value={value}
-          pressed={pressed}
-          onPress={() => {}}
-          style={{ width: '95%' }}
-        />
+        {!hideButton && (
+            <BottomButton
+                value={value}
+                pressed={pressed}
+                onPress={() => {}}
+                style={{ width: '95%' }}
+            />
+        )}
       </FooterContainer>
     </View>
   );

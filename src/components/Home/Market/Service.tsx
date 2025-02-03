@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 // FIXME: 이거 사용
 import {
   View,
@@ -103,6 +104,7 @@ const EntireServiceMarket = ({
     region: '',
   });
 
+
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState(true); // 로딩용
   const request = Request();
@@ -173,9 +175,10 @@ const EntireServiceMarket = ({
   };
 
   const extractData = (rawData: ServiceResponseType[]) => {
-    return rawData.map(service => ({
+    return rawData.map(service => {
       //TODO: 밑에 수정
-      name: service.reformer_nickname,
+      return {
+      name: service.reformer_info?.user_info?.nickname || "Reformer",
       created: service.created || new Date('2023-12-12'),
       basic_price: service.basic_price,
       max_price: service.max_price,
@@ -203,7 +206,7 @@ const EntireServiceMarket = ({
         : [],
       temporary: service.temporary,
       suspended: service.suspended,
-    })) as ServiceCardProps[];
+    }}) as ServiceCardProps[];
   };
 
   // 컴포넌트가 처음 렌더링될 때 API 호출

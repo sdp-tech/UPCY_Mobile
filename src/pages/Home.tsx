@@ -19,7 +19,7 @@ import QuotationPage, {
   QuotationProps,
 } from '../components/Home/Quotation/QuotationPage';
 import SentQuotation from '../components/Home/Quotation/SentQuotation';
-// import ServiceRegistrationPage from '../components/Home/Market/ServiceRegistration';
+import ServiceRegistrationPage from '../components/Home/Market/ServiceRegistration';
 import ServiceDetailPageScreen from '../components/Home/Market/ServiceDetailPage';
 import GoodsDetailPageScreen from '../components/Home/Market/GoodsDetailPage';
 import GoodsRegistrationPage from '../components/Home/Market/GoodsRegistration';
@@ -122,10 +122,10 @@ const HomeScreen = ({
         name="ServiceDetailPage"
         component={ServiceDetailPageScreen}
       />
-      {/* <HomeStack.Screen
+      <HomeStack.Screen
         name="ServiceRegistrationPage"
         component={ServiceRegistrationPage}
-      /> */}
+      />
       <HomeStack.Screen name="QuotationForm" component={QuotationForm} />
       <HomeStack.Screen name="QuotationPage" component={QuotationPage} />
       <HomeStack.Screen name="SentQuotation" component={SentQuotation} />

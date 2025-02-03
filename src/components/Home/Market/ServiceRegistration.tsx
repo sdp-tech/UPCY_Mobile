@@ -24,6 +24,7 @@ import {
 import { BLACK2, LIGHTGRAY, PURPLE } from '../../../styles/GlobalColor';
 import InputBox from '../../../common/InputBox';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import Hashtag from '../../../common/Hashtag';
 import Slider from '@react-native-community/slider';
 import PhotoOptions, { PhotoResultProps } from '../../../common/PhotoOptions';
@@ -136,34 +137,50 @@ const ServiceRegistrationPage = ({
   const { hideBottomBar, showBottomBar } = useBottomBar();
   const serviceData = route.params?.serviceData || {}; // 전달된 데이터 수신
   const service_uuid = serviceData.service_uuid ? serviceData.service_uuid : '';
-  // 전달된 데이터로 초기 상태 설정
-  useEffect(() => {
-    if (!serviceData) return;
 
-    setName(serviceData.service_title || '');
-    setInputText(serviceData.service_content || '');
-    setForm({ category: serviceData.service_category || '' });
-    setMakingTime(serviceData.service_period || 0);
-    setPrice(serviceData.basic_price?.toString() || '');
-    setMaxPrice(serviceData.max_price?.toString() || '');
-    setStyles(serviceData.service_style || []);
-    setMaterials(serviceData.service_material || []);
-    setOptionList(
-      serviceData.service_option?.map((option: any) => ({
-        option: option.option_name || '',
-        optionExplain: option.option_content || '',
-        addPrice: option.option_price ? option.option_price.toString() : '',
-        optionPhotos: option.optionPhotos || [],
-        photoAdded: !!option.optionPhotos?.length,
-        isFixing: false,
-      })) || []
-    );
-  }, []); // 빈 의존성 배열로 설정 -> 무한루프 문제 해결 
+  console.log("servicedata: ", serviceData.detail_photos);
+
+  // 전달된 데이터로 초기 상태 설정
+  useFocusEffect(
+    useCallback(() => {
+      if (!serviceData || Object.keys(serviceData).length === 0) return;
+
+      setName(prev => (prev !== serviceData.service_title ? serviceData.service_title || '' : prev));
+      setInputText(prev => (prev !== serviceData.service_content ? serviceData.service_content || '' : prev));
+      setForm(prev => (prev.category !== serviceData.service_category ? { category: serviceData.service_category || '' } : prev));
+      setMakingTime(prev => (prev !== serviceData.service_period ? serviceData.service_period || 0 : prev));
+      setPrice(prev => (prev !== serviceData.basic_price?.toString() ? serviceData.basic_price?.toString() || '' : prev));
+      setMaxPrice(prev => (prev !== serviceData.max_price?.toString() ? serviceData.max_price?.toString() || '' : prev));
+      setStyles(prev => (JSON.stringify(prev) !== JSON.stringify(serviceData.service_style) ? serviceData.service_style || [] : prev));
+      setMaterials(prev => (JSON.stringify(prev) !== JSON.stringify(serviceData.service_material) ? serviceData.service_material || [] : prev));
+      setPhotos(prev => (JSON.stringify(prev) !== JSON.stringify(serviceData.thumbnail_photo ? [{ uri: serviceData.thumbnail_photo.image }] : [])
+        ? serviceData.thumbnail_photo.image ? [{ uri: serviceData.thumbnail_photo.image }] : []
+        : prev));
+      setDetailPhoto(prev => (JSON.stringify(prev) !== JSON.stringify(serviceData.detail_photos?.slice(1).map(photo => ({ uri: photo.image })) || [])
+        ? serviceData.detail_photos?.slice(1).map(photo => ({ uri: photo.image })) || []
+        : prev));
+      setOptionList(prev => (JSON.stringify(prev) !== JSON.stringify(serviceData.service_option?.map(option => ({
+          option: option.option_name || '',
+          optionExplain: option.option_content || '',
+          addPrice: option.option_price ? option.option_price.toString() : '',
+          optionPhotos: option.option_photos || [],
+          photoAdded: !!option.option_photos?.length,
+          isFixing: false,
+        })) || []) ? serviceData.service_option?.map(option => ({
+          option: option.option_name || '',
+          optionExplain: option.option_content || '',
+          addPrice: option.option_price ? option.option_price.toString() : '',
+          optionPhotos: option.option_photos || [],
+          photoAdded: !!option.option_photos?.length,
+          isFixing: false,
+        })) || [] : prev));
+    }, [serviceData])
+  );
 
   useEffect(() => {
     hideBottomBar();
-    console.log('serviceData:', serviceData);
-    console.log('route.params:', route.params);
+    //console.log('serviceData:', serviceData);
+    //console.log('route.params:', route.params);
     return () => showBottomBar();
   }, []);
 
@@ -199,7 +216,7 @@ const ServiceRegistrationPage = ({
   const handleNavigate = () => { // 서비스 상세 작성 페이지
     navigation.navigate('WriteDetailPage', {
       inputText,
-      detailphoto,
+      detailPhoto,
     });
   };
 
@@ -221,8 +238,8 @@ const ServiceRegistrationPage = ({
   const [name, setName] = useState<string>(''); // 서비스 이름 
   const [price, setPrice] = useState<string>(''); // 기본 가격 (예: 20000)
   const [maxPrice, setMaxPrice] = useState<string>(''); // 최대 가격 (예: 24000)
-  const [photos, setPhotos] = useState<PhotoType[]>([]); // 썸네일 사진 
-  const [detailphoto, setDetailPhoto] = useState<PhotoType[]>([]); // 서비스 설명에 들어가는 사진 
+  const [photos, setPhotos] = useState<PhotoType[]>([]); // 썸네일 사진
+  const [detailPhoto, setDetailPhoto] = useState<PhotoType[]>([]); // 서비스 설명에 들어가는 사진
   const [inputText, setInputText] = useState(route.params?.inputText || ''); // 서비스 설명 내용 
   // 이 밑으론 옵션 개별 요소들 prop
   const [option, setOption] = useState<string>(''); // 옵션 이름 
@@ -364,17 +381,18 @@ const ServiceRegistrationPage = ({
     } else if (method === 'thumbnail') { // 서비스 썸네일, 상세 사진들 등록 
       const formData = new FormData();
       console.log('uploadImage에서 썸네일 사진 추가중...', photos[0]);
-      formData.append('service_images', {
+      formData.append('service_image', {
         uri: photos[0]?.uri, // 파일의 URI
         type: 'image/jpeg', // 이미지 형식 (예: 'image/jpeg')
-        name: photos[0]?.fileName || 'service_images.jpg', // 파일 이름
+        name: photos[0]?.fileName || 'service_image.jpg', // 파일 이름
       });
-      for (let index = 0; index < detailphoto.length; index++) {
-        console.log('uploadImage에서 상세 사진 추가중...', detailphoto[index]);
-        formData.append('service_images', {
-          uri: detailphoto[index]?.uri, // 파일의 URI
+        //formData.append('image_size', "dfd");
+      for (let index = 0; index < detailPhoto.length; index++) {
+        console.log('uploadImage에서 상세 사진 추가중...', detailPhoto[index]);
+        formData.append('service_image', {
+          uri: detailPhoto[index]?.uri, // 파일의 URI
           type: 'image/jpeg', // 이미지 형식 (예: 'image/jpeg')
-          name: detailphoto[index]?.fileName || 'service_images.jpg', // 파일 이름
+          name: detailPhoto[index]?.fileName || 'service_image.jpg', // 파일 이름
         });
       }
       try {
@@ -397,6 +415,11 @@ const ServiceRegistrationPage = ({
     const accessToken = await getAccessToken();
     const market_uuid = await getMarketUUID();
 
+    const serviceImages = [
+      ...(photos.length > 0 ? [photos[0].uri] : []),
+      ...detailPhoto.map(photo => photo.uri),
+    ];
+
     const params = {
       service_title: name,
       service_content: inputText,
@@ -407,13 +430,16 @@ const ServiceRegistrationPage = ({
       service_style: formattedStyles,
       service_material: formattedMaterials,
       service_option: formattedOptions,
+      service_image: serviceImages,
       temporary: temp,
     };
     const headers = {
       Authorization: `Bearer ${accessToken}`
     };
+
     if (temp) { // 임시저장 눌렀을 경우 
       const params_ = {
+        ...params,
         service_title: name || '임시 저장 서비스',
         service_content: inputText || '임시 설명',
         service_category: form.category || '기타(외주)',
@@ -438,6 +464,11 @@ const ServiceRegistrationPage = ({
             headers
           );
           if (response?.status === 200) {
+            const option_uuidList: any[] =
+              response.data.service_options ? response.data.service_options.map((option: any) => option.option_uuid)
+                : [];
+            await uploadImage(service_uuid, 'option', option_uuidList);
+            await uploadImage(service_uuid, 'thumbnail');
             console.log("임시저장 서비스 업데이트 완료:", response.data);
           }
         } catch (err) {
@@ -446,6 +477,8 @@ const ServiceRegistrationPage = ({
       } else {            // POST 요청: 새로운 임시저장 서비스 생성
         try {
           const response = await request.post(`/api/market/${market_uuid}/service`, params_, headers);
+          console.log("response: ", response);
+          console.log("params: ", params_)
           if (response?.status === 201) {
             console.log(response.data);
             console.log(params_);
@@ -515,10 +548,10 @@ const ServiceRegistrationPage = ({
     if (route.params?.inputText && inputText !== route.params.inputText) {
       setInputText(route.params.inputText);
     }
-    if (route.params?.detailphoto && detailphoto !== route.params.detailphoto) {
-      setDetailPhoto(route.params.detailphoto);
+    if (route.params?.detailPhoto && detailPhoto !== route.params.detailPhoto) {
+      setDetailPhoto(route.params.detailPhoto);
     }
-  }, [route.params?.inputText, route.params?.detailphoto]);
+  }, [route.params?.inputText, route.params?.detailPhoto]);
 
   const editorRef = useRef<RichEditor>(null);
 
@@ -1453,10 +1486,10 @@ const ServiceRegistrationPage = ({
                     disabled={true}
                   />
                 </View>
-                {!(detailphoto == undefined) ? (
+                {!(detailPhoto == undefined) ? (
                   <View style={{ alignItems: 'center' }}>
                     <ImageCarousel
-                      images={detailphoto}
+                      images={detailPhoto}
                       setFormImages={() => { }}
                       max={5}
                       originalSize

@@ -229,12 +229,10 @@ export const ReformerMyPageScreen = ({
           // 본인 마켓 정보 가져오기: 링크, 자기소개, 닉네임, uuid
           const response2 = await request.get(`/api/market`, {}, headers);
           if (response2 && response2.status === 200) {
-            const marketResult: MarketResponseType = response2.data[0];
+            const marketResult: MarketResponseType = response2.data;
             setMarketResponseData(marketResult);
-            const marketUUID = await getMarketUUID();
             fetchMarketData({
-              //market_thumbnail: marketResult.market_thumbnail || '', // 기본값 유지
-              market_uuid: marketUUID || marketResult.market_uuid,
+              market_uuid: marketResult.market_uuid,
             });
             console.log('마켓 정보 가져오기 성공', response2.data);
             try {
