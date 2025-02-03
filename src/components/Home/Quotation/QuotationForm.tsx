@@ -17,6 +17,7 @@ import Arrow from '../../../assets/common/Arrow.svg';
 import Search from '../../../assets/common/Search.svg';
 import PhotoOptions, { PhotoResultProps } from '../../../common/PhotoOptions';
 import Carousel from '../../../common/Carousel';
+import Request from '../../../common/requests';
 // 서비스 디테일에서 Footer 누르면 연결되는 주문서 보내기 페이지(1)
 const statusBarHeight = getStatusBarHeight(true);
 
@@ -198,9 +199,54 @@ const FilterSection = ({ label, items, showDuplicate = true, onMaterialSelect }:
 
 
 const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 'QuotationForm'>) => {
-  const materials = ['폴리에스테르', '면', '스웨이드', '울', '캐시미어', '가죽', '데님', '추가 요청사항에 기재'];
+    const {serviceUuid} = route.params;
+    const [materials, setMaterials] =useState<string[]>([]);
+    const [options, setOptions] =useState<any[]>([]);
+    const [selectedMaterials, setSelectedMaterials] =useState<string[]>([]);
+    const [selectedOptions, setSelectedOptions] =useState<number[]>([]);
+
+    const request =Request();
+
+     useEffect(() => {
+    // 서비스별 재질(Material)과 옵션(Option) 가져오기
+        const fetchData = async () => {
+          try {
+            //Material 데이터 가져오기
+            const materialResponse = await request.get(`/api/market/some-market-id/service/${serviceUuid}/material`);
+            if (materialResponse.status === 200) {
+              const fetchedMaterials = materialResponse.data.map((item: any) => item.material_name);
+              setMaterials(fetchedMaterials);
+            }
+
+            // Option 데이터 가져오기
+            const optionResponse = await request.get(`/api/market/some-market-id/service/${serviceUuid}/option`);
+            if (optionResponse.status === 200) {
+              setOptions(optionResponse.data);
+            }
+          } catch (error) {
+            console.error('Error fetching materials or options:', error);
+            Alert.alert('데이터를 가져오는 중 문제가 발생했습니다.');
+          }
+        };
+
+        fetchData();
+      }, [serviceUuid]); //serviceUuid 변경될때마다 데이터 로드
+
+       //option 선택 상태 관리 (선택된 옵션의 인덱스 저장/해제)
+      const handleOptionPress = (index: number) => {
+        setSelectedOptions((prev) => {
+          if (prev.includes(index)) {
+            return prev.filter((item) => item !== index);
+          }
+          return [...prev, index];
+        });
+      };
+
+
+  // const materials = ['폴리에스테르', '면', '스웨이드', '울', '캐시미어', '가죽', '데님', '추가 요청사항에 기재'];
   const meet = ['대면', '비대면'];
 
+/*
   const options = [
     {
       option: 'option 0',
@@ -232,6 +278,7 @@ const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 
       image: 'https://example.com/image2.jpg'
     },
   ];
+  */
 
 
   const [showDuplicate] = useState(true);
@@ -242,8 +289,8 @@ const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 
   const [refPhotos, setRefPhotos] = useState<PhotoResultProps[]>([]);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [isChecked, setIsChecked] = useState<boolean>(false);
-  const [selectedMaterial, setSelectedMaterial] = useState<string[]>([]);
-  const [selectedOptions, setSelectedOptions] = useState<number[]>([]); //옵션 상세
+ // const [selectedMaterial, setSelectedMaterial] = useState<string[]>([]);
+ // const [selectedOptions, setSelectedOptions] = useState<number[]>([]); //옵션 상세
   const [selectedFilter, setSelectedFilter] = useState<string>(''); // 거래 방식
   const [faceToFaceRegion, setFaceToFaceRegion] = useState<string>(''); // 대면 지역
   const [deliveryType, setDeliveryType] = useState<string>('');
@@ -276,11 +323,11 @@ const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 
       setSelectedFilter(value);
     }
   };
-
+/*
   const handleOptionPress = (index: number) => {
     toggleSelection(selectedOptions, setSelectedOptions, index);
   };
-
+*/
   const handleFilterSelection = (filterType: string) => {
     setSelectedFilter(filterType);
   };
@@ -297,10 +344,11 @@ const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 
     const selectedOptionDetails = selectedOptions.map(index => options[index]);
 
     navigation.navigate('InputInfo', {
+        serviceUuid,
       photos,
       materials: finalSelectedMaterials,
       transactionMethod: selectedFilter,
-      options: selectedOptionDetails, // 선택한 옵션
+      options: selectedOptionDetails,
       additionalRequest: { text: additionalRequestInput, photos: refPhotos, },
     });
   };
@@ -362,7 +410,7 @@ const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 
         label='재질 선택'
         items={materials}
         showDuplicate={true}
-        onMaterialSelect={setSelectedMaterial} />
+        onMaterialSelect={setSelectedMaterials} />
       <Subtitle16M style={{ paddingHorizontal: 15, marginBottom: 5 }}>기타 재질</Subtitle16M>
       <View style={{ paddingHorizontal: 10, flex: 1 }}>
         <InputBox

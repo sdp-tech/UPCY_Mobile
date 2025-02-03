@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import styled from 'styled-components/native';
-// import HeartButton from './HeartButton';
+import HeartButton from './HeartButton';
 import BottomButton from './BottomButton';
 import { Alert, View } from 'react-native';
 interface FooterProps {
   suspended: boolean; // 중단된 서비스인지 여부.
-  onNavigate?: () => void;
+  onNavigate?: (serviceUuid: string) => void; // serviceUuid를 전달받을 콜백
+  serviceUuid: string;
 }
 
-const Footer: React.FC<FooterProps> = ({ suspended, onNavigate }) => {
+const Footer: React.FC<FooterProps> = ({ suspended, onNavigate, serviceUuid }) => {
   // API 연결 전, 인터랙션만
   // const [like, setLike] = useState<boolean>(false);
   const [pressed, setPressed] = useState<boolean>(false);
@@ -18,7 +19,7 @@ const Footer: React.FC<FooterProps> = ({ suspended, onNavigate }) => {
       Alert.alert('현재 서비스가 중단되었습니다.');
       return;
     } else if (onNavigate) {
-      onNavigate();
+      onNavigate(serviceUuid);
     }
   };
 

@@ -391,12 +391,12 @@ const ServiceDetailPageMainScreen = ({
     tags,
     imageUris,
     profileImageUri,
+    serviceUuid,
     servicePeriod,
     serviceMaterials,
     serviceContent,
     serviceOptions,
     marketUuid,
-    serviceUuid,
     education,
     certification,
     awards,
@@ -565,7 +565,10 @@ const ServiceDetailPageMainScreen = ({
         />
       </ScrollView>
       <View style={styles.footerContainer}>
-        <Footer suspended={false} onNavigate={() => navigation.navigate('QuotationForm')} />
+        <Footer
+         suspended={false}
+         serviceUuid={serviceUuid}
+         onNavigate={(uuid) => navigation.navigate('QuotationForm', {serviceUuid:uuid})} />
         {/* TODO: 위 수정 필요  */}
       </View>
       {userRole === 'reformer' && (
