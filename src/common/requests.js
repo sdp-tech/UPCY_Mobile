@@ -13,7 +13,7 @@ export default function Request() {
     const accessToken = await getAccessToken();
     const refreshToken = await getRefreshToken();
 
-    // upcy temp api url:  http://52.79.140.77:8000
+    // upcy temp api url:  http://52.78.43.6:8000/
     // upcy domain: http://upcy.co.kr:8000/
 
     // const url = 'https://upcy.co.kr' + path;
