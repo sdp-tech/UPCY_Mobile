@@ -8,6 +8,7 @@ interface FooterProps {
   hideButton: boolean;
 }
 
+
 const Footer: React.FC<FooterProps> = ({ suspended, hideButton }) => {
   // API 연결 전, 인터랙션만
   const [like, setLike] = useState<boolean>(false);
@@ -22,7 +23,12 @@ const Footer: React.FC<FooterProps> = ({ suspended, hideButton }) => {
                 value={value}
                 pressed={pressed}
                 onPress={() => {}}
-                style={{ width: '95%' }}
+                style={{
+                  width: 358,
+                  height: 48,
+                  marginBottom: 34,
+                  marginHorizontal: 16,
+                }}
             />
         )}
       </FooterContainer>
@@ -40,7 +46,7 @@ const FooterContainer = styled.View`
   flex-direction: row;
   flex: 1;
   align-items: center;
-  justify-content: space-around;
+  justify-content: center;
   background-color: white;
 `;
 

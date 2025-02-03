@@ -485,7 +485,7 @@ const ServiceDetailPageMainScreen = ({
       option_price: option.price || 0,
       option_photos: option.photos || [],
     })) || [],
-    thumbnail_photo: imageUris?.[0]?.image,
+    thumbnail_photo: imageUris?.[0],
     detail_photos: imageUris,
   };
 
@@ -701,7 +701,7 @@ const ServiceDetailPageMainScreen = ({
       <View style={styles.footerContainer}>
         <Footer
             suspended={suspended}
-            hideButton={marketUuid === myMarketUuid}
+            hideButton={userRole === 'reformer'}
         />
       </View>
       {userRole === 'reformer' && marketUuid === myMarketUuid && (
