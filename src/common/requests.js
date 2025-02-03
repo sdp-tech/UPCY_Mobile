@@ -16,6 +16,7 @@ export default function Request() {
     // upcy temp api url:  http://52.78.43.6:8000/
     // upcy domain: http://upcy.co.kr:8000/
 
+    // const url = 'https://upcy.co.kr' + path;
     const url = 'https://api.sullung.site' + path;
 
     let headerValue;

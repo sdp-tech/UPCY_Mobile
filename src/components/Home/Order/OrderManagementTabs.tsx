@@ -4,9 +4,8 @@ import NewOrders from './NewOrders';
 import InProgressOrders from './InProgressOrders';
 import CompletedOrders from './CompletedOrders';
 import { BLACK, LIGHTGRAY, PURPLE, GREEN } from '../../../styles/GlobalColor';
-import { Body14R, Subtitle16B, Body16R, Caption11M } from '../../../styles/GlobalText';
 
-const OrderManagementTabs = () => {
+const OrderManagementTabs = ({ navigation, route }: any) => {
   return (
     <Tabs.Container
       renderTabBar={(props) => (
@@ -22,7 +21,7 @@ const OrderManagementTabs = () => {
             fontSize: 16,
             fontWeight: 'bold',
           }}
-          tabBarStyle={{
+          tabStyle={{
             backgroundColor: '#FFF',
             borderBottomWidth: 1,
             borderBottomColor: 'gray',
@@ -32,7 +31,7 @@ const OrderManagementTabs = () => {
     >
       <Tabs.Tab name="새 주문">
         <Tabs.ScrollView>
-          <NewOrders />
+          <NewOrders navigation={navigation} route={route} />
         </Tabs.ScrollView>
       </Tabs.Tab>
       <Tabs.Tab name="거래 중">

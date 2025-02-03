@@ -22,7 +22,6 @@ DerivedData
 *.xcuserstate
 ios/.xcode.env.local
 
-Info.plist
 ios/upcy.xcodeproj/project.xcworkspace/
 ios/upcy.xcodeproj/xcuserdata
 

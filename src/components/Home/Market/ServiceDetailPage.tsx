@@ -18,7 +18,7 @@ import {
 } from '@react-navigation/stack';
 import { HomeStackParams } from '../../../pages/Home';
 import Arrow from '../../../assets/common/Arrow.svg';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 // import DetailBox from './DetailBox';
 import Footer from '../../../common/Footer';
 // import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
@@ -43,7 +43,8 @@ import {
   getMarketUUID,
 } from '../../../common/storage';
 import Request from '../../../common/requests.js';
-import { numberToPrice } from './functions';
+import { LoginContext } from '../../../common/Context.tsx';
+// import { numberToPrice } from './functions';
 
 // 전체 홈 화면에서, 특정 서비스 누르면 넘어오는 페이지 (개별 서비스 페이지)
 
@@ -51,6 +52,9 @@ const { width, height } = Dimensions.get('window');
 
 type ServiceDetailPageProps = {
   reformerName: string;
+  introduce: string;
+  reformerArea: string;
+  reformerLink: string;
   serviceName: string;
   basicPrice: number;
   maxPrice: number;
@@ -64,6 +68,11 @@ type ServiceDetailPageProps = {
   serviceOptions: ServiceDetailOption[];
   marketUuid: string;
   serviceUuid: string;
+  education: any[];
+  certification: any[];
+  awards: any[];
+  career: any[];
+  freelancer: any[];
 };
 
 type ServiceData = {
@@ -89,6 +98,9 @@ type ServiceData = {
 export type DetailPageStackParams = {
   DetailPage: {
     reformerName: string;
+    introduce: string;
+    reformerArea: string;
+    reformerLink: string;
     serviceName: string;
     basicPrice: number;
     maxPrice: number;
@@ -102,6 +114,11 @@ export type DetailPageStackParams = {
     serviceOptions: ServiceDetailOption[];
     marketUuid: string;
     serviceUuid: string;
+    education: any[];
+    certification: any[];
+    awards: any[];
+    career: any[];
+    freelancer: any[];
   };
 };
 
@@ -160,14 +177,22 @@ const ServiceDetailPageScreen = ({
 type ProfileSectionProps = {
   navigation: any;
   reformerName: string;
+  introduce: string;
+  reformerArea: string;
+  reformerLink: string;
   serviceName: string;
   basicPrice: number;
   maxPrice: number;
   reviewNum: number;
-  tags: string[]
+  tags: string[];
   backgroundImageUri: string;
   profileImageUri?: string;
   marketUuid: string;
+  education: any[];
+  certification: any[];
+  awards: any[];
+  career: any[];
+  freelancer: any[];
   onPressDelete: () => void;
   serviceData: ServiceData;
 };
@@ -175,6 +200,9 @@ type ProfileSectionProps = {
 const ProfileSection = ({
   navigation,
   reformerName,
+  introduce,
+  reformerArea,
+  reformerLink,
   serviceName,
   basicPrice,
   maxPrice,
@@ -183,6 +211,11 @@ const ProfileSection = ({
   backgroundImageUri,
   profileImageUri,
   marketUuid,
+  education,
+  certification,
+  awards,
+  career,
+  freelancer,
   serviceData,
   onPressDelete,
 }: ProfileSectionProps) => {
@@ -216,7 +249,7 @@ const ProfileSection = ({
         title=""
         leftButton="CustomBack"
         rightButton={
-          (userRole === 'customer')
+          userRole === 'customer'
             ? 'Report'
             : (userRole === 'reformer' && marketUuid == myMarketUuid)
               ? 'Edit'
@@ -244,9 +277,17 @@ const ProfileSection = ({
         backgroundImageUri={backgroundImageUri}
         profilePictureUri={profileImageUri}
         reformerName={reformerName}
+        introduce={introduce}
+        reformerArea={reformerArea}
+        reformerLink={reformerLink}
         reviewNum={reviewNum}
         navigation={navigation}
         marketUuid={marketUuid}
+        education={education}
+        certification={certification}
+        awards={awards}
+        career={career}
+        freelancer={freelancer}
       />
       <Header
         like={like}
@@ -380,11 +421,11 @@ const Header = ({
         <Text style={TextStyles.Title}>{serviceName}</Text>
         <Text style={TextStyles.PriceInfo}>
           기본
-          <Text style={TextStyles.Price}> {numberToPrice(basicPrice)} 원</Text>
+          <Text style={TextStyles.Price}> {basicPrice} 원</Text>
         </Text>
         <Text style={TextStyles.PriceInfo}>
           최대
-          <Text style={TextStyles.Price}> {numberToPrice(maxPrice)} 원</Text>
+          <Text style={TextStyles.Price}> {maxPrice} 원</Text>
         </Text>
       </View>
       {/* <View style={{ margin: 15 }}>
@@ -398,18 +439,34 @@ type ProfileProps = {
   profilePictureUri?: string;
   backgroundImageUri?: string;
   reformerName: string;
+  introduce: string;
+  reformerArea: string;
+  reformerLink: string;
   reviewNum: number;
   navigation: any;
   marketUuid: string;
+  education: any[];
+  certification: any[];
+  awards: any[];
+  career: any[];
+  freelancer: any[];
 };
 
 const Profile = ({
   profilePictureUri,
   backgroundImageUri,
   reformerName,
+  introduce,
+  reformerArea,
+  reformerLink,
   reviewNum,
   navigation,
   marketUuid,
+  education,
+  certification,
+  awards,
+  career,
+  freelancer,
 }: ProfileProps) => {
   return (
     <View style={{ justifyContent: 'space-between' }}>
@@ -433,10 +490,19 @@ const Profile = ({
           <TouchableOpacity
             style={{ flexDirection: 'row', alignItems: 'center' }}
             onPress={() =>
-              navigation.navigate('MarketTabView', { // 프로필 사진 옆에 있는 이름 눌렀을 때 
+              navigation.navigate('MarketTabView', {
+                // 프로필 사진 옆에 있는 이름 눌렀을 때
                 reformerName: reformerName,
+                introduce: introduce,
+                reformerArea: reformerArea,
+                reformerLink: reformerLink,
                 marketUuid: marketUuid,
-                backgroundImageUri: backgroundImageUri ?? defaultImageUri,
+                profileImageUri: profilePictureUri ?? defaultImageUri,
+                education: education,
+                certification: certification,
+                awards: awards,
+                career: career,
+                freelancer: freelancer,
               })
             }>
             <Text style={TextStyles.reformerName}>{reformerName}</Text>
@@ -449,11 +515,14 @@ const Profile = ({
 };
 
 const ServiceDetailPageMainScreen = ({
-  navigation,
-  route,
-}: StackScreenProps<DetailPageStackParams, 'DetailPage'>) => {
+  navigation, route
+}: StackScreenProps<HomeStackParams, 'ServiceDetailPage'>) => {
+  const { isLogin } = useContext(LoginContext);
   const {
     reformerName,
+    introduce,
+    reformerArea,
+    reformerLink,
     serviceName,
     basicPrice,
     maxPrice,
@@ -467,6 +536,11 @@ const ServiceDetailPageMainScreen = ({
     serviceOptions,
     marketUuid,
     serviceUuid,
+    education,
+    certification,
+    awards,
+    career,
+    freelancer,
   } = route.params;
 
   const serviceData : ServiceData = {
@@ -507,7 +581,6 @@ const ServiceDetailPageMainScreen = ({
   //     profileImageUri={profileImageUri}
   //   />
   // );
-
   const [suspended, setSuspended] = useState<boolean>(false);
   const [userRole, setUserRole] = useState<string>('customer');
   const [myMarketUuid, setMyMarketUuid] = useState<string>('');
@@ -516,7 +589,6 @@ const ServiceDetailPageMainScreen = ({
   const [isDeletePopupVisible, setDeletePopupVisible] = useState(false);
 
   const request = Request();
-
 
   useEffect(() => {
     const getUserRoleInfo = async () => {
@@ -546,7 +618,6 @@ const ServiceDetailPageMainScreen = ({
 
     fetchServiceStatus();
   }, [marketUuid, serviceUuid]);
-
 
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('');
@@ -651,7 +722,6 @@ const ServiceDetailPageMainScreen = ({
     }
   };
 
-
   return (
     <View style={{ flex: 1, position: 'relative' }}>
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
@@ -678,6 +748,9 @@ const ServiceDetailPageMainScreen = ({
         <ProfileSection
           navigation={navigation}
           reformerName={reformerName}
+          introduce={introduce}
+          reformerArea={reformerArea}
+          reformerLink={reformerLink}
           serviceName={serviceName}
           basicPrice={basicPrice}
           maxPrice={maxPrice}
@@ -686,6 +759,11 @@ const ServiceDetailPageMainScreen = ({
           backgroundImageUri={imageUris?.[0]?.image}
           profileImageUri={profileImageUri}
           marketUuid={marketUuid}
+          education={education}
+          certification={certification}
+          awards={awards}
+          career={career}
+          freelancer={freelancer}
           onPressDelete={onPressDelete}
           serviceData={serviceData}
         />
@@ -699,10 +777,13 @@ const ServiceDetailPageMainScreen = ({
         />
       </ScrollView>
       <View style={styles.footerContainer}>
-        <Footer
-            suspended={suspended}
-            hideButton={userRole === 'reformer'}
-        />
+        {isLogin &&
+            <Footer
+              suspended={suspended}
+              hideButton={userRole === 'reformer'}
+              onNavigate={() => navigation.navigate('QuotationForm')}
+            />
+        }
       </View>
       {userRole === 'reformer' && marketUuid === myMarketUuid && (
         <TouchableOpacity
@@ -803,7 +884,6 @@ const CustomPopup = ({
     </Modal>
   );
 };
-
 
 const TextStyles = StyleSheet.create({
   Title: {
@@ -1074,5 +1154,4 @@ const styles = StyleSheet.create({
   },
 });
 
-
-export default ServiceDetailPageScreen;
+export default ServiceDetailPageMainScreen;

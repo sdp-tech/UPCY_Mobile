@@ -1,9 +1,11 @@
-import React from 'react';
-import { SafeAreaView, ScrollView, Text, TouchableOpacity, Image } from 'react-native';
+import React, { useState } from 'react';
+import { SafeAreaView, ScrollView, Text, TouchableOpacity, Image, View } from 'react-native';
 import styled from 'styled-components/native';
-import { useNavigation } from '@react-navigation/native';
+import DropDownPicker from 'react-native-dropdown-picker';
 import { Body14R, Subtitle16B } from '../../../styles/GlobalText';
-import { LIGHTGRAY } from '../../../styles/GlobalColor.tsx';
+import { PURPLE, LIGHTGRAY } from '../../../styles/GlobalColor.tsx';
+import { useNavigation } from '@react-navigation/native';
+// 주문관리 탭에서, 상단의 3번째 탭 (완료/취소 탭)
 
 const completedOrders = [
   {
@@ -46,20 +48,82 @@ const completedOrders = [
     customer: '권수현',
     completedDate: '2024-05-15',
     image: 'https://m.lovecoco.co.kr/web/product/big/201911/55d890a77de72b7213b84fec2083e3fe.jpg',
-    status: '거절한 주문',
+    status: '중단된 주문',
     is_completed: false,
   },
 ];
 
 const CompletedOrders = () => {
   const navigation = useNavigation();
+  const [filter, setFilter] = useState('all'); //초기 필터값 all
+  const [open, setOpen] = useState(false); //dropdown 열림 상태
+  const [items, setItems] = useState([
+    { label: '전체', value: 'all' },
+    { label: '거래 완료', value: 'completed' },
+    { label: '거절한 주문', value: 'rejected' },
+    { label: '중단된 주문', value: 'suspended' },
+  ]);
+
+  // 필터링된 데이터
+  const filteredOrders = completedOrders.filter((order) => {
+    if (filter === 'all') return true;
+    if (filter === 'completed') return order.is_completed;
+    if (filter === 'rejected') return order.status === '거절한 주문';
+    if (filter === 'suspended') return order.status === '중단된 주문';
+    return false;
+  });
+
+
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: LIGHTGRAY }}>
-      <ScrollView>
+      {/* 필터 영역 */}
+      <FilterContainer style={{ zIndex: 10 }}>
+        <DropDownPicker
+          open={open}
+          value={filter}
+          items={items}
+          setOpen={setOpen}
+          setValue={setFilter}
+          setItems={setItems}
+          placeholder="필터 선택"
+          style={{
+            borderColor: PURPLE,
+            borderWidth: 1,
+            borderRadius: 30,
+            alignSelf: 'flex-start',
+            maxWidth: 130,
+            maxHeight: 30,
+            paddingVertical: 0,
+            paddingHorizontal: 10,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+          containerStyle={{
+            height: 36,
+          }}
+          dropDownContainerStyle={{
+            borderColor: PURPLE,
+            alignSelf: 'flex-start',
+            minWidth: 100,
+            maxWidth: 130,
+            margin: 0,
+
+          }}
+          textStyle={{
+            fontSize: 14,
+            textAlign: 'center',
+            lineHeight: 30,
+
+          }}
+        />
+      </FilterContainer>
+
+      {/* orderinfobox 영역 */}
+      <View style={{ zIndex: 1 }}>
         {completedOrders.length > 0 ? (
-          completedOrders.map((order, index) => (
-            <OrderInfoBox key={`${order.completedDate}-${index}`}>
+          filteredOrders.map((order, index) => (
+            <OrderInfoBox key={order.id}>
               <TopSection>
                 <TopRow>
                   <OrderDate> {order.is_completed ? `완료일: ${order.completedDate}` : `취소일: ${order.completedDate}`}</OrderDate>
@@ -85,12 +149,18 @@ const CompletedOrders = () => {
         ) : (
           <Text>새 주문이 없습니다.</Text>
         )}
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 };
 
-// 스타일 정의
+
+const FilterContainer = styled.View`
+  padding: 10px;
+  border-bottom-width: 1px;
+  border-color: ${LIGHTGRAY};
+`;
+
 const OrderInfoBox = styled.View`
   flex-direction: column;
   border-radius: 12px;
