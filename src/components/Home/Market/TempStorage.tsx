@@ -44,6 +44,7 @@ const TempStorage = ({ navigation }: StackScreenProps<any>) => {
       console.log(marketUuid);
       if (response && response.status === 200) {
         const tempData = response.data.filter((item: ServiceItem) => item.temporary);
+        //console.log("tempData: ",tempData);
         setStorage(tempData);
       } else if (response && response.status === 404) {
         Alert.alert("등록된 임시저장 서비스가 없습니다.")
@@ -148,9 +149,28 @@ const TempStorage = ({ navigation }: StackScreenProps<any>) => {
       const selectedService = storage.find(
         (item) => item.service_uuid === selectedItems[0]
       );
-
       if (selectedService) {
-        navigation.navigate("ServiceRegistrationPage", { serviceData: selectedService, });
+        const transformedServiceData: ServiceData = {
+          service_uuid: selectedService.service_uuid,
+          service_title: selectedService.service_title,
+          service_content: selectedService.service_content,
+          service_category: selectedService.service_category,
+          service_period: selectedService.service_period ?? 0,
+          basic_price: selectedService.basic_price ?? 0,
+          max_price: selectedService.max_price ?? 0,
+          service_style: selectedService.service_style ?? [],
+          service_material: selectedService.service_material ?? [],
+          service_option: (selectedService.service_option ?? []).map(option => ({
+            option_name: option.option_name ?? "",
+            option_content: option.option_content ?? "",
+            option_price: option.option_price ?? 0,
+            option_photos: option.option_photos ?? [],
+          })),
+          thumbnail_photo: selectedService.service_image?.[0] ?? "",
+          detail_photos: selectedService.service_image?.slice(1) ?? [],
+        };
+        console.log("");
+        navigation.navigate("ServiceRegistrationPage", { serviceData: transformedServiceData, });
       } else {
         Alert.alert("선택한 서비스를 찾을 수 없습니다.");
       }
