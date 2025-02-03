@@ -18,7 +18,7 @@ import { useEffect, useRef, useState } from 'react';
 import { BLACK, GRAY, PURPLE } from '../../../styles/GlobalColor';
 import CareerModal from './CareerModal';
 import Request from '../../../common/requests';
-import { useNavigation } from '@react-navigation/native';
+import { CommonActions, useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { SignInParams } from '../SignIn';
 import { getAccessToken, getMarketUUID, setMarketUUID } from '../../../common/storage';
@@ -572,7 +572,7 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
       const linkChanged = JSON.stringify(memorizedForm.current?.link) !== JSON.stringify(updatedForm.link);
       const regionChanged = JSON.stringify(memorizedForm.current?.region) !== JSON.stringify(updatedForm.region);
       // 변경된 항목만 포함하는 params 객체 생성
-      const params: Partial<{ reformer_link: string; reformer_area: string }> = {};
+      const params: Partial<{ reformer_link: string; reformer_area: string; }> = {};
       if (linkChanged) params.reformer_link = updatedForm.link;
       if (regionChanged) params.reformer_area = updatedForm.region;
       if (linkChanged || regionChanged) {
@@ -740,7 +740,19 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
             "프로필 수정이 완료되었습니다.",
             "",
             [
-              { text: "확인", onPress: () => { navigation.goBack(); } }
+              {
+                text: "확인",
+                onPress: () => {
+                  navigation.dispatch(
+                    CommonActions.reset({
+                      index: 0, // 새로운 스택의 첫 번째 화면
+                      routes: [
+                        { name: 'Main', params: { screen: 'UPCY' } }
+                      ]
+                    })
+                  );
+                }
+              }
             ]
           );
         }
@@ -954,8 +966,8 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
         // 기존 form.field에 새로운 데이터 추가
         setForm(prevForm => ({
           ...prevForm,
-          introduce: data.introduce || prevForm.introduce,
-          nickname: data.nickname || prevForm.nickname,
+          introduce: data.user_info.introduce || prevForm.introduce,
+          nickname: data.user_info.nickname || prevForm.nickname,
           link: data.reformer_link || prevForm.link,
           region: data.reformer_area || prevForm.region,
           field: [...prevForm.field, ...newFields], // 기존 field에 newFields 추가

@@ -13,13 +13,12 @@ import {
 } from 'react-native';
 import styled from 'styled-components/native';
 import { getStatusBarHeight } from 'react-native-safearea-height';
-
-import { HomeStackParams } from '../../../pages/Home';
 import { StackScreenProps } from '@react-navigation/stack';
 
 import Arrow from '../../../assets/common/Arrow.svg';
+import BottomButton from '../../../common/BottomButton';
 
-import { BLACK, PURPLE } from '../../../styles/GlobalColor';
+import { BLACK, PURPLE, GREEN } from '../../../styles/GlobalColor';
 import {
   Body14R,
   Body16M,
@@ -28,14 +27,15 @@ import {
 } from '../../../styles/GlobalText';
 import Carousel from '../../../common/Carousel';
 import CheckBox from '../../../common/CheckBox';
+import React from 'react';
+import { OrderStackParams } from '../Order/OrderManagement';
 
-const statusBarHeight = getStatusBarHeight(true);
-const { width, height } = Dimensions.get('window');
+// const { width, height } = Dimensions.get('window');
 
-const QuotationPage = ({
+const QuotationConfirm = ({
   navigation,
   route,
-}: StackScreenProps<HomeStackParams, 'QuotationConfirm'>) => {
+}: StackScreenProps<OrderStackParams, 'QuotationConfirm'>) => {
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [finishModal, setFinishModal] = useState<boolean>(false);
   const [checkBoxPressed, setCheckBoxPressed] = useState<boolean>(false); // CheckBox 상태 관리
@@ -96,27 +96,21 @@ const QuotationPage = ({
   const splitRefPhotos = splitArrayIntoPairs(refPhotos, 2);
   return (
     <ScrollView>
-      <BackButton onPress={() => navigation.goBack()}>
-        <Arrow color={BLACK} />
-      </BackButton>
-      <View
-        style={{
-          position: 'absolute',
-          width: '100%',
-          height: '100%',
-          backgroundColor: 'white',
-          opacity: 0.9,
-        }}
-      />
-      <View style={{ marginTop: 30 }}>
-        <Title20B
-          style={{
-            marginTop: statusBarHeight,
-            color: BLACK,
-            textAlign: 'center',
-          }}>
-          주문서 확인
-        </Title20B>
+
+      <View>
+        <View style={{ flexDirection: "row", padding: 10, justifyContent: 'space-between' }}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Arrow color={BLACK} />
+          </TouchableOpacity>
+          <Title20B
+            style={{
+              color: BLACK,
+              textAlign: 'center',
+            }}>
+            주문서 확인
+          </Title20B>
+          <View></View>
+        </View>
         <View style={{ paddingVertical: 35, paddingHorizontal: 20 }}>
           <View style={{ backgroundColor: 'white', marginHorizontal: 10 }}>
             <View style={{ marginTop: 20 }}>
@@ -248,21 +242,22 @@ const QuotationPage = ({
             alignItems: 'center',
             borderRadius: 20,
           }}
-          onPress={() => console.log('카톡 상담 버튼 클릭')}>
-          <Text style={{ color: BLACK }}>카톡 상담</Text>
+          onPress={() => console.log('수락')}>
+          <Text style={{ color: BLACK }}>수락하기</Text>
         </TouchableOpacity>
       </View>
+
+      <View style={{ padding: 10, marginVertical: 30 }}>
+        <BottomButton value={'수락 하기'} onPress={handleSendQuotation} pressed={true} style={{ paddingVertical: 30 }}
+        />
+        <View style={{ marginVertical: 5 }} />
+        <BottomButton value={'거절 하기'} pressed={true} onPress={() => { }} color={GREEN} />
+      </View>
+
+
     </ScrollView>
   );
 };
-
-const BackButton = styled.TouchableOpacity`
-  padding: 10px;
-  position: absolute;
-  left: 0px;
-  top: ${statusBarHeight - 10}px;
-  z-index: 1;
-`;
 
 const TextBox = styled.View`
   flex-direction: row;
@@ -309,4 +304,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default QuotationPage;
+export default QuotationConfirm;

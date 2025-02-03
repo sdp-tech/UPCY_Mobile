@@ -7,6 +7,7 @@ import CloseIcon from '../../../assets/header/Close.svg';
 import SearchIcon from '../../../assets/header/Search.svg';
 import { CustomBackButton } from './CustomBackButton';
 import { CustomReportButton } from './CustomReportButton';
+import { CustomEditDeleteButton } from './CustomEditDeleteButton';
 
 interface HeaderProps {
   title: string;
@@ -18,6 +19,8 @@ interface HeaderProps {
   border?: boolean;
   reportButtonPressed?: boolean;
   setReportButtonPressed?: (reportButtonPressed: boolean) => void;
+  editDeleteButtonPressed?: boolean;
+  setEditDeleteButtonPressed?: (editDeleteButtonPressed: boolean) => void;
 }
 
 const DetailScreenHeader = ({
@@ -30,11 +33,12 @@ const DetailScreenHeader = ({
   border = true,
   reportButtonPressed = false,
   setReportButtonPressed = () => {},
+  editDeleteButtonPressed = false,
+  setEditDeleteButtonPressed = () => {},
 }: HeaderProps) => {
   const Buttons = {
     Save: <Body14M style={{ color: '#929292' }}>임시저장 | {saved}</Body14M>,
     Search: <SearchIcon color={BLACK} style={{ marginRight: 5 }} />,
-    Edit: <Body14M style={{ color: '#929292', marginRight: 10 }}>편집</Body14M>,
     Exit: <CloseIcon color={BLACK} style={{ marginHorizontal: 5 }} />,
     LeftArrow: (
       <View style={{ marginLeft: 14 }}>
@@ -44,6 +48,12 @@ const DetailScreenHeader = ({
     CustomBack: <CustomBackButton />,
     None: <></>,
     Fix: <Body16B style={{ color: '#929292', marginRight: 10 }}>...</Body16B>,
+    Edit: (
+      <CustomEditDeleteButton
+        editDeleteButtonPressed={editDeleteButtonPressed}
+        setEditDeleteButtonPressed={setEditDeleteButtonPressed}
+      />
+    ),
     Report: (
       <CustomReportButton
         reportButtonPressed={reportButtonPressed}

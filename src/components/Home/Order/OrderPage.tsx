@@ -7,12 +7,6 @@ import { BLACK, LIGHTGRAY, PURPLE, GREEN } from '../../../styles/GlobalColor';
 
 import { Title20B, Body14R, Body16B, Caption11M } from '../../../styles/GlobalText.tsx';
 
-
-
-
-import { useNavigation } from '@react-navigation/native';
-import { StackScreenProps } from '@react-navigation/stack';
-import { HomeStackParams } from '../../../pages/Home';
 import { OrderProps, OrderStackParams } from './OrderManagement.tsx';
 
 
@@ -138,7 +132,7 @@ const OrderPage = ({ flatListRef, navigation, route }: OrderProps) => {
   const handleConfirmCompleted = () => {
     setIsModalVisible(false);
     console.log('거래 완료 선택');
-    navigation.navigate('CompletedOrder');
+    navigation.navigate('CompletedOrders');
   };
 
   // 모달에서 "나중에" 클릭 핸들러
@@ -193,7 +187,7 @@ const OrderPage = ({ flatListRef, navigation, route }: OrderProps) => {
   ]);
 
   // 필터링된 주문 목록
-  const filteredOrders = orderlist.filter(order => {
+  const filteredOrders = orderlist.filter((order) => {
     if (selectedFilter === '전체') return true;
     if (selectedFilter === '거래 전') return order.status === 'before';
     if (selectedFilter === '거래 중') return order.status === 'progress';
@@ -228,7 +222,7 @@ const OrderPage = ({ flatListRef, navigation, route }: OrderProps) => {
             <OrderActionButtons status={order.status} navigation={navigation} onPress={handleCompletedPress} />
           </OrderInfoBox>
         )}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(index) => index.toString()}
         style={{ marginBottom: 60 }}
       />
 
@@ -263,7 +257,7 @@ const OrderInfoBox = styled.View`
   padding: 19px;
   margin: 10px;
   justify-content: space-between;
-  backgroundColor: white;
+  background-color: white;
 `;
 
 const StatusText = styled.Text`

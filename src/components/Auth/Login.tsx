@@ -5,6 +5,9 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
+  Button,
+  ActivityIndicator,
+  Text,
 } from 'react-native';
 import { GREEN, PURPLE } from '../../styles/GlobalColor';
 import { useState, Fragment, useContext } from 'react';
@@ -18,7 +21,8 @@ import {
   setRefreshToken,
   setUserRole,
   getUserRole,
-  setMarketUUID
+  setMarketUUID,
+  removeAccessToken
 } from '../../common/storage';
 import { LoginContext, useUser } from '../../common/Context';
 
@@ -56,7 +60,7 @@ function LoginInput({
     <TextInput
       style={{
         width: width * 0.8,
-        height: 45,
+        height: height * 0.065,
         backgroundColor: '#FFFFFF80',
         borderWidth: 2,
         borderColor: GREEN,
@@ -116,7 +120,7 @@ export async function processLoginResponse( // 통상 로그인시 호출 함수
   response: any,
   navigate: () => void,
   setLogin: (value: boolean) => void,
-  setUser: (user: UserType) => void // setUser 전달
+  setUser: (user: UserType) => void, // setUser 전달
 ) {
   const request = Request();
   // const navigation = useNavigation<StackNavigationProp<MyPageProps>>();
@@ -167,6 +171,7 @@ export async function processLoginResponse( // 통상 로그인시 호출 함수
 };
 
 export default function Login({ navigation, route }: LoginProps) {
+  const [loading, setLoading] = useState(false); // 로딩용
   const { isLogin, setLogin } = useContext(LoginContext);
   const { user, setUser } = useUser(); // useUser 훅 사용
   const { width, height } = Dimensions.get('window');
@@ -177,6 +182,7 @@ export default function Login({ navigation, route }: LoginProps) {
     if (form.email === '' || form.password === '') {
       Alert.alert('이메일과 비밀번호를 모두 입력해주세요.')
     } else {
+      setLoading(true);
       const response = await request.post(`/api/user/login`, form);
       processLoginResponse(
         response,
@@ -186,10 +192,20 @@ export default function Login({ navigation, route }: LoginProps) {
           else navigation.navigate('Home');
         },
         setLogin,
-        setUser // setUser 전달,
+        setUser, // setUser 전달
       );
+      setLoading(false)
     }
   };
+  // 로딩 중일 때 로딩 스피너 표시
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: PURPLE }}>
+        <Text style={{ color: "#ffffff", marginBottom: 20, fontSize: 16 }}>로그인 중입니다.</Text>
+        <ActivityIndicator size="large" color="#ffffff" />
+      </View>
+    );
+  }
 
   return (
     <Fragment>
@@ -254,6 +270,7 @@ export default function Login({ navigation, route }: LoginProps) {
             <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
               <Caption11M style={{ color: '#ffffff' }}>회원가입</Caption11M>
             </TouchableOpacity>
+            <Button title='test' onPress={() => { removeAccessToken }} />
             {/* <Caption11M style={{ color: '#ffffff' }}> | </Caption11M>
             <Caption11M style={{ color: '#ffffff' }}>비밀번호 찾기</Caption11M> */}
           </View>

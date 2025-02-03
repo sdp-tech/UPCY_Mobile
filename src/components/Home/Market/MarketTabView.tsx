@@ -6,9 +6,7 @@ import {
   Text,
   TouchableOpacity,
   Image,
-  ImageBackground,
   StyleSheet,
-  Alert,
 } from 'react-native';
 import { Tabs, MaterialTabBar } from 'react-native-collapsible-tab-view';
 import { Caption11M } from '../../../styles/GlobalText.tsx';
@@ -18,7 +16,6 @@ import { StackScreenProps } from '@react-navigation/stack';
 import { HomeStackParams } from '../../../pages/Home';
 import InfoPage from './InfoPage.tsx';
 // import Footer from '../../../common/Footer.tsx';
-import Request from '../../../common/requests.js';
 // import Arrow from '../../../assets/common/Arrow.svg';
 import ServicePage from './ServicePage.tsx';
 import DetailScreenHeader from '../components/DetailScreenHeader.tsx';
@@ -32,11 +29,11 @@ import { MarketType } from './InfoPage.tsx';
 export const ProfileSection = ({
   navigation,
   reformerName,
-  backgroundImageUri,
+  profileImageUri,
 }: {
   navigation: any;
   reformerName: string;
-  backgroundImageUri?: string;
+  profileImageUri: string;
 }) => {
   const marketName: string = reformerName;
 
@@ -44,11 +41,11 @@ export const ProfileSection = ({
     <View style={{ alignItems: 'center' }}>
       <ProfileHeader
         marketName={marketName}
-        backgroundImageUri={backgroundImageUri}
         navigation={navigation}
         reformerName={reformerName}
-      // rate={rate}
-      // reviewNumber={reviewNumber}
+        profileImageUri={profileImageUri}
+        // rate={rate}
+        // reviewNumber={reviewNumber}
       />
       <View style={{ padding: 20, paddingTop: 0, paddingBottom: 0 }}>
         {/* 이 밑에거 지우면 이상하게 에러남... 그냥 냅둬도 되는 거라 무시하셔도 됩니다.  */}
@@ -62,16 +59,16 @@ export const ProfileSection = ({
 
 const ProfileHeader = ({
   marketName,
-  backgroundImageUri,
   navigation,
   reformerName,
+  profileImageUri,
   // rate,
   // reviewNumber,
 }: {
   marketName: string;
-  backgroundImageUri?: string;
   navigation: any;
   reformerName: string;
+  profileImageUri: string;
   // rate: number;
   // reviewNumber: number;
 }) => {
@@ -102,7 +99,7 @@ const ProfileHeader = ({
       <DetailScreenHeader
         title=""
         leftButton="CustomBack"
-        onPressLeft={() => { }}
+        onPressLeft={() => {}}
         rightButton={
           userRole === 'customer'
             ? 'Report'
@@ -110,24 +107,16 @@ const ProfileHeader = ({
               ? 'Edit'
               : 'Report'
         }
-        onPressRight={() => { }}
+        onPressRight={() => {}}
         reportButtonPressed={reportButtonPressed}
         setReportButtonPressed={setReportButtonPressed}
       />
-      <ImageBackground
-        style={{ width: '100%', height: 200 }}
-        imageStyle={{ height: 160 }}
-        source={{
-          uri: backgroundImageUri ?? defaultImageUri,
+      <View
+        style={{
+          width: '100%',
+          height: 150,
+          backgroundColor: '#E9EBF8',
         }}>
-        <View
-          style={{
-            width: '100%',
-            height: 160,
-            backgroundColor: '#00000066',
-            opacity: 0.7,
-          }}
-        />
         <Image
           style={{
             alignSelf: 'center',
@@ -135,10 +124,10 @@ const ProfileHeader = ({
             height: 90,
             borderRadius: 180,
             position: 'absolute',
-            top: 110,
+            top: 100,
           }}
           source={{
-            uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp',
+            uri: profileImageUri,
           }}
         />
         {reportButtonPressed && (
@@ -149,8 +138,8 @@ const ProfileHeader = ({
             <Text style={TextStyles.reportText}>신고</Text>
           </TouchableOpacity>
         )}
-      </ImageBackground>
-      <View style={{ gap: 12, alignItems: 'center' }}>
+      </View>
+      <View style={{ marginTop: 50, gap: 12, alignItems: 'center' }}>
         <Text style={TextStyles.marketName}>{marketName}</Text>
         <ReformerTag />
       </View>
@@ -166,9 +155,17 @@ const ProfileHeader = ({
 
 type MarketTabViewProps = {
   reformerName: string;
+  introduce: string;
+  reformerArea: string;
+  reformerLink: string;
   marketUuid: string;
-  backgroundImageUri?: string;
+  profileImageUri?: string;
   reformerEmail?: string;
+  education: any[];
+  certification: any[];
+  awards: any[];
+  career: any[];
+  freelancer: any[];
 };
 
 export type MarketResponseType = {
@@ -180,100 +177,63 @@ export type MarketResponseType = {
   market_uuid: string;
 };
 
-export type ReformerDataResponseType = {
-  awards: any[];
-  career: any[];
-  certification: any[];
-  education: any[];
-  freelancer: any[];
-  nickname: string;
-  reformer_area: string;
-  reformer_link: string;
-};
-
 const MarketTabView = ({
   navigation,
   route,
 }: StackScreenProps<HomeStackParams, 'MarketTabView'>) => {
   const defaultMarketData = {
     reformerName: '정보 없음',
+    introduce: '',
+    reformerArea: '정보 없음',
+    reformerLink: '',
     marketUuid: '',
-    backgroundImageUri: defaultImageUri,
-    reformerEmail: 'omg2@naver.com'
+    profileImageUri: defaultImageUri,
+    reformerEmail: '정보 없음',
   } as MarketTabViewProps;
-  const { reformerName, marketUuid, backgroundImageUri, reformerEmail }: MarketTabViewProps =
-    route.params || defaultMarketData;
+  const {
+    reformerName,
+    introduce,
+    reformerArea,
+    reformerLink,
+    marketUuid,
+    profileImageUri,
+    reformerEmail,
+    education,
+    certification,
+    awards,
+    career,
+    freelancer,
+  }: MarketTabViewProps = route.params || defaultMarketData;
   const [routes] = useState([
     { key: 'profile', title: '프로필' },
     { key: 'service', title: '서비스' },
   ]);
   const scrollRef = useRef<ScrollView | null>(null);
-  const request = Request();
 
   const defaultMarketResponseData: MarketType = {
-    reformer_link: '',
-    market_introduce: '정보 없음',
-    reformer_nickname: '정보 없음',
+    reformer_link: reformerLink,
+    introduce: introduce,
+    reformer_nickname: reformerName,
     market_thumbnail: '',
-    market_uuid: '',
-    reformer_area: '정보 없음',
-    education: [],
-    certification: [],
-    awards: [],
-    career: [],
-    freelancer: [],
+    market_uuid: marketUuid,
+    reformer_area: reformerArea,
+    education: education,
+    certification: certification,
+    awards: awards,
+    career: career,
+    freelancer: freelancer,
   };
 
   const [marketData, setMarketData] = useState<MarketType>(
     defaultMarketResponseData,
   );
 
-  const fetchData = async () => {
-    try {
-      // API 호출
-      //TODO: 여기 수정 필요...
-      const response = await request.get(
-        `/api/user/reformer/${reformerName}`,
-        {},
-        {},
-      );
-      if (response && response.status === 200) {
-        const reformerDataResult: ReformerDataResponseType = response.data;
-        const tempMarketResult: MarketType = {
-          reformer_link: reformerDataResult.reformer_link ?? '',
-          market_introduce: '정보 없음',
-          reformer_nickname: reformerName,
-          market_thumbnail: '',
-          market_uuid: '',
-          reformer_area: reformerDataResult.reformer_area ?? '정보 없음',
-          education: reformerDataResult.education ?? [],
-          certification: reformerDataResult.certification ?? [],
-          awards: reformerDataResult.awards ?? [],
-          career: reformerDataResult.career ?? [],
-          freelancer: reformerDataResult.freelancer ?? [],
-        };
-        setMarketData(tempMarketResult);
-      } else {
-        Alert.alert('마켓 정보 불러오기에서 오류가 발생했습니다.');
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      // TODO: 로딩 상태 추가하기
-    }
-  };
-
-  // 컴포넌트가 처음 렌더링될 때 API 호출
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   const renderHeader = useCallback(
     () => (
       <ProfileSection
         navigation={navigation}
         reformerName={reformerName}
-        backgroundImageUri={backgroundImageUri}
+        profileImageUri={profileImageUri || defaultImageUri}
       />
     ),
     [navigation, reformerName],

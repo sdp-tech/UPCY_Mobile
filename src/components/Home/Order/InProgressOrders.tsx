@@ -1,17 +1,45 @@
 import React, { useState } from 'react';
 import { SafeAreaView, Text, TouchableOpacity, View, StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
+import { Picker } from '@react-native-picker/picker';
 import Modal from 'react-native-modal';
-import CheckBox from '../../../common/CheckBox';
+//import CheckBox from '../../../common/CheckBox';
 import DropDownIcon from '../../../assets/common/DropDown.svg';
 import UpArrowIcon from '../../../assets/common/UpArrow.svg';
 import { Body14R, Subtitle16B, Body16R } from '../../../styles/GlobalText';
-import { BLACK, PURPLE, LIGHTGRAY } from '../../../styles/GlobalColor';
+import { PURPLE, LIGHTGRAY } from '../../../styles/GlobalColor';
 import { useNavigation } from '@react-navigation/native';
 
 
+type OrderFilter = {
+  filter: string,
+  setFilter: any,
+  onOpenChat: () => void,
+}
+
+// 화면상단 필터, 채팅
+const OrderFilter = ({ filter, setFilter, onOpenChat }: OrderFilter) => {
+  return (
+    <FilterContainer>
+      <PickerWrapper>
+        <Picker
+          selectedValue={filter}
+          onValueChange={(value) => setFilter(value)}
+          style={[styles.filterPicker, { height: '100%' }]}
+        >
+          <Picker.Item label="최신순" value="desc" />
+          <Picker.Item label="오래된 순" value="asc" />
+        </Picker>
+      </PickerWrapper>
+      <OpenChatButton onPress={onOpenChat}>
+        <Text style={{ color: 'BLACK', fontSize: 14 }}>내 오픈채팅 바로가기</Text>
+      </OpenChatButton>
+    </FilterContainer>
+  );
+};
+
 // OrderInfoBox 컴포넌트
-const OrderInfoBox = ({ order }) => {
+const OrderInfoBox = ({ order }: any) => {
   const navigation = useNavigation();
   const [expanded, setExpanded] = useState(false);
   const [steps, setSteps] = useState([false, false, false, false]);
@@ -25,7 +53,7 @@ const OrderInfoBox = ({ order }) => {
 
   const toggleExpanded = () => setExpanded(!expanded);
 
-  const toggleStep = (index) => {
+  const toggleStep = (index: number) => {
     const newSteps = [...steps];
     newSteps[index] = !newSteps[index];
     setSteps(newSteps);
@@ -43,15 +71,15 @@ const OrderInfoBox = ({ order }) => {
     setDeliverySubmitted(true); // 전달 완료 상태로 설정
     setSubmitModalVisible(false);
   };
-    console.log('Is Delivery Submitted:', isDeliverySubmitted);
+  console.log('Is Delivery Submitted:', isDeliverySubmitted);
 
-//수정 버튼 핸들러
+  //수정 버튼 핸들러
   const handleEdit = () => {
-     console.log('Is Delivery Submitted before:', isDeliverySubmitted); // 상태 변경 전 확인
-     setDeliverySubmitted(false); // 상태 초기화
+    console.log('Is Delivery Submitted before:', isDeliverySubmitted); // 상태 변경 전 확인
+    setDeliverySubmitted(false); // 상태 초기화
   };
 
-  const calculateHeight = (steps) => {
+  const calculateHeight = (steps: any) => {
     if (!steps || steps.length === 0) return 0; // steps가 비어있거나 undefined일 때 기본값
     return (steps.filter(Boolean).length) * (100 / (steps.length - 1));
   };
@@ -70,13 +98,13 @@ const OrderInfoBox = ({ order }) => {
           </TextContainer>
         </ContentRow>
         <TouchableOpacity
-            style = {{ marginTop: 10, alignSelf: 'flex-end'}}
-            onPress= {()=>navigation.navigate('QuotationPage')}
-            >
-            <Text style={{color:'gray', fontSize:14, fontWeight:'bold', textDecorationLine:'underlined'}}>
+          style={{ marginTop: 10, alignSelf: 'flex-end' }}
+          onPress={() => navigation.navigate('QuotationPage')}
+        >
+          <Text style={{ color: 'gray', fontSize: 14, fontWeight: 'bold', textDecorationLine: 'underline' }}>
             주문서확인
-            </Text>
-            </TouchableOpacity>
+          </Text>
+        </TouchableOpacity>
 
       </TopSection>
 
@@ -102,22 +130,22 @@ const OrderInfoBox = ({ order }) => {
                   {index < 3 && (
                     <CheckBoxWrapper>
 
-                        <TouchableOpacity
+                      <TouchableOpacity
+                        style={[
+                          styles.checkBox,
+                          isDeliverySubmitted && styles.disabledCheckBox,
+                        ]}
+                        disabled={isDeliverySubmitted}
+                        onPress={() => toggleStep(index)}
+                      >
+                        <View
                           style={[
-                            styles.checkBox,
-                            isDeliverySubmitted && styles.disabledCheckBox,
+                            styles.checkBoxIndicator,
+                            steps[index] && styles.checked,
+                            isDeliverySubmitted && styles.disabledCheckBoxIndicator,
                           ]}
-                          disabled={isDeliverySubmitted}
-                          onPress={() => toggleStep(index)}
-                        >
-                          <View
-                            style={[
-                              styles.checkBoxIndicator,
-                              steps[index] && styles.checked,
-                              isDeliverySubmitted && styles.disabledCheckBoxIndicator,
-                            ]}
-                          />
-                        </TouchableOpacity>
+                        />
+                      </TouchableOpacity>
 
                     </CheckBoxWrapper>
                   )}
@@ -127,39 +155,39 @@ const OrderInfoBox = ({ order }) => {
           </FlowContainer>
 
           {!isDeliverySubmitted && (
-          <DropdownContainer>
-            <TouchableOpacity
-              onPress={() => setShowDropdown(!showDropdown)}
-            style={[
-              styles.dropdownButton,
-              { borderColor: isDeliverySubmitted ? LIGHTGRAY : steps[2] ? PURPLE : LIGHTGRAY },
-              { backgroundColor: isDeliverySubmitted ? LIGHTGRAY : 'white' },
-            ]}
-            disabled={isDeliverySubmitted || !steps[2]} // 전달 완료 시 비활성화
-            >
-             <Text style={[styles.dropdownButtonText, { color: isDeliverySubmitted ? 'gray' : 'black' }]}>
-             {selectedCourier}
-             </Text>
-            <DropDownIcon width={20} height={20} />
-            </TouchableOpacity>
+            <DropdownContainer>
+              <TouchableOpacity
+                onPress={() => setShowDropdown(!showDropdown)}
+                style={[
+                  styles.dropdownButton,
+                  { borderColor: isDeliverySubmitted ? LIGHTGRAY : steps[2] ? PURPLE : LIGHTGRAY },
+                  { backgroundColor: isDeliverySubmitted ? LIGHTGRAY : 'white' },
+                ]}
+                disabled={isDeliverySubmitted || !steps[2]} // 전달 완료 시 비활성화
+              >
+                <Text style={[styles.dropdownButtonText, { color: isDeliverySubmitted ? 'gray' : 'black' }]}>
+                  {selectedCourier}
+                </Text>
+                <DropDownIcon width={20} height={20} />
+              </TouchableOpacity>
 
-            {showDropdown && (
-              <DropdownList>
-                {courierOptions.map((option, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    onPress={() => {
-                      setSelectedCourier(option);
-                      setShowDropdown(false);
-                    }}
-                  >
-                    <Text style={styles.optionText}>{option}</Text>
-                  </TouchableOpacity>
-                ))}
-              </DropdownList>
-            )}
-          </DropdownContainer>
-        )}
+              {showDropdown && (
+                <DropdownList>
+                  {courierOptions.map((option, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() => {
+                        setSelectedCourier(option);
+                        setShowDropdown(false);
+                      }}
+                    >
+                      <Text style={styles.optionText}>{option}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </DropdownList>
+              )}
+            </DropdownContainer>
+          )}
 
           <TrackingNumberContainer>
             <TextInput
@@ -175,21 +203,21 @@ const OrderInfoBox = ({ order }) => {
               }}
             />
             {!isDeliverySubmitted && (
-            <TouchableOpacity
-              style={{
-                backgroundColor: steps[2] ? PURPLE : LIGHTGRAY,
-                borderRadius: 4,
-                paddingHorizontal: 10, // 좌우 패딩만 설정
-                paddingVertical: 5, // 상하 패딩을 줄여 텍스트 공간 확보
-                marginLeft: 10,
-                marginTop:10,
-                height: 30,
-              }}
-              disabled={isDeliverySubmitted || !steps[2]} // 전달 완료 시 버튼 비활성화
-              onPress={toggleModal}
-            >
-              <Text style={{ color: 'white' }}>확인</Text>
-            </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: steps[2] ? PURPLE : LIGHTGRAY,
+                  borderRadius: 4,
+                  paddingHorizontal: 10,
+                  paddingVertical: 5,
+                  marginLeft: 10,
+                  marginTop: 10,
+                  height: 30,
+                }}
+                disabled={isDeliverySubmitted || !steps[2]} // 전달 완료 시 버튼 비활성화
+                onPress={toggleModal}
+              >
+                <Text style={{ color: 'white' }}>확인</Text>
+              </TouchableOpacity>
             )}
           </TrackingNumberContainer>
 
@@ -208,12 +236,12 @@ const OrderInfoBox = ({ order }) => {
             <TouchableOpacity
               style={{
                 backgroundColor: 'white',
-                borderColor:PURPLE,
+                borderColor: PURPLE,
                 borderRadius: 4,
                 paddingHorizontal: 10, // 좌우 패딩만 설정
                 paddingVertical: 5, // 상하 패딩을 줄여 텍스트 공간 확보
                 marginLeft: 10,
-                marginTop:10,
+                marginTop: 10,
                 height: 30,
               }}
               disabled={!steps[2]}
@@ -221,59 +249,59 @@ const OrderInfoBox = ({ order }) => {
             >
               <Text style={{ color: PURPLE }}>수정</Text>
             </TouchableOpacity>
-           </TrackingNumberContainer>
+          </TrackingNumberContainer>
 
 
 
 
 
-    <Modal isVisible={isModalVisible} onBackdropPress={toggleModal}>
-      <View style={styles.modalContainer}>
-        {/* 상단 텍스트 */}
-        <Subtitle16B style={{ textAlign: 'center' , marginBottom: 10 }}>입력한 배송 정보가 정확한지 {'\n'}확인하셨나요?</Subtitle16B>
-        <Text style={{ textAlign: 'center', marginBottom: 15 }}>확인 후 '전달완료' 버튼을 누르면 업시러에게 배송 정보가 표시됩니다.</Text>
+          <Modal isVisible={isModalVisible} onBackdropPress={toggleModal}>
+            <View style={styles.modalContainer}>
+              {/* 상단 텍스트 */}
+              <Subtitle16B style={{ textAlign: 'center', marginBottom: 10 }}>입력한 배송 정보가 정확한지 {'\n'}확인하셨나요?</Subtitle16B>
+              <Text style={{ textAlign: 'center', marginBottom: 15 }}>확인 후 '전달완료' 버튼을 누르면 업시러에게 배송 정보가 표시됩니다.</Text>
 
-        {/* 버튼 영역 */}
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={toggleModal} >
-            <Text style={[styles.buttonText, { fontWeight: 'bold' }]}>확인</Text>
-          </TouchableOpacity>
+              {/* 버튼 영역 */}
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity onPress={toggleModal} >
+                  <Text style={[styles.buttonText, { fontWeight: 'bold' }]}>확인</Text>
+                </TouchableOpacity>
 
-          {/* 구분선 추가 */}
-          <View style={styles.separator} />
+                {/* 구분선 추가 */}
+                <View style={styles.separator} />
 
-          <TouchableOpacity onPress={toggleModal} >
-            <Text style={[styles.buttonText,{ fontWeight: 'bold' }, { color: '#FF5F5F' }]}>취소</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </Modal>
+                <TouchableOpacity onPress={toggleModal} >
+                  <Text style={[styles.buttonText, { fontWeight: 'bold' }, { color: '#FF5F5F' }]}>취소</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
 
-        {/* 전달완료 모달 */}
-    <Modal isVisible={isSubmitModalVisible} onBackdropPress={toggleModal}>
-      <View style={styles.modalContainer}>
-        {/* 상단 텍스트 */}
-        <Subtitle16B style={{ textAlign: 'center' , marginBottom: 10 }}>전달 완료 하시겠습니까?</Subtitle16B>
-        <Text style={{ textAlign: 'center' , marginBottom: 15 }}>전달 완료 후, 업시러가 ‘거래 완료’ 버튼을 누르면 거래가 완료됩니다.</Text>
+          {/* 전달완료 모달 */}
+          <Modal isVisible={isSubmitModalVisible} onBackdropPress={toggleModal}>
+            <View style={styles.modalContainer}>
+              {/* 상단 텍스트 */}
+              <Subtitle16B style={{ textAlign: 'center', marginBottom: 10 }}>전달 완료 하시겠습니까?</Subtitle16B>
+              <Text style={{ textAlign: 'center', marginBottom: 15 }}>전달 완료 후, 업시러가 ‘거래 완료’ 버튼을 누르면 거래가 완료됩니다.</Text>
 
-        {/* 버튼 및 구분선 영역 */}
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={handleDeliverySubmit}>
-            <Text style={[styles.buttonText, { fontWeight: 'bold' }]}>확인</Text>
-          </TouchableOpacity>
+              {/* 버튼 및 구분선 영역 */}
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity onPress={handleDeliverySubmit}>
+                  <Text style={[styles.buttonText, { fontWeight: 'bold' }]}>확인</Text>
+                </TouchableOpacity>
 
-          {/* 구분선 추가 (검은 가로선) */}
-          <View style={styles.separator} />
+                {/* 구분선 추가 (검은 가로선) */}
+                <View style={styles.separator} />
 
-          <TouchableOpacity onPress={toggleSubmitModal}>
-            <Text style={[styles.buttonText,{ fontWeight: 'bold' }, { color: '#FF5F5F' }]}>취소</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </Modal>
+                <TouchableOpacity onPress={toggleSubmitModal}>
+                  <Text style={[styles.buttonText, { fontWeight: 'bold' }, { color: '#FF5F5F' }]}>취소</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
 
 
-    </ExpandedContent>
+        </ExpandedContent>
       )}
 
       <TouchableOpacity onPress={toggleExpanded} style={styles.centerIconContainer}>
@@ -285,22 +313,31 @@ const OrderInfoBox = ({ order }) => {
 
 // InProgressOrders 컴포넌트
 const InProgressOrders = () => {
+  const [filter, setFilter] = useState('asc')
   const orders = [
-    { id: '09230', title: '데님으로 만드는 숄더백', customer: '전예영', method: '비대면', date: '2024-05-22', is_online: false,     image: 'https://image.production.fruitsfamily.com/public/product/resized@width620/t6RDVV2b6--1703933039055.png' },
-    { id: '92930', title: '내 옷을 반려동물 옷으로', customer: '전예영', method: '대면', date: '2024-05-22', is_online: true,     image:'https://m.lovecoco.co.kr/web/product/big/201911/55d890a77de72b7213b84fec2083e3fe.jpg' },
-    { id: '23894', title: '평범했던 패딩, 퀼팅백으로', customer: '전예영', method: '대면', date: '2024-05-22', is_online: true,     image:'https://image.yes24.com/goods/118500067/XL' },
-    {
-      date: '2024-05-23',
-      title: '주문 제목 예시',
-      price: '30000',
-      customer: '김철수',
-      method: '택배',
-      image: 'https://m.lovecoco.co.kr/web/product/big/201911/55d890a77de72b7213b84fec2083e3fe.jpg',
-    },
+    { id: '09230', title: '데님으로 만드는 숄더백', customer: '전예영', method: '비대면', date: '2024-05-22', is_online: false, image: 'https://image.production.fruitsfamily.com/public/product/resized@width620/t6RDVV2b6--1703933039055.png' },
+    { id: '92930', title: '내 옷을 반려동물 옷으로', customer: '전예영', method: '대면', date: '2024-05-22', is_online: true, image: 'https://m.lovecoco.co.kr/web/product/big/201911/55d890a77de72b7213b84fec2083e3fe.jpg' },
+    { id: '23894', title: '평범했던 패딩, 퀼팅백으로', customer: '전예영', method: '대면', date: '2024-05-22', is_online: true, image: 'https://image.yes24.com/goods/118500067/XL' },
+    { id: '12345', title: '주문 제목 예시', customer: '김철수', method: '비대면', date: '2024-05-10', is_online: false, image: 'https://m.lovecoco.co.kr/web/product/big/201911/55d890a77de72b7213b84fec2083e3fe.jpg' },
   ];
 
+  // 필터링된 데이터 정렬
+  // const sortedOrders = orders.sort((a, b) => {
+  //   const date_a = Date()
+  //   if (filter === 'asc') {
+
+  //     return Date(a.date) - new Date(b.date);
+  //   }
+  //   return new Date(b.date) - new Date(a.date);
+  // });
+
+  const handleOpenChat = () => {
+    // console.log('오픈채팅 바로가기');
+  };
+
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ flex: 1, backgroundColor: LIGHTGRAY }}>
+      <OrderFilter filter={filter} setFilter={setFilter} onOpenChat={handleOpenChat} />
       {orders.map((order, index) => (
         <OrderInfoBox key={index} order={order} />
       ))}
@@ -309,6 +346,34 @@ const InProgressOrders = () => {
 };
 
 // 스타일 정의
+
+const FilterContainer = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  background-color: 'LIGHTGRAY';
+  padding: 10px;
+  border-bottom-width: 1px;
+  border-bottom-color: ${LIGHTGRAY};
+`;
+
+const PickerWrapper = styled.View`
+  background-color: white;
+  width: 150px;
+  height:40px;
+  border-radius: 30px;
+  border-width: 1px;
+  border-color: ${PURPLE};
+  justify-content: center;
+  align-items: center;
+`;
+
+const OpenChatButton = styled.TouchableOpacity`
+  background-color: white;
+  padding: 10px 15px;
+  border-radius: 30px;
+`;
+
 const OrderInfoContainer = styled.View`
   flex-direction: column;
   border-radius: 12px;
@@ -320,6 +385,8 @@ const OrderInfoContainer = styled.View`
 
 const TopSection = styled.View`
   padding: 15px;
+  background-color: white;
+  border-radius: 12px;
 `;
 
 const OrderID = styled.Text`
@@ -349,6 +416,7 @@ const ExpandedContent = styled.View`
   margin-top: 10px;
   width: 100%;
   align-items: center;
+  background-color: '#F5F5F5';
 `;
 
 const FlowContainer = styled.View`
@@ -362,7 +430,7 @@ const FlowLine = styled.View`
   margin-left: 50px;
   margin-right: 10px;
   position: relative;
-  ${({ stepCount }) => `
+  ${(stepCount: any) => `
     height: ${(stepCount - 1) * 60}px;
   `}
 `;
@@ -373,7 +441,7 @@ const CompletedFlowLine = styled.View`
   left: 0;
   width: 2px;
   background-color: ${PURPLE};
-  height: ${({ height }) => height}%;
+  height: ${(height: any) => height}%;
 `;
 
 const Circle = styled.View`
@@ -382,8 +450,8 @@ const Circle = styled.View`
   width: 10px;
   height: 10px;
   border-radius: 5px;
-  background-color: ${({ completed }) => (completed ? PURPLE : LIGHTGRAY)};
-  ${({ index, stepCount }) => `
+  background-color: ${(completed: any) => (completed ? PURPLE : LIGHTGRAY)};
+  ${({ index, stepCount }: any) => `
     top: ${(index / (stepCount - 1)) * 100}%;
   `}
 `;
@@ -402,6 +470,7 @@ const StepRow = styled.View`
 const DropdownContainer = styled.View`
   width: 188px;
   height: 30px;
+  background-color: '#F5F5F5';
   margin-top: 10px;
   align-self: center;
 `;
@@ -410,7 +479,7 @@ const DropdownList = styled.View`
   border: 1px solid ${PURPLE};
   border-radius: 4px;
   margin-top: 5px;
-  background-color: white;
+  background-color: LIGHTGRAY;
   z-index: 10;
 `;
 const TrackingNumberContainer = styled.View`
@@ -430,7 +499,7 @@ const TextInput = styled.TextInput`
   border-color: ${PURPLE};
   border-radius: 4px;
   align-self: center;
-  marginLeft: 55px;
+  margin-left: 55px;
 
 `;
 const SubmitButton = styled.TouchableOpacity`
@@ -441,7 +510,7 @@ const SubmitButton = styled.TouchableOpacity`
   height: 33px;
   align-items: center;
   margin-top: 15px;
-  marginLeft: 55px;
+  margin-left: 55px;
 `;
 
 const SubmitButtonText = styled.Text`
@@ -459,6 +528,17 @@ const CheckBoxWrapper = styled.View`
 
 
 const styles = StyleSheet.create({
+  filterPicker: {
+    borderRadius: 12,
+    borderColor: PURPLE,
+    backgroundColor: 'transparent',
+    paddingRight: 5,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign: 'center',
+  },
+
   dropdownButton: {
     width: 188,
     height: 30,
@@ -477,34 +557,36 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: 'black',
   },
-    checkBox: {
-      width: 20,
-      height: 20,
-      borderWidth: 2,
-      borderColor: PURPLE,
-      justifyContent: 'center',
-      alignItems: 'center',
-      borderRadius: 4,
-    },
-    disabledCheckBox: {
-      borderColor: LIGHTGRAY,
-      backgroundColor: LIGHTGRAY,
-    },
-    checkBoxIndicator: {
-      width: 10,
-      height: 10,
-      backgroundColor: 'white',
-    },
-    checked: {
-      backgroundColor: PURPLE,
-    },
-    disabledCheckBoxIndicator: {
-      backgroundColor: LIGHTGRAY,
-    },
+  checkBox: {
+    width: 20,
+    height: 20,
+    borderWidth: 2,
+    borderColor: PURPLE,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 4,
+  },
+  disabledCheckBox: {
+    borderColor: LIGHTGRAY,
+    backgroundColor: LIGHTGRAY,
+  },
+  checkBoxIndicator: {
+    width: 10,
+    height: 10,
+    backgroundColor: 'white',
+  },
+  checked: {
+    backgroundColor: PURPLE,
+  },
+  disabledCheckBoxIndicator: {
+    backgroundColor: LIGHTGRAY,
+  },
   centerIconContainer: {
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 10,
+    backgroundColor: '#F5F5F5',
+    borderRadius: 12,
   },
   modalContainer: {
     backgroundColor: 'white',
@@ -526,19 +608,19 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'space-between', // 버튼 사이에 공간을 두기 위해
     width: '100%',
-    alignItems:'center'
+    alignItems: 'center'
   },
   buttonText: {
     fontSize: 14,
     //fontWeight:'400',
   },
-   separator: {
-     width: 250,
-     height: 1, // 버튼 높이와 맞추기
-     backgroundColor: 'black',
-     marginTop:20,
-     marginBottom:20,
-       },
+  separator: {
+    width: 250,
+    height: 1, // 버튼 높이와 맞추기
+    backgroundColor: 'black',
+    marginTop: 20,
+    marginBottom: 20,
+  },
 
 
 

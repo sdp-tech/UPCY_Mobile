@@ -9,7 +9,7 @@ import { StackScreenProps } from "@react-navigation/stack";
 import BottomButton from "../../../common/BottomButton";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Request from '../../../common/requests.js';
-import { getMarketUUID } from '../../../common/storage';
+import { getAccessToken, getMarketUUID } from '../../../common/storage';
 
 const statusBarHeight = getStatusBarHeight(true);
 
@@ -40,13 +40,17 @@ const TempStorage = ({ navigation }: StackScreenProps<any>) => {
   const fetchData = async () => {
     try {
       const marketUuid = await getMarketUUID();
-      const response = await request.get(`/api/market/${marketUuid}/service?temporary=true`, {});
+      const response = await request.get(`/api/market/${marketUuid}/service?temporary=true`, {}, {});
       console.log(marketUuid);
       if (response && response.status === 200) {
         const tempData = response.data.filter((item: ServiceItem) => item.temporary);
+        //console.log("tempData: ",tempData);
         setStorage(tempData);
+      } else if (response && response.status === 404) {
+        Alert.alert("등록된 임시저장 서비스가 없습니다.")
       } else {
         Alert.alert("데이터를 불러오는 중 오류가 발생했습니다.");
+        console.log(response)
       }
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -85,8 +89,12 @@ const TempStorage = ({ navigation }: StackScreenProps<any>) => {
   const handleDeleteAll = async () => {
     try {
       const marketUuid = await getMarketUUID();
+      const accessToken = await getAccessToken();
+      const headers = {
+        Authorization: `Bearer ${accessToken}`,
+      };
       const deletePromises = storage.map((item) =>
-        request.del(`/api/market/${marketUuid}/service/${item.service_uuid}`, {})
+        request.del(`/api/market/${marketUuid}/service/${item.service_uuid}`, {}, headers)
       );
 
       const responses = await Promise.all(deletePromises);
@@ -96,6 +104,9 @@ const TempStorage = ({ navigation }: StackScreenProps<any>) => {
         setStorage([]);
         setSelectedItems([]);
         setDeleteAllPopupVisible(false);
+      } else {
+        console.log(responses)
+        Alert.alert("전체 삭제에 실패했습니다.")
       }
     } catch (error) {
       console.error("Error deleting all items:", error);
@@ -106,19 +117,24 @@ const TempStorage = ({ navigation }: StackScreenProps<any>) => {
   const handleDeleteSelected = async () => {
     try {
       const marketUuid = await getMarketUUID();
+      const accessToken = await getAccessToken();
+      const headers = {
+        Authorization: `Bearer ${accessToken}`,
+      };
       const deletePromises = selectedItems.map((serviceUuid) =>
-        request.del(`/api/market/${marketUuid}/service/${serviceUuid}`, {})
+        request.del(`/api/market/${marketUuid}/service/${serviceUuid}`, {}, headers)
       );
-
       const responses = await Promise.all(deletePromises);
       const allSuccess = responses.every((res: any) => res.status === 200);
-
       if (allSuccess) {
         setStorage((prev) =>
           prev.filter((item) => !selectedItems.includes(item.service_uuid))
         );
         setSelectedItems([]);
         setDeleteSelectedPopupVisible(false);
+      } else {
+        console.log(responses)
+        Alert.alert("선택 삭제에 실패했습니다.")
       }
     } catch (error) {
       console.error("Error deleting selected items:", error);
@@ -133,9 +149,28 @@ const TempStorage = ({ navigation }: StackScreenProps<any>) => {
       const selectedService = storage.find(
         (item) => item.service_uuid === selectedItems[0]
       );
-
       if (selectedService) {
-        navigation.navigate("ServiceRegistrationPage", { serviceData: selectedService, });
+        const transformedServiceData: ServiceData = {
+          service_uuid: selectedService.service_uuid,
+          service_title: selectedService.service_title,
+          service_content: selectedService.service_content,
+          service_category: selectedService.service_category,
+          service_period: selectedService.service_period ?? 0,
+          basic_price: selectedService.basic_price ?? 0,
+          max_price: selectedService.max_price ?? 0,
+          service_style: selectedService.service_style ?? [],
+          service_material: selectedService.service_material ?? [],
+          service_option: (selectedService.service_option ?? []).map(option => ({
+            option_name: option.option_name ?? "",
+            option_content: option.option_content ?? "",
+            option_price: option.option_price ?? 0,
+            option_photos: option.option_photos ?? [],
+          })),
+          thumbnail_photo: selectedService.service_image?.[0] ?? "",
+          detail_photos: selectedService.service_image?.slice(1) ?? [],
+        };
+        console.log("");
+        navigation.navigate("ServiceRegistrationPage", { serviceData: transformedServiceData, });
       } else {
         Alert.alert("선택한 서비스를 찾을 수 없습니다.");
       }

@@ -10,6 +10,7 @@ import {
   // FlatList,
   ScrollView,
   Image,
+  Animated,
 } from 'react-native';
 import {
   StackScreenProps,
@@ -17,7 +18,7 @@ import {
 } from '@react-navigation/stack';
 import { HomeStackParams } from '../../../pages/Home';
 import Arrow from '../../../assets/common/Arrow.svg';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 // import DetailBox from './DetailBox';
 import Footer from '../../../common/Footer';
 // import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
@@ -33,13 +34,17 @@ import {
   ServiceDetailOption,
 } from './Service';
 import Flag from '../../../assets/common/Flag.svg';
+import Trash from '../../../assets/common/Trash.svg';
+import Pencil from '../../../assets/common/Pencil2.svg';
 import {
   getUserRole,
   getAccessToken,
   getNickname,
+  getMarketUUID,
 } from '../../../common/storage';
 import Request from '../../../common/requests.js';
-import { numberToPrice } from './functions';
+import { LoginContext } from '../../../common/Context.tsx';
+// import { numberToPrice } from './functions';
 
 // 전체 홈 화면에서, 특정 서비스 누르면 넘어오는 페이지 (개별 서비스 페이지)
 
@@ -47,6 +52,9 @@ const { width, height } = Dimensions.get('window');
 
 type ServiceDetailPageProps = {
   reformerName: string;
+  introduce: string;
+  reformerArea: string;
+  reformerLink: string;
   serviceName: string;
   basicPrice: number;
   maxPrice: number;
@@ -60,11 +68,39 @@ type ServiceDetailPageProps = {
   serviceOptions: ServiceDetailOption[];
   marketUuid: string;
   serviceUuid: string;
+  education: any[];
+  certification: any[];
+  awards: any[];
+  career: any[];
+  freelancer: any[];
+};
+
+type ServiceData = {
+  service_uuid: string;
+  service_title: string;
+  service_content: string;
+  service_category: string;
+  service_period: number;
+  basic_price: number;
+  max_price: number;
+  service_style: string[];
+  service_material: any[];
+  service_option: {
+    option_name: string;
+    option_content: string;
+    option_price: number;
+    option_photos: string[];
+  }[];
+  thumbnail_photo: string;
+  detail_photos: string[];
 };
 
 export type DetailPageStackParams = {
   DetailPage: {
     reformerName: string;
+    introduce: string;
+    reformerArea: string;
+    reformerLink: string;
     serviceName: string;
     basicPrice: number;
     maxPrice: number;
@@ -78,6 +114,11 @@ export type DetailPageStackParams = {
     serviceOptions: ServiceDetailOption[];
     marketUuid: string;
     serviceUuid: string;
+    education: any[];
+    certification: any[];
+    awards: any[];
+    career: any[];
+    freelancer: any[];
   };
 };
 
@@ -136,6 +177,9 @@ const ServiceDetailPageScreen = ({
 type ProfileSectionProps = {
   navigation: any;
   reformerName: string;
+  introduce: string;
+  reformerArea: string;
+  reformerLink: string;
   serviceName: string;
   basicPrice: number;
   maxPrice: number;
@@ -144,11 +188,21 @@ type ProfileSectionProps = {
   backgroundImageUri: string;
   profileImageUri?: string;
   marketUuid: string;
+  education: any[];
+  certification: any[];
+  awards: any[];
+  career: any[];
+  freelancer: any[];
+  onPressDelete: () => void;
+  serviceData: ServiceData;
 };
 
 const ProfileSection = ({
   navigation,
   reformerName,
+  introduce,
+  reformerArea,
+  reformerLink,
   serviceName,
   basicPrice,
   maxPrice,
@@ -157,13 +211,21 @@ const ProfileSection = ({
   backgroundImageUri,
   profileImageUri,
   marketUuid,
+  education,
+  certification,
+  awards,
+  career,
+  freelancer,
+  serviceData,
+  onPressDelete,
 }: ProfileSectionProps) => {
   const [like, setLike] = useState<boolean>(false);
   const { hideBottomBar, showBottomBar } = useBottomBar();
 
   const [reportButtonPressed, setReportButtonPressed] = useState(false);
+  const [editDeleteButtonPressed, setEditDeleteButtonPressed] = useState(false);
   const [userRole, setUserRole] = useState<string>('customer');
-  const [userNickname, setUserNickname] = useState<string>('');
+  const [myMarketUuid, setMyMarketUuid] = useState<string>('');
 
   useEffect(() => {
     const getUserRoleInfo = async () => {
@@ -171,12 +233,12 @@ const ProfileSection = ({
       setUserRole(userRole ? userRole : 'customer');
       console.log(userRole); // debug
     };
-    const getUserNicknameInfo = async () => {
-      const userNickname = await getNickname();
-      setUserNickname(userNickname ? userNickname : '');
+    const getMyMarketUuidInfo = async () => {
+      const myMarketUuid = await getMarketUUID();
+      setMyMarketUuid(myMarketUuid ? myMarketUuid : '');
     };
     getUserRoleInfo();
-    getUserNicknameInfo();
+    getMyMarketUuidInfo();
     hideBottomBar();
     return () => showBottomBar();
   }, []);
@@ -187,9 +249,9 @@ const ProfileSection = ({
         title=""
         leftButton="CustomBack"
         rightButton={
-          (userRole === 'customer')
+          userRole === 'customer'
             ? 'Report'
-            : (userRole === 'customer' && userNickname == reformerName)
+            : (userRole === 'reformer' && marketUuid == myMarketUuid)
               ? 'Edit'
               : 'Report'
         }
@@ -197,21 +259,35 @@ const ProfileSection = ({
         onPressRight={() => { }}
         reportButtonPressed={reportButtonPressed}
         setReportButtonPressed={setReportButtonPressed}
+        editDeleteButtonPressed={editDeleteButtonPressed}
+        setEditDeleteButtonPressed={setEditDeleteButtonPressed}
       />
       <Banner
         backgroundImageUri={backgroundImageUri}
         tags={tags}
         reportButtonPressed={reportButtonPressed}
         setReportButtonPressed={setReportButtonPressed}
+        editDeleteButtonPressed={editDeleteButtonPressed}
+        setEditDeleteButtonPressed={setEditDeleteButtonPressed}
         navigation={navigation}
+        onPressDelete={onPressDelete}
+        serviceData={serviceData}
       />
       <Profile
         backgroundImageUri={backgroundImageUri}
         profilePictureUri={profileImageUri}
         reformerName={reformerName}
+        introduce={introduce}
+        reformerArea={reformerArea}
+        reformerLink={reformerLink}
         reviewNum={reviewNum}
         navigation={navigation}
         marketUuid={marketUuid}
+        education={education}
+        certification={certification}
+        awards={awards}
+        career={career}
+        freelancer={freelancer}
       />
       <Header
         like={like}
@@ -229,7 +305,11 @@ type BannerProps = {
   tags: string[];
   reportButtonPressed: boolean;
   setReportButtonPressed: (reportButtonPressed: boolean) => void;
+  editDeleteButtonPressed: boolean;
+  setEditDeleteButtonPressed: (setEditDeleteButtonPressed: boolean) => void;
   navigation: any;
+  onPressDelete: () => void;
+  serviceData: ServiceData;
 };
 
 const Banner = ({
@@ -237,12 +317,21 @@ const Banner = ({
   tags,
   reportButtonPressed,
   setReportButtonPressed,
+  editDeleteButtonPressed,
+  setEditDeleteButtonPressed,
   navigation,
+  onPressDelete,
+  serviceData,
 }: BannerProps) => {
   const onPressReport = () => {
     setReportButtonPressed(false);
     navigation.navigate('ReportPage');
   };
+  const onPressEdit = () => {
+    setEditDeleteButtonPressed(false);
+    navigation.navigate('ServiceRegistrationPage', {serviceData: serviceData});
+  };
+
 
   return (
     <ImageBackground // 임시 이미지
@@ -259,6 +348,43 @@ const Banner = ({
           </View>
           <Text style={TextStyles.reportText}>신고</Text>
         </TouchableOpacity>
+      )}
+      {editDeleteButtonPressed && (
+        <View
+            style={{
+                flexDirection: 'column',
+                position: 'absolute',
+                top: 0,
+                right: 0,
+                backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                width: 186,
+                height: 97,
+                borderRadius: 8,
+                zIndex: 1000,
+                display: 'flex',
+            }}>
+            <TouchableOpacity style={styles.editDeleteWindow} onPress={onPressEdit}>
+                <View style={{ justifyContent: 'center' }}>
+                    <Pencil/>
+                </View>
+                <Text style={TextStyles.reportText}>수정</Text>
+          </TouchableOpacity>
+          <View
+            style={{
+              height: 1,
+              backgroundColor: '#E5E5E5', // 버튼 사이 회색 선
+              marginHorizontal: 10,
+              width: '100%',
+              marginLeft: 0,
+            }}
+          />
+          <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: 13,}} onPress={onPressDelete}>
+            <View style={{ justifyContent: 'center' }}>
+              <Trash />
+            </View>
+            <Text style={TextStyles.reportText}>삭제</Text>
+          </TouchableOpacity>
+        </View>
       )}
       <View style={styles.tagContainer}>
         {tags?.length > 0 &&
@@ -295,11 +421,11 @@ const Header = ({
         <Text style={TextStyles.Title}>{serviceName}</Text>
         <Text style={TextStyles.PriceInfo}>
           기본
-          <Text style={TextStyles.Price}> {numberToPrice(basicPrice)} 원</Text>
+          <Text style={TextStyles.Price}> {basicPrice} 원</Text>
         </Text>
         <Text style={TextStyles.PriceInfo}>
           최대
-          <Text style={TextStyles.Price}> {numberToPrice(maxPrice)} 원</Text>
+          <Text style={TextStyles.Price}> {maxPrice} 원</Text>
         </Text>
       </View>
       {/* <View style={{ margin: 15 }}>
@@ -313,18 +439,34 @@ type ProfileProps = {
   profilePictureUri?: string;
   backgroundImageUri?: string;
   reformerName: string;
+  introduce: string;
+  reformerArea: string;
+  reformerLink: string;
   reviewNum: number;
   navigation: any;
   marketUuid: string;
+  education: any[];
+  certification: any[];
+  awards: any[];
+  career: any[];
+  freelancer: any[];
 };
 
 const Profile = ({
   profilePictureUri,
   backgroundImageUri,
   reformerName,
+  introduce,
+  reformerArea,
+  reformerLink,
   reviewNum,
   navigation,
   marketUuid,
+  education,
+  certification,
+  awards,
+  career,
+  freelancer,
 }: ProfileProps) => {
   return (
     <View style={{ justifyContent: 'space-between' }}>
@@ -348,10 +490,19 @@ const Profile = ({
           <TouchableOpacity
             style={{ flexDirection: 'row', alignItems: 'center' }}
             onPress={() =>
-              navigation.navigate('MarketTabView', { // 프로필 사진 옆에 있는 이름 눌렀을 때 
+              navigation.navigate('MarketTabView', {
+                // 프로필 사진 옆에 있는 이름 눌렀을 때
                 reformerName: reformerName,
+                introduce: introduce,
+                reformerArea: reformerArea,
+                reformerLink: reformerLink,
                 marketUuid: marketUuid,
-                backgroundImageUri: backgroundImageUri ?? defaultImageUri,
+                profileImageUri: profilePictureUri ?? defaultImageUri,
+                education: education,
+                certification: certification,
+                awards: awards,
+                career: career,
+                freelancer: freelancer,
               })
             }>
             <Text style={TextStyles.reformerName}>{reformerName}</Text>
@@ -364,11 +515,14 @@ const Profile = ({
 };
 
 const ServiceDetailPageMainScreen = ({
-  navigation,
-  route,
-}: StackScreenProps<DetailPageStackParams, 'DetailPage'>) => {
+  navigation, route
+}: StackScreenProps<HomeStackParams, 'ServiceDetailPage'>) => {
+  const { isLogin } = useContext(LoginContext);
   const {
     reformerName,
+    introduce,
+    reformerArea,
+    reformerLink,
     serviceName,
     basicPrice,
     maxPrice,
@@ -382,7 +536,32 @@ const ServiceDetailPageMainScreen = ({
     serviceOptions,
     marketUuid,
     serviceUuid,
+    education,
+    certification,
+    awards,
+    career,
+    freelancer,
   } = route.params;
+
+  const serviceData : ServiceData = {
+    service_uuid: serviceUuid,
+    service_title: serviceName,
+    service_content: serviceContent,
+    service_category: tags?.[0] || '',
+    service_period: servicePeriod,
+    basic_price: basicPrice,
+    max_price: maxPrice,
+    service_style: tags || [],
+    service_material: serviceMaterials || [],
+    service_options: serviceOptions?.map((option) => ({
+      option_name: option.name || '',
+      option_content: option.content || '',
+      option_price: option.price || 0,
+      option_photos: option.photos || [],
+    })) || [],
+    thumbnail_photo: imageUris?.[0],
+    detail_photos: imageUris,
+  };
 
   // const [index, setIndex] = useState<number>(0);
   // const optionPageRef = useRef<FlatList<any>>(null);
@@ -402,13 +581,12 @@ const ServiceDetailPageMainScreen = ({
   //     profileImageUri={profileImageUri}
   //   />
   // );
-
   const [suspended, setSuspended] = useState<boolean>(false);
   const [userRole, setUserRole] = useState<string>('customer');
-  const [isServiceQuitPopupVisible, setServiceQuitPopupVisible] =
-    useState(false);
-  const [isServiceResumePopupVisible, setServiceResumePopupVisible] =
-    useState(false);
+  const [myMarketUuid, setMyMarketUuid] = useState<string>('');
+  const [isServiceQuitPopupVisible, setServiceQuitPopupVisible] = useState(false);
+  const [isServiceResumePopupVisible, setServiceResumePopupVisible] = useState(false);
+  const [isDeletePopupVisible, setDeletePopupVisible] = useState(false);
 
   const request = Request();
 
@@ -417,7 +595,12 @@ const ServiceDetailPageMainScreen = ({
       const userRole = await getUserRole();
       setUserRole(userRole ? userRole : 'customer');
     };
+    const getMyMarketUuidInfo = async () => {
+        const myMarketUuid = await getMarketUUID();
+        setMyMarketUuid(myMarketUuid ? myMarketUuid : '');
+    };
     getUserRoleInfo();
+    getMyMarketUuidInfo();
 
     const fetchServiceStatus = async () => {
       try {
@@ -436,6 +619,60 @@ const ServiceDetailPageMainScreen = ({
     fetchServiceStatus();
   }, [marketUuid, serviceUuid]);
 
+  const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState('');
+  const animationValue = useRef(new Animated.Value(0)).current;
+
+  const showMessage = (text, type) => {
+      console.log('showMessage called with:', text, type);
+    setMessage(text);
+    setMessageType(type);
+    Animated.timing(animationValue, {
+      toValue: 1,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => {
+        console.log('Animation started');
+      setTimeout(() => {
+        Animated.timing(animationValue, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }).start();
+      }, 2000);
+    });
+  };
+
+  const handleDelete = async () => {    //todo: 진행중인 주문이 있으면 삭제 안되게 설정
+    const accessToken = await getAccessToken();
+    const headers = { Authorization: `Bearer ${accessToken}` };
+    try {
+        const response = await request.del(
+          `/api/market/${marketUuid}/service/${serviceUuid}`,
+          { headers }
+        );
+        if (response && response.status === 200) {
+          setDeletePopupVisible(false);
+          showMessage('삭제 완료되었습니다.', 'success');
+          setTimeout(() => {
+            navigation.goBack();
+          }, 2300);
+        } else {
+          console.error('Error deleting service:', error);
+          setDeletePopupVisible(false);
+          showMessage('문제가 생겼습니다. 잠시 후에 다시 시도해주세요.', 'error');
+        }
+    } catch (error) {
+        console.error('Error deleting service:', error);
+        showMessage('문제가 생겼습니다. 잠시 후에 다시 시도해주세요.', 'error');
+        setDeletePopupVisible(false);
+    }
+  };
+
+  const onPressDelete = () => {
+    setDeletePopupVisible(true);
+  };
+
   const handleServiceQuit = async () => {
     const accessToken = await getAccessToken();
     const headers = {
@@ -448,7 +685,6 @@ const ServiceDetailPageMainScreen = ({
         { suspended: true },
         headers,
       );
-      //console.log(response.data);
       if (response && response.status === 200) {
         setSuspended(true);
         setServiceQuitPopupVisible(false);
@@ -463,13 +699,7 @@ const ServiceDetailPageMainScreen = ({
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     };
-    const handleServiceResume = async () => {
-      const accessToken = await getAccessToken();
-      const headers = {
-        Authorization: `Bearer ${accessToken}`,
-      };
-
-      try {
+    try {
         const response = await request.put(
           `/api/market/${marketUuid}/service/${serviceUuid}`,
           { suspended: false },
@@ -479,10 +709,9 @@ const ServiceDetailPageMainScreen = ({
           setSuspended(false);
           setServiceResumePopupVisible(false);
         }
-      } catch (error) {
+    } catch (error) {
         console.error('Error quitting service:', error);
-      }
-    };
+    }
   };
 
   const handlePopup = (suspended: boolean) => {
@@ -519,6 +748,9 @@ const ServiceDetailPageMainScreen = ({
         <ProfileSection
           navigation={navigation}
           reformerName={reformerName}
+          introduce={introduce}
+          reformerArea={reformerArea}
+          reformerLink={reformerLink}
           serviceName={serviceName}
           basicPrice={basicPrice}
           maxPrice={maxPrice}
@@ -527,6 +759,13 @@ const ServiceDetailPageMainScreen = ({
           backgroundImageUri={imageUris?.[0]?.image}
           profileImageUri={profileImageUri}
           marketUuid={marketUuid}
+          education={education}
+          certification={certification}
+          awards={awards}
+          career={career}
+          freelancer={freelancer}
+          onPressDelete={onPressDelete}
+          serviceData={serviceData}
         />
         <DetailBox2
           servicePeriod={servicePeriod}
@@ -538,10 +777,15 @@ const ServiceDetailPageMainScreen = ({
         />
       </ScrollView>
       <View style={styles.footerContainer}>
-        <Footer suspended={false} />
-        {/* TODO: 위 수정 필요  */}
+        {isLogin &&
+            <Footer
+              suspended={suspended}
+              hideButton={userRole === 'reformer'}
+              onNavigate={() => navigation.navigate('QuotationForm')}
+            />
+        }
       </View>
-      {userRole === 'reformer' && (
+      {userRole === 'reformer' && marketUuid === myMarketUuid && (
         <TouchableOpacity
           style={
             suspended ? styles.serviceResumeButton : styles.serviceQuitButton
@@ -558,6 +802,26 @@ const ServiceDetailPageMainScreen = ({
         </TouchableOpacity>
       )}
 
+      <Animated.View
+        style={[
+          styles.animationMessageContainer,
+          {
+            opacity: animationValue,
+            backgroundColor: '#E9EBF8',
+          },
+        ]}
+      >
+        <Text style={styles.animationMessageText}>{message}</Text>
+      </Animated.View>
+
+      <CustomPopup
+        visible={isDeletePopupVisible}
+        title="해당 서비스를 삭제할까요?"
+        subtitle="한번 삭제한 서비스는 복구할 수 없습니다."
+        confirmText="삭제"
+        onConfirm={handleDelete}
+        onCancel={() => setDeletePopupVisible(false)}
+      />
       <CustomPopup
         visible={isServiceQuitPopupVisible}
         title="서비스 주문 받기를 정말 중단할까요?"
@@ -583,8 +847,8 @@ type CustomPopupProps = {
   title: string;
   subtitle: string;
   confirmText: string;
-  onConfirm: any;
-  onCancel: any;
+  onConfirm: () => void;
+  onCancel: () => void;
 };
 
 const CustomPopup = ({
@@ -615,24 +879,11 @@ const CustomPopup = ({
               <Text style={styles.cancelText}>취소</Text>
             </TouchableOpacity>
           </View>
-          <View style={styles.messageContainer}>
-            <Text style={styles.title}>{title}</Text>
-            <Text style={styles.subtitle}>{subtitle}</Text>
-          </View>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.confirmButton} onPress={onConfirm}>
-              <Text style={styles.confirmText}>{confirmText}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
-              <Text style={styles.cancelText}>취소</Text>
-            </TouchableOpacity>
-          </View>
         </View>
       </View>
     </Modal>
   );
 };
-
 
 const TextStyles = StyleSheet.create({
   Title: {
@@ -778,6 +1029,11 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
   },
+  editDeleteWindow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 13,
+  },
   serviceQuitButton: {
     position: 'absolute',
     bottom: 20,
@@ -826,6 +1082,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     overflow: 'hidden',
   },
+  animationMessageContainer: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: [{ translateX: -150 }, { translateY: -25 }],
+    width: 300,
+    height: 45,
+    padding: 15,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  animationMessageText: {
+    color: '#929292',
+    textAlign: 'center',
+    fontSize: 14,
+    fontWeight: '400',
+    lineHeight: 18,
+  },
   messageContainer: {
     height: 154, // 메시지 영역 높이 고정
     width: '100%', // 가로 전체 사용
@@ -854,21 +1129,23 @@ const styles = StyleSheet.create({
     borderTopColor: '#E5E5E5',
   },
   confirmButton: {
-    height: 60, // 버튼 높이 줄임 (62 -> 60)
+    height: 60,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E5E5', // 회색 구분선
+    borderBottomColor: '#E5E5E5',
     justifyContent: 'center',
     alignItems: 'center',
+    alignSelf: 'stretch',
   },
   confirmText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#FF3B30', // 빨간색 텍스트
+    color: '#FF3B30',
   },
   cancelButton: {
-    height: 60, // 버튼 높이 줄임 (62 -> 60)
+    height: 60,
     justifyContent: 'center',
     alignItems: 'center',
+    alignSelf: 'stretch',
   },
   cancelText: {
     fontSize: 16,
@@ -877,5 +1154,4 @@ const styles = StyleSheet.create({
   },
 });
 
-
-export default ServiceDetailPageScreen;
+export default ServiceDetailPageMainScreen;
