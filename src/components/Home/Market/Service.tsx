@@ -139,9 +139,9 @@ const EntireServiceMarket = ({
   const [serviceCardData, setServiceCardData] = useState<ServiceCardProps[]>(
     [] as ServiceCardProps[],
   );
-  const [serviceCardRawData, setServiceCardRawData] = useState<
-    ServiceResponseType[]
-  >([]);
+  const [serviceCardAllData, setServiceCardAllData] = useState<
+    ServiceCardProps[]
+  >([] as ServiceCardProps[]);
 
   const serviceTitle: string = '지금 주목해야 할 업사이클링 서비스';
   const serviceDescription: string = '옷장 속 옷들의 트렌디한 재탄생';
@@ -154,9 +154,9 @@ const EntireServiceMarket = ({
         Alert.alert('아직 등록된 서비스가 없거나, 오류가 발생하였습니다.');
       } else if (response && response.status === 200) {
         const serviceListResults: ServiceResponseType[] = response.data.results;
-        setServiceCardRawData(serviceListResults);
         const extractedServiceCardData = extractData(serviceListResults);
         setServiceCardData(extractedServiceCardData);
+        setServiceCardAllData(extractedServiceCardData);
         try {
           // 개별 옵션 데이터를 가져오기 위한 API 호출
           const optionResponses = await Promise.all(
@@ -253,7 +253,7 @@ const EntireServiceMarket = ({
   useEffect(() => {
     if (serviceCardData) {
       // filter by search term
-      let searchFilteredData = extractData(serviceCardRawData);
+      let searchFilteredData = serviceCardAllData;
       if (searchTerm && searchTerm.length > 0) {
         searchFilteredData = serviceCardData.filter(card => {
           const {
@@ -370,8 +370,8 @@ const EntireServiceMarket = ({
                   service_uuid={card.service_uuid}
                   service_period={card.service_period}
                   navigation={navigation}
-                  service_options={serviceCardRawData[index].service_option}
-                  service_materials={serviceCardRawData[index].service_material}
+                  service_options={card.service_options}
+                  service_materials={card.service_materials}
                   suspended={serviceCardData[index].suspended}
                   profileImageUri={card.profileImageUri}
                   education={card.education}
