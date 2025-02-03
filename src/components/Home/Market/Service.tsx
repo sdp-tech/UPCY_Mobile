@@ -225,12 +225,12 @@ const EntireServiceMarket = ({
       })) as MaterialDetail[],
       service_options: Array.isArray(service.service_option)
         ? (service.service_option.map(option => ({
-          option_content: option.option_content,
-          option_name: option.option_name,
-          option_price: option.option_price,
-          option_uuid: option.option_uuid,
-          service_option_image: option.service_option_image || '',
-        })) as ServiceDetailOption[])
+            option_content: option.option_content,
+            option_name: option.option_name,
+            option_price: option.option_price,
+            option_uuid: option.option_uuid,
+            service_option_image: option.service_option_image || '',
+          })) as ServiceDetailOption[])
         : [],
       temporary: service.temporary,
       suspended: service.suspended,
@@ -252,7 +252,7 @@ const EntireServiceMarket = ({
   useEffect(() => {
     if (serviceCardData) {
       // filter by search term
-      let searchFilteredData = serviceCardData;
+      let searchFilteredData = extractData(serviceCardRawData);
       if (searchTerm && searchTerm.length > 0) {
         searchFilteredData = serviceCardData.filter(card => {
           const {
@@ -306,10 +306,10 @@ const EntireServiceMarket = ({
       const styleFilteredData =
         selectedStylesList.length > 0
           ? dateFilteredData.filter(card =>
-            card.service_styles?.some(style =>
-              selectedStylesList.includes(style),
-            ),
-          )
+              card.service_styles?.some(style =>
+                selectedStylesList.includes(style),
+              ),
+            )
           : [];
 
       // TODO: add more filtering logic here
