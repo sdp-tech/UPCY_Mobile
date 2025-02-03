@@ -17,7 +17,7 @@ import {
 } from '@react-navigation/stack';
 import { HomeStackParams } from '../../../pages/Home';
 import Arrow from '../../../assets/common/Arrow.svg';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 // import DetailBox from './DetailBox';
 import Footer from '../../../common/Footer';
 // import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
@@ -39,6 +39,7 @@ import {
   getNickname,
 } from '../../../common/storage';
 import Request from '../../../common/requests.js';
+import { LoginContext } from '../../../common/Context.tsx';
 // import { numberToPrice } from './functions';
 
 // 전체 홈 화면에서, 특정 서비스 누르면 넘어오는 페이지 (개별 서비스 페이지)
@@ -379,6 +380,7 @@ const Profile = ({
 const ServiceDetailPageMainScreen = ({
   navigation, route
 }: StackScreenProps<HomeStackParams, 'ServiceDetailPage'>) => {
+  const { isLogin } = useContext(LoginContext);
   const {
     reformerName,
     introduce,
@@ -565,7 +567,9 @@ const ServiceDetailPageMainScreen = ({
         />
       </ScrollView>
       <View style={styles.footerContainer}>
-        <Footer suspended={false} onNavigate={() => navigation.navigate('QuotationForm')} />
+        {isLogin &&
+          <Footer suspended={false} onNavigate={() => navigation.navigate('QuotationForm')} />
+        }
         {/* TODO: 위 수정 필요  */}
       </View>
       {userRole === 'reformer' && (
