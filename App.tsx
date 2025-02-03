@@ -93,6 +93,7 @@ const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
       }}>
       {state.routes.map((route, index) => {
         const isFocused = state.index === index; // 한 번 더 눌렀을 때
+        // TODO: 여기 부분 수정하면 같은 탭 또 안 눌러도 될듯?
         const onPress = () => {
           if (isFocused) {
             navigation.reset({

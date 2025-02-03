@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 // FIXME: 이거 사용
 import {
   View,
