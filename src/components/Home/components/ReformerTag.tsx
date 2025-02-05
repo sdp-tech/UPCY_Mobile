@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Dimensions } from 'react-native';
 const ReformerTag = () => {
   return (
     <View style={Styles.container}>
@@ -6,21 +6,20 @@ const ReformerTag = () => {
     </View>
   );
 };
-
+const { width, height } = Dimensions.get('screen');
 const Styles = StyleSheet.create({
   container: {
-    width: 49,
-    height: 20,
-    borderRadius: 20,
     backgroundColor: '#E9EBF8',
+    borderRadius: 20,
+    paddingVertical: height * 0.005,
+    paddingHorizontal: height * 0.012,
   },
 });
 
 const TextStyles = StyleSheet.create({
   label: {
     color: '#612FEF',
-    textAlign: 'center',
-    fontSize: 11,
+    fontSize: width * 0.03,
     fontWeight: '600',
   },
 });
