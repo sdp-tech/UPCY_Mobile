@@ -34,6 +34,8 @@ export interface QuotationProps {
 
 
 const QuotationPage = ({ navigation, route }: StackScreenProps<OrderStackParams, 'QuotationPage'>) => {
+  console.log("Received options in QuotationPage:", options ?? "No options received");
+
   const {
     photos = [],
     materials = [],
@@ -120,7 +122,11 @@ const QuotationPage = ({ navigation, route }: StackScreenProps<OrderStackParams,
   const quotation = [
     { key: '의뢰한 의류 정보', data: photos, ref: true, },
     { key: '소재', data: materials }, // QuotationForm에서 선택한 재질
-    { key: '추가한 옵션', data: options?.map(option => option.title).join(', ') || '없음' }, // 선택한 옵션들, 없으면 '없음'
+// options가 배열인지 확인 후, undefined 요소를 필터링하여 사용
+{ key: '추가한 옵션', data: Array.isArray(options)
+  ? options.filter(Boolean).map(option => option.option_name).join(', ')
+  : '없음'
+},
     { key: '추가 요청사항', data: additionalRequest?.text || '없음', photos: additionalRequest.photos?.map(photo => photo.uri) || [], }, // 추가 요청사항, 없으면 '없음'
     { key: '거래 방식', data: transactionMethod }, //선택한 거래 방식 (대면/비대면)
     { key: '이름', data: name },
@@ -305,31 +311,35 @@ const QuotationPage = ({ navigation, route }: StackScreenProps<OrderStackParams,
 
               {item.key === '추가한 옵션' && (
                 <View style={{ backgroundColor: 'white', marginHorizontal: 10, paddingVertical: 20 }}>
-                  {options?.map((option: any, optionIndex: any) => (
-                    <View key={optionIndex} style={styles.optionCard}>
+                  {/* options가 존재하고 배열일 경우만 map 실행 */}
+                  {Array.isArray(options) && options.length > 0 ? (
+                    options.map((option) => (
+                    <View key={option.option_uuid} style={styles.optionCard}>
 
-                      <Subtitle16M style={{ color: PURPLE }}>{option.option}</Subtitle16M>
+                      <Subtitle16M style={{ color: PURPLE }}>{option.option_name}</Subtitle16M>
 
                       <View style={styles.optionHeader}>
-                        <Subtitle16M style={{ color: BLACK }}>{option.title}</Subtitle16M>
-                        <Body16M style={{ color: BLACK, textAlign: 'right' }}>{option.price}</Body16M>
+                        <Subtitle16M style={{ color: BLACK }}>{option.option_name}</Subtitle16M>
+                        <Body16M style={{ color: BLACK, textAlign: 'right' }}>{option.option_price}</Body16M>
                       </View>
 
                       <View style={styles.optionContent}>
                         <View style={styles.optionDescription}>
-                          <Body14R style={{ color: BLACK }}>{option.description}</Body14R>
+                          <Body14R style={{ color: BLACK }}>{option.option_content}</Body14R>
                         </View>
                         <View style={styles.optionImage}>
-                          <Image source={{ uri: option.image }} style={styles.optionImage} />
+                          <Image source={{ uri: option.service_option_image }} style={styles.optionImage} />
                         </View>
                       </View>
 
                     </View>
-                  ))}
-
-
-                </View>
-              )}
+                  ))
+                ) : (
+                  // 옵션이 없는 경우
+                  <Body16M style={{ color: '#888', textAlign: 'center' }}>추가한 옵션이 없습니다.</Body16M>
+                )}
+              </View>
+            )}
 
 
 

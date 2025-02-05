@@ -144,6 +144,7 @@ const ServiceDetailPageScreen = ({
     marketUuid,
     serviceUuid,
   }: ServiceDetailPageProps = route.params;
+  console.log(`🟢 marketUuid from ServiceDetailPageScreen: ${marketUuid}`); // ✅ 확인용
 
   return (
     <DetailPageStack.Navigator
@@ -225,6 +226,7 @@ const ProfileSection = ({
   const [reportButtonPressed, setReportButtonPressed] = useState(false);
   const [editDeleteButtonPressed, setEditDeleteButtonPressed] = useState(false);
   const [userRole, setUserRole] = useState<string>('customer');
+  const [userNickname, setUserNickname] = useState<string>('');
   const [myMarketUuid, setMyMarketUuid] = useState<string>('');
 
   useEffect(() => {
@@ -778,11 +780,12 @@ const ServiceDetailPageMainScreen = ({
       </ScrollView>
       <View style={styles.footerContainer}>
         {isLogin &&
-            <Footer
-              suspended={suspended}
-              hideButton={userRole === 'reformer'}
-              onNavigate={() => navigation.navigate('QuotationForm')}
-            />
+        <Footer
+         suspended={suspended}
+         hideButton={userRole === 'reformer'}
+         serviceUuid={serviceUuid}
+         onNavigate={(uuid) => navigation.navigate('QuotationForm', { serviceUuid: uuid , marketUuid: marketUuid,})}
+         />
         }
       </View>
       {userRole === 'reformer' && marketUuid === myMarketUuid && (

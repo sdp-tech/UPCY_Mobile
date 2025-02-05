@@ -168,6 +168,7 @@ const FilterSection = ({ label, items, showDuplicate = true, onMaterialSelect }:
   };
 
   useEffect(() => {
+
     if (selectedItems.length > 0) {
       onMaterialSelect(selectedItems);
     }
@@ -199,46 +200,56 @@ const FilterSection = ({ label, items, showDuplicate = true, onMaterialSelect }:
 
 
 const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 'QuotationForm'>) => {
-    const {serviceUuid} = route.params;
-    const [materials, setMaterials] =useState<string[]>([]);
-    const [options, setOptions] =useState<any[]>([]);
-    const [selectedMaterials, setSelectedMaterials] =useState<string[]>([]);
-    const [selectedOptions, setSelectedOptions] =useState<number[]>([]);
-
+    const {serviceUuid,marketUuid} = route.params;
+     const [materials, setMaterials] = useState<MaterialDetail[]>([]);
+     const [options, setOptions] = useState<ServiceDetailOption[]>([]);
+     const [selectedMaterials, setSelectedMaterials] = useState<string[]>([]);
+     const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
     const request =Request();
 
      useEffect(() => {
+
     // 서비스별 재질(Material)과 옵션(Option) 가져오기
         const fetchData = async () => {
           try {
+            console.log(`Fetching data for serviceUuid: ${serviceUuid}`); //확인용
+
             //Material 데이터 가져오기
-            const materialResponse = await request.get(`/api/market/some-market-id/service/${serviceUuid}/material`);
-            if (materialResponse.status === 200) {
-              const fetchedMaterials = materialResponse.data.map((item: any) => item.material_name);
-              setMaterials(fetchedMaterials);
+            const materialResponse = await request.get(`/api/market/${marketUuid}/service/${serviceUuid}/material`);
+             console.log('Material Response:', materialResponse?.data ?? 'No data');
+
+            if (materialResponse.status === 200 && Array.isArray(materialResponse.data)) {
+              setMaterials(materialResponse.data);
+            } else {
+              console.error('Material API response error:', materialResponse);
             }
 
             // Option 데이터 가져오기
-            const optionResponse = await request.get(`/api/market/some-market-id/service/${serviceUuid}/option`);
-            if (optionResponse.status === 200) {
-              setOptions(optionResponse.data);
-            }
+            const optionResponse = await request.get(`/api/market/${marketUuid}/service/${serviceUuid}/option`);
+              console.log('Option Response:', optionResponse?.data ?? 'No data');
+
+            if (optionResponse.status === 200 && Array.isArray(optionResponse.data)) {
+                      setOptions(optionResponse.data); // 수정된 부분
+           } else {
+               console.error('Option API response error:', optionResponse);
+           }
+
           } catch (error) {
-            console.error('Error fetching materials or options:', error);
-            Alert.alert('데이터를 가져오는 중 문제가 발생했습니다.');
+            console.error('Error fetching materials or options(api error):', error);
+            Alert.alert('데이터를 가져오는 중 문제가 발생했습니다.(api error)');
           }
         };
 
         fetchData();
-      }, [serviceUuid]); //serviceUuid 변경될때마다 데이터 로드
+      }, [serviceUuid, marketUuid]);
 
        //option 선택 상태 관리 (선택된 옵션의 인덱스 저장/해제)
-      const handleOptionPress = (index: number) => {
+      const handleOptionPress = (uuid: string) => {
         setSelectedOptions((prev) => {
-          if (prev.includes(index)) {
-            return prev.filter((item) => item !== index);
+          if (prev.includes(uuid)) {
+            return prev.filter((item) => item !== uuid);
           }
-          return [...prev, index];
+          return [...prev, uuid];
         });
       };
 
@@ -284,12 +295,13 @@ const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 
   const [showDuplicate] = useState(true);
   const [text, setText] = useState<string>('');
   const [materialInput, setMaterialInput] = useState<string>(''); // 재질 선택 Input
+  const [finalSelectedMaterials, setFinalSelectedMaterials] = useState<string[]>([]);
   const [additionalRequestInput, setAdditionalRequestInput] = useState<string>(''); //추가요청사항 input
   const [photos, setPhotos] = useState<PhotoResultProps[]>([]);
   const [refPhotos, setRefPhotos] = useState<PhotoResultProps[]>([]);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [isChecked, setIsChecked] = useState<boolean>(false);
- // const [selectedMaterial, setSelectedMaterial] = useState<string[]>([]);
+  const [selectedMaterial, setSelectedMaterial] = useState<string[]>([]);
  // const [selectedOptions, setSelectedOptions] = useState<number[]>([]); //옵션 상세
   const [selectedFilter, setSelectedFilter] = useState<string>(''); // 거래 방식
   const [faceToFaceRegion, setFaceToFaceRegion] = useState<string>(''); // 대면 지역
@@ -332,16 +344,29 @@ const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 
     setSelectedFilter(filterType);
   };
 
+useEffect(() => {
+  setFinalSelectedMaterials([...new Set([...selectedMaterials, materialInput].filter(Boolean))]);
+}, [selectedMaterials, materialInput]);
+
   const handleNextPress = () => {
     if (!selectedFilter) {
       Alert.alert('거래 방식을 선택해주세요');
       return;
     }
-    const finalSelectedMaterials = materialInput
-      ? [...selectedMaterial, materialInput]
-      : selectedMaterial;
 
-    const selectedOptionDetails = selectedOptions.map(index => options[index]);
+/*     const finalSelectedMaterials =
+      selectedMaterial.length > 0
+        ? [...selectedMaterial, materialInput].filter((item) => item.trim() !== '') // 빈 문자열 제거
+        : materialInput.trim() !== ''
+        ? [materialInput]
+         : []; */
+
+      const selectedOptionDetails = selectedOptions.map((uuid) =>
+        options.find((option) => option.option_uuid === uuid)
+      );
+
+
+
 
     navigation.navigate('InputInfo', {
         serviceUuid,
@@ -408,9 +433,12 @@ const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 
       <View style={{ height: 8, backgroundColor: 'white' }} />
       <FilterSection
         label='재질 선택'
-        items={materials}
+        items={materials? materials.map(material => material.material_name):[]}
         showDuplicate={true}
-        onMaterialSelect={setSelectedMaterials} />
+         onMaterialSelect={(selected) => {
+           setSelectedMaterials(selected);
+         }}
+     ㅁ/>
       <Subtitle16M style={{ paddingHorizontal: 15, marginBottom: 5 }}>기타 재질</Subtitle16M>
       <View style={{ paddingHorizontal: 10, flex: 1 }}>
         <InputBox
@@ -425,49 +453,58 @@ const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 
       <View style={{ height: 32, backgroundColor: 'white' }} />
       <View style={{ borderBottomWidth: 5, borderColor: '#D9D9D9' }} />
 
-      <View style={styles.optionBox}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 5 }}>
-          <Subtitle18M style={{ paddingHorizontal: 15 }}>옵션 상세</Subtitle18M>
-          {showDuplicate && <Caption11M style={{ color: PURPLE }}>• 중복 가능</Caption11M>}
-        </View>
+    <View style={styles.optionBox}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 5 }}>
+        <Subtitle18M style={{ paddingHorizontal: 15 }}>옵션 상세</Subtitle18M>
+        {showDuplicate && <Caption11M style={{ color: PURPLE }}>• 중복 가능</Caption11M>}
+      </View>
 
-        {options.map((option, optionIndex) => (
-          <View key={optionIndex} style={{ flexDirection: 'row', alignItems: 'center' }}>
+      {/* options가 존재하고 배열일 경우만 map 실행 */}
+      {Array.isArray(options) && options.length > 0 ? (
+        options.map((option) => (
+          <View key={option.option_uuid} style={{ flexDirection: 'row', alignItems: 'center' }}>
             <CheckBox
-              value={selectedOptions.includes(optionIndex)}
-              onValueChange={() => handleOptionPress(optionIndex)}
+              value={selectedOptions.includes(option.option_uuid)}
+              onValueChange={() => handleOptionPress(option.option_uuid)}
               tintColors={{ true: PURPLE, false: '#D9D9D9' }}
             />
             <TouchableOpacity
-              key={optionIndex}
-              style={[styles.optionCard, selectedOptions.includes(optionIndex) && styles.selectedOptionCard]}
-              onPress={() => handleOptionPress(optionIndex)}
+              key={option.option_uuid}
+              style={[styles.optionCard, selectedOptions.includes(option.option_uuid) && styles.selectedOptionCard]}
+              onPress={() => handleOptionPress(option.option_uuid)}
             >
-              <Subtitle16M style={selectedOptions.includes(optionIndex) ? styles.selectedOptionText : { color: PURPLE }}>
-                {option.title}
+              <Subtitle16M style={selectedOptions.includes(option.option_uuid) ? styles.selectedOptionText : { color: PURPLE }}>
+                {option.option_name}
               </Subtitle16M>
 
               <View style={styles.optionHeader}>
-                <Subtitle16M style={selectedOptions.includes(optionIndex) ? styles.selectedOptionText : { color: BLACK }}>
-                  {option.title}
+                <Subtitle16M style={selectedOptions.includes(option.option_uuid) ? styles.selectedOptionText : { color: BLACK }}>
+                  {option.option_name}
                 </Subtitle16M>
-                <Body16M style={selectedOptions.includes(optionIndex) ? styles.selectedOptionText : { color: BLACK, textAlign: 'right' }}>
-                  {option.price}
+                <Body16M style={selectedOptions.includes(option.option_uuid) ? styles.selectedOptionText : { color: BLACK, textAlign: 'right' }}>
+                  {option.option_price}
                 </Body16M>
               </View>
 
               <View style={styles.optionContent}>
                 <View style={styles.optionDescription}>
-                  <Body14R style={{ color: BLACK }}>{option.description}</Body14R>
+                  <Body14R style={{ color: BLACK }}>{option.option_content}</Body14R>
                 </View>
                 <View style={styles.optionImage}>
-                  <Image source={{ uri: option.image }} style={styles.optionImage} />
+                  <Image source={{ uri: option.service_option_image }} style={styles.optionImage} />
                 </View>
               </View>
             </TouchableOpacity>
           </View>
-        ))}
-      </View>
+        ))
+      ) : (
+        // options가 없을 때 표시할 메시지
+        <View style={{ alignItems: 'center', marginVertical: 10 }}>
+          <Body16M style={{ color: '#888' }}>옵션이 없습니다.</Body16M>
+        </View>
+      )}
+    </View>
+
 
 
       <View style={{ paddingVertical: 20, borderBottomWidth: 5, borderColor: '#D9D9D9', backgroundColor: '#FFFFFF', marginBottom: 20 }}>
