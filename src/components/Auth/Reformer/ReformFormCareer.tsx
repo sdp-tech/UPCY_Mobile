@@ -24,6 +24,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { SignInParams } from '../SignIn';
 import { getAccessToken, getMarketUUID, setMarketUUID } from '../../../common/storage';
 import { PhotoType } from '../../../hooks/useImagePicker';
+import { Files } from '../../../types/UserTypes';
 
 
 const AddTouchable = styled.TouchableOpacity`
@@ -772,7 +773,21 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
     }
   }
 
-  const uploadFiles = async (Type: any, data: any) => {
+  // FormData 내부 데이터를 직접 확인하는 함수
+  const logFormData = (formData: FormData) => {
+    console.log("✅ FormData 확인:");
+
+    (formData as any)._parts.forEach((part: any) => {
+      console.log(`Field: ${part[0]}`);
+      if (typeof part[1] === 'object') {
+        console.log(`   ➤ File Info: ${JSON.stringify(part[1], null, 2)}`);
+      } else {
+        console.log(`   ➤ Value: ${part[1]}`);
+      }
+    });
+  };
+
+  const uploadFiles = async (Type: any, data: { file: Files }) => {
     // data가 객체이고, data.file이 배열인지 확인
     if (!data || !Array.isArray(data.file)) {
       console.error("data.file is not an array or undefined:", data);
@@ -786,45 +801,46 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
     };
 
     // Type에 따라 engType 결정
-    const engType =
-      Type === '학력'
-        ? 'education'
-        : Type === '실무 경험'
-          ? 'career'
-          : Type === '공모전'
-            ? 'awards'
-            : Type === '자격증'
-              ? 'certification'
-              : 'freelancer'; // 기타 (개인 포트폴리오, 외주 등)
+    const engType = Type === '학력' ? 'education'
+      : Type === '실무 경험' ? 'career'
+        : Type === '공모전' ? 'awards'
+          : Type === '자격증' ? 'certification'
+            : 'freelancer';
     const uuidKey = `${engType}_uuid`; // 각 타입에 따른 UUID 키 생성
-    // data.file 배열 처리
-    data.file.forEach((file: any) => {
-      formData.append('proof_document', {
-        uri: file.uri, // 파일의 URI
-        type: file.type || 'application/pdf',
-        name: file.name || 'document.pdf', // 파일 이름
-      });
-      console.log("FormData for upload:", formData);
-    });
+    // 🔹 파일 추가 (React Native에서 사용되는 `uri` 방식)
+    for (const file of data.file) {
+      if (!file.uri) {
+        console.error("❌ 파일 URI가 없습니다:", file);
+        continue;
+      }
+
+      formData.append('document', {
+        uri: file.uri,
+        type: 'application/pdf',
+        name: file.name || 'document.pdf',
+      } as any);
+
+      console.log(`✅ 추가된 파일: ${file.name}, URI: ${file.uri}`);
+    }
+    logFormData(formData);
+
+    console.log("FormData for upload:", formData);
 
     try {
       // Step 1: 기존 데이터의 UUID를 가져오기 위해 GET 요청
       const response = await request.get(`/api/user/reformer/${engType}`, headers);
       if (response && response.status === 200) {
         const UUIDs = response.data.map((item: any) => item[uuidKey]);
-        console.log(UUIDs)
+        console.log(`받아온 UUID들:`, UUIDs)
         // Step 2: 파일 업로드 요청
-        const headers_ = {
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'multipart/form-data', // multipart/form-data 설정
-        };
+
         for (const uuid of UUIDs) {
           const response2 = await request.post(
             `/api/user/reformer/${engType}/${uuid}/document`,
             formData,
-            headers_
+            headers
           );
-          if (response2.status === 200) {
+          if (response2.status === 201) {
             console.log(engType, '자격증명 파일 업로드 성공');
           } else {
             console.log(response2);
