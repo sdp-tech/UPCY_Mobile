@@ -2,7 +2,7 @@
 import React from 'react';
 import Logo from '../assets/common/Logo.svg';
 import styled from 'styled-components/native';
-import { TextInput, TouchableOpacity } from 'react-native';
+import { Text, TextInput, TouchableOpacity } from 'react-native';
 import Search from '../assets/common/Search.svg';
 
 const FrameBox = styled.View`
@@ -26,11 +26,12 @@ const SearchContainer = styled.View`
   margin-left: 30px;
 `;
 
-const SearchInput = styled.TextInput`
+const SearchInput = styled.View`
   flex: 1;
   padding: 10px;
-  font-size: 14px;
   color: #a1a1a1;
+  align-content: center;
+  justify-content: center;
 `;
 
 interface CustomHeader2Props {
@@ -46,11 +47,9 @@ const CustomHeader2 = ({ navigation }: CustomHeader2Props) => {
       <Logo color="#612FEF" width={41.572} height={18} />
       <SearchContainer>
         <TouchableOpacity onPress={handleOnPress}>
-          <SearchInput
-            placeholder="검색어를 입력해보세요"
-            placeholderTextColor="#929292"
-            editable={false}
-          />
+          <SearchInput>
+            <Text style={{ color: "#929292" }}>검색어를 입력해보세요</Text>
+          </SearchInput>
         </TouchableOpacity>
         <TouchableOpacity onPress={handleOnPress}>
           <Search stroke={'#000'} />
