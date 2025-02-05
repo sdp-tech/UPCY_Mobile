@@ -6,6 +6,7 @@ import {
   Alert,
   Text,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import styled from 'styled-components/native';
 import { Caption11M, Subtitle16B } from '../../../styles/GlobalText';
@@ -75,6 +76,7 @@ const FixSection: React.FC<FixSectionProps> = ({ index, type, _1st, edit, onDele
 }
 
 export default function ReformCareer({ fix, form, setForm }: ReformProps) {
+  const [loading, setLoading] = useState(false);
   const { width } = Dimensions.get('screen');
   const [careerModal, setCareerModal] = useState(false);
   const [careerIndex, setCareerIndex] = useState(-1);
@@ -563,6 +565,7 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
     } else if (form.field.length < 1) {
       Alert.alert('경력을 최소 1개 작성해주세요')
     } else { // 필수 사항 모두 입력되었을 경우 
+      setLoading(true);
       const accessToken = await getAccessToken();
       const headers = {
         Authorization: `Bearer ${accessToken}`
@@ -592,6 +595,7 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
       } else { console.log('지역, 링크 변동 없음'); }
       // 아래는 필드 확인해서 타입에 따라 uuid 겟하고 그걸로 delete하고 POST 요청하는 코드
       await handleProfileUpdate();
+      setLoading(false);
     }
   }
 
@@ -606,7 +610,7 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
     } else if (form.field.length < 1) {
       Alert.alert('경력을 최소 1개 작성해주세요')
     } else { // 필수 사항 모두 입력되었을 경우 
-
+      setLoading(true);
       form.field.forEach(value => {
         if (value.type === '학력') {
           updatedForm.education = updatedForm.education || []; // null일 경우 빈 배열로 초기화
@@ -685,6 +689,7 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
         } else {
           console.log(response);
           Alert.alert('프로필 등록에 실패했습니다.');
+          return;
         }
       } catch (err) {
         console.log(err);
@@ -698,7 +703,7 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
         const updateResponse = await request.put(`/api/user`, data, headers);
         if (updateResponse && updateResponse.status === 200) {
           console.log(data, '닉네임, 소개글 등록 성공');
-          // 이 아래는 프로필 이미지 등록 
+          // 이 아래는 프로필 이미지, 파일 등록 
           await uploadProfileImage();
         }
         else {
@@ -710,6 +715,7 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
       } catch (err) {
         console.error(err);
       }
+      setLoading(false);
     }
   };
 
@@ -980,6 +986,14 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
       console.error(err);
     }
   }
+  // 로딩 중일 때 로딩 스피너 표시
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -1038,7 +1052,10 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
         <BottomButton
           value={!fix ? '다음' : '완료'}
           pressed={false}
-          onPress={!fix ? handleSubmit : handleFix}
+          onPress={
+            !fix ?
+              handleSubmit
+              : handleFix}
           style={{ width: '90%', alignSelf: 'center', marginBottom: 10 }}
         />
         {fix && // TODO: 이거 배포 전에는 삭제하기! (디버깅용)
