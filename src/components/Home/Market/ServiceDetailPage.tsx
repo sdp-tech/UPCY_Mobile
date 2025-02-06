@@ -32,6 +32,7 @@ import {
   defaultImageUri,
   MaterialDetail,
   ServiceDetailOption,
+  ServiceOptionImage,
 } from './Service';
 import Flag from '../../../assets/common/Flag.svg';
 import Trash from '../../../assets/common/Trash.svg';
@@ -89,7 +90,7 @@ type ServiceData = {
     option_name: string;
     option_content: string;
     option_price: number;
-    option_photos: string[];
+    service_option_image: ServiceOptionImage[];
   }[];
   thumbnail_photo: string;
   detail_photos: string[];
@@ -122,57 +123,6 @@ export type DetailPageStackParams = {
   };
 };
 
-const DetailPageStack = createStackNavigator<DetailPageStackParams>();
-
-const ServiceDetailPageScreen = ({
-  navigation,
-  route,
-}: StackScreenProps<HomeStackParams, 'ServiceDetailPage'>) => {
-  const {
-    reformerName,
-    serviceName,
-    basicPrice,
-    maxPrice,
-    reviewNum,
-    tags,
-    imageUris,
-    profileImageUri,
-    servicePeriod,
-    serviceMaterials,
-    serviceContent,
-    serviceOptions,
-    marketUuid,
-    serviceUuid,
-  }: ServiceDetailPageProps = route.params;
-
-  return (
-    <DetailPageStack.Navigator
-      screenOptions={() => ({
-        headerShown: false,
-      })}>
-      <DetailPageStack.Screen
-        name="DetailPage"
-        component={ServiceDetailPageMainScreen}
-        initialParams={{
-          reformerName,
-          serviceName,
-          basicPrice,
-          maxPrice,
-          reviewNum,
-          tags,
-          imageUris,
-          profileImageUri,
-          servicePeriod,
-          serviceMaterials,
-          serviceContent,
-          serviceOptions,
-          marketUuid,
-          serviceUuid,
-        }}
-      />
-    </DetailPageStack.Navigator>
-  );
-};
 
 type ProfileSectionProps = {
   navigation: any;
@@ -330,7 +280,7 @@ const Banner = ({
   };
   const onPressEdit = () => {
     setEditDeleteButtonPressed(false);
-    navigation.navigate('ServiceRegistrationPage', {serviceData: serviceData});
+    navigation.navigate('ServiceRegistrationPage', { serviceData: serviceData });
   };
 
 
@@ -352,23 +302,23 @@ const Banner = ({
       )}
       {editDeleteButtonPressed && (
         <View
-            style={{
-                flexDirection: 'column',
-                position: 'absolute',
-                top: 0,
-                right: 0,
-                backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                width: 186,
-                height: 97,
-                borderRadius: 8,
-                zIndex: 1000,
-                display: 'flex',
-            }}>
-            <TouchableOpacity style={styles.editDeleteWindow} onPress={onPressEdit}>
-                <View style={{ justifyContent: 'center' }}>
-                    <Pencil/>
-                </View>
-                <Text style={TextStyles.reportText}>수정</Text>
+          style={{
+            flexDirection: 'column',
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            width: 186,
+            height: 97,
+            borderRadius: 8,
+            zIndex: 1000,
+            display: 'flex',
+          }}>
+          <TouchableOpacity style={styles.editDeleteWindow} onPress={onPressEdit}>
+            <View style={{ justifyContent: 'center' }}>
+              <Pencil />
+            </View>
+            <Text style={TextStyles.reportText}>수정</Text>
           </TouchableOpacity>
           <View
             style={{
@@ -379,7 +329,7 @@ const Banner = ({
               marginLeft: 0,
             }}
           />
-          <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: 13,}} onPress={onPressDelete}>
+          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 13, }} onPress={onPressDelete}>
             <View style={{ justifyContent: 'center' }}>
               <Trash />
             </View>
@@ -544,7 +494,7 @@ const ServiceDetailPageMainScreen = ({
     freelancer,
   } = route.params;
 
-  const serviceData : ServiceData = {
+  const serviceData: ServiceData = { // 담솔님이 추가하신거 
     service_uuid: serviceUuid,
     service_title: serviceName,
     service_content: serviceContent,
@@ -554,11 +504,11 @@ const ServiceDetailPageMainScreen = ({
     max_price: maxPrice,
     service_style: tags || [],
     service_material: serviceMaterials || [],
-    service_options: serviceOptions?.map((option) => ({
-      option_name: option.name || '',
-      option_content: option.content || '',
-      option_price: option.price || 0,
-      option_photos: option.photos || [],
+    service_option: serviceOptions?.map((option) => ({
+      option_name: option.option_name || '',
+      option_content: option.option_content || '',
+      option_price: option.option_price || 0,
+      service_option_image: option.service_option_image || [],
     })) || [],
     thumbnail_photo: imageUris?.[0],
     detail_photos: imageUris,
@@ -597,8 +547,8 @@ const ServiceDetailPageMainScreen = ({
       setUserRole(userRole ? userRole : 'customer');
     };
     const getMyMarketUuidInfo = async () => {
-        const myMarketUuid = await getMarketUUID();
-        setMyMarketUuid(myMarketUuid ? myMarketUuid : '');
+      const myMarketUuid = await getMarketUUID();
+      setMyMarketUuid(myMarketUuid ? myMarketUuid : '');
     };
     getUserRoleInfo();
     getMyMarketUuidInfo();
@@ -624,8 +574,8 @@ const ServiceDetailPageMainScreen = ({
   const [messageType, setMessageType] = useState('');
   const animationValue = useRef(new Animated.Value(0)).current;
 
-  const showMessage = (text, type) => {
-      console.log('showMessage called with:', text, type);
+  const showMessage = (text: string, type: string) => {
+    console.log('showMessage called with:', text, type);
     setMessage(text);
     setMessageType(type);
     Animated.timing(animationValue, {
@@ -633,7 +583,7 @@ const ServiceDetailPageMainScreen = ({
       duration: 300,
       useNativeDriver: true,
     }).start(() => {
-        console.log('Animation started');
+      console.log('Animation started');
       setTimeout(() => {
         Animated.timing(animationValue, {
           toValue: 0,
@@ -648,25 +598,25 @@ const ServiceDetailPageMainScreen = ({
     const accessToken = await getAccessToken();
     const headers = { Authorization: `Bearer ${accessToken}` };
     try {
-        const response = await request.del(
-          `/api/market/${marketUuid}/service/${serviceUuid}`,
-          { headers }
-        );
-        if (response && response.status === 200) {
-          setDeletePopupVisible(false);
-          showMessage('삭제 완료되었습니다.', 'success');
-          setTimeout(() => {
-            navigation.goBack();
-          }, 2300);
-        } else {
-          console.error('Error deleting service:', error);
-          setDeletePopupVisible(false);
-          showMessage('문제가 생겼습니다. 잠시 후에 다시 시도해주세요.', 'error');
-        }
-    } catch (error) {
-        console.error('Error deleting service:', error);
-        showMessage('문제가 생겼습니다. 잠시 후에 다시 시도해주세요.', 'error');
+      const response = await request.del(
+        `/api/market/${marketUuid}/service/${serviceUuid}`,
+        { headers }
+      );
+      if (response && response.status === 200) {
         setDeletePopupVisible(false);
+        showMessage('삭제 완료되었습니다.', 'success');
+        setTimeout(() => {
+          navigation.goBack();
+        }, 2300);
+      } else {
+        console.error('Error deleting service');
+        setDeletePopupVisible(false);
+        showMessage('문제가 생겼습니다. 잠시 후에 다시 시도해주세요.', 'error');
+      }
+    } catch (error) {
+      console.error('Error deleting service:', error);
+      showMessage('문제가 생겼습니다. 잠시 후에 다시 시도해주세요.', 'error');
+      setDeletePopupVisible(false);
     }
   };
 
@@ -701,17 +651,17 @@ const ServiceDetailPageMainScreen = ({
       Authorization: `Bearer ${accessToken}`,
     };
     try {
-        const response = await request.put(
-          `/api/market/${marketUuid}/service/${serviceUuid}`,
-          { suspended: false },
-          headers,
-        );
-        if (response && response.status === 200) {
-          setSuspended(false);
-          setServiceResumePopupVisible(false);
-        }
+      const response = await request.put(
+        `/api/market/${marketUuid}/service/${serviceUuid}`,
+        { suspended: false },
+        headers,
+      );
+      if (response && response.status === 200) {
+        setSuspended(false);
+        setServiceResumePopupVisible(false);
+      }
     } catch (error) {
-        console.error('Error quitting service:', error);
+      console.error('Error quitting service:', error);
     }
   };
 
@@ -725,7 +675,7 @@ const ServiceDetailPageMainScreen = ({
 
   return (
     <View style={{ flex: 1, position: 'relative' }}>
-      <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 100 }} bounces={false} overScrollMode="never">
         {/* <Tabs.Container
         renderHeader={renderHeader}
         allowHeaderOverscroll={false}

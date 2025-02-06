@@ -46,7 +46,7 @@ const FileBox = ({ data = [], setData, max }: FileBoxProps) => {
         <FilePicker
           callback={r => {
             console.log(r);
-            setData?.([{ name: r.name ? r.name : 'noname', uri: r.uri }]);
+            setData?.([{ name: r.name ? r.name : 'document.pdf', uri: r.uri }]);
           }}
           disabled={data.length >= max}
           style={styles.BoxView}>
