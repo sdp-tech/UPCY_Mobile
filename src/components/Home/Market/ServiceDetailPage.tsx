@@ -144,7 +144,6 @@ const ServiceDetailPageScreen = ({
     marketUuid,
     serviceUuid,
   }: ServiceDetailPageProps = route.params;
-  console.log(`🟢 marketUuid from ServiceDetailPageScreen: ${marketUuid}`); // ✅ 확인용
 
   return (
     <DetailPageStack.Navigator

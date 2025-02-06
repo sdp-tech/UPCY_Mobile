@@ -201,37 +201,73 @@ const FilterSection = ({ label, items, showDuplicate = true, onMaterialSelect }:
 
 const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 'QuotationForm'>) => {
     const {serviceUuid,marketUuid} = route.params;
+
+    const [serviceInfo, setServiceInfo] = useState<{
+      market_name: string;
+      reformer_name: string;
+      reformer_introduce: string;
+      service_image: string;
+      basic_price: number;
+    } | null>(null);
+    const defaultImageUri = 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp';
+
+
      const [materials, setMaterials] = useState<MaterialDetail[]>([]);
      const [options, setOptions] = useState<ServiceDetailOption[]>([]);
+     const [materialsList, setMaterialsList] = useState<{ material_uuid: string; material_name: string }[]>([]);
      const [selectedMaterials, setSelectedMaterials] = useState<string[]>([]);
+     const [selectedMaterialNames, setSelectedMaterialNames] = useState<string[]>([]); // 선택된 재질 name으로 전달
+     const [extraMaterial, setExtraMaterial] = useState<string>(''); // 기타 재질
      const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
     const request =Request();
 
      useEffect(() => {
 
-    // 서비스별 재질(Material)과 옵션(Option) 가져오기
+    // 서비스별 데이터 가져오기
         const fetchData = async () => {
           try {
             console.log(`Fetching data for serviceUuid: ${serviceUuid}`); //확인용
+    //api 요청 병렬 처리
+        const [infoResponse, materialResponse, optionResponse] = await Promise.all([
+          request.get(`/api/market/${marketUuid}/service/${serviceUuid}`),
+          request.get(`/api/market/${marketUuid}/service/${serviceUuid}/material`),
+          request.get(`/api/market/${marketUuid}/service/${serviceUuid}/option`)
+        ]);
+
+
+          //마켓 데이터 가져오기
+          if (infoResponse.status === 200) {
+            console.log('✅ Service Info Response:', infoResponse.data);
+
+         // const firstImage = infoResponse.data.service_image?.[0]?.image || defaultImageUri;
+
+          setServiceInfo({
+            service_title: infoResponse.data.service_title,
+            reformer_name: infoResponse.data.reformer_info?.user_info?.nickname ?? '이름 없음',
+            reformer_introduce: infoResponse.data.reformer_info?.user_info?.introduce ?? '소개글 없음',
+            service_image: infoResponse.data.service_image?.[0]?.image || defaultImageUri,
+            basic_price: infoResponse.data.basic_price??0,  });
+          } else {
+          console.error('❌ Service API response error:', infoResponse ?? 'No Response');
+          }
+
+
+
 
             //Material 데이터 가져오기
-            const materialResponse = await request.get(`/api/market/${marketUuid}/service/${serviceUuid}/material`);
-             console.log('Material Response:', materialResponse?.data ?? 'No data');
 
-            if (materialResponse.status === 200 && Array.isArray(materialResponse.data)) {
-              setMaterials(materialResponse.data);
-            } else {
-              console.error('Material API response error:', materialResponse);
-            }
+        if (materialResponse.status === 200 && Array.isArray(materialResponse.data)) {
+          setMaterialsList(materialResponse.data);
+        } else {
+          console.error("❌ Material API response error:", materialResponse.data);
+        }
 
             // Option 데이터 가져오기
-            const optionResponse = await request.get(`/api/market/${marketUuid}/service/${serviceUuid}/option`);
-              console.log('Option Response:', optionResponse?.data ?? 'No data');
 
             if (optionResponse.status === 200 && Array.isArray(optionResponse.data)) {
-                      setOptions(optionResponse.data); // 수정된 부분
+                      setOptions(optionResponse.data);
            } else {
-               console.error('Option API response error:', optionResponse);
+            console.error('❌ Option API response error:', optionResponse ?? 'No Response');
            }
 
           } catch (error) {
@@ -295,7 +331,7 @@ const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 
   const [showDuplicate] = useState(true);
   const [text, setText] = useState<string>('');
   const [materialInput, setMaterialInput] = useState<string>(''); // 재질 선택 Input
-  const [finalSelectedMaterials, setFinalSelectedMaterials] = useState<string[]>([]);
+  //const [finalSelectedMaterials, setFinalSelectedMaterials] = useState<string[]>([]);
   const [additionalRequestInput, setAdditionalRequestInput] = useState<string>(''); //추가요청사항 input
   const [photos, setPhotos] = useState<PhotoResultProps[]>([]);
   const [refPhotos, setRefPhotos] = useState<PhotoResultProps[]>([]);
@@ -345,8 +381,22 @@ const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 
   };
 
 useEffect(() => {
+
+      // 선택된 material name 저장
+    const handleMaterialSelect = (selected: string) => {
+        setSelectedMaterialNames((prev) =>
+          prev.includes(selected) ? prev.filter((item) => item !== selected) : [...prev, selected]
+        );
+      };
+
+  setExtraMaterial(materialInput || '');
+    }, [selectedMaterials, materialInput]);
+
+
+/*
   setFinalSelectedMaterials([...new Set([...selectedMaterials, materialInput].filter(Boolean))]);
 }, [selectedMaterials, materialInput]);
+ */
 
   const handleNextPress = () => {
     if (!selectedFilter) {
@@ -354,12 +404,6 @@ useEffect(() => {
       return;
     }
 
-/*     const finalSelectedMaterials =
-      selectedMaterial.length > 0
-        ? [...selectedMaterial, materialInput].filter((item) => item.trim() !== '') // 빈 문자열 제거
-        : materialInput.trim() !== ''
-        ? [materialInput]
-         : []; */
 
       const selectedOptionDetails = selectedOptions.map((uuid) =>
         options.find((option) => option.option_uuid === uuid)
@@ -370,8 +414,15 @@ useEffect(() => {
 
     navigation.navigate('InputInfo', {
         serviceUuid,
+      serviceTitle: serviceInfo?.service_title ?? '마켓명 없음',
+      //reformerName: serviceInfo?.reformer_name ?? '리폼러 없음',
+      //reformerIntroduce: serviceInfo?.reformer_introduce ?? '소개 없음',
+      //serviceImage: serviceInfo?.service_image ?? defaultImageUri,
+      basicPrice: serviceInfo?.basic_price ?? 0,
       photos,
-      materials: finalSelectedMaterials,
+      materialsList,
+      selectedMaterialNames,
+      extraMaterial,
       transactionMethod: selectedFilter,
       options: selectedOptionDetails,
       additionalRequest: { text: additionalRequestInput, photos: refPhotos, },
@@ -388,14 +439,20 @@ useEffect(() => {
         <Search />
       </SearchButton>
       <ImageBackground
-        source={{ uri: 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp' }}
+        source={{ uri: serviceInfo?.service_image || defaultImageUri }}
         style={{ width: '100%', height: 210 }}
       >
         <View style={{ position: 'absolute', width: '100%', height: '100%', backgroundColor: BLACK, opacity: 0.7 }} />
         <View style={{ paddingTop: 100, paddingLeft: 50 }}>
-          <Title20B style={{ color: 'white', marginBottom: 3 }}>마켓명 (SDP의 상점)</Title20B>
-          <Caption12M style={{ color: 'white', marginBottom: 18 }}>리폼러 닉네임 (전성식탁)</Caption12M>
-          <Body16M style={{ color: 'white' }}>마켓 소개글</Body16M>
+          <Title20B style={{ color: 'white', marginBottom: 3 }}>
+           {serviceInfo?.service_title ?? '마켓명 없음'}
+          </Title20B>
+          <Caption12M style={{ color: 'white', marginBottom: 18 }}>
+            {serviceInfo?.reformer_name ?? '리폼러 닉네임 없음'}
+           </Caption12M>
+          <Body16M style={{ color: 'white' }}>
+           {serviceInfo?.reformer_introduce ?? '마켓 소개글 없음'}
+          </Body16M>
         </View>
       </ImageBackground>
       <View style={{ justifyContent: 'center' }}>
@@ -433,12 +490,12 @@ useEffect(() => {
       <View style={{ height: 8, backgroundColor: 'white' }} />
       <FilterSection
         label='재질 선택'
-        items={materials? materials.map(material => material.material_name):[]}
+        items={materialsList.map(material => material.material_name)}
         showDuplicate={true}
          onMaterialSelect={(selected) => {
-           setSelectedMaterials(selected);
+           setSelectedMaterialNames(selected);
          }}
-     ㅁ/>
+     />
       <Subtitle16M style={{ paddingHorizontal: 15, marginBottom: 5 }}>기타 재질</Subtitle16M>
       <View style={{ paddingHorizontal: 10, flex: 1 }}>
         <InputBox
@@ -564,7 +621,7 @@ useEffect(() => {
             <Text>📦</Text>
             <Text>비대면</Text>
           </View>
-          <Text>오픈채팅에서 리폼접수 주소를 주고 받으세요!</Text>
+          <Text>택배로 리폼된 옷을 받아보세요!</Text>
         </TouchableOpacity>
 
         {/* 대면 버튼 */}

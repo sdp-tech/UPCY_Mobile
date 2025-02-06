@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
 import { ScrollView, View, Text, TouchableOpacity, ImageBackground, Dimensions, Modal, Image, Alert, StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
 import { getStatusBarHeight } from 'react-native-safearea-height';
@@ -14,6 +14,8 @@ import CheckBox from '../../../common/CheckBox';
 import BottomButton from '../../../common/BottomButton';
 import Rejection from './Rejection';
 import Request from '../../../common/requests.js';
+import { getAccessToken } from '../../../common/storage.js';
+
 import { OrderStackParams } from '../Order/OrderManagement';
 
 const statusBarHeight = getStatusBarHeight(true);
@@ -21,8 +23,11 @@ const { width, height } = Dimensions.get('window');
 
 export interface QuotationProps {
   photos?: { uri: string }[];
-  materials?: string[];
+  materialsList?: { material_uuid: string; material_name: string }[];
+  selectedMaterialNames?: string[];
+  extraMaterial?: string[];
   transactionMethod?: string;
+  basicPrice?: number;
   options?: { title: string; price: string; description: string; image: string }[];
   additionalRequest?: { text?: string; photos?: { uri: string }[] };
   name?: string;
@@ -34,21 +39,37 @@ export interface QuotationProps {
 
 
 const QuotationPage = ({ navigation, route }: StackScreenProps<OrderStackParams, 'QuotationPage'>) => {
-  console.log("Received options in QuotationPage:", options ?? "No options received");
 
   const {
+    serviceTitle = [],
     photos = [],
-    materials = [],
+    materialsList =[],
+    selectedMaterialNames = [], //material_name
+    extraMaterial ='' , //기타재질(직접입력값)
     transactionMethod = '',
-    options = [],
+    options=[],
     additionalRequest = { text: '', photos: [] },
     name = '',
     tel = '',
     zonecode = '',
     address = '',
     detailedAddress = '',
+    basicPrice =0,
   }: QuotationProps = route.params || {};
 
+
+
+  // material_name 리스트를 material_uuid으로 변환
+const selectedMaterialUUIDs = selectedMaterialNames
+  .map((name) => {
+    const material = materialsList.find((mat) => mat.material_name === name);
+    return material ? material.material_uuid : null;
+  })
+  .filter((uuid): uuid is string => uuid !== null);
+
+
+
+const finalMaterials = [...selectedMaterialNames, ...(extraMaterial ? [extraMaterial] : [])].filter(Boolean).join(', ');
 
   const fullAddress = `${address} ${detailedAddress}`.trim();  //전체주소(fullAddress) 생성
 
@@ -57,6 +78,18 @@ const QuotationPage = ({ navigation, route }: StackScreenProps<OrderStackParams,
   const [checkBoxPressed, setCheckBoxPressed] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [additionalModalVisible, setAdditionalModalVisible] = useState<boolean>(false);
+
+  useEffect(() => {
+    console.log("route.params:", route.params);
+    console.log("options in QuotationPage:", options);
+  }, [route.params]);
+
+    //옵션 추가 금액 합산
+    const optionAdditionalPrice = Array.isArray(options)
+      ? options.reduce((total, option) => total + (option.option_price ? Number(option.option_price) : 0), 0)
+      : 0;
+    //예상 결제 금액
+    const totalPrice = basicPrice + optionAdditionalPrice;
 
   const showModal = () => {
     setFinishModal(true);
@@ -71,62 +104,107 @@ const QuotationPage = ({ navigation, route }: StackScreenProps<OrderStackParams,
       return;
     }
 
+   // 서버에 보낼 데이터 `FormData` 객체 생성
+    const formData = new FormData();
 
-    // 서버에 보낼 데이터 준비
-    const orderData = {
-      materials,
-      transactionMethod,
-      options,
-      additionalRequest: {
-        text: additionalRequest.text,
-        photos: additionalRequest.photos?.map(photo => photo.uri) || [],
-      },
-      photos: photos.map(photo => photo.uri) || [],
-      name,
-      tel,
-      zonecode,
-      address,
-      detailedAddress,
+    // 이미지를 `FormData`에 추가 (file로)
+    photos.forEach((photo, index) => {
+      const imageData = {
+          uri: photo.uri.startsWith('file://') ? photo.uri : `file://${photo.uri}`,
+          type: photo.type || 'image/jpeg',
+          name: photo.fileName || `image_${index}.jpg`,
+     };
+
+    console.log('adding image $(index):', imageData);
+
+   formData.append('images', imageData);
+
+    });
+
+ // `additional_request_images`
+  additionalRequest.photos?.forEach((photo, index) => {
+    const additionalImageData = {
+      uri: photo.uri.startsWith('file://') ? photo.uri : `file://${photo.uri}`,
+      type: photo.type || 'image/jpeg',
+      name: photo.fileName || `additional_image_${index}.jpg`,
     };
+    console.log(`Adding additional request image ${index}:`, additionalImageData);
+    formData.append('additional_request_images', additionalImageData);
+  });
+
+    // 나머지 데이터 추가
+    formData.append('service_uuid', route.params?.serviceUuid);
+    formData.append('transaction_option', transactionMethod);
+    formData.append('service_price', basicPrice.toString());
+    formData.append('option_price', optionAdditionalPrice.toString());
+    formData.append('total_price', totalPrice.toString());
+    formData.append('additional_request', additionalRequest.text || '');
+      selectedMaterialUUIDs.forEach((uuid) => {
+        formData.append('materials', uuid);
+      });
+
+      // extraMaterial 추가
+      formData.append(
+        'extra_material',
+        Array.isArray(extraMaterial) ? extraMaterial.join(', ') : extraMaterial || ''
+      );
+
+    options.forEach((option) =>
+      formData.append('options', option.option_uuid)
+    );
+    formData.append('orderer_name', name);
+    formData.append('orderer_phone_number', tel);
+    formData.append('orderer_email', ''); // 선택 사항
+    formData.append('orderer_address', fullAddress);
+
+    console.log('FormData being sent:', formData);
 
 
     const request = Request();
+    const accessToken = await getAccessToken(); // 토큰 가져오기
+
+      const headers = {
+        'Content-Type': 'multipart/form-data',
+      };
 
     try {
       setLoading(true); // 로딩 상태 시작
 
       // API 요청: 주문 생성
-      const response = await request.post('/api/orders', orderData, {
-        headers: {
-          'Content-Type': 'application/json', //json 데이터 형식
-          Authorization: 'Bearer your_access_token', // 인증 토큰(필요시 교체)
-        },
-      });
+    const response = await request.post('/api/orders', formData, {
+         'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${accessToken}`,
+        });
+
 
       if (response && response.status === 201) { // 주문 생성 성공
         const result = response.data; // 서버 응답 데이터
         Alert.alert('주문 성공!', `주문번호: ${result.order_uuid}`);
         navigation.navigate('SentQuotation'); // 성공 시 sentquotation으로 이동
       } else {
+          console.error('Server Response:', response.data);
         Alert.alert('주문 실패', '주문서를 생성할 수 없습니다.');
       }
     } catch (error) {
-      console.error(error);
+        console.error('Error Sending Quotation:', error.response || error.message);
       Alert.alert('에러', '주문서를 생성하는 중 문제가 발생했습니다.');
     } finally {
       setLoading(false); // 로딩 상태 종료
+      console.log('FormData before sending:', formData);
+      console.log('Access Token:', accessToken);
+      console.log('Request URL:', '/api/orders');
+
     }
   };
 
 
   const quotation = [
     { key: '의뢰한 의류 정보', data: photos, ref: true, },
-    { key: '소재', data: materials }, // QuotationForm에서 선택한 재질
-// options가 배열인지 확인 후, undefined 요소를 필터링하여 사용
-{ key: '추가한 옵션', data: Array.isArray(options)
-  ? options.filter(Boolean).map(option => option.option_name).join(', ')
-  : '없음'
-},
+    { key: '소재', data: finalMaterials },
+    { key: '추가한 옵션', data: Array.isArray(options)
+      ? options.filter(Boolean).map(option => option.option_name).join(', ')
+      : '없음'
+    },
     { key: '추가 요청사항', data: additionalRequest?.text || '없음', photos: additionalRequest.photos?.map(photo => photo.uri) || [], }, // 추가 요청사항, 없으면 '없음'
     { key: '거래 방식', data: transactionMethod }, //선택한 거래 방식 (대면/비대면)
     { key: '이름', data: name },
@@ -154,6 +232,7 @@ const QuotationPage = ({ navigation, route }: StackScreenProps<OrderStackParams,
     : []
 
 
+
   return (
     <ScrollView>
       <BackButton onPress={() => navigation.goBack()}>
@@ -167,7 +246,7 @@ const QuotationPage = ({ navigation, route }: StackScreenProps<OrderStackParams,
         <View style={{ marginHorizontal: 20, paddingVertical: 10, alignItems: 'center' }}>
           <Subtitle16B style={{ color: 'black' }}>주문서</Subtitle16B>
           <View style={{ height: 2.5, backgroundColor: PURPLE, width: '100%', marginTop: 5, marginBottom: 20 }} />
-          <Subtitle18B style={{ color: 'black', marginBottom: 5 }}>청바지로 에코백 만들어드립니다</Subtitle18B>
+          <Subtitle18B style={{ color: 'black', marginBottom: 5 }}>{serviceTitle}</Subtitle18B>
           <Body14B style={{ color: 'black' }}>주문번호: 08WH9A</Body14B>
           <Caption12M style={{ color: 'black' }}>2024-10-31 17:05</Caption12M>
 
@@ -285,11 +364,11 @@ const QuotationPage = ({ navigation, route }: StackScreenProps<OrderStackParams,
                 <View style={{ marginTop: 30, marginBottom: 40 }}>
                   <TextBox>
                     <Subtitle16M style={{ flex: 1 }}>서비스 금액</Subtitle16M>
-                    <Body14R style={{ flex: 1.5, textAlign: 'right' }}>19900원</Body14R>
+                    <Body14R style={{ flex: 1.5, textAlign: 'right' }}>{basicPrice.toLocaleString()}원</Body14R>
                   </TextBox>
                   <TextBox>
                     <Subtitle16M style={{ flex: 1 }}>옵션 추가 금액</Subtitle16M>
-                    <Body14R style={{ flex: 1.5, textAlign: 'right' }}>2000원</Body14R>
+                    <Body14R style={{ flex: 1.5, textAlign: 'right' }}>{optionAdditionalPrice.toLocaleString()}원</Body14R>
                   </TextBox>
                   <View
                     style={{
@@ -302,7 +381,7 @@ const QuotationPage = ({ navigation, route }: StackScreenProps<OrderStackParams,
                   />
                   <TextBox>
                     <Subtitle16B style={{ flex: 1 }}>예상 결제 금액</Subtitle16B>
-                    <Subtitle16B style={{ flex: 1.5, textAlign: 'right' }}>21900원</Subtitle16B>
+                    <Subtitle16B style={{ flex: 1.5, textAlign: 'right' }}>{totalPrice.toLocaleString()}원</Subtitle16B>
                   </TextBox>
                 </View>
               )}
