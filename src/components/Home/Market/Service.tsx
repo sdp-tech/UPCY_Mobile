@@ -21,7 +21,7 @@ import RenderHTML from 'react-native-render-html';
 //import { numberToPrice } from './functions.ts';
 
 // 홈화면에 있는, 서비스 전체 리스트!
-type ServiceOptionImage = {
+export type ServiceOptionImage = {
   image: string;
 };
 
@@ -226,12 +226,12 @@ const EntireServiceMarket = ({
       })) as MaterialDetail[],
       service_options: Array.isArray(service.service_option)
         ? (service.service_option.map(option => ({
-            option_content: option.option_content,
-            option_name: option.option_name,
-            option_price: option.option_price,
-            option_uuid: option.option_uuid,
-            service_option_image: option.service_option_image || '',
-          })) as ServiceDetailOption[])
+          option_content: option.option_content,
+          option_name: option.option_name,
+          option_price: option.option_price,
+          option_uuid: option.option_uuid,
+          service_option_image: option.service_option_image || '',
+        })) as ServiceDetailOption[])
         : [],
       temporary: service.temporary,
       suspended: service.suspended,
@@ -307,10 +307,10 @@ const EntireServiceMarket = ({
       const styleFilteredData =
         selectedStylesList.length > 0
           ? dateFilteredData.filter(card =>
-              card.service_styles?.some(style =>
-                selectedStylesList.includes(style),
-              ),
-            )
+            card.service_styles?.some(style =>
+              selectedStylesList.includes(style),
+            ),
+          )
           : [];
 
       // TODO: add more filtering logic here
