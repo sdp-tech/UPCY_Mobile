@@ -167,10 +167,10 @@ const TempStorage = ({ navigation }: StackScreenProps<any>) => {
             option_photos: option.option_photos ?? [],
           })),
           thumbnail_photo: selectedService.service_image?.[0] ?? "",
-          detail_photos: selectedService.service_image?.slice(1) ?? [],
+          detail_photos: selectedService.service_image ?? [],
         };
         console.log("");
-        navigation.navigate("ServiceRegistrationPage", { serviceData: transformedServiceData, });
+        navigation.navigate("ServiceRegistrationPage", { serviceData: transformedServiceData, fix : false});
       } else {
         Alert.alert("선택한 서비스를 찾을 수 없습니다.");
       }

@@ -123,6 +123,66 @@ export type DetailPageStackParams = {
   };
 };
 
+const DetailPageStack = createStackNavigator<DetailPageStackParams>();
+
+const ServiceDetailPageScreen = ({
+  navigation,
+  route,
+}: StackScreenProps<HomeStackParams, 'ServiceDetailPage'>) => {
+  const {
+    reformerName,
+    serviceName,
+    basicPrice,
+    maxPrice,
+    reviewNum,
+    tags,
+    imageUris,
+    profileImageUri,
+    servicePeriod,
+    serviceMaterials,
+    serviceContent,
+    serviceOptions,
+    marketUuid,
+    serviceUuid,
+    education,
+    certification,
+    awards,
+    career,
+    freelancer,
+  }: ServiceDetailPageProps = route.params;
+  return (
+    <DetailPageStack.Navigator
+      screenOptions={() => ({
+        headerShown: false,
+      })}>
+      <DetailPageStack.Screen
+        name="DetailPage"
+        component={ServiceDetailPageMainScreen}
+        initialParams={{
+          reformerName,
+          serviceName,
+          basicPrice,
+          maxPrice,
+          reviewNum,
+          tags,
+          imageUris,
+          profileImageUri,
+          servicePeriod,
+          serviceMaterials,
+          serviceContent,
+          serviceOptions,
+          marketUuid,
+          serviceUuid,
+          education,
+          certification,
+          awards,
+          career,
+          freelancer,
+        }}
+      />
+    </DetailPageStack.Navigator>
+  );
+};
 
 type ProfileSectionProps = {
   navigation: any;
@@ -175,7 +235,6 @@ const ProfileSection = ({
   const [reportButtonPressed, setReportButtonPressed] = useState(false);
   const [editDeleteButtonPressed, setEditDeleteButtonPressed] = useState(false);
   const [userRole, setUserRole] = useState<string>('customer');
-  const [userNickname, setUserNickname] = useState<string>('');
   const [myMarketUuid, setMyMarketUuid] = useState<string>('');
 
   useEffect(() => {
@@ -280,7 +339,7 @@ const Banner = ({
   };
   const onPressEdit = () => {
     setEditDeleteButtonPressed(false);
-    navigation.navigate('ServiceRegistrationPage', { serviceData: serviceData });
+    navigation.navigate('ServiceRegistrationPage', {serviceData: serviceData, fix: true });
   };
 
 
@@ -329,7 +388,7 @@ const Banner = ({
               marginLeft: 0,
             }}
           />
-          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 13, }} onPress={onPressDelete}>
+          <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: 13,}} onPress={onPressDelete}>
             <View style={{ justifyContent: 'center' }}>
               <Trash />
             </View>
@@ -494,7 +553,7 @@ const ServiceDetailPageMainScreen = ({
     freelancer,
   } = route.params;
 
-  const serviceData: ServiceData = { // 담솔님이 추가하신거 
+  const serviceData: ServiceData = { // 담솔님이 추가하신거
     service_uuid: serviceUuid,
     service_title: serviceName,
     service_content: serviceContent,

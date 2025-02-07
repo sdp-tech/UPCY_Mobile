@@ -48,7 +48,7 @@ const ServicePage: React.FC<ServicePageProps> = ({
         const marketResult = response.data;
         setItems(marketResult);
         const response2 = await request.get(`/api/market/${marketUuid}/service?temporary=true`,
-          {}, {});
+          {}, {});console.log(response2.data);
         if (response2 && response2.status === 200) {
           setTempItem(response2.data.length)
         } else if (response2 && response2.status === 404) {
@@ -116,9 +116,15 @@ const ServicePage: React.FC<ServicePageProps> = ({
         {items.map((item, index) => (
           <ServiceCard
             key={index}
-            introduce=""
-            reformer_area="정보없음"
-            reformer_link=""
+            profileImageUri={item.reformer_info.user_info.profile_image_url || defaultImageUri}
+            introduce={item.reformer_info.user_info.introduce || ''}
+            reformer_area={item.reformer_info.reformer_area || ''}
+            reformer_link={item.reformer_info.reformer_link || ''}
+            education={item.reformer_info.education || []}
+            certification={item.reformer_info.certification || []}
+            awards={item.reformer_info.awards || []}
+            career={item.reformer_info.career || []}
+            freelancer={item.reformer_info.freelancer || []}
             created={item.created || new Date('2023-12-12')}
             name={reformerName || ''}
             basic_price={item.basic_price || 0}
@@ -148,7 +154,7 @@ const ServicePage: React.FC<ServicePageProps> = ({
               }))
               : []}
             suspended={item.suspended}
-            navigation={navigation} education={[]} certification={[]} awards={[]} career={[]} freelancer={[]} />
+            navigation={navigation} />
         ))}
         <View style={{ paddingBottom: 100 }} />
       </View>

@@ -132,14 +132,11 @@ interface ServiceRegiProps extends StackScreenProps<MyPageStackParams, 'ServiceR
 const ServiceRegistrationPage = ({
   navigation,
   route,
-  fix
 }: ServiceRegiProps) => {
   const { hideBottomBar, showBottomBar } = useBottomBar();
   const serviceData = route.params?.serviceData || {}; // 전달된 데이터 수신
   const service_uuid = serviceData.service_uuid ? serviceData.service_uuid : '';
-
-  console.log("servicedata: ", serviceData.detail_photos);
-
+  const fix = route.params?.fix ?? false;
   // 전달된 데이터로 초기 상태 설정
   useFocusEffect(
     useCallback(() => {
@@ -217,6 +214,7 @@ const ServiceRegistrationPage = ({
     navigation.navigate('WriteDetailPage', {
       inputText,
       detailPhoto,
+      serviceData,
     });
   };
 
@@ -355,8 +353,14 @@ const ServiceRegistrationPage = ({
       for (const id of option_uuidList) { // 여러개의 uuid 각각에 진행 
         const formData = new FormData();
         for (let option of optionList) {
-          for (let photo of option.optionPhotos) {
-            console.log('uploadImage에서 옵션별 사진 추가중...', option.optionPhotos);
+          const newPhotos = option.optionPhotos.filter(newPhoto => // 새로운 이미지만 필터링
+            !option.optionPhotos.some(existingPhoto =>
+              existingPhoto.uri === newPhoto.uri
+            )
+          );
+
+          console.log(`uploadImage에서 [옵션 ${id}] 중복 검사 후 이미지 업로드 중...`, newPhotos);
+          for (let photo of newPhotos) {
             if (photo?.uri) {
               formData.append('option_image', {
                 uri: photo.uri,
@@ -366,47 +370,69 @@ const ServiceRegistrationPage = ({
             }
           }
         }
-        try {
-          const response = await request.post(`/api/market/${market_uuid}/service/${service_uuid}/option/${id}/image`, formData, headers_);
-          if (response && response.status === 200) {
-            console.log('옵션', id, '이미지 업로드 성공');
-          } else {
-            console.log(response);
-            console.log('옵션', id, '이미지 업로드 실패');
+
+        if (formData.getParts().length > 0) {
+          try {
+            const response = await request.post(`/api/market/${market_uuid}/service/${service_uuid}/option/${id}/image`, formData, headers_);
+            if (response && response.status === 200) {
+              console.log('옵션', id, '이미지 업로드 성공');
+            } else {
+              console.log(response);
+              console.log('옵션', id, '이미지 업로드 실패');
+            }
+          } catch (error) {
+            console.error(error);
           }
-        } catch (error) {
-          console.error(error);
+        } else {
+          console.log('옵션', id, '이미지 중복으로 업로드 안함');
         }
       }
     } else if (method === 'thumbnail') { // 서비스 썸네일, 상세 사진들 등록 
       const formData = new FormData();
-      console.log('uploadImage에서 썸네일 사진 추가중...', photos[0]);
-      formData.append('service_image', {
-        uri: photos[0]?.uri, // 파일의 URI
-        type: 'image/jpeg', // 이미지 형식 (예: 'image/jpeg')
-        name: photos[0]?.fileName || 'service_image.jpg', // 파일 이름
-      });
-        //formData.append('image_size', "dfd");
-      for (let index = 0; index < detailPhoto.length; index++) {
-        console.log('uploadImage에서 상세 사진 추가중...', detailPhoto[index]);
+      const newPhotos = photos.filter(newPhoto =>
+        !serviceData?.thumbnail_photo?.image || newPhoto.uri !== serviceData.thumbnail_photo.image
+      );
+
+      console.log('uploadImage에서 썸네일 이미지 중복 검사 후 업로드 중...', newPhotos);
+      if (newPhotos.length > 0) {
         formData.append('service_image', {
-          uri: detailPhoto[index]?.uri, // 파일의 URI
-          type: 'image/jpeg', // 이미지 형식 (예: 'image/jpeg')
-          name: detailPhoto[index]?.fileName || 'service_image.jpg', // 파일 이름
+          uri: newPhotos[0]?.uri,
+          type: 'image/jpeg',
+          name: newPhotos[0]?.fileName || 'service_image.jpg',
         });
       }
-      try {
-        const response = await request.post(`/api/market/${market_uuid}/service/${service_uuid}/image`, formData, headers_);
-        if (response && response.status === 200) {
-          console.log('서비스 썸네일 업로드 성공');
-        } else {
-          console.log(response);
-          console.log('서비스 썸네일 사진 업로드 실패');
-        }
-      } catch (error) {
-        console.error(error);
+
+      const newDetailPhotos = detailPhoto.filter(newPhoto =>
+        !(serviceData?.detail_photos?.slice(1).some(existingPhoto =>
+          existingPhoto.image === newPhoto.uri
+        ))
+      );
+
+      console.log('uploadImage에서 서비스 상세 이미지 중복 검사 후 업로드 중...', newDetailPhotos);
+      for (let photo of newDetailPhotos) {
+        formData.append('service_image', {
+          uri: photo.uri,
+          type: 'image/jpeg',
+          name: photo.fileName || 'service_image.jpg',
+        });
       }
-    } else { // 서비스 상세 안에 들어가는 사진들 
+
+      if (formData.getParts().length > 0) {
+        try {
+          const response = await request.post(`/api/market/${market_uuid}/service/${service_uuid}/image`, formData, headers_);
+          if (response && response.status === 200) {
+            console.log('서비스 썸네일 및 상세 이미지 업로드 성공');
+          } else {
+            console.log(response);
+            console.log('서비스 썸네일 및 상세 이미지 업로드 실패');
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      } else {
+        console.log('썸네일 및 상세 이미지 중복으로 업로드 안함');
+      }
+    } else {
 
     }
   }
@@ -455,7 +481,6 @@ const ServiceRegistrationPage = ({
         }],
         temporary: temp,
       };
-
       if (service_uuid) { // PUT 요청: 기존 임시저장 서비스 업데이트
         try {
           const response = await request.put(
@@ -500,7 +525,7 @@ const ServiceRegistrationPage = ({
       }
       navigation.navigate('TempStorage'); // 차후 수정 필요
     }
-    else if ( // 일반 등록일 경우, 필수 필드 모두 채워야함 
+    if ( // 일반 등록일 경우, 필수 필드 모두 채워야함
       !(form.category == '') &&
       !(name == '') &&
       !(styles.length == 0) &&
@@ -510,39 +535,68 @@ const ServiceRegistrationPage = ({
       !(photos.length == 0) &&
       !(materials.length == 0)
     ) {
-      try {
-        const response = await request.post(`/api/market/${market_uuid}/service`, params, headers)
-        if (response?.status === 201) {
-          console.log('응답 결과:', response.data);
-          const service_uuid = await response?.data.service_uuid;
-          const option_uuidList: any[] =
-            response.data.service_options ? response.data.service_options.map((option: any) => option.option_uuid)
-              : []; // 없으면 빈 배열 
-          // 그리고 아래에서 그 리스트 전달, 이후 함수에서 리스트 다시 분해해서 반복문 돌려서 사진 업로드
-          console.log('옵션 id 리스트:', option_uuidList);
-          await uploadImage(service_uuid, 'option', option_uuidList); // 옵션별 사진 등록
-          await uploadImage(service_uuid, 'thumbnail'); // 서비스 썸네일 등록 
-          console.log("Service UUID:", service_uuid);
-          // navigation.navigate('ReformerProfilePage');
-          console.log("서비스가 성공적으로 등록되었습니다!");
-          Alert.alert(
-            "서비스 등록이 완료되었습니다.",
-            "",
-            [
-              { text: "확인", onPress: () => { navigation.goBack(); } }
-            ]
-          );
-        } else {
-          Alert.alert('서비스 등록에 실패했습니다.')
-          console.log(response);
+      if(service_uuid){  //임시저장 서비스를 등록할 경우
+        try {
+          const response = await request.put(`/api/market/${market_uuid}/service/${service_uuid}`, params, headers);
+          if (response?.status === 200) {
+            console.log('응답 결과:', response.data);
+            const option_uuidList: any[] =
+              response.data.service_options ? response.data.service_options.map((option: any) => option.option_uuid)
+                : []; // 없으면 빈 배열
+            // 그리고 아래에서 그 리스트 전달, 이후 함수에서 리스트 다시 분해해서 반복문 돌려서 사진 업로드
+            console.log('옵션 id 리스트:', option_uuidList);
+            await uploadImage(service_uuid, 'option', option_uuidList); // 옵션별 사진 등록
+            await uploadImage(service_uuid, 'thumbnail'); // 서비스 썸네일 등록
+            // navigation.navigate('ReformerProfilePage');
+            console.log("서비스가 성공적으로 등록되었습니다!");
+            Alert.alert(
+              "서비스 등록이 완료되었습니다.",
+              "",
+              [
+                { text: "확인", onPress: () => { navigation.navigate('ReformerMyPageScreen'); } }
+              ]
+            );
+          } else {
+            Alert.alert('서비스 등록에 실패했습니다.')
+            console.log(response);
+          }
+        } catch (err) {
+          console.error(err);
         }
+      } else if (!service_uuid){
+        try {
+          const response = await request.post(`/api/market/${market_uuid}/service`, params, headers);
+          if (response?.status === 201) {
+            console.log('응답 결과:', response.data);
+            const service_uuid = await response?.data.service_uuid;
+            const option_uuidList: any[] =
+              response.data.service_options ? response.data.service_options.map((option: any) => option.option_uuid)
+                : []; // 없으면 빈 배열
+            // 그리고 아래에서 그 리스트 전달, 이후 함수에서 리스트 다시 분해해서 반복문 돌려서 사진 업로드
+            console.log('옵션 id 리스트:', option_uuidList);
+            await uploadImage(service_uuid, 'option', option_uuidList); // 옵션별 사진 등록
+            await uploadImage(service_uuid, 'thumbnail'); // 서비스 썸네일 등록
+            console.log("Service UUID:", service_uuid);
+            // navigation.navigate('ReformerProfilePage');
+            console.log("서비스가 성공적으로 등록되었습니다!");
+            Alert.alert(
+              "서비스 등록이 완료되었습니다.",
+              "",
+              [
+                { text: "확인", onPress: () => { navigation.navigate('ReformerMyPageScreen'); } }
+              ]
+            );
+          } else {
+            Alert.alert('서비스 등록에 실패했습니다.')
+            console.log(response);
+          }
       } catch (err) {
         console.error(err);
       }
     } else { // 누락된거 있는 경우 
       Alert.alert('필수 사항들을 모두 입력해주세요');
     }
-  }
+  }};
 
   useEffect(() => { // 카테고리 모달 열 때 바텀바 숨기기 .. 
     setBottomVisible(!modalOpen);
@@ -745,24 +799,43 @@ const ServiceRegistrationPage = ({
           backgroundColor: '#ffffff',
         }}>{bottomVisible &&
           <ButtonSection style={{ flex: 1, marginHorizontal: 10 }}>
-            <FooterButton
-              style={{ flex: 0.2, backgroundColor: '#612FEF' }}
-              onPress={() => Alert.alert(
-                '썸네일, 상세 사진 등은 저장되지 않습니다. 괜찮으시겠습니까?',
-                '',
-                [
-                  { text: '아니오', onPress: () => { }, style: 'destructive' },
-                  { text: '네', onPress: () => handleSubmit(true) },
-                ],
-                { cancelable: false },
-              )}>
-              <Subtitle16B style={{ color: '#FFFFFF' }}>임시저장</Subtitle16B>
-            </FooterButton>
-            <FooterButton
-              style={{ flex: 0.7, backgroundColor: '#DBFC72' }}
-              onPress={() => handleSubmit(false)}>
-              <Subtitle16B style={{ color: '#612FEF' }}>등록</Subtitle16B>
-            </FooterButton>
+            {fix ? (
+              <>
+                {/* fix === true */}
+                <FooterButton
+                  style={{ flex: 0.2, backgroundColor: '#612FEF' }}
+                  onPress={() => navigation.goBack()}>
+                  <Subtitle16B style={{ color: '#FFFFFF' }}>취소</Subtitle16B>
+                </FooterButton>
+                <FooterButton
+                  style={{ flex: 0.7, backgroundColor: '#DBFC72' }}
+                  onPress={() => handleSubmit(false)}>
+                  <Subtitle16B style={{ color: '#612FEF' }}>확인</Subtitle16B>
+                </FooterButton>
+              </>
+            ) : (
+              <>
+                {/* fix === false */}
+                <FooterButton
+                  style={{ flex: 0.2, backgroundColor: '#612FEF' }}
+                  onPress={() => Alert.alert(
+                    '썸네일, 상세 사진 등은 저장되지 않습니다. 괜찮으시겠습니까?',
+                    '',
+                    [
+                      { text: '아니오', onPress: () => { }, style: 'destructive' },
+                      { text: '네', onPress: () => handleSubmit(true) },
+                    ],
+                    { cancelable: false },
+                  )}>
+                  <Subtitle16B style={{ color: '#FFFFFF' }}>임시저장</Subtitle16B>
+                </FooterButton>
+                <FooterButton
+                  style={{ flex: 0.7, backgroundColor: '#DBFC72' }}
+                  onPress={() => handleSubmit(false)}>
+                  <Subtitle16B style={{ color: '#612FEF' }}>등록</Subtitle16B>
+                </FooterButton>
+              </>
+            )}
           </ButtonSection>
         }
 
