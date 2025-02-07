@@ -123,67 +123,6 @@ export type DetailPageStackParams = {
   };
 };
 
-const DetailPageStack = createStackNavigator<DetailPageStackParams>();
-
-const ServiceDetailPageScreen = ({
-  navigation,
-  route,
-}: StackScreenProps<HomeStackParams, 'ServiceDetailPage'>) => {
-  const {
-    reformerName,
-    serviceName,
-    basicPrice,
-    maxPrice,
-    reviewNum,
-    tags,
-    imageUris,
-    profileImageUri,
-    servicePeriod,
-    serviceMaterials,
-    serviceContent,
-    serviceOptions,
-    marketUuid,
-    serviceUuid,
-    education,
-    certification,
-    awards,
-    career,
-    freelancer,
-  }: ServiceDetailPageProps = route.params;
-  return (
-    <DetailPageStack.Navigator
-      screenOptions={() => ({
-        headerShown: false,
-      })}>
-      <DetailPageStack.Screen
-        name="DetailPage"
-        component={ServiceDetailPageMainScreen}
-        initialParams={{
-          reformerName,
-          serviceName,
-          basicPrice,
-          maxPrice,
-          reviewNum,
-          tags,
-          imageUris,
-          profileImageUri,
-          servicePeriod,
-          serviceMaterials,
-          serviceContent,
-          serviceOptions,
-          marketUuid,
-          serviceUuid,
-          education,
-          certification,
-          awards,
-          career,
-          freelancer,
-        }}
-      />
-    </DetailPageStack.Navigator>
-  );
-};
-
 type ProfileSectionProps = {
   navigation: any;
   reformerName: string;
@@ -382,7 +321,7 @@ const Banner = ({
           <View
             style={{
               height: 1,
-              backgroundColor: '#E5E5E5', // 버튼 사이 회색 선
+              backgroundColor: '#E5E5E5',
               marginHorizontal: 10,
               width: '100%',
               marginLeft: 0,

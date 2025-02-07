@@ -150,7 +150,6 @@ const ServiceRegistrationPage = ({
       setMaxPrice(prev => (prev !== serviceData.max_price?.toString() ? serviceData.max_price?.toString() || '' : prev));
       setStyles(serviceData.service_style || []);
       setMaterials(serviceData.service_material || []);
-      console.log("va", styles, "ca", materials);
       setPhotos(prev => (JSON.stringify(prev) !== JSON.stringify(serviceData.thumbnail_photo ? [{ uri: serviceData.thumbnail_photo.image }] : [])
         ? serviceData.thumbnail_photo.image ? [{ uri: serviceData.thumbnail_photo.image }] : []
         : prev));
@@ -172,14 +171,11 @@ const ServiceRegistrationPage = ({
           photoAdded: !!option.service_option_image?.length,
           isFixing: false,
         })) || [] : prev));
-    console.log(serviceData.service_option.service_option_image);
     }, [serviceData])
   );
 
   useEffect(() => {
     hideBottomBar();
-    //console.log('serviceData:', serviceData);
-    //console.log('route.params:', route.params);
     return () => showBottomBar();
   }, []);
 
@@ -518,7 +514,6 @@ const ServiceRegistrationPage = ({
 
           if (response?.status === 201) {
             const service_uuid = response?.data.service_uuid;
-            console.log(response.data);
             option_uuidList = response.data.service_option ? response.data.service_option.map((option: any) => option.option_uuid) : [];
 
             console.log('옵션 id 리스트:', option_uuidList);
@@ -760,7 +755,6 @@ const ServiceRegistrationPage = ({
       setHashtags(prevHashtags => [...new Set([...prevHashtags, ...words])]);
       // 입력 필드 초기화
       setHashtagText('');
-      console.log(optionList);
     } else {
       Alert.alert('추가소재는 5개 이하로 입력해주세요');
     }

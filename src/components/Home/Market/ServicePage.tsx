@@ -48,7 +48,7 @@ const ServicePage: React.FC<ServicePageProps> = ({
         const marketResult = response.data;
         setItems(marketResult);
         const response2 = await request.get(`/api/market/${marketUuid}/service?temporary=true`,
-          {}, {});console.log(response2.data);
+          {}, {});
         if (response2 && response2.status === 200) {
           setTempItem(response2.data.length)
         } else if (response2 && response2.status === 404) {
