@@ -23,10 +23,15 @@ import { useNavigation } from '@react-navigation/native';
 import Request from '../common/requests';
 import { getNickname } from '../common/storage';
 
-const ReportPage = ({}: StackScreenProps<HomeStackParams, 'ReportPage'>) => {
+type Service_key = {
+  service_key: string;
+}
+
+const ReportPage = ({ route }: StackScreenProps<HomeStackParams, 'ReportPage'>) => {
   const [reportReason, setReportReason] = useState<string>('');
   const [reportContent, setReportContent] = useState<string>('');
   const navigation = useNavigation();
+  const service_key: Service_key | undefined = route.params;
   return (
     <BottomSheetModalProvider>
       <SafeAreaView>
@@ -34,8 +39,8 @@ const ReportPage = ({}: StackScreenProps<HomeStackParams, 'ReportPage'>) => {
           title="신고"
           leftButton="CustomBack"
           rightButton="None"
-          onPressLeft={() => {}}
-          onPressRight={() => {}}
+          onPressLeft={() => { }}
+          onPressRight={() => { }}
         />
         <View style={styles.container}>
           <Text style={TextStyles.mainTitle}>
@@ -50,6 +55,7 @@ const ReportPage = ({}: StackScreenProps<HomeStackParams, 'ReportPage'>) => {
             reportReason={reportReason}
             reportContent={reportContent}
             navigation={navigation}
+            service_key={service_key}
           />
         </View>
       </SafeAreaView>
@@ -124,10 +130,12 @@ const ReportConfirmButton = ({
   reportReason,
   reportContent,
   navigation,
+  service_key
 }: {
   reportReason: string;
   reportContent: string;
   navigation: any;
+  service_key: Service_key | undefined;
 }) => {
   const [userNickname, setUserNickname] = useState<string>('');
 
@@ -150,18 +158,20 @@ const ReportConfirmButton = ({
   }) => {
     try {
       const params = {
-        reported_user_id: 'malangcow', // TODO: fix
+        reported_user_id: service_key?.service_key, // TODO: fix
         reporter_user_id: userNickname,
         reason: reason,
         details: details,
       };
+      console.log(params);
       const response = await request.post(`/api/market/report`, params);
       if (!response || response.status === 404) {
         Alert.alert('오류가 발생하였습니다.');
       } else if (response.status === 500) {
         Alert.alert('서버에 오류가 발생하였습니다.');
+        console.log(response);
       } else if (response && response.status === 200) {
-        // TODO
+        // TODO: 이후 추가하기 
       }
     } catch (error) {
       console.error(error);
@@ -309,24 +319,31 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     paddingLeft: 16,
     paddingRight: 10,
     paddingVertical: 10,
     marginTop: 8,
     borderRadius: 5,
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: '#612FEF',
   },
   textInputBox: {
+    display: 'flex',
     borderRadius: 5,
-    borderWidth: 1,
+    marginTop: 8,
+    alignItems: 'center',
+    borderWidth: 2,
     borderColor: '#6C4CE4',
     paddingHorizontal: 16,
-    paddingTop: 10,
+    paddingLeft: 16,
+    paddingRight: 10,
+    paddingVertical: 10,
+    paddingTop: 12
   },
   modalItem: {
     paddingVertical: 12,
-    paddingLeft: 20,
+    paddingLeft: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
   },

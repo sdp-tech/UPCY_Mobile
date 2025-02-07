@@ -92,7 +92,7 @@ const ProfileHeader = ({
 
   const onPressReport = () => {
     setReportButtonPressed(false);
-    navigation.navigate('ReportPage');
+    navigation.navigate('ReportPage', { service_key: marketName });
   };
   const { width, height } = Dimensions.get('screen');
   return (
