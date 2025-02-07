@@ -205,6 +205,7 @@ const TextStyles = StyleSheet.create({
     color: '#612FEF',
     fontSize: 14,
     fontWeight: '600',
+    lineHeight: 16,
   },
 });
 

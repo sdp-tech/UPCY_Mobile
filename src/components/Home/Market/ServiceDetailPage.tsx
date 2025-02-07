@@ -562,7 +562,7 @@ const ServiceDetailPageMainScreen = ({
     basic_price: basicPrice,
     max_price: maxPrice,
     service_style: tags || [],
-    service_material: serviceMaterials || [],
+    service_material: serviceMaterials?.map((material) => (material.material_name || '')) || [],
     service_option: serviceOptions?.map((option) => ({
       option_name: option.option_name || '',
       option_content: option.option_content || '',
@@ -572,7 +572,6 @@ const ServiceDetailPageMainScreen = ({
     thumbnail_photo: imageUris?.[0],
     detail_photos: imageUris,
   };
-
   // const [index, setIndex] = useState<number>(0);
   // const optionPageRef = useRef<FlatList<any>>(null);
 
