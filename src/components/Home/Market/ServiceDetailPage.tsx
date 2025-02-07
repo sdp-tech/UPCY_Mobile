@@ -335,7 +335,7 @@ const Banner = ({
 }: BannerProps) => {
   const onPressReport = () => {
     setReportButtonPressed(false);
-    navigation.navigate('ReportPage');
+    navigation.navigate('ReportPage', { service_key: serviceData.service_uuid });
   };
   const onPressEdit = () => {
     setEditDeleteButtonPressed(false);
@@ -787,12 +787,12 @@ const ServiceDetailPageMainScreen = ({
       </ScrollView>
       <View style={styles.footerContainer}>
         {isLogin &&
-        <Footer
-         suspended={suspended}
-         hideButton={userRole === 'reformer'}
-         serviceUuid={serviceUuid}
-         onNavigate={(uuid) => navigation.navigate('QuotationForm', { serviceUuid: uuid , marketUuid: marketUuid,})}
-         />
+          <Footer
+            suspended={suspended}
+            hideButton={userRole === 'reformer'}
+            serviceUuid={serviceUuid}
+            onNavigate={(uuid) => navigation.navigate('QuotationForm', { serviceUuid: uuid, marketUuid: marketUuid, })}
+          />
         }
       </View>
       {userRole === 'reformer' && marketUuid === myMarketUuid && (
