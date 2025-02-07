@@ -22,7 +22,8 @@ import {
   setUserRole,
   getUserRole,
   setMarketUUID,
-  removeAccessToken
+  removeAccessToken,
+  getNickname
 } from '../../common/storage';
 import { LoginContext, useUser } from '../../common/Context';
 
@@ -138,8 +139,12 @@ export async function processLoginResponse( // 통상 로그인시 호출 함수
       if (response?.status === 200) {
         const user_role = response.data.role;
         setUserRole(user_role);
+        const user_nickname = response.data.nickname;
+        setNickname(user_nickname);
+        const nickname = await getNickname();
+        console.log('processLogin에서 닉네임 설정 완료:', nickname);
         const role = await getUserRole();
-        console.log('processLogin에서 유저롤 설정 완료', role);
+        console.log('processLogin에서 유저롤 설정 완료:', role);
         setLogin(true);
         if (role === 'reformer') { // 리폼러인 경우, marketUUID 저장 
           try {
