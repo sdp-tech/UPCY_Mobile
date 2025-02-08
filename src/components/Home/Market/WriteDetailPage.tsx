@@ -14,12 +14,12 @@ const { width, height } = Dimensions.get('window');
 
 
 const WriteDetailPage = ({ navigation, route }: StackScreenProps<MyPageStackParams, 'WriteDetailPage'>) => {
-  const { inputText } = route.params; // route 파라미터 전달받아옴 
-  const { detailphoto } = route.params;
-  const [localInput, setLocalInput] = useState(inputText); // 로컬변수 지정 
-  const [d_photoadded, setD_Photoadded] = useState<boolean>(false);
-  const [d_detailphoto, setDetailPhoto] = useState<PhotoType[]>(detailphoto ? detailphoto : []);
-  // 사진 삽입한 상태면 그거 그대로 보여줌 
+  const { inputText } = route.params; // route 파라미터 전달받아옴
+  const { detailPhoto } = route.params;
+  const [localInput, setLocalInput] = useState(inputText); // 로컬변수 지정
+  const [d_photoAdded, setD_photoAdded] = useState<boolean>(false);
+  const [d_detailPhoto, setDetailPhoto] = useState<PhotoType[]>(detailPhoto ? detailPhoto : []);
+  // 사진 삽입한 상태면 그거 그대로 보여줌
   const { hideBottomBar, showBottomBar } = useBottomBar();
 
   useEffect(() => {
@@ -28,15 +28,26 @@ const WriteDetailPage = ({ navigation, route }: StackScreenProps<MyPageStackPara
   }, []);
 
   const pickImage = () => {
-    if (d_photoadded) {
-      setD_Photoadded(false);
+    if (d_photoAdded) {
+      setD_photoAdded(false);
     } else {
-      setD_Photoadded(true);
+      setD_photoAdded(true);
     }
-  }
+  };
 
-  const handleGoBack = () => { // 파라미터 지정
-    navigation.navigate('ServiceRegistrationPage', { inputText: localInput, detailphoto: d_detailphoto, serviceData: [] });
+  const handleGoBack = () => {
+    const serviceData = route.params?.serviceData || {};
+    const existingPhotos = serviceData.detail_photos || [];
+
+    const updatedDetailPhotos = existingPhotos.length > 0
+      ? [existingPhotos[0], ...d_detailPhoto]
+      : [...d_detailPhoto];
+
+    navigation.navigate('ServiceRegistrationPage', {
+      inputText: localInput,
+      detailPhoto: updatedDetailPhotos,
+      serviceData: { ...serviceData, detail_photos: updatedDetailPhotos },
+    });
   };
 
   const editor = useRef<RichEditor>(null);
@@ -83,13 +94,18 @@ const WriteDetailPage = ({ navigation, route }: StackScreenProps<MyPageStackPara
           useContainer={true}
           onCursorPosition={handleCursorPosition}
         />
-        {d_photoadded &&
+        {d_photoAdded && (
           <View style={{ marginBottom: 200 }}>
-            <ImageCarousel images={d_detailphoto} setFormImages={setDetailPhoto} max={5}
-              originalSize originalHeight={width - 32} originalWidth={width - 32} />
+            <ImageCarousel
+              images={d_detailPhoto}
+              setFormImages={setDetailPhoto}
+              max={5}
+              originalSize
+              originalHeight={width - 32}
+              originalWidth={width - 32}
+            />
           </View>
-        }
-
+        )}
       </ScrollView>
     </SafeAreaView>
   )

@@ -26,6 +26,7 @@ export type InputInfoProps = {
 const statusBarHeight = getStatusBarHeight(true);
 
 const InputInfo = ({ navigation, route }: InputInfoProps): React.JSX.Element => {
+
   // 컴포넌트 내부 구현
   const [postModal, setPostModal] = useState(false); // 모달 가시성 관리
   const [selectedAddress, setSelectedAddress] = useState(''); // 선택한 주소를 저장

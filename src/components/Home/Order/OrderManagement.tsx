@@ -97,7 +97,7 @@ const OrderManagement = ({
           }}
         />
         <OrderStack.Screen name="QuotationPage" component={QuotationPage} />
-        <OrderStack.Screen name="QuotationForm" component={QuotationForm} />ㄱ
+        <OrderStack.Screen name="QuotationForm" component={QuotationForm} />
         <OrderStack.Screen name="NewOrders" component={NewOrders} />
         <OrderStack.Screen name="InProgressOrders" component={InProgressOrders} />
         <OrderStack.Screen name="OrderPage" component={OrderPage} />

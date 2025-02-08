@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
+  Dimensions,
 } from 'react-native';
 import { Tabs, MaterialTabBar } from 'react-native-collapsible-tab-view';
 import { Caption11M } from '../../../styles/GlobalText.tsx';
@@ -44,8 +45,8 @@ export const ProfileSection = ({
         navigation={navigation}
         reformerName={reformerName}
         profileImageUri={profileImageUri}
-        // rate={rate}
-        // reviewNumber={reviewNumber}
+      // rate={rate}
+      // reviewNumber={reviewNumber}
       />
       <View style={{ padding: 20, paddingTop: 0, paddingBottom: 0 }}>
         {/* 이 밑에거 지우면 이상하게 에러남... 그냥 냅둬도 되는 거라 무시하셔도 됩니다.  */}
@@ -91,15 +92,15 @@ const ProfileHeader = ({
 
   const onPressReport = () => {
     setReportButtonPressed(false);
-    navigation.navigate('ReportPage');
+    navigation.navigate('ReportPage', { service_key: marketName });
   };
-
+  const { width, height } = Dimensions.get('screen');
   return (
     <>
       <DetailScreenHeader
         title=""
         leftButton="CustomBack"
-        onPressLeft={() => {}}
+        onPressLeft={() => { }}
         rightButton={
           userRole === 'customer'
             ? 'Report'
@@ -107,24 +108,24 @@ const ProfileHeader = ({
               ? 'Edit'
               : 'Report'
         }
-        onPressRight={() => {}}
+        onPressRight={() => { }}
         reportButtonPressed={reportButtonPressed}
         setReportButtonPressed={setReportButtonPressed}
       />
       <View
         style={{
-          width: '100%',
-          height: 150,
+          width: width,
+          height: height * 0.17,
           backgroundColor: '#E9EBF8',
         }}>
         <Image
           style={{
             alignSelf: 'center',
-            width: 90,
-            height: 90,
+            width: width * 0.23,
+            height: width * 0.23,
             borderRadius: 180,
             position: 'absolute',
-            top: 100,
+            top: height * 0.12,
           }}
           source={{
             uri: profileImageUri,
@@ -139,7 +140,7 @@ const ProfileHeader = ({
           </TouchableOpacity>
         )}
       </View>
-      <View style={{ marginTop: 50, gap: 12, alignItems: 'center' }}>
+      <View style={{ marginTop: height * 0.06, gap: 12, alignItems: 'center' }}>
         <Text style={TextStyles.marketName}>{marketName}</Text>
         <ReformerTag />
       </View>
