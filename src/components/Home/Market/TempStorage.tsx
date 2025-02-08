@@ -41,22 +41,18 @@ const TempStorage = ({ navigation }: StackScreenProps<any>) => {
     try {
       const marketUuid = await getMarketUUID();
       const response = await request.get(`/api/market/${marketUuid}/service?temporary=true`, {}, {});
-      console.log(marketUuid);
       if (response && response.status === 200) {
         const tempData = response.data.filter((item: ServiceItem) => item.temporary);
-        //console.log("tempData: ",tempData);
         setStorage(tempData);
       } else if (response && response.status === 404) {
         Alert.alert("등록된 임시저장 서비스가 없습니다.")
       } else {
         Alert.alert("데이터를 불러오는 중 오류가 발생했습니다.");
-        console.log(response)
       }
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
-  //aa
 
   useFocusEffect(
     useCallback(() => {
@@ -105,7 +101,6 @@ const TempStorage = ({ navigation }: StackScreenProps<any>) => {
         setSelectedItems([]);
         setDeleteAllPopupVisible(false);
       } else {
-        console.log(responses)
         Alert.alert("전체 삭제에 실패했습니다.")
       }
     } catch (error) {
@@ -133,7 +128,6 @@ const TempStorage = ({ navigation }: StackScreenProps<any>) => {
         setSelectedItems([]);
         setDeleteSelectedPopupVisible(false);
       } else {
-        console.log(responses)
         Alert.alert("선택 삭제에 실패했습니다.")
       }
     } catch (error) {
@@ -158,19 +152,13 @@ const TempStorage = ({ navigation }: StackScreenProps<any>) => {
           service_period: selectedService.service_period ?? 0,
           basic_price: selectedService.basic_price ?? 0,
           max_price: selectedService.max_price ?? 0,
-          service_style: selectedService.service_style ?? [],
-          service_material: selectedService.service_material ?? [],
-          service_option: (selectedService.service_option ?? []).map(option => ({
-            option_name: option.option_name ?? "",
-            option_content: option.option_content ?? "",
-            option_price: option.option_price ?? 0,
-            option_photos: option.option_photos ?? [],
-          })),
+          service_style: selectedService.service_style?.map((style) => (style.style_name || '')) || [],
+          service_material: selectedService.service_material?.map((material) => (material.material_name || '')) || [],
+          service_option: selectedService.service_option ?? [],
           thumbnail_photo: selectedService.service_image?.[0] ?? "",
-          detail_photos: selectedService.service_image?.slice(1) ?? [],
+          detail_photos: selectedService.service_image ?? [],
         };
-        console.log("");
-        navigation.navigate("ServiceRegistrationPage", { serviceData: transformedServiceData, });
+        navigation.navigate("ServiceRegistrationPage", { serviceData: transformedServiceData, fix : false});
       } else {
         Alert.alert("선택한 서비스를 찾을 수 없습니다.");
       }
@@ -258,7 +246,7 @@ const TempStorage = ({ navigation }: StackScreenProps<any>) => {
 
 const Header = ({ navigation }: { navigation: any }) => (
   <View style={styles.headerContainer}>
-    <BackButton onPress={() => navigation.goBack()}>
+    <BackButton onPress={() => navigation.navigate('ReformerMyPageScreen')}>
       <Close color='black' />
     </BackButton>
     <Text style={styles.headerTitle}>임시저장</Text>

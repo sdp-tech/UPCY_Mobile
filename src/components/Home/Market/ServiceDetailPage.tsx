@@ -123,7 +123,6 @@ export type DetailPageStackParams = {
   };
 };
 
-
 type ProfileSectionProps = {
   navigation: any;
   reformerName: string;
@@ -175,7 +174,6 @@ const ProfileSection = ({
   const [reportButtonPressed, setReportButtonPressed] = useState(false);
   const [editDeleteButtonPressed, setEditDeleteButtonPressed] = useState(false);
   const [userRole, setUserRole] = useState<string>('customer');
-  const [userNickname, setUserNickname] = useState<string>('');
   const [myMarketUuid, setMyMarketUuid] = useState<string>('');
 
   useEffect(() => {
@@ -280,7 +278,7 @@ const Banner = ({
   };
   const onPressEdit = () => {
     setEditDeleteButtonPressed(false);
-    navigation.navigate('ServiceRegistrationPage', { serviceData: serviceData });
+    navigation.navigate('ServiceRegistrationPage', {serviceData: serviceData, fix: true });
   };
 
 
@@ -323,13 +321,13 @@ const Banner = ({
           <View
             style={{
               height: 1,
-              backgroundColor: '#E5E5E5', // 버튼 사이 회색 선
+              backgroundColor: '#E5E5E5',
               marginHorizontal: 10,
               width: '100%',
               marginLeft: 0,
             }}
           />
-          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 13, }} onPress={onPressDelete}>
+          <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: 13,}} onPress={onPressDelete}>
             <View style={{ justifyContent: 'center' }}>
               <Trash />
             </View>
@@ -494,7 +492,7 @@ const ServiceDetailPageMainScreen = ({
     freelancer,
   } = route.params;
 
-  const serviceData: ServiceData = { // 담솔님이 추가하신거 
+  const serviceData: ServiceData = { // 담솔님이 추가하신거
     service_uuid: serviceUuid,
     service_title: serviceName,
     service_content: serviceContent,
@@ -503,7 +501,7 @@ const ServiceDetailPageMainScreen = ({
     basic_price: basicPrice,
     max_price: maxPrice,
     service_style: tags || [],
-    service_material: serviceMaterials || [],
+    service_material: serviceMaterials?.map((material) => (material.material_name || '')) || [],
     service_option: serviceOptions?.map((option) => ({
       option_name: option.option_name || '',
       option_content: option.option_content || '',
@@ -513,7 +511,6 @@ const ServiceDetailPageMainScreen = ({
     thumbnail_photo: imageUris?.[0],
     detail_photos: imageUris,
   };
-
   // const [index, setIndex] = useState<number>(0);
   // const optionPageRef = useRef<FlatList<any>>(null);
 
