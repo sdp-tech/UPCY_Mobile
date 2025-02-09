@@ -19,7 +19,7 @@ import {
   BottomSheetFlatList,
   BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet';
-import { useNavigation } from '@react-navigation/native';
+import { CommonActions, useNavigation } from '@react-navigation/native';
 import Request from '../common/requests';
 import { getNickname } from '../common/storage';
 
@@ -171,7 +171,17 @@ const ReportConfirmButton = ({
         Alert.alert('서버에 오류가 발생하였습니다.');
         console.log(response);
       } else if (response && response.status === 200) {
-        // TODO: 이후 추가하기 
+        Alert.alert('신고가 완료되었습니다.')
+        navigation.dispatch(
+          CommonActions.navigate({
+            name: "Main",
+            params: {
+              screen: "UPCY", // MainTabNavigator의 홈 화면으로 이동
+            },
+          })
+        );
+      } else {
+        console.log(response);
       }
     } catch (error) {
       console.error(error);
