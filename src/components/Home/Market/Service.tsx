@@ -31,7 +31,7 @@ export type ServiceDetailOption = {
   option_name: string;
   option_price: number;
   option_uuid: string;
-  service_option_image: ServiceOptionImage[]; // 옵션 사진
+  service_option_images: ServiceOptionImage[]; // 옵션 사진
 };
 
 export type MaterialDetail = {
@@ -235,7 +235,7 @@ const EntireServiceMarket = ({
           option_name: option.option_name,
           option_price: option.option_price,
           option_uuid: option.option_uuid,
-          service_option_image: option.service_option_image || '',
+          service_option_images: option.service_option_images || '',
         })) as ServiceDetailOption[])
         : [],
       temporary: service.temporary,

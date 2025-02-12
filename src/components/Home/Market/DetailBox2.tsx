@@ -166,11 +166,11 @@ const OptionBox = ({ list, }: { list: ServiceDetailOption[], }) => {
                     {option.option_content}
                   </Text>
                 </View>
-                {(Array.isArray(option.service_option_image) && option.service_option_image.length > 0) &&
+                {(Array.isArray(option.service_option_images) && option.service_option_images.length > 0) &&
                   <Image
                     style={{ width: 50, height: 100, flexGrow: 0.4 }}
                     source={{
-                      uri: option.service_option_image[0].image
+                      uri: option.service_option_images[0].image
                     }}
                   />
                 }
@@ -178,7 +178,6 @@ const OptionBox = ({ list, }: { list: ServiceDetailOption[], }) => {
             </View>
           );
         })}
-        <Button title='test' onPress={() => { console.log('service_option_image:', list); }} />
       </View>
     </View>
   );
