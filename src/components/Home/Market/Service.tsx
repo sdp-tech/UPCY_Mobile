@@ -509,7 +509,7 @@ export const ServiceCard = ({
         }}
         baseStyle={{
           maxWidth: 370,
-          maxHeight: 150,
+          maxHeight: 40,
           color: suspended ? '#A0A0A0' : '#222222',
         }}
       />
