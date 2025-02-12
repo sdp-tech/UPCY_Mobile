@@ -27,7 +27,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import Hashtag from '../../../common/Hashtag';
 import Slider from '@react-native-community/slider';
-import PhotoOptions, { PhotoResultProps } from '../../../common/PhotoOptions';
+import PhotoOptions from '../../../common/PhotoOptions';
 import Carousel from '../../../common/Carousel';
 import FilterElement from './FilterElement';
 import { useBottomBar } from '../../../../contexts/BottomBarContext';
@@ -125,54 +125,54 @@ interface Material {
   material_name: string;
 }
 
-interface ServiceRegiProps extends StackScreenProps<MyPageStackParams, 'ServiceRegistrationPage'> {
-  fix: boolean;
-}
-
 const ServiceRegistrationPage = ({
   navigation,
-  route,
-}: ServiceRegiProps) => {
+  route
+}: StackScreenProps<MyPageStackParams, 'ServiceRegistrationPage'>) => {
   const { hideBottomBar, showBottomBar } = useBottomBar();
   const serviceData = route.params?.serviceData || {}; // 전달된 데이터 수신
   const service_uuid = serviceData.service_uuid ? serviceData.service_uuid : '';
   const fix = route.params?.fix ?? false;
   // 전달된 데이터로 초기 상태 설정
-  useFocusEffect(
-    useCallback(() => {
-      if (!serviceData || Object.keys(serviceData).length === 0) return;
 
-      setName(prev => (prev !== serviceData.service_title ? serviceData.service_title || '' : prev));
-      setInputText(prev => (prev !== serviceData.service_content ? serviceData.service_content || '' : prev));
-      setForm(prev => (prev.category !== serviceData.service_category ? { category: serviceData.service_category || '' } : prev));
-      setMakingTime(prev => (prev !== serviceData.service_period ? serviceData.service_period || 0 : prev));
-      setPrice(prev => (prev !== serviceData.basic_price?.toString() ? serviceData.basic_price?.toString() || '' : prev));
-      setMaxPrice(prev => (prev !== serviceData.max_price?.toString() ? serviceData.max_price?.toString() || '' : prev));
-      setStyles(serviceData.service_style || []);
-      setMaterials(serviceData.service_material || []);
-      setPhotos(prev => (JSON.stringify(prev) !== JSON.stringify(serviceData.thumbnail_photo ? [{ uri: serviceData.thumbnail_photo.image }] : [])
-        ? serviceData.thumbnail_photo.image ? [{ uri: serviceData.thumbnail_photo.image }] : []
-        : prev));
-      setDetailPhoto(prev => (JSON.stringify(prev) !== JSON.stringify(serviceData.detail_photos?.slice(1).map(photo => ({ uri: photo.image })) || [])
-        ? serviceData.detail_photos?.slice(1).map(photo => ({ uri: photo.image })) || []
-        : prev));
-      setOptionList(prev => (JSON.stringify(prev) !== JSON.stringify(serviceData.service_option?.map(option => ({
-          option: option.option_name || '',
-          optionExplain: option.option_content || '',
-          addPrice: option.option_price ? option.option_price.toString() : '',
-          optionPhotos: option.service_option_image?.image || [],
-          photoAdded: !!option.service_option_image?.length,
-          isFixing: false,
-        })) || []) ? serviceData.service_option?.map(option => ({
-          option: option.option_name || '',
-          optionExplain: option.option_content || '',
-          addPrice: option.option_price ? option.option_price.toString() : '',
-          optionPhotos: option.service_option_image?.image || [],
-          photoAdded: !!option.service_option_image?.length,
-          isFixing: false,
-        })) || [] : prev));
-    }, [serviceData])
-  );
+  useEffect(() => {
+    if (!serviceData || Object.keys(serviceData).length === 0) return;
+    console.log(fix);
+    setName(prev => (prev !== serviceData.service_title ? serviceData.service_title || '' : prev));
+    setInputText(prev => (prev !== serviceData.service_content ? serviceData.service_content || '' : prev));
+    setForm(prev => (prev.category !== serviceData.service_category ? { category: serviceData.service_category || '' } : prev));
+    setMakingTime(prev => (prev !== serviceData.service_period ? serviceData.service_period || 0 : prev));
+    setPrice(prev => (prev !== serviceData.basic_price?.toString() ? serviceData.basic_price?.toString() || '' : prev));
+    setMaxPrice(prev => (prev !== serviceData.max_price?.toString() ? serviceData.max_price?.toString() || '' : prev));
+    setStyles(serviceData.service_style || []);
+    setMaterials(serviceData.service_material || []);
+    setPhotos((prev: any) => {
+      const newPhoto = serviceData.thumbnail_photo?.image
+        ? [{ uri: serviceData.thumbnail_photo.image }]
+        : [];
+      return JSON.stringify(prev) !== JSON.stringify(newPhoto) ? newPhoto : prev;
+    });
+    setDetailPhoto(prev => (JSON.stringify(prev) !== JSON.stringify(serviceData.detail_photos?.slice(1).map((photo: any) => ({ uri: photo.image })) || [])
+      ? serviceData.detail_photos?.slice(1).map((photo: any) => ({ uri: photo.image })) || []
+      : prev));
+    setOptionList(prev => (JSON.stringify(prev) !== JSON.stringify(serviceData.service_option?.map((option: any) => ({
+      option: option.option_name || '',
+      optionExplain: option.option_content || '',
+      addPrice: option.option_price ? option.option_price.toString() : '',
+      optionPhotos: option.service_option_image?.image || [],
+      photoAdded: !!option.service_option_image?.length,
+      isFixing: false,
+    })) || []) ? serviceData.service_option?.map((option: any) => ({
+      option: option.option_name || '',
+      optionExplain: option.option_content || '',
+      addPrice: option.option_price ? option.option_price.toString() : '',
+      optionPhotos: option.service_option_image?.image || [],
+      photoAdded: !!option.service_option_image?.length,
+      isFixing: false,
+    })) || [] : prev));
+    console.log(serviceData);
+  }, [serviceData])
+
 
   useEffect(() => {
     hideBottomBar();
@@ -251,7 +251,6 @@ const ServiceRegistrationPage = ({
     option_name: option.option || '', // 옵션 이름
     option_content: option.optionExplain || '', // 옵션 설명
     option_price: parseInt(option.addPrice || '0', 10), // 옵션 가격 (문자열을 숫자로 변환)
-
   }));
 
   const formattedStyles: Style[] = (styles || []).map((style) => ({
@@ -262,7 +261,7 @@ const ServiceRegistrationPage = ({
     material_name: material || '',
   }));
 
-  const handleMaterialAndStyleSubmit = async (service_uuid: string) => {
+  const handleMaterialAndStyleSubmit = async (service_uuid: string, fix?: boolean) => {
     const accessToken = await getAccessToken();
     const market_uuid = await getMarketUUID();
 
@@ -274,69 +273,73 @@ const ServiceRegistrationPage = ({
     const materials = formattedMaterials || [];
     const styles = formattedStyles || [];
     const options = formattedOptions || [];
-
-    // Material 등록
-    for (const material of materials) {
-      const materialParams = { material_name: material.material_name };
-      try {
-        const response = await request.post(
-          `/api/market/${market_uuid}/service/${service_uuid}/material`,
-          materialParams,
-          headers
-        );
-        if (response?.status === 201) {
-          console.log(`Material ${material.material_name} 등록 완료`);
-        } else {
-          console.log('재료 등록 실패');
-          console.log(response);
+    if (!fix) {
+      // Material 등록
+      for (const material of materials) {
+        const materialParams = { material_name: material.material_name };
+        try {
+          const response = await request.post(
+            `/api/market/${market_uuid}/service/${service_uuid}/material`,
+            materialParams,
+            headers
+          );
+          if (response?.status === 201) {
+            console.log(`Material ${material.material_name} 등록 완료`);
+          } else {
+            console.log('재료 등록 실패');
+            console.log(response);
+          }
+        } catch (err) {
+          console.error(`Material ${material.material_name} 등록 실패:`, err);
         }
-      } catch (err) {
-        console.error(`Material ${material.material_name} 등록 실패:`, err);
       }
-    }
 
-    // Style 등록
-    for (const style of styles) {
-      const styleParams = { style_name: style.style_name };
-      try {
-        const response = await request.post(
-          `/api/market/${market_uuid}/service/${service_uuid}/style`,
-          styleParams,
-          headers
-        );
-        if (response?.status === 201) {
-          console.log(`Style ${style.style_name} 등록 완료`);
-        } else {
-          console.log('스타일 등록 실패');
-          console.log(response);
+      // Style 등록
+      for (const style of styles) {
+        const styleParams = { style_name: style.style_name };
+        try {
+          const response = await request.post(
+            `/api/market/${market_uuid}/service/${service_uuid}/style`,
+            styleParams,
+            headers
+          );
+          if (response?.status === 201) {
+            console.log(`Style ${style.style_name} 등록 완료`);
+          } else {
+            console.log('스타일 등록 실패');
+            console.log(response);
+          }
+        } catch (err) {
+          console.error(`Style ${style.style_name} 등록 실패:`, err);
         }
-      } catch (err) {
-        console.error(`Style ${style.style_name} 등록 실패:`, err);
       }
-    }
 
-    // OptionList 등록 
-    for (const option of options) {
-      const optionParams = {
-        option_name: option.option_name,
-        option_content: option.option_content,
-        option_price: option.option_price,
-      };
-      try {
-        const response = await request.post(
-          `/api/market/${market_uuid}/service/${service_uuid}/option`,
-          optionParams,
-          headers
-        );
-        if (response?.status === 201) {
-          console.log(`Option 등록 완료`);
-        } else {
-          console.log('옵션 등록 실패');
-          console.log(response);
+      // OptionList 등록 
+      for (const option of options) {
+        const optionParams = {
+          option_name: option.option_name,
+          option_content: option.option_content,
+          option_price: option.option_price,
+        };
+        try {
+          const response = await request.post(
+            `/api/market/${market_uuid}/service/${service_uuid}/option`,
+            optionParams,
+            headers
+          );
+          if (response?.status === 201) {
+            console.log(`Option 등록 완료`);
+            console.log(`옵션 등록 응답:`, response);
+          } else {
+            console.log('옵션 등록 실패');
+            console.log(response);
+          }
+        } catch (err) {
+          console.error(`Option 등록 실패:`, err);
         }
-      } catch (err) {
-        console.error(`Option 등록 실패:`, err);
       }
+    } else { // fix일때.
+
     }
   };
 
@@ -347,91 +350,162 @@ const ServiceRegistrationPage = ({
       Authorization: `Bearer ${accessToken}`,
       'Content-Type': 'multipart/form-data', // multipart/form-data 설정
     };
-    if (method === 'option') { // 옵션별 이미지 업로드 
-      for (const id of option_uuidList) { // 여러개의 uuid 각각에 진행
-        const formData = new FormData();
-        for (let option of optionList) {
-          const newPhotos = option.optionPhotos.filter(newPhoto => // 새로운 이미지만 필터링
-            !(serviceData?.service_option?.service_option_image?.some(existingPhoto =>
-              existingPhoto.uri === newPhoto.uri
-            ))
-          );
+    if (fix) {
+      if (method === 'option') { // 옵션별 이미지 업로드 
+        for (const id of option_uuidList) { // 여러개의 uuid 각각에 진행
+          const formData = new FormData();
+          for (let option of optionList) {
+            const newPhotos = option.optionPhotos.filter(newPhoto => // 새로운 이미지만 필터링
+              !(serviceData?.service_option?.service_option_image?.some((existingPhoto: any) =>
+                existingPhoto.uri === newPhoto.uri
+              ))
+            );
 
-          console.log(`uploadImage에서 [옵션 ${id}] 중복 검사 후 이미지 업로드 중...`, newPhotos);
-          for (let photo of newPhotos) {
-            if (photo?.uri) {
-              formData.append('option_image', {
-                uri: photo.uri,
-                type: 'image/jpeg',
-                name: photo.fileName || 'option_image.jpg',
-              });
+            console.log(`uploadImage에서 [옵션 ${id}] 중복 검사 후 이미지 업로드 중...`, newPhotos);
+            for (let photo of newPhotos) {
+              if (photo?.uri) {
+                formData.append('option_image', {
+                  uri: photo.uri,
+                  type: 'image/jpeg',
+                  name: photo.fileName || 'option_image.jpg',
+                });
+              }
             }
           }
+
+          if (formData.getParts().length > 0) {
+            try {
+              const response = await request.post(`/api/market/${market_uuid}/service/${service_uuid}/option/${id}/image`, formData, headers_);
+              if (response && response.status === 200) {
+                console.log('옵션', id, '이미지 업로드 성공');
+                console.log('옵션 이미지 업로드 응답:', response);
+              } else {
+                console.log(response);
+                console.log('옵션', id, '이미지 업로드 실패');
+              }
+            } catch (error) {
+              console.error(error);
+            }
+          } else {
+            console.log('옵션', id, '이미지 중복으로 업로드 안함');
+          }
+        }
+      } else if (method === 'thumbnail') { // 서비스 썸네일, 상세 사진들 등록 
+        const formData = new FormData();
+        const newPhotos = photos.filter(newPhoto =>
+          !serviceData?.thumbnail_photo?.image || newPhoto.uri !== serviceData.thumbnail_photo.image
+        );
+
+        console.log('uploadImage에서 썸네일 이미지 중복 검사 후 업로드 중...', newPhotos);
+        if (newPhotos.length > 0) {
+          formData.append('service_image', {
+            uri: newPhotos[0]?.uri,
+            type: 'image/jpeg',
+            name: newPhotos[0]?.fileName || 'service_image.jpg',
+          });
+        }
+
+        const newDetailPhotos = detailPhoto.filter(newPhoto =>
+          !(serviceData?.detail_photos?.some((existingPhoto: any) =>
+            existingPhoto.image === newPhoto.uri
+          ))
+        );
+
+        console.log('uploadImage에서 서비스 상세 이미지 중복 검사 후 업로드 중...', newDetailPhotos);
+        for (let photo of newDetailPhotos) {
+          formData.append('service_image', {
+            uri: photo.uri,
+            type: 'image/jpeg',
+            name: photo.fileName || 'service_image.jpg',
+          });
         }
 
         if (formData.getParts().length > 0) {
           try {
-            const response = await request.post(`/api/market/${market_uuid}/service/${service_uuid}/option/${id}/image`, formData, headers_);
+            const response = await request.post(`/api/market/${market_uuid}/service/${service_uuid}/image`, formData, headers_);
             if (response && response.status === 200) {
-              console.log('옵션', id, '이미지 업로드 성공');
+              console.log('서비스 썸네일 및 상세 이미지 업로드 성공');
+              console.log('썸네일,상세 이미지 업로드 응답:', response);
             } else {
               console.log(response);
-              console.log('옵션', id, '이미지 업로드 실패');
+              console.log('서비스 썸네일 및 상세 이미지 업로드 실패');
             }
           } catch (error) {
             console.error(error);
           }
         } else {
-          console.log('옵션', id, '이미지 중복으로 업로드 안함');
+          console.log('썸네일 및 상세 이미지 중복으로 업로드 안함');
         }
       }
-    } else if (method === 'thumbnail') { // 서비스 썸네일, 상세 사진들 등록 
-      const formData = new FormData();
-      const newPhotos = photos.filter(newPhoto =>
-        !serviceData?.thumbnail_photo?.image || newPhoto.uri !== serviceData.thumbnail_photo.image
-      );
-
-      console.log('uploadImage에서 썸네일 이미지 중복 검사 후 업로드 중...', newPhotos);
-      if (newPhotos.length > 0) {
-        formData.append('service_image', {
-          uri: newPhotos[0]?.uri,
-          type: 'image/jpeg',
-          name: newPhotos[0]?.fileName || 'service_image.jpg',
-        });
-      }
-
-      const newDetailPhotos = detailPhoto.filter(newPhoto =>
-        !(serviceData?.detail_photos?.slice(1).some(existingPhoto =>
-          existingPhoto.image === newPhoto.uri
-        ))
-      );
-
-      console.log('uploadImage에서 서비스 상세 이미지 중복 검사 후 업로드 중...', newDetailPhotos);
-      for (let photo of newDetailPhotos) {
-        formData.append('service_image', {
-          uri: photo.uri,
-          type: 'image/jpeg',
-          name: photo.fileName || 'service_image.jpg',
-        });
-      }
-
-      if (formData.getParts().length > 0) {
-        try {
-          const response = await request.post(`/api/market/${market_uuid}/service/${service_uuid}/image`, formData, headers_);
-          if (response && response.status === 200) {
-            console.log('서비스 썸네일 및 상세 이미지 업로드 성공');
-          } else {
-            console.log(response);
-            console.log('서비스 썸네일 및 상세 이미지 업로드 실패');
+    } else { // 첫 등록일 경우 
+      if (method === 'option') {
+        if (option_uuidList) {
+          for (const id of option_uuidList) { // 여러개의 uuid 각각에 진행
+            const formData = new FormData();
+            for (let option of optionList) {
+              const option_photos = option.optionPhotos;
+              if (option_photos) {
+                for (let photo of option_photos) {
+                  console.log(`uploadImage에서 [옵션 ${id}] 이미지 업로드 중...`, photo);
+                  if (photo?.uri) {
+                    formData.append('option_image', {
+                      uri: photo.uri,
+                      type: 'image/jpeg',
+                      name: photo.fileName || 'option_image.jpg',
+                    });
+                  }
+                }
+              }
+            }
+            if (formData.getParts().length > 0) {
+              try {
+                const response = await request.post(`/api/market/${market_uuid}/service/${service_uuid}/option/${id}/image`, formData, headers_);
+                if (response && response.status === 200) {
+                  console.log('옵션', id, '이미지 업로드 성공');
+                  console.log('옵션 이미지 업로드 응답:', response);
+                } else {
+                  console.log(response);
+                  console.log('옵션', id, '이미지 업로드 실패');
+                }
+              } catch (error) {
+                console.error(error);
+              }
+            }
           }
-        } catch (error) {
-          console.error(error);
         }
-      } else {
-        console.log('썸네일 및 상세 이미지 중복으로 업로드 안함');
+      } else if (method === 'thumbnail') {
+        const formData = new FormData();
+        formData.append('service_image', { // 썸네일 
+          uri: photos?.[0].uri,
+          type: 'image/jpeg',
+          name: photos?.[0].fileName || 'service_image.jpg',
+        });
+        console.log('uploadImage에서 썸네일 이미지 업로드 중...', photos[0]);
+        if (detailPhoto) {
+          for (const d_photo of detailPhoto) {
+            formData.append('service_image', { // 서비스 상세 
+              uri: d_photo.uri,
+              type: 'image/jpeg',
+              name: d_photo.fileName || 'service_image.jpg',
+            });
+            console.log('uploadImage에서 서비스 상세 이미지 업로드 중...', d_photo);
+          }
+        }
+        if (formData.getParts().length > 0) {
+          try {
+            const response = await request.post(`/api/market/${market_uuid}/service/${service_uuid}/image`, formData, headers_);
+            if (response && response.status === 200) {
+              console.log('서비스 썸네일 및 상세 이미지 업로드 성공');
+              console.log('썸네일,상세 이미지 업로드 응답:', response);
+            } else {
+              console.log(response);
+              console.log('서비스 썸네일 및 상세 이미지 업로드 실패');
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        }
       }
-    } else {
-
     }
   }
   // 인자로 true 전달하면 임시저장, false면 일반 등록 
@@ -495,6 +569,7 @@ const ServiceRegistrationPage = ({
               const response2 = await request.get(`/api/market/${market_uuid}/service/${service_uuid}/option`, { headers });
               if (response2?.status === 200) {
                 option_uuidList = response2.data.map((option: any) => option.option_uuid);
+                console.log('옵션 UUID리스트 가져오기 성공');
               }
             } catch (error) {
               console.error("옵션 UUID 가져오기 실패:", error);
@@ -527,7 +602,7 @@ const ServiceRegistrationPage = ({
           console.error("임시 저장 실패:", err);
         }
       }
-      navigation.navigate('TempStorage'); // 차후 수정 필요
+      navigation.navigate('TempStorage'); // TODO:차후 수정 필요
     } else { // 일반 등록일 경우 필수 필드 확인
       if (
         !(form.category == '') &&
@@ -544,7 +619,7 @@ const ServiceRegistrationPage = ({
             const response = await request.put(`/api/market/${market_uuid}/service/${service_uuid}`, params, headers);
 
             if (response?.status === 200) {
-              await handleMaterialAndStyleSubmit(service_uuid);
+              await handleMaterialAndStyleSubmit(service_uuid, fix);
 
               try {
                 const response2 = await request.get(`/api/market/${market_uuid}/service/${service_uuid}/option`, { headers });
@@ -564,7 +639,7 @@ const ServiceRegistrationPage = ({
                 fix ? "서비스 수정이 완료되었습니다." : "서비스 등록이 완료되었습니다.",
                 "",
                 [{ text: "확인", onPress: () => { navigation.navigate('ReformerMyPageScreen'); } }]
-              );장장
+              );
             } else {
               Alert.alert(fix ? '서비스 수정 실패' : '서비스 등록 실패');
               console.log(response);
@@ -578,8 +653,8 @@ const ServiceRegistrationPage = ({
 
             if (response?.status === 201) {
               const service_uuid = response?.data.service_uuid;
-              option_uuidList = response.data.service_options ? response.data.service_options.map((option: any) => option.option_uuid) : [];
-
+              option_uuidList = response.data.service_option ? response.data.service_option.map((option: any) => option.option_uuid) : [];
+              console.log(response);
               console.log('옵션 id 리스트:', option_uuidList);
               await uploadImage(service_uuid, 'option', option_uuidList);
               await uploadImage(service_uuid, 'thumbnail');
@@ -588,7 +663,7 @@ const ServiceRegistrationPage = ({
               Alert.alert(
                 "서비스 등록이 완료되었습니다.",
                 "",
-                [{ text: "확인", onPress: () => { navigation.navigate('ReformerMyPageScreen'); } }]
+                [{ text: "확인", onPress: () => { navigation.goBack(); } }]
               );
             } else {
               Alert.alert('서비스 등록 실패');
@@ -843,14 +918,14 @@ const ServiceRegistrationPage = ({
   const handleGoBack = () => {
     const alertButtons = fix
       ? [
-          { text: "아니오", onPress: () => {} },
-          { text: "네", onPress: navigation.goBack, style: "destructive" }
-        ]
+        { text: "아니오", onPress: () => { } },
+        { text: "네", onPress: navigation.goBack, style: "destructive" as const }
+      ]
       : [
-          { text: "임시저장", onPress: () => handleSubmit(true) },
-          { text: "아니오", onPress: () => {} },
-          { text: "네", onPress: navigation.goBack, style: "destructive" }
-        ];
+        { text: "임시저장", onPress: () => handleSubmit(true) },
+        { text: "아니오", onPress: () => { } },
+        { text: "네", onPress: navigation.goBack, style: "destructive" as const }
+      ];
 
     Alert.alert("정말로 나가시겠습니까?", "", alertButtons, { cancelable: false });
   };
@@ -935,18 +1010,10 @@ const ServiceRegistrationPage = ({
                   style={{ backgroundColor: '#222222' }}
                   max={1}
                   setPhoto={setPhotos}
-                  buttonLabel="   dddddddd "
+                  buttonLabel="등록한 이미지 수정 "
+                  textColor='#ffffff'
                 />
-                <Text
-                  style={{
-                    position: 'absolute',
-                    left: 20,
-                    bottom: 33,
-                    color: '#ffffff',
-                    zIndex: 2,
-                  }}>
-                  등록한 이미지 수정
-                </Text>
+
               </TouchableOpacity>
             </View>
           )}

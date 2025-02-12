@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Dimensions, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, SafeAreaView, ScrollView, View } from 'react-native';
 import { RichEditor, RichToolbar, actions } from 'react-native-pell-rich-editor';
 import { StackScreenProps } from '@react-navigation/stack';
 import DetailScreenHeader from '../components/DetailScreenHeader';
@@ -10,7 +10,7 @@ import { MyPageStackParams } from '../../../pages/MyPage';
 import React from 'react';
 
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 
 const WriteDetailPage = ({ navigation, route }: StackScreenProps<MyPageStackParams, 'WriteDetailPage'>) => {
@@ -46,7 +46,7 @@ const WriteDetailPage = ({ navigation, route }: StackScreenProps<MyPageStackPara
     navigation.navigate('ServiceRegistrationPage', {
       inputText: localInput,
       detailPhoto: updatedDetailPhotos,
-      serviceData: { ...serviceData, detail_photos: updatedDetailPhotos },
+      //serviceData: { ...serviceData, detail_photos: updatedDetailPhotos },
     });
   };
 

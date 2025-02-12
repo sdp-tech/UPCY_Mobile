@@ -18,6 +18,7 @@ import Search from '../../../assets/common/Search.svg';
 import PhotoOptions, { PhotoResultProps } from '../../../common/PhotoOptions';
 import Carousel from '../../../common/Carousel';
 import Request from '../../../common/requests';
+import { MaterialDetail, ServiceDetailOption } from '../Market/Service';
 // 서비스 디테일에서 Footer 누르면 연결되는 주문서 보내기 페이지(1)
 const statusBarHeight = getStatusBarHeight(true);
 
@@ -26,6 +27,11 @@ interface FilterSectionProps {
   items: any[];
   showDuplicate: boolean;
   onMaterialSelect: (selectedItems: string[]) => void;
+}
+
+export type QuotationFormProps = {
+  serviceUuid: string;
+  marketUuid: string;
 }
 
 interface FilterProps {
@@ -200,34 +206,34 @@ const FilterSection = ({ label, items, showDuplicate = true, onMaterialSelect }:
 
 
 const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 'QuotationForm'>) => {
-    const {serviceUuid,marketUuid} = route.params;
+  const { serviceUuid, marketUuid } = route.params;
 
-    const [serviceInfo, setServiceInfo] = useState<{
-      market_name: string;
-      reformer_name: string;
-      reformer_introduce: string;
-      service_image: string;
-      basic_price: number;
-    } | null>(null);
-    const defaultImageUri = 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp';
+  const [serviceInfo, setServiceInfo] = useState<{
+    market_name: string;
+    reformer_name: string;
+    reformer_introduce: string;
+    service_image: string;
+    basic_price: number;
+  } | null>(null);
+  const defaultImageUri = 'https://image.made-in-china.com/2f0j00efRbSJMtHgqG/Denim-Bag-Youth-Fashion-Casual-Small-Mini-Square-Ladies-Shoulder-Bag-Women-Wash-Bags.webp';
 
 
-     const [materials, setMaterials] = useState<MaterialDetail[]>([]);
-     const [options, setOptions] = useState<ServiceDetailOption[]>([]);
-     const [materialsList, setMaterialsList] = useState<{ material_uuid: string; material_name: string }[]>([]);
-     const [selectedMaterials, setSelectedMaterials] = useState<string[]>([]);
-     const [selectedMaterialNames, setSelectedMaterialNames] = useState<string[]>([]); // 선택된 재질 name으로 전달
-     const [extraMaterial, setExtraMaterial] = useState<string>(''); // 기타 재질
-     const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
-    const request =Request();
+  const [materials, setMaterials] = useState<MaterialDetail[]>([]);
+  const [options, setOptions] = useState<ServiceDetailOption[]>([]);
+  const [materialsList, setMaterialsList] = useState<{ material_uuid: string; material_name: string }[]>([]);
+  const [selectedMaterials, setSelectedMaterials] = useState<string[]>([]);
+  const [selectedMaterialNames, setSelectedMaterialNames] = useState<string[]>([]); // 선택된 재질 name으로 전달
+  const [extraMaterial, setExtraMaterial] = useState<string>(''); // 기타 재질
+  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+  const request = Request();
 
-     useEffect(() => {
+  useEffect(() => {
 
     // 서비스별 데이터 가져오기
-        const fetchData = async () => {
-          try {
-            console.log(`Fetching data for serviceUuid: ${serviceUuid}`); //확인용
-    //api 요청 병렬 처리
+    const fetchData = async () => {
+      try {
+        console.log(`Fetching data for serviceUuid: ${serviceUuid}`); //확인용
+        //api 요청 병렬 처리
         const [infoResponse, materialResponse, optionResponse] = await Promise.all([
           request.get(`/api/market/${marketUuid}/service/${serviceUuid}`),
           request.get(`/api/market/${marketUuid}/service/${serviceUuid}/material`),
@@ -235,26 +241,27 @@ const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 
         ]);
 
 
-          //마켓 데이터 가져오기
-          if (infoResponse.status === 200) {
-            console.log('✅ Service Info Response:', infoResponse.data);
+        //마켓 데이터 가져오기
+        if (infoResponse.status === 200) {
+          console.log('✅ Service Info Response:', infoResponse.data);
 
-         // const firstImage = infoResponse.data.service_image?.[0]?.image || defaultImageUri;
+          // const firstImage = infoResponse.data.service_image?.[0]?.image || defaultImageUri;
 
           setServiceInfo({
             service_title: infoResponse.data.service_title,
             reformer_name: infoResponse.data.reformer_info?.user_info?.nickname ?? '이름 없음',
             reformer_introduce: infoResponse.data.reformer_info?.user_info?.introduce ?? '소개글 없음',
             service_image: infoResponse.data.service_image?.[0]?.image || defaultImageUri,
-            basic_price: infoResponse.data.basic_price??0,  });
-          } else {
+            basic_price: infoResponse.data.basic_price ?? 0,
+          });
+        } else {
           console.error('❌ Service API response error:', infoResponse ?? 'No Response');
-          }
+        }
 
 
 
 
-            //Material 데이터 가져오기
+        //Material 데이터 가져오기
 
         if (materialResponse.status === 200 && Array.isArray(materialResponse.data)) {
           setMaterialsList(materialResponse.data);
@@ -262,70 +269,70 @@ const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 
           console.error("❌ Material API response error:", materialResponse.data);
         }
 
-            // Option 데이터 가져오기
+        // Option 데이터 가져오기
 
-            if (optionResponse.status === 200 && Array.isArray(optionResponse.data)) {
-                      setOptions(optionResponse.data);
-           } else {
-            console.error('❌ Option API response error:', optionResponse ?? 'No Response');
-           }
+        if (optionResponse.status === 200 && Array.isArray(optionResponse.data)) {
+          setOptions(optionResponse.data);
+        } else {
+          console.error('❌ Option API response error:', optionResponse ?? 'No Response');
+        }
 
-          } catch (error) {
-            console.error('Error fetching materials or options(api error):', error);
-            Alert.alert('데이터를 가져오는 중 문제가 발생했습니다.(api error)');
-          }
-        };
+      } catch (error) {
+        console.error('Error fetching materials or options(api error):', error);
+        Alert.alert('데이터를 가져오는 중 문제가 발생했습니다.(api error)');
+      }
+    };
 
-        fetchData();
-      }, [serviceUuid, marketUuid]);
+    fetchData();
+  }, [serviceUuid, marketUuid]);
 
-       //option 선택 상태 관리 (선택된 옵션의 인덱스 저장/해제)
-      const handleOptionPress = (uuid: string) => {
-        setSelectedOptions((prev) => {
-          if (prev.includes(uuid)) {
-            return prev.filter((item) => item !== uuid);
-          }
-          return [...prev, uuid];
-        });
-      };
+  //option 선택 상태 관리 (선택된 옵션의 인덱스 저장/해제)
+  const handleOptionPress = (uuid: string) => {
+    setSelectedOptions((prev) => {
+      if (prev.includes(uuid)) {
+        return prev.filter((item) => item !== uuid);
+      }
+      return [...prev, uuid];
+    });
+  };
 
 
   // const materials = ['폴리에스테르', '면', '스웨이드', '울', '캐시미어', '가죽', '데님', '추가 요청사항에 기재'];
   const meet = ['대면', '비대면'];
 
-/*
-  const options = [
-    {
-      option: 'option 0',
-      title: '유료 옵션',
-      description: '옵션입니다.',
-      price: '1,000 원',
-      image: 'https://example.com/image1.jpg'
-
-    },
-    {
-      option: 'option 1',
-      title: '단추',
-      description: '가방 입구에 똑딱이 단추를 추가할 수 있어요.',
-      price: '1,000 원',
-      image: 'https://example.com/image1.jpg'
-    },
-    {
-      option: 'option 2',
-      title: '지퍼',
-      description: '주머니에 귀여운 지퍼를 달아보세요.',
-      price: '1,000 원',
-      image: 'https://example.com/image2.jpg'
-    },
-    {
-      option: 'option 3',
-      title: '주머니',
-      description: '주머니를 달아보세요.',
-      price: '1,000 원',
-      image: 'https://example.com/image2.jpg'
-    },
-  ];
-  */
+  /*
+    const options = [
+      {
+        option: 'option 0',
+        title: '유료 옵션',
+        description: '옵션입니다.',
+        price: '1,000 원',
+        image: 'https://example.com/image1.jpg'
+  
+      },
+      {
+        option: 'option 1',
+        title: '단추',
+        description: '가방 입구에 똑딱이 단추를 추가할 수 있어요.',
+        price: '1,000 원',
+        image: 'https://example.com/image1.jpg'
+      },
+      {
+        option: 'option 2',
+        title: '지퍼',
+        description: '주머니에 귀여운 지퍼를 달아보세요.',
+        price: '1,000 원',
+        image: 'https://example.com/image2.jpg'
+      },
+      {
+        option: 'option 3',
+        title: '주머니',
+        description: '주머니를 달아보세요.',
+        price: '1,000 원',
+        image: 'https://example.com/image2.jpg'
+      },
+    ];
+    */
 
 
   const [showDuplicate] = useState(true);
@@ -338,7 +345,7 @@ const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [selectedMaterial, setSelectedMaterial] = useState<string[]>([]);
- // const [selectedOptions, setSelectedOptions] = useState<number[]>([]); //옵션 상세
+  // const [selectedOptions, setSelectedOptions] = useState<number[]>([]); //옵션 상세
   const [selectedFilter, setSelectedFilter] = useState<string>(''); // 거래 방식
   const [faceToFaceRegion, setFaceToFaceRegion] = useState<string>(''); // 대면 지역
   const [deliveryType, setDeliveryType] = useState<string>('');
@@ -371,32 +378,32 @@ const QuotationForm = ({ navigation, route }: StackScreenProps<HomeStackParams, 
       setSelectedFilter(value);
     }
   };
-/*
-  const handleOptionPress = (index: number) => {
-    toggleSelection(selectedOptions, setSelectedOptions, index);
-  };
-*/
+  /*
+    const handleOptionPress = (index: number) => {
+      toggleSelection(selectedOptions, setSelectedOptions, index);
+    };
+  */
   const handleFilterSelection = (filterType: string) => {
     setSelectedFilter(filterType);
   };
 
-useEffect(() => {
+  useEffect(() => {
 
-      // 선택된 material name 저장
+    // 선택된 material name 저장
     const handleMaterialSelect = (selected: string) => {
-        setSelectedMaterialNames((prev) =>
-          prev.includes(selected) ? prev.filter((item) => item !== selected) : [...prev, selected]
-        );
-      };
+      setSelectedMaterialNames((prev) =>
+        prev.includes(selected) ? prev.filter((item) => item !== selected) : [...prev, selected]
+      );
+    };
 
-  setExtraMaterial(materialInput || '');
-    }, [selectedMaterials, materialInput]);
+    setExtraMaterial(materialInput || '');
+  }, [selectedMaterials, materialInput]);
 
 
-/*
-  setFinalSelectedMaterials([...new Set([...selectedMaterials, materialInput].filter(Boolean))]);
-}, [selectedMaterials, materialInput]);
- */
+  /*
+    setFinalSelectedMaterials([...new Set([...selectedMaterials, materialInput].filter(Boolean))]);
+  }, [selectedMaterials, materialInput]);
+   */
 
   const handleNextPress = () => {
     if (!selectedFilter) {
@@ -405,15 +412,15 @@ useEffect(() => {
     }
 
 
-      const selectedOptionDetails = selectedOptions.map((uuid) =>
-        options.find((option) => option.option_uuid === uuid)
-      );
+    const selectedOptionDetails = selectedOptions.map((uuid) =>
+      options.find((option) => option.option_uuid === uuid)
+    );
 
 
 
 
     navigation.navigate('InputInfo', {
-        serviceUuid,
+      serviceUuid,
       serviceTitle: serviceInfo?.service_title ?? '마켓명 없음',
       //reformerName: serviceInfo?.reformer_name ?? '리폼러 없음',
       //reformerIntroduce: serviceInfo?.reformer_introduce ?? '소개 없음',
@@ -445,13 +452,13 @@ useEffect(() => {
         <View style={{ position: 'absolute', width: '100%', height: '100%', backgroundColor: BLACK, opacity: 0.7 }} />
         <View style={{ paddingTop: 100, paddingLeft: 50 }}>
           <Title20B style={{ color: 'white', marginBottom: 3 }}>
-           {serviceInfo?.service_title ?? '마켓명 없음'}
+            {serviceInfo?.service_title ?? '마켓명 없음'}
           </Title20B>
           <Caption12M style={{ color: 'white', marginBottom: 18 }}>
             {serviceInfo?.reformer_name ?? '리폼러 닉네임 없음'}
-           </Caption12M>
+          </Caption12M>
           <Body16M style={{ color: 'white' }}>
-           {serviceInfo?.reformer_introduce ?? '마켓 소개글 없음'}
+            {serviceInfo?.reformer_introduce ?? '마켓 소개글 없음'}
           </Body16M>
         </View>
       </ImageBackground>
@@ -492,10 +499,10 @@ useEffect(() => {
         label='재질 선택'
         items={materialsList.map(material => material.material_name)}
         showDuplicate={true}
-         onMaterialSelect={(selected) => {
-           setSelectedMaterialNames(selected);
-         }}
-     />
+        onMaterialSelect={(selected) => {
+          setSelectedMaterialNames(selected);
+        }}
+      />
       <Subtitle16M style={{ paddingHorizontal: 15, marginBottom: 5 }}>기타 재질</Subtitle16M>
       <View style={{ paddingHorizontal: 10, flex: 1 }}>
         <InputBox
@@ -510,57 +517,57 @@ useEffect(() => {
       <View style={{ height: 32, backgroundColor: 'white' }} />
       <View style={{ borderBottomWidth: 5, borderColor: '#D9D9D9' }} />
 
-    <View style={styles.optionBox}>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 5 }}>
-        <Subtitle18M style={{ paddingHorizontal: 15 }}>옵션 상세</Subtitle18M>
-        {showDuplicate && <Caption11M style={{ color: PURPLE }}>• 중복 가능</Caption11M>}
-      </View>
+      <View style={styles.optionBox}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 5 }}>
+          <Subtitle18M style={{ paddingHorizontal: 15 }}>옵션 상세</Subtitle18M>
+          {showDuplicate && <Caption11M style={{ color: PURPLE }}>• 중복 가능</Caption11M>}
+        </View>
 
-      {/* options가 존재하고 배열일 경우만 map 실행 */}
-      {Array.isArray(options) && options.length > 0 ? (
-        options.map((option) => (
-          <View key={option.option_uuid} style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <CheckBox
-              value={selectedOptions.includes(option.option_uuid)}
-              onValueChange={() => handleOptionPress(option.option_uuid)}
-              tintColors={{ true: PURPLE, false: '#D9D9D9' }}
-            />
-            <TouchableOpacity
-              key={option.option_uuid}
-              style={[styles.optionCard, selectedOptions.includes(option.option_uuid) && styles.selectedOptionCard]}
-              onPress={() => handleOptionPress(option.option_uuid)}
-            >
-              <Subtitle16M style={selectedOptions.includes(option.option_uuid) ? styles.selectedOptionText : { color: PURPLE }}>
-                {option.option_name}
-              </Subtitle16M>
-
-              <View style={styles.optionHeader}>
-                <Subtitle16M style={selectedOptions.includes(option.option_uuid) ? styles.selectedOptionText : { color: BLACK }}>
+        {/* options가 존재하고 배열일 경우만 map 실행 */}
+        {Array.isArray(options) && options.length > 0 ? (
+          options.map((option) => (
+            <View key={option.option_uuid} style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <CheckBox
+                value={selectedOptions.includes(option.option_uuid)}
+                onValueChange={() => handleOptionPress(option.option_uuid)}
+                tintColors={{ true: PURPLE, false: '#D9D9D9' }}
+              />
+              <TouchableOpacity
+                key={option.option_uuid}
+                style={[styles.optionCard, selectedOptions.includes(option.option_uuid) && styles.selectedOptionCard]}
+                onPress={() => handleOptionPress(option.option_uuid)}
+              >
+                <Subtitle16M style={selectedOptions.includes(option.option_uuid) ? styles.selectedOptionText : { color: PURPLE }}>
                   {option.option_name}
                 </Subtitle16M>
-                <Body16M style={selectedOptions.includes(option.option_uuid) ? styles.selectedOptionText : { color: BLACK, textAlign: 'right' }}>
-                  {option.option_price}
-                </Body16M>
-              </View>
 
-              <View style={styles.optionContent}>
-                <View style={styles.optionDescription}>
-                  <Body14R style={{ color: BLACK }}>{option.option_content}</Body14R>
+                <View style={styles.optionHeader}>
+                  <Subtitle16M style={selectedOptions.includes(option.option_uuid) ? styles.selectedOptionText : { color: BLACK }}>
+                    {option.option_name}
+                  </Subtitle16M>
+                  <Body16M style={selectedOptions.includes(option.option_uuid) ? styles.selectedOptionText : { color: BLACK, textAlign: 'right' }}>
+                    {option.option_price}
+                  </Body16M>
                 </View>
-                <View style={styles.optionImage}>
-                  <Image source={{ uri: option.service_option_image }} style={styles.optionImage} />
+
+                <View style={styles.optionContent}>
+                  <View style={styles.optionDescription}>
+                    <Body14R style={{ color: BLACK }}>{option.option_content}</Body14R>
+                  </View>
+                  <View style={styles.optionImage}>
+                    <Image source={{ uri: option.service_option_image }} style={styles.optionImage} />
+                  </View>
                 </View>
-              </View>
-            </TouchableOpacity>
+              </TouchableOpacity>
+            </View>
+          ))
+        ) : (
+          // options가 없을 때 표시할 메시지
+          <View style={{ alignItems: 'center', marginVertical: 10 }}>
+            <Body16M style={{ color: '#888' }}>옵션이 없습니다.</Body16M>
           </View>
-        ))
-      ) : (
-        // options가 없을 때 표시할 메시지
-        <View style={{ alignItems: 'center', marginVertical: 10 }}>
-          <Body16M style={{ color: '#888' }}>옵션이 없습니다.</Body16M>
-        </View>
-      )}
-    </View>
+        )}
+      </View>
 
 
 

@@ -14,7 +14,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import CustomHeader2 from '../common/CustomHeader2';
 import HomeTabView, { SelectedOptionProps } from '../components/Home/HomeMain';
 import MarketTabView from '../components/Home/Market/MarketTabView';
-import QuotationForm from '../components/Home/Quotation/QuotationForm';
+import QuotationForm, { QuotationFormProps } from '../components/Home/Quotation/QuotationForm';
 import QuotationPage, {
   QuotationProps,
 } from '../components/Home/Quotation/QuotationPage';
@@ -46,7 +46,7 @@ import ReformerMarket from '../components/Home/Market/ReformerMarket';
 export type HomeStackParams = {
   Home: { searchTerm?: string };
   ServiceDetailPage: {
-    // id: string;
+    id: number;
     serviceName: string;
     introduce: string;
     reformerArea: string;
@@ -62,6 +62,7 @@ export type HomeStackParams = {
     serviceMaterials: MaterialDetail[];
     serviceContent: string;
     serviceOptions: ServiceDetailOption[];
+    serviceCategory: string;
     marketUuid: string;
     serviceUuid: string;
     education: any[];
@@ -71,7 +72,7 @@ export type HomeStackParams = {
     freelancer: any[];
   };
   GoodsDetailPage: undefined;
-  QuotationForm: undefined;
+  QuotationForm: QuotationFormProps;
   QuotationPage: QuotationProps;
   SentQuotation: undefined;
   // ServiceRegistrationPage: { inputText?: string; detailphoto?: PhotoType[] };
@@ -93,6 +94,7 @@ export type HomeStackParams = {
     introduce: string;
     reformerArea: string;
     reformerLink: string;
+    id: number;
     marketUuid: string;
     profileImageUri?: string;
     education: any[];
@@ -134,10 +136,6 @@ const HomeScreen = ({
       <HomeStack.Screen
         name="ServiceDetailPage"
         component={ServiceDetailPageMainScreen}
-      />
-      <HomeStack.Screen
-        name="ServiceRegistrationPage"
-        component={ServiceRegistrationPage}
       />
       <HomeStack.Screen name="QuotationForm" component={QuotationForm} />
       <HomeStack.Screen name="QuotationPage" component={QuotationPage} />
@@ -237,9 +235,9 @@ const HomeMainScreen = ({
               <Button onPress={handlePopupButtonPress}>
                 <ButtonText>팝업 표시</ButtonText>
               </Button>
-              <Button onPress={() => navigation.navigate('QuotationForm')}>
+              {/* <Button onPress={() => navigation.navigate('QuotationForm')}>
                 <Text>주문서</Text>
-              </Button>
+              </Button> */}
               <Button onPress={() => navigation.navigate('QuotationPage', {})}>
                 <Text>주문서 확인</Text>
               </Button>

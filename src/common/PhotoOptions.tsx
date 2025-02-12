@@ -36,6 +36,7 @@ interface PhotoProps {
   photo?: undefined | PhotoResultProps;
   setPhoto: (p: PhotoResultProps[]) => void;
   max: number;
+  textColor?: string;
 }
 
 export interface PhotoResultProps {
@@ -51,6 +52,7 @@ const PhotoOptions = ({
   setPhoto,
   max,
   style,
+  textColor
 }: PhotoProps) => {
   const CameraActions: Action[] = [
     //카메라 & 갤러리 세팅
@@ -174,8 +176,8 @@ const PhotoOptions = ({
         }}>
         {buttonLabel && (
           <>
-            <PhotoIcon />
-            <Body14M style={{ marginLeft: 10 }}>{buttonLabel}</Body14M>
+            <PhotoIcon color="white" />
+            <Body14M style={{ marginLeft: 10, color: textColor ?? "#000000" }}>{buttonLabel}</Body14M>
           </>
         )}
         {photo !== undefined && (

@@ -76,7 +76,7 @@ type ServiceDetailPageProps = {
   freelancer: any[];
 };
 
-type ServiceData = {
+export type ServiceData = {
   service_uuid: string;
   service_title: string;
   service_content: string;
@@ -144,6 +144,7 @@ type ProfileSectionProps = {
   freelancer: any[];
   onPressDelete: () => void;
   serviceData: ServiceData;
+  id: number;
 };
 
 const ProfileSection = ({
@@ -167,6 +168,7 @@ const ProfileSection = ({
   freelancer,
   serviceData,
   onPressDelete,
+  id
 }: ProfileSectionProps) => {
   const [like, setLike] = useState<boolean>(false);
   const { hideBottomBar, showBottomBar } = useBottomBar();
@@ -212,6 +214,7 @@ const ProfileSection = ({
         setEditDeleteButtonPressed={setEditDeleteButtonPressed}
       />
       <Banner
+        id={id}
         backgroundImageUri={backgroundImageUri}
         tags={tags}
         reportButtonPressed={reportButtonPressed}
@@ -223,6 +226,7 @@ const ProfileSection = ({
         serviceData={serviceData}
       />
       <Profile
+        id={id}
         backgroundImageUri={backgroundImageUri}
         profilePictureUri={profileImageUri}
         reformerName={reformerName}
@@ -259,6 +263,7 @@ type BannerProps = {
   navigation: any;
   onPressDelete: () => void;
   serviceData: ServiceData;
+  id: number;
 };
 
 const Banner = ({
@@ -271,14 +276,18 @@ const Banner = ({
   navigation,
   onPressDelete,
   serviceData,
+  id
 }: BannerProps) => {
   const onPressReport = () => {
     setReportButtonPressed(false);
-    navigation.navigate('ReportPage', { service_key: serviceData.service_uuid });
+    navigation.navigate('ReportPage', { service_key: id });
   };
   const onPressEdit = () => {
     setEditDeleteButtonPressed(false);
-    navigation.navigate('ServiceRegistrationPage', {serviceData: serviceData, fix: true });
+    navigation.navigate("MY", {
+      screen: "ServiceRegistrationPage",
+      params: { serviceData: serviceData, fix: true },
+    });
   };
 
 
@@ -327,7 +336,7 @@ const Banner = ({
               marginLeft: 0,
             }}
           />
-          <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: 13,}} onPress={onPressDelete}>
+          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 13, }} onPress={onPressDelete}>
             <View style={{ justifyContent: 'center' }}>
               <Trash />
             </View>
@@ -399,6 +408,7 @@ type ProfileProps = {
   awards: any[];
   career: any[];
   freelancer: any[];
+  id: number;
 };
 
 const Profile = ({
@@ -416,6 +426,7 @@ const Profile = ({
   awards,
   career,
   freelancer,
+  id
 }: ProfileProps) => {
   return (
     <View style={{ justifyContent: 'space-between' }}>
@@ -441,6 +452,7 @@ const Profile = ({
             onPress={() =>
               navigation.navigate('MarketTabView', {
                 // 프로필 사진 옆에 있는 이름 눌렀을 때
+                id: id,
                 reformerName: reformerName,
                 introduce: introduce,
                 reformerArea: reformerArea,
@@ -490,13 +502,15 @@ const ServiceDetailPageMainScreen = ({
     awards,
     career,
     freelancer,
+    serviceCategory,
+    id
   } = route.params;
 
   const serviceData: ServiceData = { // 담솔님이 추가하신거
     service_uuid: serviceUuid,
     service_title: serviceName,
     service_content: serviceContent,
-    service_category: tags?.[0] || '',
+    service_category: serviceCategory,
     service_period: servicePeriod,
     basic_price: basicPrice,
     max_price: maxPrice,
@@ -511,24 +525,7 @@ const ServiceDetailPageMainScreen = ({
     thumbnail_photo: imageUris?.[0],
     detail_photos: imageUris,
   };
-  // const [index, setIndex] = useState<number>(0);
-  // const optionPageRef = useRef<FlatList<any>>(null);
 
-  // const flatListRef = useRef<FlatList>(null);
-
-  // const renderHeader = () => (
-  //   <ProfileSection
-  //     navigation={navigation}
-  //     reformerName={reformerName}
-  //     serviceName={serviceName}
-  //     basicPrice={basicPrice}
-  //     maxPrice={maxPrice}
-  //     reviewNum={reviewNum}
-  //     tags={tags}
-  //     backgroundImageUri={backgroundImageUri}
-  //     profileImageUri={profileImageUri}
-  //   />
-  // );
   const [suspended, setSuspended] = useState<boolean>(false);
   const [userRole, setUserRole] = useState<string>('customer');
   const [myMarketUuid, setMyMarketUuid] = useState<string>('');
@@ -694,6 +691,7 @@ const ServiceDetailPageMainScreen = ({
         </Tabs.Tab>
       </Tabs.Container> */}
         <ProfileSection
+          id={id}
           navigation={navigation}
           reformerName={reformerName}
           introduce={introduce}

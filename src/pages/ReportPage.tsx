@@ -158,19 +158,18 @@ const ReportConfirmButton = ({
   }) => {
     try {
       const params = {
-        reported_user_id: service_key?.service_key, // TODO: fix
-        reporter_user_id: userNickname,
+        reported_user_id: service_key?.service_key,
         reason: reason,
         details: details,
       };
       console.log(params);
       const response = await request.post(`/api/market/report`, params);
-      if (!response || response.status === 404) {
-        Alert.alert('오류가 발생하였습니다.');
+      if (!response) {
+        Alert.alert('로그인 이후 이용해주세요.');
       } else if (response.status === 500) {
         Alert.alert('서버에 오류가 발생하였습니다.');
         console.log(response);
-      } else if (response && response.status === 200) {
+      } else if (response && response.status === 201) {
         Alert.alert('신고가 완료되었습니다.')
         navigation.dispatch(
           CommonActions.navigate({

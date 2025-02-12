@@ -39,6 +39,7 @@ export type MaterialDetail = {
 };
 
 interface ServiceCardProps {
+  id: number;
   name: string; // 리폼러 이름
   introduce: string;
   reformer_link: string;
@@ -68,6 +69,7 @@ interface ServiceCardProps {
 export type ServiceResponseType = {
   reformer_info: {
     user_info: {
+      id: number;
       email: string;
       phone: number;
       full_name: string;
@@ -166,15 +168,16 @@ const EntireServiceMarket = ({
                 {},
                 {},
               );
+              //console.log(optionResponse);
               return optionResponse.data.results;
             }),
           );
 
           // 옵션 데이터 병합
           const mergedServiceCardData = extractedServiceCardData.map(
-            (service, index) => ({
+            (service) => ({
               ...service,
-              service_options: optionResponses[index]?.map((option: any) => ({
+              service_options: optionResponses?.map((option: any) => ({
                 option_content: option.option_content,
                 option_name: option.option_name,
                 option_price: option.option_price,
@@ -183,12 +186,13 @@ const EntireServiceMarket = ({
               })),
             }),
           );
-
           setServiceCardData(mergedServiceCardData);
         } catch (error) {
           console.log(error);
         }
         console.log('서비스 목록 로드 완료');
+        console.log(serviceCardData[0]);
+
       } else {
         Alert.alert('오류가 발생했습니다.');
         console.log(response);
@@ -204,6 +208,7 @@ const EntireServiceMarket = ({
   const extractData = (rawData: ServiceResponseType[]) => {
     return rawData.map(service => ({
       //TODO: 밑에 수정
+      id: service.reformer_info.user_info.id,
       name: service.reformer_info.user_info.nickname,
       introduce: service.reformer_info.user_info.introduce,
       reformer_link: service.reformer_info.reformer_link,
@@ -217,6 +222,7 @@ const EntireServiceMarket = ({
       imageUris: service.service_image, // 썸네일, 상세 사진들
       service_title: service.service_title,
       service_content: service.service_content,
+      service_category: service.service_category,
       market_uuid: service.market_uuid || '',
       service_uuid: service.service_uuid,
       service_period: service.service_period,
@@ -355,6 +361,7 @@ const EntireServiceMarket = ({
               !card.temporary && (
                 <ServiceCard
                   key={card.service_uuid}
+                  id={card.id}
                   name={card.name}
                   introduce={card.introduce}
                   reformer_area={card.reformer_area}
@@ -420,6 +427,7 @@ export const ServiceCard = ({
   awards,
   career,
   freelancer,
+  id
 }: ServiceCardComponentProps) => {
   //TODO: get review num using API
   const REVIEW_NUM = 5;
@@ -430,6 +438,7 @@ export const ServiceCard = ({
       style={styles.cardContainer}
       onPress={() => {
         navigation.navigate('ServiceDetailPage', {
+          id: id,
           reformerName: name,
           introduce: introduce,
           reformerArea: reformer_area,
@@ -455,7 +464,7 @@ export const ServiceCard = ({
         });
       }}>
       <View style={styles.topContainer}>
-        <ImageBackground
+        <ImageBackground // 썸네일 이미지 
           style={{ width: '100%', height: 180, position: 'relative' }}
           imageStyle={{ height: 180 }}
           source={{
@@ -500,6 +509,7 @@ export const ServiceCard = ({
         }}
         baseStyle={{
           maxWidth: 370,
+          maxHeight: 150,
           color: suspended ? '#A0A0A0' : '#222222',
         }}
       />
@@ -602,7 +612,7 @@ const TextStyles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '400',
     lineHeight: 24,
-    borderRadius: 8,
+    borderRadius: 18,
   },
   noServiceText: {
     fontSize: 16,
