@@ -171,7 +171,7 @@ const ProfileSection = ({
   id
 }: ProfileSectionProps) => {
   const [like, setLike] = useState<boolean>(false);
-  const { hideBottomBar, showBottomBar } = useBottomBar();
+  //const { hideBottomBar, showBottomBar } = useBottomBar();
 
   const [reportButtonPressed, setReportButtonPressed] = useState(false);
   const [editDeleteButtonPressed, setEditDeleteButtonPressed] = useState(false);
@@ -190,8 +190,8 @@ const ProfileSection = ({
     };
     getUserRoleInfo();
     getMyMarketUuidInfo();
-    hideBottomBar();
-    return () => showBottomBar();
+    // hideBottomBar();
+    // return () => showBottomBar();
   }, []);
 
   return (
@@ -669,7 +669,7 @@ const ServiceDetailPageMainScreen = ({
 
   return (
     <View style={{ flex: 1, position: 'relative' }}>
-      <ScrollView contentContainerStyle={{ paddingBottom: 100 }} bounces={false} overScrollMode="never">
+      <ScrollView bounces={false} overScrollMode="never">
         {/* <Tabs.Container
         renderHeader={renderHeader}
         allowHeaderOverscroll={false}

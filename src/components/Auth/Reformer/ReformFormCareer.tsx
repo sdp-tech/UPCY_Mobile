@@ -1072,7 +1072,7 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
             !fix ?
               handleSubmit
               : handleFix}
-          style={{ width: '90%', alignSelf: 'center', marginBottom: 10 }}
+          style={{ width: '100%', alignSelf: 'center', marginBottom: 10 }}
         />
       </View>
       {careerIndex >= 0 && (
