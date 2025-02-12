@@ -151,11 +151,12 @@ const ServicePage: React.FC<ServicePageProps> = ({
                 option_name: option.option_name || '',
                 option_price: option.option_price || '',
                 option_uuid: option.option_uuid || '',
-                service_option_image: option.service_option_image || [],
+                service_option_images: option.service_option_images || [],
               }))
               : []}
             suspended={item.suspended}
-            navigation={navigation} />
+            navigation={navigation}
+            mypage />
         ))}
         <View style={{ paddingBottom: 100 }} />
       </View>

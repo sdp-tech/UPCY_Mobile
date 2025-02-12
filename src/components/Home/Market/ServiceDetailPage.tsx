@@ -90,7 +90,7 @@ export type ServiceData = {
     option_name: string;
     option_content: string;
     option_price: number;
-    service_option_image: ServiceOptionImage[];
+    service_option_images: ServiceOptionImage[];
   }[];
   thumbnail_photo: string;
   detail_photos: string[];
@@ -520,7 +520,7 @@ const ServiceDetailPageMainScreen = ({
       option_name: option.option_name || '',
       option_content: option.option_content || '',
       option_price: option.option_price || 0,
-      service_option_image: option.service_option_image || [],
+      service_option_images: option.service_option_images || [],
     })) || [],
     thumbnail_photo: imageUris?.[0],
     detail_photos: imageUris,

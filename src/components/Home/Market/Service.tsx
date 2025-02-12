@@ -65,6 +65,7 @@ interface ServiceCardProps {
   awards?: any[];
   career?: any[];
   freelancer?: any[];
+  mypage?: boolean;
 }
 
 export type ServiceResponseType = {
@@ -152,7 +153,7 @@ const EntireServiceMarket = ({
   const fetchData = async () => {
     try {
       // API 호출: 전체 서비스
-      const response = await request.get(`/api/market/services`, {}, {});
+      const response = await request.get(`/api/market/services?suspended=false`, {}, {}); // 중단된 서비스는 안 보임 
       if (response.status === 404) {
         Alert.alert('아직 등록된 서비스가 없거나, 오류가 발생하였습니다.');
       } else if (response && response.status === 200) {
@@ -169,7 +170,7 @@ const EntireServiceMarket = ({
                 {},
                 {},
               );
-              console.log('optionResponse:', optionResponse);
+              //console.log('optionResponse:', optionResponse);
               return optionResponse.data.results;
             }),
           );
@@ -183,7 +184,7 @@ const EntireServiceMarket = ({
                 option_name: option.option_name,
                 option_price: option.option_price,
                 option_uuid: option.option_uuid,
-                service_option_image: option.service_option_image || [],
+                service_option_images: option.service_option_images || [],
               })),
             }),
           );
@@ -444,7 +445,8 @@ export const ServiceCard = ({
   awards,
   career,
   freelancer,
-  id
+  id,
+  mypage
 }: ServiceCardComponentProps) => {
   //TODO: get review num using API
   const REVIEW_NUM = 5;
@@ -454,31 +456,60 @@ export const ServiceCard = ({
       key={service_uuid}
       style={styles.cardContainer}
       onPress={() => {
-        navigation.navigate('ServiceDetailPage', {
-          id: id,
-          reformerName: name,
-          introduce: introduce,
-          reformerArea: reformer_area,
-          reformerLink: reformer_link,
-          serviceName: service_title,
-          basicPrice: basic_price,
-          maxPrice: max_price,
-          reviewNum: REVIEW_NUM,
-          tags: service_styles,
-          imageUris: imageUris,
-          profileImageUri: profileImageUri,
-          servicePeriod: service_period,
-          serviceMaterials: service_materials,
-          serviceContent: service_content,
-          serviceOptions: service_options,
-          marketUuid: market_uuid,
-          serviceUuid: service_uuid,
-          education: education,
-          certification: certification,
-          awards: awards,
-          career: career,
-          freelancer: freelancer,
-        });
+        !mypage ? // 일반적인 경우 
+          navigation.navigate('ServiceDetailPage', {
+            id: id,
+            reformerName: name,
+            introduce: introduce,
+            reformerArea: reformer_area,
+            reformerLink: reformer_link,
+            serviceName: service_title,
+            basicPrice: basic_price,
+            maxPrice: max_price,
+            reviewNum: REVIEW_NUM,
+            tags: service_styles,
+            imageUris: imageUris,
+            profileImageUri: profileImageUri,
+            servicePeriod: service_period,
+            serviceMaterials: service_materials,
+            serviceContent: service_content,
+            serviceOptions: service_options,
+            marketUuid: market_uuid,
+            serviceUuid: service_uuid,
+            education: education,
+            certification: certification,
+            awards: awards,
+            career: career,
+            freelancer: freelancer,
+          }) : // 마이페이지에서 보이는 경우 
+          navigation.navigate('UPCY', {
+            screen: 'ServiceDetailPage',
+            params: {
+              id: id,
+              reformerName: name,
+              introduce: introduce,
+              reformerArea: reformer_area,
+              reformerLink: reformer_link,
+              serviceName: service_title,
+              basicPrice: basic_price,
+              maxPrice: max_price,
+              reviewNum: REVIEW_NUM,
+              tags: service_styles,
+              imageUris: imageUris,
+              profileImageUri: profileImageUri,
+              servicePeriod: service_period,
+              serviceMaterials: service_materials,
+              serviceContent: service_content,
+              serviceOptions: service_options,
+              marketUuid: market_uuid,
+              serviceUuid: service_uuid,
+              education: education,
+              certification: certification,
+              awards: awards,
+              career: career,
+              freelancer: freelancer,
+            }
+          })
       }}>
       <View style={styles.topContainer}>
         <ImageBackground // 썸네일 이미지 
@@ -497,9 +528,12 @@ export const ServiceCard = ({
           <View style={styles.service_style}>
             {service_styles?.map((service_style, index) => {
               return (
-                <Text style={TextStyles.serviceCardTag} key={index}>
-                  {service_style}
-                </Text>
+                <View style={styles.tag} key={index}>
+                  <Text style={TextStyles.serviceCardTag} key={index}>
+                    {service_style}
+                  </Text>
+                </View>
+
               );
             })}
           </View>
@@ -581,6 +615,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  tag: {
+    backgroundColor: 'rgba(97, 47, 239, 0.80)',
+    borderRadius: 8,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    display: 'flex',
+  },
 });
 
 const TextStyles = StyleSheet.create({
@@ -617,7 +659,7 @@ const TextStyles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '400',
     lineHeight: 24,
-    borderRadius: 18,
+    borderRadius: 8,
   },
   noServiceText: {
     fontSize: 16,

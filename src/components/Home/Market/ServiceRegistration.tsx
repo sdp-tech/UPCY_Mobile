@@ -137,7 +137,6 @@ const ServiceRegistrationPage = ({
 
   useEffect(() => {
     if (!serviceData || Object.keys(serviceData).length === 0) return;
-    console.log(fix);
     setName(prev => (prev !== serviceData.service_title ? serviceData.service_title || '' : prev));
     setInputText(prev => (prev !== serviceData.service_content ? serviceData.service_content || '' : prev));
     setForm(prev => (prev.category !== serviceData.service_category ? { category: serviceData.service_category || '' } : prev));
@@ -159,18 +158,17 @@ const ServiceRegistrationPage = ({
       option: option.option_name || '',
       optionExplain: option.option_content || '',
       addPrice: option.option_price ? option.option_price.toString() : '',
-      optionPhotos: option.service_option_image?.image || [],
-      photoAdded: !!option.service_option_image?.length,
+      optionPhotos: option.service_option_images?.image || [],
+      photoAdded: !!option.service_option_images?.length,
       isFixing: false,
     })) || []) ? serviceData.service_option?.map((option: any) => ({
       option: option.option_name || '',
       optionExplain: option.option_content || '',
       addPrice: option.option_price ? option.option_price.toString() : '',
-      optionPhotos: option.service_option_image?.image || [],
-      photoAdded: !!option.service_option_image?.length,
+      optionPhotos: option.service_option_images?.image || [],
+      photoAdded: !!option.service_option_images?.length,
       isFixing: false,
     })) || [] : prev));
-    console.log(serviceData);
   }, [serviceData])
 
 
@@ -356,7 +354,7 @@ const ServiceRegistrationPage = ({
           const formData = new FormData();
           for (let option of optionList) {
             const newPhotos = option.optionPhotos.filter(newPhoto => // 새로운 이미지만 필터링
-              !(serviceData?.service_option?.service_option_image?.some((existingPhoto: any) =>
+              !(serviceData?.service_option?.service_option_images?.some((existingPhoto: any) =>
                 existingPhoto.uri === newPhoto.uri
               ))
             );
