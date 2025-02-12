@@ -18,6 +18,7 @@ import DetailModal from '../Market/GoodsDetailOptionsModal';
 import { SelectedOptionProps } from '../HomeMain.tsx';
 import Request from '../../../common/requests.js';
 import RenderHTML from 'react-native-render-html';
+import React from 'react';
 //import { numberToPrice } from './functions.ts';
 
 // 홈화면에 있는, 서비스 전체 리스트!
@@ -168,7 +169,7 @@ const EntireServiceMarket = ({
                 {},
                 {},
               );
-              //console.log(optionResponse);
+              console.log('optionResponse:', optionResponse);
               return optionResponse.data.results;
             }),
           );
@@ -191,8 +192,6 @@ const EntireServiceMarket = ({
           console.log(error);
         }
         console.log('서비스 목록 로드 완료');
-        console.log(serviceCardData[0]);
-
       } else {
         Alert.alert('오류가 발생했습니다.');
         console.log(response);
@@ -402,6 +401,24 @@ const EntireServiceMarket = ({
   );
 };
 
+const WebDisplay = React.memo(function WebDisplay({ service_content, suspended }: { service_content: string, suspended: boolean | undefined }) {
+  return (
+    <RenderHTML
+      contentWidth={350}
+      source={{ html: service_content }}
+      tagsStyles={{
+        img: { maxWidth: '100%' },
+        p: { color: suspended ? '#A0A0A0' : '#222222', overflow: 'hidden' },
+      }}
+      baseStyle={{
+        maxWidth: 370,
+        maxHeight: 40,
+        color: suspended ? '#A0A0A0' : '#222222',
+      }}
+    />
+  );
+});
+
 export const ServiceCard = ({
   name,
   introduce,
@@ -500,19 +517,7 @@ export const ServiceCard = ({
         </Subtitle18B>
         {/* <HeartButton like={like} onPress={() => setLike(!like)} /> */}
       </View>
-      <RenderHTML
-        contentWidth={350}
-        source={{ html: service_content }}
-        tagsStyles={{
-          img: { maxWidth: '100%' },
-          p: { color: suspended ? '#A0A0A0' : '#222222', overflow: 'hidden' },
-        }}
-        baseStyle={{
-          maxWidth: 370,
-          maxHeight: 40,
-          color: suspended ? '#A0A0A0' : '#222222',
-        }}
-      />
+      <WebDisplay service_content={service_content} suspended={suspended} />
     </TouchableOpacity>
   );
 };

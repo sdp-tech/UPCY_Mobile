@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Image, Button, Dimensions } from 'react-native'
 import RenderHTML from 'react-native-render-html';
 import { defaultImageUri, MaterialDetail, ServiceDetailOption, } from './Service';
 import { useState } from 'react';
+import React from 'react';
 
 const { width, } = Dimensions.get("window");
 
@@ -37,6 +38,22 @@ const PeriodBox = ({ period }: { period: number }) => {
   );
 };
 
+const WebDisplay = React.memo(function WebDisplay({ content }: { content: string }) {
+  return (
+    <RenderHTML
+      contentWidth={350}
+      source={{ html: content || "<p>No content available</p>" }}
+      tagsStyles={{
+        img: { maxWidth: '100%' },
+        p: { overflow: 'hidden' },
+      }}
+      baseStyle={{
+        maxWidth: 370,
+      }}
+    />
+  );
+});
+
 const ContentBox = ({ content, imageUris }: { content: string; imageUris: { image: string }[] }) => {
   const [imageHeights, setImageHeights] = useState<number[]>([]);
 
@@ -56,17 +73,7 @@ const ContentBox = ({ content, imageUris }: { content: string; imageUris: { imag
       <View style={styles.contentLine}>
         <Text style={styles.eachLabel}>서비스 상세</Text>
         <View style={{ paddingHorizontal: 16, paddingBottom: 8 }}>
-          <RenderHTML
-            contentWidth={350}
-            source={{ html: content }}
-            tagsStyles={{
-              img: { maxWidth: '100%' },
-              p: { overflow: 'hidden' },
-            }}
-            baseStyle={{
-              maxWidth: 370,
-            }}
-          />
+          <WebDisplay content={content} />
         </View>
 
         {/* 이미지 렌더링 */}

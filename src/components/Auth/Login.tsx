@@ -275,12 +275,9 @@ export default function Login({ navigation, route }: LoginProps) {
             <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
               <Caption11M style={{ color: '#ffffff' }}>회원가입</Caption11M>
             </TouchableOpacity>
-            <Button title='test' onPress={() => { removeAccessToken }} />
-            {/* <Caption11M style={{ color: '#ffffff' }}> | </Caption11M>
-            <Caption11M style={{ color: '#ffffff' }}>비밀번호 찾기</Caption11M> */}
           </View>
         </View>
-        {/* <View // 아래에 소셜로그인 구현 필요 
+        {/* <View // TODO:아래에 소셜로그인 구현 필요 
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',

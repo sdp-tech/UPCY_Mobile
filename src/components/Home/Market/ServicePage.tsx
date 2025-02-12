@@ -115,6 +115,7 @@ const ServicePage: React.FC<ServicePageProps> = ({
         {error && <Text style={styles.errorText}>{error}</Text>}
         {items.map((item, index) => (
           <ServiceCard
+            id={item.reformer_info.user_info.id}
             key={index}
             profileImageUri={item.reformer_info.user_info.profile_image_url || defaultImageUri}
             introduce={item.reformer_info.user_info.introduce || ''}
