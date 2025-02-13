@@ -56,7 +56,6 @@ const SearchPage = ({
     '캐주얼',
     '떡볶이코트',
     '리본 옵션',
-    'test', // TODO: remove
   ];
 
   const [searchTerm, setSearchTerm] = useState<string>('');

@@ -18,6 +18,7 @@ import DetailModal from '../Market/GoodsDetailOptionsModal';
 import { SelectedOptionProps } from '../HomeMain.tsx';
 import Request from '../../../common/requests.js';
 import RenderHTML from 'react-native-render-html';
+import React from 'react';
 //import { numberToPrice } from './functions.ts';
 
 // 홈화면에 있는, 서비스 전체 리스트!
@@ -30,7 +31,7 @@ export type ServiceDetailOption = {
   option_name: string;
   option_price: number;
   option_uuid: string;
-  service_option_image: ServiceOptionImage[]; // 옵션 사진
+  service_option_images: ServiceOptionImage[]; // 옵션 사진
 };
 
 export type MaterialDetail = {
@@ -39,6 +40,7 @@ export type MaterialDetail = {
 };
 
 interface ServiceCardProps {
+  id: number;
   name: string; // 리폼러 이름
   introduce: string;
   reformer_link: string;
@@ -63,11 +65,13 @@ interface ServiceCardProps {
   awards?: any[];
   career?: any[];
   freelancer?: any[];
+  mypage?: boolean;
 }
 
 export type ServiceResponseType = {
   reformer_info: {
     user_info: {
+      id: number;
       email: string;
       phone: number;
       full_name: string;
@@ -149,7 +153,7 @@ const EntireServiceMarket = ({
   const fetchData = async () => {
     try {
       // API 호출: 전체 서비스
-      const response = await request.get(`/api/market/services`, {}, {});
+      const response = await request.get(`/api/market/services?suspended=false`, {}, {}); // 중단된 서비스는 안 보임 
       if (response.status === 404) {
         Alert.alert('아직 등록된 서비스가 없거나, 오류가 발생하였습니다.');
       } else if (response && response.status === 200) {
@@ -166,24 +170,24 @@ const EntireServiceMarket = ({
                 {},
                 {},
               );
+              //console.log('optionResponse:', optionResponse);
               return optionResponse.data.results;
             }),
           );
 
           // 옵션 데이터 병합
           const mergedServiceCardData = extractedServiceCardData.map(
-            (service, index) => ({
+            (service) => ({
               ...service,
-              service_options: optionResponses[index]?.map((option: any) => ({
+              service_options: optionResponses?.map((option: any) => ({
                 option_content: option.option_content,
                 option_name: option.option_name,
                 option_price: option.option_price,
                 option_uuid: option.option_uuid,
-                service_option_image: option.service_option_image || [],
+                service_option_images: option.service_option_images || [],
               })),
             }),
           );
-
           setServiceCardData(mergedServiceCardData);
         } catch (error) {
           console.log(error);
@@ -204,6 +208,7 @@ const EntireServiceMarket = ({
   const extractData = (rawData: ServiceResponseType[]) => {
     return rawData.map(service => ({
       //TODO: 밑에 수정
+      id: service.reformer_info.user_info.id,
       name: service.reformer_info.user_info.nickname,
       introduce: service.reformer_info.user_info.introduce,
       reformer_link: service.reformer_info.reformer_link,
@@ -217,6 +222,7 @@ const EntireServiceMarket = ({
       imageUris: service.service_image, // 썸네일, 상세 사진들
       service_title: service.service_title,
       service_content: service.service_content,
+      service_category: service.service_category,
       market_uuid: service.market_uuid || '',
       service_uuid: service.service_uuid,
       service_period: service.service_period,
@@ -230,7 +236,7 @@ const EntireServiceMarket = ({
           option_name: option.option_name,
           option_price: option.option_price,
           option_uuid: option.option_uuid,
-          service_option_image: option.service_option_image || '',
+          service_option_images: option.service_option_images || '',
         })) as ServiceDetailOption[])
         : [],
       temporary: service.temporary,
@@ -355,6 +361,7 @@ const EntireServiceMarket = ({
               !card.temporary && (
                 <ServiceCard
                   key={card.service_uuid}
+                  id={card.id}
                   name={card.name}
                   introduce={card.introduce}
                   reformer_area={card.reformer_area}
@@ -395,6 +402,24 @@ const EntireServiceMarket = ({
   );
 };
 
+const WebDisplay = React.memo(function WebDisplay({ service_content, suspended }: { service_content: string, suspended: boolean | undefined }) {
+  return (
+    <RenderHTML
+      contentWidth={350}
+      source={{ html: service_content }}
+      tagsStyles={{
+        img: { maxWidth: '100%' },
+        p: { color: suspended ? '#A0A0A0' : '#222222', overflow: 'hidden' },
+      }}
+      baseStyle={{
+        maxWidth: 370,
+        maxHeight: 40,
+        color: suspended ? '#A0A0A0' : '#222222',
+      }}
+    />
+  );
+});
+
 export const ServiceCard = ({
   name,
   introduce,
@@ -420,6 +445,8 @@ export const ServiceCard = ({
   awards,
   career,
   freelancer,
+  id,
+  mypage
 }: ServiceCardComponentProps) => {
   //TODO: get review num using API
   const REVIEW_NUM = 5;
@@ -429,33 +456,63 @@ export const ServiceCard = ({
       key={service_uuid}
       style={styles.cardContainer}
       onPress={() => {
-        navigation.navigate('ServiceDetailPage', {
-          reformerName: name,
-          introduce: introduce,
-          reformerArea: reformer_area,
-          reformerLink: reformer_link,
-          serviceName: service_title,
-          basicPrice: basic_price,
-          maxPrice: max_price,
-          reviewNum: REVIEW_NUM,
-          tags: service_styles,
-          imageUris: imageUris,
-          profileImageUri: profileImageUri,
-          servicePeriod: service_period,
-          serviceMaterials: service_materials,
-          serviceContent: service_content,
-          serviceOptions: service_options,
-          marketUuid: market_uuid,
-          serviceUuid: service_uuid,
-          education: education,
-          certification: certification,
-          awards: awards,
-          career: career,
-          freelancer: freelancer,
-        });
+        !mypage ? // 일반적인 경우 
+          navigation.navigate('ServiceDetailPage', {
+            id: id,
+            reformerName: name,
+            introduce: introduce,
+            reformerArea: reformer_area,
+            reformerLink: reformer_link,
+            serviceName: service_title,
+            basicPrice: basic_price,
+            maxPrice: max_price,
+            reviewNum: REVIEW_NUM,
+            tags: service_styles,
+            imageUris: imageUris,
+            profileImageUri: profileImageUri,
+            servicePeriod: service_period,
+            serviceMaterials: service_materials,
+            serviceContent: service_content,
+            serviceOptions: service_options,
+            marketUuid: market_uuid,
+            serviceUuid: service_uuid,
+            education: education,
+            certification: certification,
+            awards: awards,
+            career: career,
+            freelancer: freelancer,
+          }) : // 마이페이지에서 보이는 경우 
+          navigation.navigate('UPCY', {
+            screen: 'ServiceDetailPage',
+            params: {
+              id: id,
+              reformerName: name,
+              introduce: introduce,
+              reformerArea: reformer_area,
+              reformerLink: reformer_link,
+              serviceName: service_title,
+              basicPrice: basic_price,
+              maxPrice: max_price,
+              reviewNum: REVIEW_NUM,
+              tags: service_styles,
+              imageUris: imageUris,
+              profileImageUri: profileImageUri,
+              servicePeriod: service_period,
+              serviceMaterials: service_materials,
+              serviceContent: service_content,
+              serviceOptions: service_options,
+              marketUuid: market_uuid,
+              serviceUuid: service_uuid,
+              education: education,
+              certification: certification,
+              awards: awards,
+              career: career,
+              freelancer: freelancer,
+            }
+          })
       }}>
       <View style={styles.topContainer}>
-        <ImageBackground
+        <ImageBackground // 썸네일 이미지 
           style={{ width: '100%', height: 180, position: 'relative' }}
           imageStyle={{ height: 180 }}
           source={{
@@ -471,9 +528,12 @@ export const ServiceCard = ({
           <View style={styles.service_style}>
             {service_styles?.map((service_style, index) => {
               return (
-                <Text style={TextStyles.serviceCardTag} key={index}>
-                  {service_style}
-                </Text>
+                <View style={styles.tag} key={index}>
+                  <Text style={TextStyles.serviceCardTag} key={index}>
+                    {service_style}
+                  </Text>
+                </View>
+
               );
             })}
           </View>
@@ -491,18 +551,7 @@ export const ServiceCard = ({
         </Subtitle18B>
         {/* <HeartButton like={like} onPress={() => setLike(!like)} /> */}
       </View>
-      <RenderHTML
-        contentWidth={350}
-        source={{ html: service_content }}
-        tagsStyles={{
-          img: { maxWidth: '100%' },
-          p: { color: suspended ? '#A0A0A0' : '#222222', overflow: 'hidden' },
-        }}
-        baseStyle={{
-          maxWidth: 370,
-          color: suspended ? '#A0A0A0' : '#222222',
-        }}
-      />
+      <WebDisplay service_content={service_content} suspended={suspended} />
     </TouchableOpacity>
   );
 };
@@ -565,6 +614,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  tag: {
+    backgroundColor: 'rgba(97, 47, 239, 0.80)',
+    borderRadius: 8,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    display: 'flex',
   },
 });
 

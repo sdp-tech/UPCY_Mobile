@@ -234,7 +234,7 @@ export const ReformerMyPageScreen = ({
             fetchMarketData({
               market_uuid: marketResult.market_uuid,
             });
-            console.log('마켓 정보 가져오기 성공', response2.data);
+            //console.log('마켓 정보 가져오기 성공', response2.data);
             try {
               // reformer 정보 가져오기: 활동지역, 경력사항들
               const response3 = await request.get(
@@ -257,8 +257,8 @@ export const ReformerMyPageScreen = ({
                   career: reformerResult.career,
                   freelancer: reformerResult.freelancer,
                 });
-                console.log('리폼러 정보 가져오기 성공 ', response3.data);
-                console.log('마켓 최종 합산 데이터:', marketData);
+                //console.log('리폼러 정보 가져오기 성공 ', response3.data);
+                //console.log('마켓 최종 합산 데이터:', marketData);
               } else {
                 console.log(response3);
               }

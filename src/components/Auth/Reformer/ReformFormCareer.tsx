@@ -1072,19 +1072,8 @@ export default function ReformCareer({ fix, form, setForm }: ReformProps) {
             !fix ?
               handleSubmit
               : handleFix}
-          style={{ width: '90%', alignSelf: 'center', marginBottom: 10 }}
+          style={{ width: '100%', alignSelf: 'center', marginBottom: 10 }}
         />
-        {fix && // TODO: 이거 배포 전에는 삭제하기! (디버깅용)
-          <View>
-            <BottomButton
-              value="check"
-              pressed={false}
-              onPress={() => {
-                console.log(form);
-              }}
-              style={{ width: '90%', alignSelf: 'center', marginBottom: 10 }}
-            />
-          </View>}
       </View>
       {careerIndex >= 0 && (
         <CareerModal

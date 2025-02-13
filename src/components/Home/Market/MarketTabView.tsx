@@ -31,16 +31,19 @@ export const ProfileSection = ({
   navigation,
   reformerName,
   profileImageUri,
+  id
 }: {
   navigation: any;
   reformerName: string;
   profileImageUri: string;
+  id: number;
 }) => {
   const marketName: string = reformerName;
 
   return (
     <View style={{ alignItems: 'center' }}>
       <ProfileHeader
+        id={id}
         marketName={marketName}
         navigation={navigation}
         reformerName={reformerName}
@@ -63,6 +66,7 @@ const ProfileHeader = ({
   navigation,
   reformerName,
   profileImageUri,
+  id,
   // rate,
   // reviewNumber,
 }: {
@@ -70,6 +74,7 @@ const ProfileHeader = ({
   navigation: any;
   reformerName: string;
   profileImageUri: string;
+  id: number;
   // rate: number;
   // reviewNumber: number;
 }) => {
@@ -92,7 +97,7 @@ const ProfileHeader = ({
 
   const onPressReport = () => {
     setReportButtonPressed(false);
-    navigation.navigate('ReportPage', { service_key: marketName });
+    navigation.navigate('ReportPage', { service_key: id });
   };
   const { width, height } = Dimensions.get('screen');
   return (
@@ -161,7 +166,7 @@ type MarketTabViewProps = {
   reformerLink: string;
   marketUuid: string;
   profileImageUri?: string;
-  reformerEmail?: string;
+  id: number;
   education: any[];
   certification: any[];
   awards: any[];
@@ -189,7 +194,7 @@ const MarketTabView = ({
     reformerLink: '',
     marketUuid: '',
     profileImageUri: defaultImageUri,
-    reformerEmail: '정보 없음',
+    id: 1,
   } as MarketTabViewProps;
   const {
     reformerName,
@@ -198,7 +203,7 @@ const MarketTabView = ({
     reformerLink,
     marketUuid,
     profileImageUri,
-    reformerEmail,
+    id,
     education,
     certification,
     awards,
@@ -232,6 +237,7 @@ const MarketTabView = ({
   const renderHeader = useCallback(
     () => (
       <ProfileSection
+        id={id}
         navigation={navigation}
         reformerName={reformerName}
         profileImageUri={profileImageUri || defaultImageUri}
