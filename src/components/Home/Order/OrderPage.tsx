@@ -81,7 +81,7 @@ const OrderActionButtons = ({ status, navigation, onPress }: { status: string; n
    return(
      <ButtonContainer>
 
-         {(status === 'pending') && (
+         {(status === 'accepted') && (
            <>
              <ActionButton onPress={onPress}>
                <ActionText>오픈채팅</ActionText>
@@ -183,9 +183,6 @@ const OrderPage = ( ) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const request = Request();
 
-orderList.forEach((order, index) => {
-  console.log(`📌 주문 ${index + 1}의 상태:`, JSON.stringify(order.order_status, null, 2));
-});
 
 
 
@@ -414,8 +411,8 @@ orderList.forEach((order, index) => {
             </View>
             <OrderIDText>{order.order_uuid}</OrderIDText>
             <OrderStatusLabel order_status={order.order_status} />
-            <OrderActionButtons   status={order.order_status?.[0]?.status || ''}  navigation={navigation} onPress={() => setIsModalVisible(true)} />  //현재 press 시 모두 거래 완료 모달임 , 추후 수정 필요
-          </OrderInfoBox>
+            <OrderActionButtons   status={order.order_status?.[0]?.status || ''}  navigation={navigation} onPress={() => setIsModalVisible(true)} />
+            </OrderInfoBox>
           </View>
         )}}
         keyExtractor={(item: any) => item.order_uuid}
