@@ -58,47 +58,75 @@ const OrderStatusLabel = ({ order_status }: any) =>  {
        case 'pending':
          return <StatusText style={{ color: PURPLE }}>수락 대기중</StatusText>;
        case 'accepted':
-         return <StatusText style={{ color: GREEN }}>수락됨</StatusText>;
+         return <StatusText style={{ color: GREEN }}>제작중(수락)</StatusText>;
        case 'rejected':
          return <StatusText style={{ color: 'red' }}>거절됨</StatusText>;
        case 'received':
-         return <StatusText style={{ color: PURPLE }}>재료 수령</StatusText>;
+         return <StatusText style={{ color: PURPLE }}>제작중(재료 수령)</StatusText>;
        case 'produced':
-         return <StatusText style={{ color: PURPLE }}>제작 완료</StatusText>;
+         return <StatusText style={{ color: PURPLE }}>제작중(제작 완료)</StatusText>;
        case 'deliver':
          return <StatusText style={{ color: PURPLE }}>배송중</StatusText>;
        case 'end':
          return <StatusText style={{ color: PURPLE }}>거래 완료</StatusText>;
        default:
          return <StatusText style={{ color: BLACK }}>상태 없음</StatusText>;
+         //중단된 주문 추가해야됨
   }
 };
 
-const OrderActionButtons = ({ status, navigation, onPress }: { status: string; navigation: any; onPress: () => void }) => (
+const OrderActionButtons = ({ status, navigation, onPress }: { status: string; navigation: any; onPress: () => void }) => {
 
 
-  <ButtonContainer>
+   return(
+     <ButtonContainer>
+
+         {(status === 'pending') && (
+           <>
+             <ActionButton onPress={onPress}>
+               <ActionText>오픈채팅</ActionText>
+             </ActionButton>
+           </>
+         )}
+
+         {(status === 'received') && (
+           <>
+             <ActionButton onPress={onPress}>
+               <ActionText>오픈채팅</ActionText>
+             </ActionButton>
+           </>
+         )}
+
+         {(status === 'produced') && (
+           <>
+             <ActionButton onPress={onPress}>
+               <ActionText>오픈채팅</ActionText>
+             </ActionButton>
+           </>
+         )}
+
+         {(status === 'deliver') && (
+           <>
+             <ActionButton onPress={onPress}>
+               <ActionText>오픈채팅</ActionText>
+             </ActionButton>
+             <ActionButton onPress={onPress}>
+               <ActionText style={{ color: PURPLE }}>거래 완료하기</ActionText>
+             </ActionButton>
+           </>
+         )}
 
 
-    {status === 'progress' && (
-  <>
-    <ActionButton>
-      <ActionText>오픈채팅</ActionText>
-    </ActionButton>
+         {(status === 'rejected') && (
+             <ActionButton onPress={onPress}>
+             <ActionText>거절 사유 확인하기</ActionText>
+           </ActionButton>
+         )}
 
-    <ActionButton onPress={onPress}>
-      <ActionText style={{ color: PURPLE }}>거래 완료하기</ActionText>
-    </ActionButton>
-  </>
-    )}
+       </ButtonContainer>
+     );
+     };
 
-    {status === 'completed' && (
-      <ActionButton onPress={() => navigation.navigate('WriteReviewPage')}>
-        <ActionText style={{ color: PURPLE }}>리뷰 작성</ActionText>
-      </ActionButton>
-    )}
-  </ButtonContainer>
-);
 
 interface FilterProps {
   selectedFilter: any;
@@ -155,6 +183,9 @@ const OrderPage = ( ) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const request = Request();
 
+orderList.forEach((order, index) => {
+  console.log(`📌 주문 ${index + 1}의 상태:`, JSON.stringify(order.order_status, null, 2));
+});
 
 
 
@@ -383,7 +414,7 @@ const OrderPage = ( ) => {
             </View>
             <OrderIDText>{order.order_uuid}</OrderIDText>
             <OrderStatusLabel order_status={order.order_status} />
-            <OrderActionButtons status={order.order_status} navigation={navigation} onPress={() => setIsModalVisible(true)} />
+            <OrderActionButtons   status={order.order_status?.[0]?.status || ''}  navigation={navigation} onPress={() => setIsModalVisible(true)} />  //현재 press 시 모두 거래 완료 모달임 , 추후 수정 필요
           </OrderInfoBox>
           </View>
         )}}
