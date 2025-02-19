@@ -17,6 +17,7 @@ export default function Request() {
     // upcy domain: http://upcy.co.kr:8000/
 
     // const url = 'https://upcy.co.kr' + path;
+    const baseUrl = 'https://api.sullung.site';
     const url = 'https://api.sullung.site' + path;
 
     let headerValue;
@@ -52,7 +53,7 @@ export default function Request() {
         // refresh 토큰을 통해 access 토큰 재발급
         try {
           const response = await axios.post(
-            'https://upcy.co.kr/api/user/token/refresh',
+            `${baseUrl}/api/user/token/refresh`,
             {
               refresh: refreshToken,
             },
@@ -63,9 +64,14 @@ export default function Request() {
             //   },
             // },
           );
-          setAccessToken(response.data.access);
+          if (response.status === 200) {
+            setAccessToken(response.data.access);
           console.warn('new access token', response.data.access);
           headerValue = `Bearer ${response.data.access}`;
+          } else {
+            console.log(response);
+            return;
+          }
         } catch (error) {
           // refresh 토큰이 유효하지 않은 모든 경우(토큰 만료, 토큰 없음 등)
           console.error(error);

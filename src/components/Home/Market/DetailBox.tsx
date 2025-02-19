@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { Tabs } from 'react-native-collapsible-tab-view';
 import { Option } from './ServiceRegistration';
+import React from 'react';
 
 const DetailBox = () => {
   const { width, height } = Dimensions.get('window');

@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, ActivityIndicator } from 'react-native';
 import { LoginContext } from '../common/Context';
 import Lock from '../assets/common/Lock.svg';
 import { ReformerMyPageScreen } from '../components/Auth/Reformer/ReformerMyPage.tsx';
@@ -24,12 +24,12 @@ export type MyPageStackParams = {
   MyPage: { userInfo?: any | undefined };
   FixMyPage: { userInfo?: any, reformerInfo?: any };
   Login: undefined;
-  ReformerMyPageScreen: { navigation: any; route: any };
+  ReformerMyPageScreen: undefined;
   UpcyerMyPageMainScreen: { navigation: any; route: any };
   TempStorage: undefined;
   TempStorageEdit: undefined;
-  ServiceRegistrationPage: { inputText?: string; detailphoto?: PhotoType[]; serviceData: any; };
-  WriteDetailPage: { inputText: string; detailphoto?: PhotoType[] };
+  ServiceRegistrationPage: { inputText?: string; detailPhoto?: PhotoType[]; serviceData?: any; fix?: boolean; };
+  WriteDetailPage: { inputText: string; detailPhoto?: PhotoType[]; serviceData: any; };
 };
 
 export interface MypageStackProps {

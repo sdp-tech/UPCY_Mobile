@@ -115,6 +115,7 @@ const ServicePage: React.FC<ServicePageProps> = ({
         {error && <Text style={styles.errorText}>{error}</Text>}
         {items.map((item, index) => (
           <ServiceCard
+            id={item.reformer_info.user_info.id}
             key={index}
             profileImageUri={item.reformer_info.user_info.profile_image_url || defaultImageUri}
             introduce={item.reformer_info.user_info.introduce || ''}
@@ -150,11 +151,12 @@ const ServicePage: React.FC<ServicePageProps> = ({
                 option_name: option.option_name || '',
                 option_price: option.option_price || '',
                 option_uuid: option.option_uuid || '',
-                service_option_image: option.service_option_image || [],
+                service_option_images: option.service_option_images || [],
               }))
               : []}
             suspended={item.suspended}
-            navigation={navigation} />
+            navigation={navigation}
+            mypage />
         ))}
         <View style={{ paddingBottom: 100 }} />
       </View>

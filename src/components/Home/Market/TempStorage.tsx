@@ -1,17 +1,16 @@
-import React, { useEffect, useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View, Modal, Alert, StyleSheet, Animated, } from "react-native";
 import { useFocusEffect } from '@react-navigation/native';
 import Close from '../../../assets/header/Close.svg';
 import styled from "styled-components/native";
-import { getStatusBarHeight } from "react-native-safearea-height";
-import { Body14B, Body14M, Body16B } from "../../../styles/GlobalText";
+import { Body14M, Body16B } from "../../../styles/GlobalText";
 import { StackScreenProps } from "@react-navigation/stack";
-import BottomButton from "../../../common/BottomButton";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Request from '../../../common/requests.js';
 import { getAccessToken, getMarketUUID } from '../../../common/storage';
+import { ServiceData } from "./ServiceDetailPage.tsx";
+import { PhotoType } from "../../../hooks/useImagePicker.ts";
 
-const statusBarHeight = getStatusBarHeight(true);
 
 const BackButton = styled.TouchableOpacity`
   padding: 10px;
@@ -23,6 +22,13 @@ interface ServiceItem {
   service_title: string;
   service_content: string;
   service_category: string;
+  service_period?: number; // 추가됨
+  basic_price?: number; // 추가됨
+  max_price?: number; // 추가됨
+  service_style?: string[];
+  service_material?: string[]; // 추가됨
+  service_option?: any[]; // 추가됨
+  service_image: PhotoType[];
   updated?: boolean;
   temporary?: boolean;
 }
@@ -152,13 +158,13 @@ const TempStorage = ({ navigation }: StackScreenProps<any>) => {
           service_period: selectedService.service_period ?? 0,
           basic_price: selectedService.basic_price ?? 0,
           max_price: selectedService.max_price ?? 0,
-          service_style: selectedService.service_style?.map((style) => (style.style_name || '')) || [],
-          service_material: selectedService.service_material?.map((material) => (material.material_name || '')) || [],
+          service_style: selectedService.service_style?.map((style: any) => (style.style_name || '')) || [],
+          service_material: selectedService.service_material?.map((material: any) => (material.material_name || '')) || [],
           service_option: selectedService.service_option ?? [],
-          thumbnail_photo: selectedService.service_image?.[0] ?? "",
-          detail_photos: selectedService.service_image ?? [],
+          thumbnail_photo: selectedService.service_image?.[0]?.uri ?? "",
+          detail_photos: selectedService.service_image?.slice(1).map((img) => img.uri) ?? [],
         };
-        navigation.navigate("ServiceRegistrationPage", { serviceData: transformedServiceData, fix : false});
+        navigation.navigate("ServiceRegistrationPage", { serviceData: transformedServiceData, fix: false });
       } else {
         Alert.alert("선택한 서비스를 찾을 수 없습니다.");
       }
