@@ -157,6 +157,7 @@ const toggleSelection = <T,>(
 };
 
 
+
 const handlePhotoUpdate = (
   photos: PhotoResultProps[],
   setPhotos: Dispatch<SetStateAction<PhotoResultProps[]>>,
@@ -384,37 +385,33 @@ useEffect(() => {
 }, [selectedMaterials, materialInput]);
  */
 
-  const handleNextPress = () => {
-    if (!selectedFilter) {
-      Alert.alert('거래 방식을 선택해주세요');
-      return;
-    }
-
+    const handleNextPress = () => {
+      if (!selectedFilter) {
+        Alert.alert('거래 방식을 선택해주세요');
+        return;
+      }
 
       const selectedOptionDetails = selectedOptions.map((uuid) =>
         options.find((option) => option.option_uuid === uuid)
       );
 
+      const navigationTarget = selectedFilter === '대면' ? 'QuotationPage' : 'InputInfo';
 
-
-
-    navigation.navigate('InputInfo', {
+      navigation.navigate(navigationTarget, {
         serviceUuid,
-      serviceTitle: serviceInfo?.service_title ?? '마켓명 없음',
-      //reformerName: serviceInfo?.reformer_name ?? '리폼러 없음',
-      //reformerIntroduce: serviceInfo?.reformer_introduce ?? '소개 없음',
-      //serviceImage: serviceInfo?.service_image ?? defaultImageUri,
-      orderer_email: email,
-      basicPrice: serviceInfo?.basic_price ?? 0,
-      photos,
-      materialsList,
-      selectedMaterialNames,
-      extraMaterial,
-      transactionMethod: selectedFilter,
-      options: selectedOptionDetails,
-      additionalRequest: { text: additionalRequestInput, photos: refPhotos, },
-    });
-  };
+        serviceTitle: serviceInfo?.service_title ?? '마켓명 없음',
+        orderer_email: email,
+        basicPrice: serviceInfo?.basic_price ?? 0,
+        photos,
+        materialsList,
+        selectedMaterialNames,
+        extraMaterial,
+        transactionMethod: selectedFilter, // 거래 방식 ('대면' 또는 '비대면')
+        options: selectedOptionDetails,
+        additionalRequest: { text: additionalRequestInput, photos: refPhotos },
+      });
+    };
+
 
 
   return (

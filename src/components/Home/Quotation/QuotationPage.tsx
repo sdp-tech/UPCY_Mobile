@@ -104,6 +104,15 @@ const selectedMaterialUUIDs = selectedMaterialNames
       return;
     }
 
+//거래방식 데이터 변환 (delivery/pickup)
+    const getTransactionOption = (method: string) => {
+      if (method === "비대면") return "delivery";
+      if (method === "대면") return "pickup";
+      return "";
+    };
+
+
+
    // 서버에 보낼 데이터 `FormData` 객체 생성
     const formData = new FormData();
 
@@ -134,7 +143,8 @@ const selectedMaterialUUIDs = selectedMaterialNames
 
     // 나머지 데이터 추가
     formData.append('service_uuid', route.params?.serviceUuid);
-    formData.append('transaction_option', transactionMethod);
+    const transactionOption = getTransactionOption(transactionMethod);
+    formData.append("transaction_option", transactionOption);
     formData.append('service_price', basicPrice.toString());
     formData.append('option_price', optionAdditionalPrice.toString());
     formData.append('total_price', totalPrice.toString());
@@ -143,15 +153,21 @@ const selectedMaterialUUIDs = selectedMaterialNames
         formData.append('materials', uuid);
       });
 
-      // extraMaterial 추가
       formData.append(
         'extra_material',
         Array.isArray(extraMaterial) ? extraMaterial.join(', ') : extraMaterial || ''
       );
 
-    options.forEach((option) =>
-      formData.append('options', option.option_uuid)
-    );
+    const defaultOptionUUID = "00000000-0000-0000-0000-000000000000"; // 유효한 기본 UUID = option 선택하지 않은 경우 사용
+
+    if (Array.isArray(options) && options.length > 0) {
+      options.forEach((option) => {
+        formData.append('options', option.option_uuid);
+      });
+    } else {
+      formData.append('options', defaultOptionUUID);  // 기본 옵션 UUID 추가
+    }
+
     formData.append('orderer_name', name);
     formData.append('orderer_phone_number', tel);
     formData.append('orderer_address', fullAddress);
