@@ -188,6 +188,9 @@ const OrderPage = ( ) => {
   const [selectedFilter, setSelectedFilter] = useState('전체');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
+  const [rejectedReason, setRejectedReason] = useState('');
+  const [isRejectedModalVisible, setIsRejectedModalVisible] = useState(false);
+
   const request = Request();
 
 
@@ -242,6 +245,8 @@ const OrderPage = ( ) => {
         } else {
           Alert.alert('주문 목록을 불러오는 데 실패했습니다.');
         }
+
+
 
 
 
@@ -310,6 +315,8 @@ const OrderPage = ( ) => {
           };
         });
 
+
+
         //주문 날짜 기준 내림차순 정렬
         updatedOrders.sort((a, b) => new Date(b.order_date) - new Date(a.order_date));
 
@@ -323,12 +330,46 @@ const OrderPage = ( ) => {
     };
 
 
+
+
     // 화면이 포커스될 때마다 주문 목록을 새로고침
     useFocusEffect(
       useCallback(() => {
         fetchOrders();
       }, [])
     );
+
+const fetchRejectedReason = async (order_uuid: string) => {
+  try {
+    const accessToken = await getAccessToken();
+    if (!accessToken) {
+      Alert.alert('❌ 오류', '로그인이 필요합니다.');
+      return;
+    }
+
+    const response = await request.get(`/api/orders/${order_uuid}/status?filter=rejected`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    console.log('📌 거절 사유 API 응답:', response.data);
+
+    if (response.status === 200) {
+      const status = response.data.status;
+      if (status === 'rejected') {
+        const reason = response.data.rejected_reason || '거절 사유가 없습니다.';
+        setRejectedReason(reason);
+        setIsRejectedModalVisible(true);
+      } else {
+        Alert.alert('알림', '해당 주문은 거절된 주문이 아닙니다.');
+      }
+    } else {
+      Alert.alert('❌ 오류', '거절 사유를 불러오는 데 실패했습니다.');
+    }
+  } catch (error) {
+    console.error('❌ 거절 사유 불러오기 실패:', error?.response?.data || error.message);
+    Alert.alert('❌ 오류', `거절 사유 조회 중 오류 발생\n${error?.response?.data?.message || error.message}`);
+  }
+};
 
 
     if (loading) {
@@ -500,9 +541,10 @@ const OrderPage = ( ) => {
               onPressCompleted={() => handleCompletedPress(order)}  // 거래 완료만 이 함수 실행
               reformerLink={order.service_info?.reformer_info?.reformer_link}
               onPressRejected={() => {
-                // 거절 사유 확인 기능 작성 예시
-                Alert.alert('거절 사유', order.reject_reason || '거절 사유가 없습니다.');
-              }}
+                console.log('거절 사유 조회 order_uuid:', order.order_uuid);
+                  setSelectedOrder(order);
+                fetchRejectedReason(order.order_uuid);
+                }}
             />
 
             </OrderInfoBox>
@@ -530,6 +572,43 @@ const OrderPage = ( ) => {
           </ModalBox>
         </ModalContainer>
       </Modal>
+
+
+        <Modal
+          transparent={true}
+          visible={isRejectedModalVisible}
+          onRequestClose={() => setIsRejectedModalVisible(false)}
+        >
+          <ModalContainer>
+            <ModalBox>
+
+              <Body16B style={{ color: BLACK, textAlign: 'center', marginBottom: 15, borderBottomWidth: 1, borderBottomColor: PURPLE, paddingBottom: 10 }}>
+                주문서 거절 안내
+              </Body16B>
+
+
+              <Body16B style={{ color: BLACK, textAlign: 'center', marginBottom: 30,fontWeight: 'bold' }}>
+                '{selectedOrder?.reformer_name || selectedOrder?.service_info?.reformer_info?.user_info?.nickname || '익명 리포머'}'님께 전송한 주문서가{'\n'}
+                다음과 같은 사유로 거절되었습니다.
+              </Body16B>
+
+
+              {/* 거절 사유 안내 */}
+              <Body16B style={{ color: BLACK, marginBottom: 8 }}>거절 사유 안내</Body16B>
+              <View style={{ backgroundColor: '#F4F4F4', borderRadius: 8, padding: 12 }}>
+                <Body14R style={{ color: PURPLE }}>{rejectedReason}</Body14R>
+              </View>
+
+              {/* 버튼 */}
+              <TouchableOpacity
+                onPress={() => setIsRejectedModalVisible(false)}
+                style={[styles.confirmButton, { marginTop: 40 }]}
+              >
+                <Body16B style={{ color: 'white', textAlign: 'center' }}>확인</Body16B>
+              </TouchableOpacity>
+            </ModalBox>
+          </ModalContainer>
+        </Modal>
 
 
     </SafeAreaView>
@@ -641,6 +720,14 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 10,
   },
+
+confirmButton: {
+  backgroundColor: PURPLE,
+  padding:10,
+  borderRadius: 10,
+  alignItems: 'center',
+  marginTop: 20,
+},
 
 });
 
