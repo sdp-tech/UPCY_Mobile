@@ -1,5 +1,5 @@
 import React, { useState , useEffect, useCallback} from 'react';
-import { SafeAreaView, FlatList, ActivityIndicator, Alert, Text, TouchableOpacity, View, StyleSheet } from 'react-native';
+import { SafeAreaView, FlatList, ActivityIndicator, Alert, Text, TouchableOpacity, View, StyleSheet, Linking } from 'react-native';
 import styled from 'styled-components/native';
 import { useFocusEffect } from '@react-navigation/native';
 import { Picker } from '@react-native-picker/picker';
@@ -13,6 +13,9 @@ import { useNavigation } from '@react-navigation/native';
 import Request from '../../../common/requests';
 import { getAccessToken } from '../../../common/storage.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { OrderStackParams } from '../Order/OrderManagement';
+
 
 interface OrderInfoType {
   order_uuid: string;
@@ -108,10 +111,10 @@ const OrderStatusLabel = ({ order_status }: any) => {
   return (
       <StatusText>
         {status === 'pending' && '수락 대기중'}
-        {status === 'accepted' && '제작중(수락)'}
-        {status === 'received' && '제작중(재료 수령)'}
-        {status === 'produced' && '제작중(제작 완료)'}
-        {status === 'deliver' && '배송중'}
+        {status === 'accepted' && '수락'}
+        {status === 'received' && '재료 수령 완료'}
+        {status === 'produced' && '제작 완료'}
+        {status === 'deliver' && '배송 정보 입력'}
         {status === 'end' && '거래 완료'}
         {status === 'rejected' && '거절됨'}
         {!status && '상태 없음'}
@@ -122,6 +125,7 @@ const OrderStatusLabel = ({ order_status }: any) => {
 // OrderInfoBox 컴포넌트
 const OrderInfoBox = ({ order }: any) => {
   const navigation = useNavigation();
+  const isDelivery = order.transaction?.transaction_option === 'delivery';
   const [expanded, setExpanded] = useState(false);
 
   const [isModalVisible, setModalVisible] = useState(false);
@@ -131,8 +135,16 @@ const OrderInfoBox = ({ order }: any) => {
   const [isDeliverySubmitted, setDeliverySubmitted] = useState(false);
   const [orderStatus, setOrderStatus] = useState(order.order_status);
   const [trackingNumber, setTrackingNumber] = useState('');
-  const [steps, setSteps] = useState([false, false,false,false]);
+  const [steps, setSteps] = useState(
+    order.transaction?.transaction_option === 'delivery'
+      ? [false, false, false, false]   // 비대면 4개
+      : [false, false, false]          // 대면 3개
+  );
+  const lastCompletedIndex = steps.lastIndexOf(true); // 마지막으로 완료된 index (flowline 정확하게 채우기 위해서 사용)
+
+
   const transactionUuid = order.transaction_uuid;
+
 
   const courierOptions = ['CJ 대한통운', '우체국택배', '한진택배', '롯데택배'];
 
@@ -149,6 +161,27 @@ const OrderInfoBox = ({ order }: any) => {
        prevSteps[3] || orderStatus === 'deliver',
      ]);
   }, [orderStatus]);
+
+  // 전달완료 상태 저장
+  const saveDeliverySubmittedState = async (order_uuid: string, state: boolean) => {
+    try {
+      await AsyncStorage.setItem(`deliverySubmitted_${order_uuid}`, JSON.stringify(state));
+    } catch (error) {
+      console.error("❌ 전달완료 상태 저장 실패:", error);
+    }
+  };
+
+  // 전달완료 상태 불러오기
+  const loadDeliverySubmittedState = async (order_uuid: string) => {
+    try {
+      const savedState = await AsyncStorage.getItem(`deliverySubmitted_${order_uuid}`);
+      if (savedState !== null) {
+        setDeliverySubmitted(JSON.parse(savedState));
+      }
+    } catch (error) {
+      console.error("❌ 전달완료 상태 불러오기 실패:", error);
+    }
+  };
 
   // 체크박스 상태를 저장
   const saveStepState = async (order_uuid: string, steps: boolean[]) => {
@@ -178,6 +211,12 @@ const OrderInfoBox = ({ order }: any) => {
 
   const toggleExpanded = () => setExpanded(!expanded);
 
+  const stepLabels = isDelivery
+    ? ["입금 확인", "재료 수령 완료", "제작 완료", "배송 정보 입력"]
+    : ["입금 확인", "재료 수령 완료", "제작 완료"];
+  const lastStepIndex = stepLabels.length - 1;
+  const completedCount = Math.min(lastCompletedIndex + 1, lastStepIndex);
+
   const toggleStep = async (index: number) => {
     const newSteps = [...steps];
     newSteps[index] = !newSteps[index];
@@ -196,6 +235,39 @@ const OrderInfoBox = ({ order }: any) => {
     loadStepState(order.order_uuid, setSteps);
   }, []);
 
+  // 전달완료 상태 불러오기
+  useEffect(() => {
+    loadDeliverySubmittedState(order.order_uuid);
+  }, []);
+
+
+  useEffect(() => {
+    loadDeliveryInfo(order.order_uuid);
+  }, []);
+
+  // AsyncStorage에서 택배사 및 송장 번호 불러오기
+  const loadDeliveryInfo = async (order_uuid: string) => {
+    try {
+      const savedCourier = await AsyncStorage.getItem(`courier_${order_uuid}`);
+      const savedTracking = await AsyncStorage.getItem(`tracking_${order_uuid}`);
+      if (savedCourier) setSelectedCourier(savedCourier);
+      if (savedTracking) setTrackingNumber(savedTracking);
+    } catch (error) {
+      console.error("❌ 배송 정보 불러오기 실패:", error);
+    }
+  };
+
+  // AsyncStorage에 택배사 및 송장 번호 저장
+  const saveDeliveryInfo = async (order_uuid: string, courier: string, tracking: string) => {
+    try {
+      await AsyncStorage.setItem(`courier_${order_uuid}`, courier);
+      await AsyncStorage.setItem(`tracking_${order_uuid}`, tracking);
+    } catch (error) {
+      console.error("❌ 배송 정보 저장 실패:", error);
+    }
+  };
+
+
   const toggleSubmitModal = () => {
     setSubmitModalVisible(prevState => !prevState);
   };
@@ -213,6 +285,8 @@ const OrderInfoBox = ({ order }: any) => {
       Alert.alert('❌ 오류', '택배사와 송장 번호를 입력해주세요.');
       return;
     }
+
+    saveDeliveryInfo(order.order_uuid, selectedCourier, trackingNumber);
 
     if (!transactionUuid) {
         Alert.alert('❌ 오류', '거래 정보가 없습니다.');
@@ -265,6 +339,8 @@ const OrderInfoBox = ({ order }: any) => {
 
               setSubmitModalVisible(false);
               setDeliverySubmitted(true);
+              saveDeliverySubmittedState(order.order_uuid, true);
+
             } else {
               Alert.alert('❌ 오류', `서버 응답 실패: ${response.status}`);
             }
@@ -278,7 +354,6 @@ const OrderInfoBox = ({ order }: any) => {
         };
 
 
-  console.log('Is Delivery Submitted:', isDeliverySubmitted);
 
   //수정 버튼 핸들러
   const handleEdit = () => {
@@ -304,12 +379,12 @@ const OrderInfoBox = ({ order }: any) => {
             <Subtitle16B>{order.service_info?.service_title || '서비스명 없음'}</Subtitle16B>
             <Body14R>주문자: {order.orderer_information?.orderer_name || '익명'}</Body14R>
             <Body14R>주문 일시: {order.order_date}</Body14R>
-            <Body14R>거래 방식:{order.transaction?.transaction_option === '비대면' ? '비대면' : '대면'}</Body14R>
+            <Body14R>거래 방식:{order.transaction?.transaction_option === 'delivery' ? '비대면' : '대면'}</Body14R>
           </TextContainer>
         </ContentRow>
         <TouchableOpacity
           style={{ marginTop: 10, alignSelf: 'flex-end' }}
-          onPress={() => navigation.navigate('QuotationPage')}
+          onPress={() => navigation.navigate('QuotationReview', { order })}
         >
           <Text style={{ color: 'gray', fontSize: 14, fontWeight: 'bold', textDecorationLine: 'underline' }}>
             주문서확인
@@ -319,57 +394,70 @@ const OrderInfoBox = ({ order }: any) => {
       </TopSection>
 
       {expanded && (
-        <ExpandedContent>
-          <FlowContainer>
-            <FlowLine stepCount={4}>
-              <CompletedFlowLine steps={steps} stepCount={4} height={calculateHeight(steps)} />
-              {Array(4).fill(null).map((_, index) => (
-                <Circle
-                  key={`circle-${index}`}
-                  index={index}
-                  completed={steps[index]}
-                  stepCount={steps.length}
-                />
-              ))}
-            </FlowLine>
+          <ExpandedContent>
 
-            <StepContainer>
-              {["입금 확인", "재료 수령 완료", "제작 완료", "배송 정보 입력"].map((stepLabel, index) => (
-                <StepRow key={index}>
-                  <Body16R>{stepLabel}</Body16R>
-                  {index < 3 && (
-                    <CheckBoxWrapper>
+        <FlowContainer>
+        <FlowLine height={lastStepIndex * STEP_HEIGHT}>
+            <CompletedFlowLine completedCount={completedCount} />
 
-                      <TouchableOpacity
-                        style={[
-                          styles.checkBox,
-                          isDeliverySubmitted && styles.disabledCheckBox,
-                        ]}
-                        disabled={isDeliverySubmitted}
-                        onPress={() => toggleStep(index)}
-                      >
-                        <View
-                          style={[
-                            styles.checkBoxIndicator,
-                            steps[index] && styles.checked,
-                            isDeliverySubmitted && styles.disabledCheckBoxIndicator,
-                          ]}
-                        />
-                      </TouchableOpacity>
+            {stepLabels.map((_, index) => (
+              <Circle
+                key={`circle-${index}`}
+                index={index}
+                completed={steps[index]}
+                stepCount={steps.length}
+              />
+            ))}
+          </FlowLine>
 
-                    </CheckBoxWrapper>
-                  )}
-                </StepRow>
-              ))}
-            </StepContainer>
-          </FlowContainer>
 
-          {!isDeliverySubmitted && (
+          <StepContainer>
+            {stepLabels.map((stepLabel, index) => (
+              <StepRow key={index}>
+                <Body16R>{stepLabel}</Body16R>
+                {/* '배송 정보 입력' 단계는 체크박스 X */}
+                {isDelivery ? (index < 3) && (
+                  <CheckBoxWrapper>
+                    <TouchableOpacity
+                      style={[styles.checkBox, isDeliverySubmitted && styles.disabledCheckBox]}
+                      disabled={isDeliverySubmitted}
+                      onPress={() => toggleStep(index)}
+                    >
+                      <View style={[
+                        styles.checkBoxIndicator,
+                        steps[index] && styles.checked,
+                        isDeliverySubmitted && styles.disabledCheckBoxIndicator,
+                      ]} />
+                    </TouchableOpacity>
+                  </CheckBoxWrapper>
+                ) : (
+                  // 대면일 땐 index < 3 이라서 3개까지만 체크박스
+                  <CheckBoxWrapper>
+                    <TouchableOpacity
+                      style={[styles.checkBox, isDeliverySubmitted && styles.disabledCheckBox]}
+                      disabled={isDeliverySubmitted}
+                      onPress={() => toggleStep(index)}
+                    >
+                      <View style={[
+                        styles.checkBoxIndicator,
+                        steps[index] && styles.checked,
+                        isDeliverySubmitted && styles.disabledCheckBoxIndicator,
+                      ]} />
+                    </TouchableOpacity>
+                  </CheckBoxWrapper>
+                )}
+              </StepRow>
+            ))}
+          </StepContainer>
+        </FlowContainer>
+
+        {/* ✅ 배송 정보 입력 UI는 delivery(비대면)일 때만 렌더링 */}
+        {isDelivery && (
+          <>
             <DropdownContainer>
-
               <DropdownButton
-                onPress={() => setShowDropdown(!showDropdown)}
-                disabled={isDeliverySubmitted || !steps[2]} // 전달 완료 시 비활성화
+                onPress={() => !isDeliverySubmitted && setShowDropdown(!showDropdown)}
+                disabled={isDeliverySubmitted || !steps[2]}
               >
                 <Text style={[styles.dropdownButtonText, { color: isDeliverySubmitted ? 'gray' : 'black' }]}>
                   {selectedCourier}
@@ -377,7 +465,7 @@ const OrderInfoBox = ({ order }: any) => {
                 <DropDownIcon width={20} height={20} />
               </DropdownButton>
 
-              {showDropdown && (
+              {!isDeliverySubmitted && showDropdown && (
                 <Modal isVisible={showDropdown} onBackdropPress={() => setShowDropdown(false)}>
                   <View style={{ backgroundColor: 'white', padding: 10, borderRadius: 10 }}>
                     {courierOptions.map((option, index) => (
@@ -394,29 +482,58 @@ const OrderInfoBox = ({ order }: any) => {
                   </View>
                 </Modal>
               )}
-
             </DropdownContainer>
-          )}
 
-          <TrackingNumberContainer>
-            <TextInput
-              placeholder="송장 번호 입력"
-              editable={!isDeliverySubmitted && steps[2]} //전달완료 시 비활성화
-              value={trackingNumber}
-              onChangeText={(text) => setTrackingNumber(text)}
-              style={{
-                borderColor: isDeliverySubmitted || !steps[2] ? LIGHTGRAY : PURPLE,
-                borderWidth: 1,
-                borderRadius: 4,
-                flex: 0,
-                paddingHorizontal: 10,
-                backgroundColor: isDeliverySubmitted ? LIGHTGRAY : 'white',
-              }}
-            />
-            {!isDeliverySubmitted && (
+            <TrackingNumberContainer>
+              <TextInput
+                placeholder="송장 번호 입력"
+                editable={!isDeliverySubmitted && steps[2]}
+                value={trackingNumber}
+                onChangeText={(text) => setTrackingNumber(text)}
+                style={{
+                  borderColor: isDeliverySubmitted || !steps[2] ? LIGHTGRAY : PURPLE,
+                  borderWidth: 1,
+                  borderRadius: 4,
+                  flex: 0,
+                  paddingHorizontal: 10,
+                  backgroundColor: isDeliverySubmitted ? LIGHTGRAY : 'white',
+                }}
+              />
               <TouchableOpacity
                 style={{
-                  backgroundColor: steps[2] ? PURPLE : LIGHTGRAY,
+                  backgroundColor: (isDeliverySubmitted || !steps[2]) ? LIGHTGRAY : PURPLE,
+                  borderRadius: 4,
+                  paddingHorizontal: 10,
+                  paddingVertical: 5,
+                  marginLeft: 10,
+                  marginTop: 10,
+                  height: 30,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+                disabled={isDeliverySubmitted || !steps[2]}
+                onPress={toggleModal}
+              >
+                <Text style={{ color: (isDeliverySubmitted || !steps[2]) ? 'gray' : 'white' }}>확인</Text>
+              </TouchableOpacity>
+            </TrackingNumberContainer>
+
+            <TrackingNumberContainer>
+              <SubmitButton
+                onPress={isDeliverySubmitted ? undefined : toggleSubmitModal}
+                style={{
+                  backgroundColor: isDeliverySubmitted ? LIGHTGRAY : PURPLE,
+                }}
+              >
+                <SubmitButtonText style={{ color: isDeliverySubmitted ? 'gray' : 'white' }}>
+                  전달 완료
+                </SubmitButtonText>
+              </SubmitButton>
+
+              <TouchableOpacity
+                style={{
+                  backgroundColor: 'white',
+                  borderColor: PURPLE,
                   borderRadius: 4,
                   paddingHorizontal: 10,
                   paddingVertical: 5,
@@ -424,46 +541,12 @@ const OrderInfoBox = ({ order }: any) => {
                   marginTop: 10,
                   height: 30,
                 }}
-                disabled={isDeliverySubmitted || !steps[2]} // 전달 완료 시 버튼 비활성화
-                onPress={toggleModal}
+                disabled={!steps[2]}
+                onPress={handleEdit}
               >
-                <Text style={{ color: 'white' }}>확인</Text>
+                <Text style={{ color: PURPLE }}>수정</Text>
               </TouchableOpacity>
-            )}
-          </TrackingNumberContainer>
-
-          <TrackingNumberContainer>
-            <SubmitButton
-              onPress={isDeliverySubmitted ? undefined : toggleSubmitModal}
-              style={{
-                backgroundColor: isDeliverySubmitted ? LIGHTGRAY : PURPLE,
-              }}
-            >
-              <SubmitButtonText style={{ color: isDeliverySubmitted ? 'gray' : 'white' }}>
-                전달 완료
-              </SubmitButtonText>
-            </SubmitButton>
-
-            <TouchableOpacity
-              style={{
-                backgroundColor: 'white',
-                borderColor: PURPLE,
-                borderRadius: 4,
-                paddingHorizontal: 10,
-                paddingVertical: 5,
-                marginLeft: 10,
-                marginTop: 10,
-                height: 30,
-              }}
-              disabled={!steps[2]}
-              onPress={handleEdit}
-            >
-              <Text style={{ color: PURPLE }}>수정</Text>
-            </TouchableOpacity>
-          </TrackingNumberContainer>
-
-
-
+            </TrackingNumberContainer>
 
 
           <Modal isVisible={isModalVisible} onBackdropPress={toggleModal}>
@@ -511,7 +594,11 @@ const OrderInfoBox = ({ order }: any) => {
             </View>
           </Modal>
 
+
+        </>
+        )}
         </ExpandedContent>
+
       )
      }
 
@@ -549,8 +636,26 @@ const InProgressOrders = () => {
   const [filter, setFilter] = useState('asc'); // 최신순/오래된순 필터
   const [orders, setOrders] = useState([]); // 주문 데이터 상태
   const [loading, setLoading] = useState(true); // 로딩 상태
+  const [reformerLink, setReformerLink] = useState('');
+
   const request = Request();
 
+  // Reformer link 가져오기 추가
+  const fetchReformerInfo = async () => {
+    try {
+      const accessToken = await getAccessToken();
+      if (!accessToken) return;
+      const response = await request.get('/api/user/reformer', {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      if (response.status === 200) {
+        console.log('✅ Reformer Info:', response.data);
+        setReformerLink(response.data.reformer_link);
+      }
+    } catch (error) {
+      console.error('❌ Reformer 정보 가져오기 실패:', error);
+    }
+  };
 
   // 📌 API 요청: 진행 중인 주문 목록 불러오기
     const fetchOrders = async () => {
@@ -604,34 +709,40 @@ const InProgressOrders = () => {
   // 화면이 다시 활성화될 때마다 주문 목록 새로고침
   useFocusEffect(
     useCallback(() => {
+      fetchReformerInfo();
       fetchOrders();
     }, [])
   );
 
-  const handleOpenChat = () => {
-    // console.log('오픈채팅 바로가기');
-  };
+      const handleOpenChat = () => {
+        if (reformerLink) {
+          Linking.openURL(reformerLink);
+        } else {
+          Alert.alert('❌ 오류', '오픈채팅 링크를 불러오지 못했습니다.');
+        }
+      };
+
+      // ✅ OrderFilter에 onOpenChat 전달
+      return (
+        <SafeAreaView style={{ flex: 1, backgroundColor: LIGHTGRAY }}>
+          <OrderFilter filter={filter} setFilter={setFilter} onOpenChat={handleOpenChat} />
+
+          {loading ? (
+            <ActivityIndicator size="large" color="#6200EE" style={{ marginTop: 20 }} />
+          ) : (
+            <FlatList
+              nestedScrollEnabled={true}
+              data={orders}
+              keyExtractor={(item, index) => item.order_uuid || index.toString()}
+              renderItem={({ item: order }) => <OrderInfoBox order={order} />}
+            />
+          )}
+        </SafeAreaView>
+      );
+    };
 
 
 
-  return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: LIGHTGRAY }}>
-      <OrderFilter filter={filter} setFilter={setFilter} onOpenChat={handleOpenChat} />
-
-      {loading ? (
-              <ActivityIndicator size="large" color="#6200EE" style={{ marginTop: 20 }} />
-            ) : (
-              <FlatList
-                nestedScrollEnabled={true}
-                data={orders}
-                keyExtractor={(item, index) => item.order_uuid || index.toString()}
-                renderItem={({ item: order }) => <OrderInfoBox order={order} />}
-              />
-            )}
-
-    </SafeAreaView>
-  );
-};
 
 // 스타일 정의
 
@@ -720,15 +831,17 @@ const FlowContainer = styled.View`
   align-items: flex-start;
 `;
 
-const FlowLine = styled.View`
+const STEP_HEIGHT = 60; // Step 하나당 높이 고정
+
+const FlowLine = styled.View<{ stepCount: number }>`
   width: 2px;
   background-color: ${LIGHTGRAY};
   margin-left: 50px;
   margin-right: 10px;
   position: relative;
-  height: ${(props) => (props.stepCount ? (props.stepCount - 1) * 60 : 0)}px;
-
+  height: ${({ height }) => height}px;
 `;
+
 
 const CompletedFlowLine = styled.View`
   position: absolute;
@@ -736,20 +849,19 @@ const CompletedFlowLine = styled.View`
   left: 0;
   width: 2px;
   background-color: ${PURPLE};
-  height: ${(props) => (typeof props.height === 'number' ? `${props.height}%` : '0%')};
+  height: ${({ completedCount }) => completedCount * STEP_HEIGHT}px;
 `;
 
-const Circle = styled.View<{ completed: boolean; index: number; stepCount: number }>`
+const Circle = styled.View<{ completed: boolean; index: number }>`
   position: absolute;
   left: -5px;
   width: 10px;
   height: 10px;
   border-radius: 5px;
   background-color: ${({ completed }) => (completed ? PURPLE : LIGHTGRAY)};
-  ${({ index, stepCount }) => `
-    top: ${(index / (stepCount - 1)) * 100}%;
-  `}
+  top: ${({ index }) => index * STEP_HEIGHT}px;
 `;
+
 
 
 const StepContainer = styled.View`

@@ -62,7 +62,7 @@ const handleSendQuotation = async () => {
 
     if (response && response.status === 200) {
       Alert.alert('성공', '주문이 수락되었습니다.');
-      navigation.navigate('SentQuotation');
+      navigation.navigate('OrderManagementTabs');
     } else {
       console.error('Error:', response.data);
       Alert.alert('실패', '주문 수락 중 오류가 발생했습니다.');
@@ -76,7 +76,7 @@ const handleSendQuotation = async () => {
 
   const handleSendRejection = () => {
 
-    navigation.navigate('Rejection');
+    navigation.navigate('Rejection', {order});
   };
 
 // 주문서 이미지 (order)
